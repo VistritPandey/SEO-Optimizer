@@ -85,6 +85,27 @@ def builtin_changes(
         text = source.read_text()
         heading = re.search(r"<h1\b[^>]*>(.*?)</h1>", text, flags=re.I | re.S)
         head = re.search(r"<head\b[^>]*>", text, flags=re.I)
+        supporting_ids = list(finding.evidence_ids)
+        if heading is None:
+            rendered = next(
+                (
+                    item
+                    for item in evidence
+                    if item.kind == "dom"
+                    and item.url == page.url
+                    and item.environment == page.environment
+                    and item.tenant_id == page.tenant_id
+                    and item.project_id == page.project_id
+                    and item.data.get("render_settled") is True
+                ),
+                None,
+            )
+            if rendered is not None:
+                heading = re.search(
+                    r"<h1\b[^>]*>(.*?)</h1>", str(rendered.data.get("html", "")), flags=re.I | re.S
+                )
+                if heading is not None:
+                    supporting_ids.append(rendered.id)
         if not heading or not head or re.search(r"<title\b", text, re.I):
             continue
         from html import escape, unescape
@@ -99,7 +120,7 @@ def builtin_changes(
                 after=head.group(0) + "\n<title>" + escape(title) + "</title>",
                 reason="Use the page's observed main heading as its descriptive title.",
                 check_id=finding.check_id,
-                evidence_ids=finding.evidence_ids,
+                evidence_ids=supporting_ids,
             )
         )
     return changes
