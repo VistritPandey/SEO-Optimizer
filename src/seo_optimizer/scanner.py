@@ -240,6 +240,16 @@ def affected_urls(spec: ProjectSpec, changed: list[str] | None) -> list[str] | N
         return None
     if not changed:
         return []
+    changed = [
+        path
+        for path in changed
+        if not (
+            path.split("/", 1)[0] in {"tests", "test", "__tests__", ".github"}
+            or path in {"README.md", "LICENSE", "LICENSE.md"}
+        )
+    ]
+    if not changed:
+        return []
     # Shared rendering/config/backend changes require broad inspection.
     if any(
         any(
