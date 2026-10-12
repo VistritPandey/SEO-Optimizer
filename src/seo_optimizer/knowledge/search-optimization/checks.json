@@ -492,7 +492,8 @@
       ],
       "source_ids": [
         "google-cwv",
-        "web-vitals"
+        "web-vitals",
+        "google-pagespeed"
       ],
       "reference": "references/performance.md"
     },
