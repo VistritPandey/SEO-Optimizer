@@ -190,6 +190,29 @@ def scan(
                     dependencies=["Supply current owner-verified hours for the actual location."],
                 )
         outcomes.setdefault("content.factual", "needs_model")
+    performance = [item for item in evidence if item.data.get("provider") == "pagespeed"]
+    for measurement in performance:
+        if measurement.data.get("collection_error") or measurement.data.get("runtime_error"):
+            emit(
+                "perf.cwv",
+                measurement,
+                "Performance collection is unavailable.",
+                Severity.INFO,
+                unresolved=True,
+                dependencies=["Obtain a successful performance diagnostic for the public URL."],
+            )
+        else:
+            emit(
+                "perf.cwv",
+                measurement,
+                "Lab diagnostics are available; "
+                "field and causal outcomes require separate evidence.",
+                Severity.INFO,
+                unresolved=True,
+                dependencies=[
+                    "Inspect device/window/URL field scope and repeat comparable lab runs."
+                ],
+            )
     coverage = []
     for id, check in knowledge.checks.items():
         state = outcomes.get(
@@ -210,6 +233,7 @@ def scan(
         "total_checks": len(coverage),
         "pages": len(pages),
         "findings": len(findings),
+        "performance": [item.data for item in performance],
         "unknown_metrics": [
             "Search rankings",
             "AI citation share",
