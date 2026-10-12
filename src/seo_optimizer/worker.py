@@ -548,6 +548,7 @@ class Worker:
         }
         if not changes or not spec.auto_fix:
             return "complete", result, 0
+        result["proposals"] = [change.model_dump(mode="json") for change in changes]
         files = apply_changes(
             repository,
             spec,
