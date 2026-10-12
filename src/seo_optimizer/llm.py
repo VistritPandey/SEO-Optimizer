@@ -136,7 +136,7 @@ class ModelClient:
                     "messages": [{"role": "system", "content": instructions}, *history],
                     "options": {"temperature": 0, "num_predict": self.config.max_output_tokens},
                 }
-                if self.config.capabilities.json_schema:
+                if self.config.capabilities.json_schema and (not definitions or step == max_steps - 1):
                     payload["format"] = schema
                 if definitions:
                     payload["tools"] = [
