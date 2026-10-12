@@ -27,8 +27,8 @@ class KnowledgePackage:
 
 
 def load_knowledge(root: Path = DEFAULT_KNOWLEDGE) -> KnowledgePackage:
-    catalog = CheckCatalog.model_validate_json((root / "checks.json").read_text())
-    registry = SourceRegistry.model_validate_json((root / "sources.json").read_text())
+    catalog = CheckCatalog.model_validate_json((root / "checks.json").read_text(), strict=True)
+    registry = SourceRegistry.model_validate_json((root / "sources.json").read_text(), strict=True)
     package = KnowledgePackage(root.resolve(), catalog, registry)
     errors = validate_knowledge(package)
     if errors:
@@ -60,7 +60,8 @@ def validate_knowledge(package: KnowledgePackage) -> list[str]:
                 errors.append(f"{check.id}: source {source_id} does not declare support")
         if check.assessment == "experimental" and not any(
             package.sources[source_id].source_type == "research"
-            for source_id in check.source_ids if source_id in package.sources
+            for source_id in check.source_ids
+            if source_id in package.sources
         ):
             errors.append(f"{check.id}: experiment requires research provenance")
     for source in package.registry.sources:
@@ -86,8 +87,9 @@ def validate_knowledge(package: KnowledgePackage) -> list[str]:
     except (IndexError, yaml.YAMLError):
         errors.append("invalid skill frontmatter")
     # Follow actual local Markdown links, including links in supporting references.
-    referenced: set[Path] = set()
+    links: dict[Path, set[Path]] = {}
     for document in package.root.rglob("*.md"):
+        links[document.resolve()] = set()
         for target in re.findall(r"\[[^\]]*\]\(([^)]+)\)", document.read_text()):
             if target.startswith(("https://", "http://", "#")):
                 continue
@@ -95,8 +97,16 @@ def validate_knowledge(package: KnowledgePackage) -> list[str]:
             if not path.is_relative_to(package.root) or not path.is_file():
                 errors.append(f"{document.name}: broken or escaping link {target}")
             else:
-                referenced.add(path)
+                links[document.resolve()].add(path)
+    reachable: set[Path] = set()
+    pending = [entrypoint.resolve()]
+    while pending:
+        document_path = pending.pop()
+        if document_path in reachable:
+            continue
+        reachable.add(document_path)
+        pending.extend(links.get(document_path, set()) - reachable)
     for check in package.catalog.checks:
-        if (package.root / check.reference).resolve() not in referenced:
+        if (package.root / check.reference).resolve() not in reachable:
             errors.append(f"{check.id}: reference is not discoverable from Markdown")
     return errors
