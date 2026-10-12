@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>How it works · SEO Optimizer</title>
+  <meta name="description" content="Explore how SEO Optimizer observes, checks, repairs and verifies a website within its owner's policy.">
+  <link rel="stylesheet" href="/static/guide.css">
+  <script src="/static/guide.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to the guide</a>
+  <header class="masthead"><a class="brand" href="/">Optimizer <span>FIELD GUIDE</span></a><a class="action secondary" href="/">Open workspace <span aria-hidden="true">↗</span></a></header>
+  <main id="main">
+    <section class="intro">
+      <span class="eyebrow">FROM A CODE CHANGE TO A VERIFIED FIX</span>
+      <h1>A working partner<br>for your <em>website.</em></h1>
+      <p>Connect the website and its repository. The worker gathers evidence, chooses supported improvements, and verifies what it changes. Your project policy sets its authority.</p>
+      <div class="intro-links"><a href="#workflow">Follow a job ↓</a><a href="#decisions">Explore a decision ↓</a><a href="#setup">Choose a setup ↓</a></div>
+    </section>
+
+    <section id="workflow" aria-labelledby="workflow-heading">
+      <div class="section-heading"><div><span class="eyebrow">01 / THE WORKFLOW</span><h2>Every action has a reason.</h2></div><p>Select a step to inspect its input and output.</p></div>
+      <div class="workflow-steps" role="group" aria-label="Job workflow steps">
+        <button type="button" data-step="0" aria-pressed="true"><span>01</span>Trigger</button>
+        <button type="button" data-step="1" aria-pressed="false"><span>02</span>Scope</button>
+        <button type="button" data-step="2" aria-pressed="false"><span>03</span>Observe</button>
+        <button type="button" data-step="3" aria-pressed="false"><span>04</span>Assess</button>
+        <button type="button" data-step="4" aria-pressed="false"><span>05</span>Verify patch</button>
+        <button type="button" data-step="5" aria-pressed="false"><span>06</span>Publish</button>
+        <button type="button" data-step="6" aria-pressed="false"><span>07</span>Confirm</button>
+        <button type="button" data-step="7" aria-pressed="false"><span>08</span>Remember</button>
+      </div>
+      <article class="step-detail" aria-live="polite" aria-atomic="true">
+        <div><span id="step-kind" class="eyebrow">SIGNED EVENT / SCHEDULE / MANUAL AUDIT</span><h3 id="step-title">A reason to inspect the site</h3><p id="step-description">A signed GitHub push, a periodic reconciliation, or your manual audit queues a project-scoped job. Repeated events reuse existing work.</p></div>
+        <dl class="step-record"><div><dt>Input</dt><dd id="step-input">Repository, branch, revision and project identity</dd></div><div><dt>Output</dt><dd id="step-output">A durable queued job</dd></div><div><dt>Gate</dt><dd id="step-gate">Signature, repository and branch must match the connection</dd></div></dl>
+      </article>
+      <noscript><p>JavaScript is disabled. The worker scopes changed routes, collects evidence, assesses issues, verifies patches, publishes permitted changes, confirms deployment and retains finding memory.</p></noscript>
+    </section>
+
+    <section id="decisions" aria-labelledby="decision-heading">
+      <div class="section-heading"><div><span class="eyebrow">02 / EVIDENCE BEFORE ACTION</span><h2>Sometimes the right fix<br>is <em>no change.</em></h2></div><p>Illustrative examples. These controls do not run a real audit or change a repository.</p></div>
+      <div class="decision-layout">
+        <div class="decision-controls"><label for="scenario">What did the worker observe?</label><select id="scenario"><option value="title">Public page missing its title</option><option value="healthy">Healthy page</option><option value="private">An intentionally private page</option><option value="training">Training blocked, search allowed</option><option value="facts">Content needs unverified facts</option><option value="tool">A required tool failed</option></select><label class="check"><input id="auto-fix" type="checkbox" checked> Automatic fixes enabled</label><p class="aside-note">Models may propose work. Application code checks paths, evidence, privacy and permissions independently.</p></div>
+        <article class="decision-result" aria-live="polite" aria-atomic="true"><span id="decision-status" class="status">Supported proposal</span><h3 id="decision-title">Use the observed heading as a title</h3><p id="decision-reason">The page is public and the title is absent. An actual heading supplies useful text without inventing business claims.</p><dl><div><dt>Evidence</dt><dd id="decision-evidence">HTTP response, mapped source and observed heading</dd></div><div><dt>Next step</dt><dd id="decision-next">Validate the exact metadata patch before committing it</dd></div></dl></article>
+      </div>
+    </section>
+
+    <section id="setup" aria-labelledby="setup-heading">
+      <div class="section-heading"><div><span class="eyebrow">03 / RUN IT YOUR WAY</span><h2>The worker goes<br>where your model lives.</h2></div><p>Python 3.12, uv and Git. A web process and a worker run separately.</p></div>
+      <div class="setup-options" role="group" aria-label="Installation setup"><button type="button" data-setup="rules" aria-pressed="true">Local rules</button><button type="button" data-setup="ollama" aria-pressed="false">Local Ollama</button><button type="button" data-setup="hosted" aria-pressed="false">Hosted + local worker</button></div>
+      <div class="setup-detail"><div><h3 id="setup-title">Start without model credentials</h3><p id="setup-description">Rules are the default. Run the dashboard in one terminal and the worker in another. Connect a website through the workspace.</p><p id="setup-dependency" class="aside-note">Default local URL: http://127.0.0.1:8000. Local repositories must be inside OPT_REPO_ROOTS.</p></div><pre><code id="setup-command">uv sync --locked
+
+# Terminal 1
+uv run seo-optimizer serve
+
+# Terminal 2
+uv run seo-optimizer worker</code></pre></div>
+    </section>
+
+    <section class="measurement" aria-labelledby="measurement-heading"><span class="eyebrow">04 / READ THE RESULTS CORRECTLY</span><h2 id="measurement-heading">A verified code fix<br>is the start of measurement.</h2><div class="measurement-grid"><div><h3>Observed audit health</h3><p>Summarizes assessed checks. Missing data and unsupported checks are visible; they are never silently counted as healthy.</p></div><div><h3>Model usage</h3><p>Records available tokens, runtime and configured API pricing. Local electricity and hardware costs stay separate.</p></div><div><h3>Search outcomes</h3><p>Rankings, indexing, citations, visits and conversions need their own observations over time. A lab score or a screenshot cannot establish them.</p></div></div></section>
+    <footer><span>SEO Optimizer · Read, reason, verify.</span><a href="/">Open your workspace <span aria-hidden="true">↗</span></a></footer>
+  </main>
+</body>
+</html>
