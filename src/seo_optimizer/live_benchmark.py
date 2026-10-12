@@ -2,6 +2,7 @@
 
 import json
 import os
+import time
 from pathlib import Path
 from typing import Literal
 
@@ -26,7 +27,9 @@ def benchmark(
     model: str,
     limit: int = 5,
     split: Literal["development", "held_out"] = "development",
-) -> None:
+) -> int:
+    if limit < 1:
+        raise ValueError("Benchmark limit must be positive")
     knowledge = load_knowledge()
     cases = [case for case in load_cases(cases_path, knowledge) if case.split == split][:limit]
     config = ProviderConfig.model_validate(
@@ -42,6 +45,11 @@ def benchmark(
     try:
         for case in cases:
             request = case.to_request().model_dump(mode="json")
+            request["project"]["permitted_actions"] = [
+                "investigate",
+                "collect_evidence",
+                "experiment",
+            ]
             request["checks"] = [
                 knowledge.checks[id].model_dump(mode="json") for id in case.allowed_check_ids
             ]
@@ -58,6 +66,7 @@ def benchmark(
                 "Healthy or intentionally excluded cases need no finding. "
                 "Use only the provided evidence and catalog sources; do not invent observations."
             )
+            started = time.monotonic()
             try:
                 result = client.complete(
                     instructions,
@@ -92,7 +101,8 @@ def benchmark(
                         model=model,
                         capabilities=ProviderCapabilities(json_schema=True),
                         raw_response="",
-                        run_error=type(error).__name__,
+                        run_error=type(error).__name__ + ": " + str(error)[:1000],
+                        runtime_ms=(time.monotonic() - started) * 1000,
                     )
                 )
             print(f"Recorded {case.id}", flush=True)
@@ -111,3 +121,4 @@ def benchmark(
     )
     save_report(report, output)
     print(json.dumps(report.counts))
+    return 1 if report.counts["failed"] else (2 if report.counts["skipped"] else 0)
