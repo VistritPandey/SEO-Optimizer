@@ -90,11 +90,13 @@ only. No GitHub credentials or paid model access is needed for the suite.
 uv run seo-optimizer evaluate --cases tests/fixtures/cases.json --responses tests/fixtures/reference-responses.json --split all --output reports/reference-replay.json
 uv run seo-optimizer rules --cases tests/fixtures/cases.json --output reports/rules-responses.json
 uv run seo-optimizer evaluate --cases tests/fixtures/cases.json --responses reports/rules-responses.json --split all --output reports/rules-baseline.json
-uv run seo-optimizer benchmark-live --cases tests/fixtures/cases.json --model YOUR_INSTALLED_MODEL --provider ollama --limit 5 --output reports/my-model.json
+uv run seo-optimizer benchmark-live --cases tests/fixtures/cases.json --model YOUR_INSTALLED_MODEL --provider ollama --arm hybrid --limit 17 --output reports/my-model.json
 ```
 
 Synthetic reference replay tests the rubric, not model quality. The limited rules replay leaves
-unsupported cases skipped. A live benchmark retains malformed outputs and wrong decisions as
+unsupported cases skipped. Hybrid evaluation runs rules first and calls the selected model only for unsupported checks;
+its protocol records how many cases actually used inference. `--arm model-only` measures the
+model without rules. A live benchmark retains malformed outputs and wrong decisions as
 failures. Evaluation exits: 0 all passed; 1 failed/invalid; 2 incomplete with no failures.
 Unknown costs remain null; a local model's zero API cost does not imply zero electricity or
 hardware cost. Held-out cases remain separate from development runs.
