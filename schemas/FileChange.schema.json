@@ -1,0 +1,46 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "title": "Path",
+      "type": "string"
+    },
+    "before": {
+      "maxLength": 100000,
+      "title": "Before",
+      "type": "string"
+    },
+    "after": {
+      "maxLength": 100000,
+      "title": "After",
+      "type": "string"
+    },
+    "reason": {
+      "minLength": 1,
+      "title": "Reason",
+      "type": "string"
+    },
+    "check_id": {
+      "title": "Check Id",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "path",
+    "before",
+    "after",
+    "reason",
+    "check_id",
+    "evidence_ids"
+  ],
+  "title": "FileChange",
+  "type": "object"
+}
