@@ -97,9 +97,9 @@ def validate_assessment(
             if not isinstance(target, str) or not _allowed_path(target, project.allowed_paths):
                 errors.append("tool path outside project policy")
     tool_failed = any(not result.success for result in assessment.tool_results)
-    seen: set[tuple[str, FindingStatus]] = set()
+    seen: set[tuple[str, FindingStatus, tuple[str, ...]]] = set()
     for finding in assessment.findings:
-        key = (finding.check_id, finding.status)
+        key = (finding.check_id, finding.status, tuple(sorted(finding.evidence_ids)))
         if key in seen:
             errors.append(f"duplicate finding {finding.check_id}/{finding.status}")
         seen.add(key)
