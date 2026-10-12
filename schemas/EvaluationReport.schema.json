@@ -1,0 +1,445 @@
+{
+  "$defs": {
+    "ActionKind": {
+      "enum": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "publish_content",
+        "change_crawler_policy",
+        "update_business_profile",
+        "merge",
+        "deploy",
+        "experiment"
+      ],
+      "title": "ActionKind",
+      "type": "string"
+    },
+    "EvaluationResult": {
+      "additionalProperties": false,
+      "properties": {
+        "case_id": {
+          "title": "Case Id",
+          "type": "string"
+        },
+        "provider": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Provider"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "status": {
+          "enum": [
+            "passed",
+            "failed",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "expected": {
+          "items": {
+            "$ref": "#/$defs/ExpectedFinding"
+          },
+          "title": "Expected",
+          "type": "array"
+        },
+        "observed": {
+          "items": {
+            "$ref": "#/$defs/Finding"
+          },
+          "title": "Observed",
+          "type": "array"
+        },
+        "failures": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Failures",
+          "type": "array"
+        },
+        "runtime_ms": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Runtime Ms"
+        },
+        "usage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Usage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "case_id",
+        "status",
+        "expected"
+      ],
+      "title": "EvaluationResult",
+      "type": "object"
+    },
+    "EvidenceStrength": {
+      "enum": [
+        "confirmed",
+        "supported",
+        "hypothesis"
+      ],
+      "title": "EvidenceStrength",
+      "type": "string"
+    },
+    "ExpectedFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/FindingStatus"
+        },
+        "allowed_actions": {
+          "items": {
+            "$ref": "#/$defs/ActionKind"
+          },
+          "minItems": 1,
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "required_evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Evidence Ids",
+          "type": "array"
+        },
+        "automatic": {
+          "default": false,
+          "title": "Automatic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "check_id",
+        "status",
+        "allowed_actions"
+      ],
+      "title": "ExpectedFinding",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "minLength": 1,
+          "title": "Check Id",
+          "type": "string"
+        },
+        "summary": {
+          "minLength": 1,
+          "title": "Summary",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/FindingStatus"
+        },
+        "severity": {
+          "$ref": "#/$defs/Severity"
+        },
+        "evidence_strength": {
+          "$ref": "#/$defs/EvidenceStrength"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "action": {
+          "$ref": "#/$defs/ProposedAction"
+        },
+        "verification_criteria": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Verification Criteria",
+          "type": "array"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "summary",
+        "status",
+        "severity",
+        "evidence_strength",
+        "source_ids",
+        "action",
+        "verification_criteria"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "FindingStatus": {
+      "enum": [
+        "defect",
+        "unresolved",
+        "experiment"
+      ],
+      "title": "FindingStatus",
+      "type": "string"
+    },
+    "JsonValue": {},
+    "ProposedAction": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/ActionKind"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "automatic": {
+          "default": false,
+          "title": "Automatic",
+          "type": "boolean"
+        },
+        "target_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Paths",
+          "type": "array"
+        },
+        "fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fact Ids",
+          "type": "array"
+        },
+        "crawler_changes": {
+          "additionalProperties": {
+            "enum": [
+              "allow",
+              "block"
+            ],
+            "type": "string"
+          },
+          "title": "Crawler Changes",
+          "type": "object"
+        },
+        "indexability_changes": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Indexability Changes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "rationale"
+      ],
+      "title": "ProposedAction",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    },
+    "Usage": {
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "api_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Cost Usd"
+        },
+        "electricity_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Electricity Cost Usd"
+        },
+        "hardware_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hardware Cost Usd"
+        }
+      },
+      "title": "Usage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0",
+      "default": "1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "generated_at": {
+      "format": "date-time",
+      "title": "Generated At",
+      "type": "string"
+    },
+    "knowledge_version": {
+      "title": "Knowledge Version",
+      "type": "string"
+    },
+    "split": {
+      "enum": [
+        "development",
+        "held_out",
+        "all"
+      ],
+      "title": "Split",
+      "type": "string"
+    },
+    "results": {
+      "items": {
+        "$ref": "#/$defs/EvaluationResult"
+      },
+      "title": "Results",
+      "type": "array"
+    },
+    "counts": {
+      "additionalProperties": {
+        "type": "integer"
+      },
+      "title": "Counts",
+      "type": "object"
+    },
+    "metrics": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Metrics",
+      "type": "object"
+    },
+    "unverified": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unverified",
+      "type": "array"
+    }
+  },
+  "required": [
+    "generated_at",
+    "knowledge_version",
+    "split",
+    "results",
+    "counts",
+    "metrics",
+    "unverified"
+  ],
+  "title": "EvaluationReport",
+  "type": "object"
+}
