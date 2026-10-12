@@ -13,6 +13,39 @@ SECRET_NAMES = re.compile(
 )
 
 
+def without_metadata(text: str) -> str:
+    """Remove a data-only JS metadata declaration for a conservative body-equality gate."""
+    match = re.search(r"export\s+const\s+metadata(?:\s*:\s*Metadata)?\s*=\s*\{", text)
+    if not match:
+        return text.strip()
+    depth, quote, escaped, end = 1, "", False, match.end()
+    for end in range(match.end(), len(text)):
+        char = text[end]
+        if quote:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == quote:
+                quote = ""
+        elif char in {"'", '"'}:
+            quote = char
+        elif char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                end += 1
+                if text[end : end + 1] == ";":
+                    end += 1
+                break
+        elif char in "()`=":
+            raise ValueError("Metadata must contain data, not executable expressions")
+    if depth or quote:
+        raise ValueError("Metadata declaration is not balanced")
+    return (text[: match.start()] + text[end:]).strip()
+
+
 def run_git(root: Path, *arguments: str) -> str:
     environment = {
         "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
@@ -90,24 +123,47 @@ def apply_changes(
         if not set(change.evidence_ids).issubset(evidence_ids) or change.check_id not in check_ids:
             raise ValueError("Patch is not supported by collected findings")
         target = confined(root, change.path, spec.allowed_paths)
-        if not target.is_file() or target.stat().st_size > 200_000:
+        creating = not target.exists()
+        if creating and (
+            change.before
+            or not spec.allow_content_publication
+            or not spec.check_commands
+            or not spec.facts
+        ):
+            raise ValueError("New content requires publication policy, facts and sandbox checks")
+        if not creating and (not target.is_file() or target.stat().st_size > 200_000):
             raise ValueError("Patch target is missing or too large")
-        original = target.read_text()
-        if original.count(change.before) != 1:
+        original = "" if creating else target.read_text()
+        if not creating and (not change.before or original.count(change.before) != 1):
             raise ValueError("Patch context is stale or ambiguous")
-        updated = original.replace(change.before, change.after, 1)
+        updated = change.after if creating else original.replace(change.before, change.after, 1)
         if updated == original:
             raise ValueError("Patch does not change the file")
         if not spec.allow_content_publication:
             # Default automatic scope is document-head metadata, not arbitrary app code.
-            if target.suffix.lower() != ".html":
+            if target.suffix.lower() in {".tsx", ".jsx", ".js", ".ts"}:
+                if (
+                    change.check_id
+                    not in {"tech.title", "tech.metadata", "tech.canonical", "tech.indexability"}
+                    or not spec.check_commands
+                ):
+                    raise ValueError(
+                        "Framework metadata edits require configured build verification"
+                    )
+                if without_metadata(original) != without_metadata(updated):
+                    raise ValueError("Framework edit changes application behavior beyond metadata")
+            elif target.suffix.lower() == ".html":
+                head = re.search(r"<head\b[^>]*>(.*?)</head>", original, flags=re.S | re.I)
+                start = original.find(change.before)
+                if not head or not (
+                    head.start() <= start and start + len(change.before) <= head.end()
+                ):
+                    raise ValueError("Automatic edit extends beyond permitted page metadata")
+            else:
                 raise ValueError("Application/content edits require explicit publication policy")
-            head = re.search(r"<head\b[^>]*>(.*?)</head>", original, flags=re.S | re.I)
-            start = original.find(change.before)
-            if not head or not (head.start() <= start and start + len(change.before) <= head.end()):
-                raise ValueError("Automatic edit extends beyond permitted page metadata")
         elif not spec.facts:
             raise ValueError("Content publication requires verified business facts")
+        target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(updated)
         result[change.path] = updated
     return result
