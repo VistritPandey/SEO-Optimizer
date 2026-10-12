@@ -1,0 +1,7 @@
+{
+  "status": "passed",
+  "scope": "Real HTTPS request with DNS pinning, original Host and TLS server name",
+  "url": "https://example.com/",
+  "http_status": 200,
+  "returned_url": "https://example.com/"
+}
