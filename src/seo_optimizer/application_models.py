@@ -104,5 +104,5 @@ class Registration(Contract):
     def normalize_email(self) -> Self:
         if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", self.email):
             raise ValueError("invalid email")
-        self.email = self.email.strip().lower()
+        object.__setattr__(self, "email", self.email.strip().lower())
         return self
