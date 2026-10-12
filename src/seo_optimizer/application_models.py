@@ -6,7 +6,7 @@ from typing import Literal, Self
 
 from pydantic import Field, HttpUrl, model_validator
 
-from seo_optimizer.contracts import Contract, ProviderCapabilities, TrustedFact, WebsiteType
+from seo_optimizer.contracts import Contract, Finding, ProviderCapabilities, TrustedFact, WebsiteType
 
 
 class ProviderConfig(Contract):
@@ -91,7 +91,7 @@ class FileChange(Contract):
 
 
 class AgentDecision(Contract):
-    findings: list[dict[str, object]] = Field(default_factory=list)
+    findings: list[Finding] = Field(default_factory=list)
     changes: list[FileChange] = Field(default_factory=list)
     summary: str = ""
 
