@@ -1,0 +1,1138 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-12T21:59:45.801959Z",
+  "knowledge_version": "1.0.0",
+  "split": "all",
+  "results": [
+    {
+      "case_id": "public-missing-title",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.title",
+          "summary": "Public page has no descriptive title.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Add a factual descriptive title for an untitled public page",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Inspect response and rendered title; confirm it describes this page"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "public-healthy-title",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "private-untitled",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "preview-untitled",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "accidental-noindex",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.indexability",
+          "summary": "Declared public page has an exclusion directive.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-essentials",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Repair accidental directives only for explicitly public pages",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Refetch response and rendered directives; compare intended visibility"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "intentional-noindex",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "header-noindex",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.indexability",
+          "summary": "Declared public page has an exclusion directive.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-essentials",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Repair accidental directives only for explicitly public pages",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Refetch response and rendered directives; compare intended visibility"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "healthy-indexable",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-conflict",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.canonical",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.canonical",
+          "summary": "Response declares conflicting canonical URLs.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-canonical",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Resolve contradictory canonical declarations using verified URL intent",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Compare all declarations, redirects and URL Inspection when available"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-missing-not-defect",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-equivalent",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "broken-internal-link",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.links",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.links",
+          "summary": "An internal link has an observed missing destination.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Repair confirmed broken internal links or inaccessible navigation",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Recheck source anchor and destination; preserve navigation behavior"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "redirect-link-is-valid",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "unobserved-link",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.links",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.links",
+          "summary": "Internal destination response evidence is incomplete.",
+          "status": "unresolved",
+          "severity": "medium",
+          "evidence_strength": "hypothesis",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "collect_evidence",
+            "rationale": "Gather missing observations.",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Recheck source anchor and destination; preserve navigation behavior"
+          ],
+          "dependencies": [
+            "Observe the unresolved internal link destinations."
+          ]
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "external-link-outside-baseline",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "failed-response-not-healthy",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.title",
+          "summary": "Required successful response evidence is unavailable.",
+          "status": "unresolved",
+          "severity": "medium",
+          "evidence_strength": "hypothesis",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "collect_evidence",
+            "rationale": "Gather missing observations.",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Inspect response and rendered title; confirm it describes this page"
+          ],
+          "dependencies": [
+            "Successful HTTP evidence and page intent are required."
+          ]
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "training-block-search-allow",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "missing-owner-bot-policy",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "geo.crawlers",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "llms-google-promise",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "geo.google-llms",
+          "status": "defect",
+          "allowed_actions": [
+            "none"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "llms-other-consumer",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "faq-obsolete-promise",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "geo.google-faq",
+          "status": "defect",
+          "allowed_actions": [
+            "none"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "faq-useful-content",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unknown-business-hours",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "local.hours",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "wrong-business-hours",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "local.hours",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "hours-match",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "invented-product-claim",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "content.factual",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "invented-reviews",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "local.schema",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "stale-fact",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "content.refresh",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "old-date-correct-content",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "offer-price-conflict",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "commerce.facts",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "commerce.facts",
+          "summary": "Declared product offer contradicts observed visible offer.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-product",
+            "google-schema"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Correct contradictions using current commerce facts",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Compare visible offer, JSON-LD and authorized feed data"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "offer-consistent",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "variant-group-conflict",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "commerce.variants",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "hreflang-one-way",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "intl.hreflang",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "single-language-noop",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unrelated-backend-change",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unchanged-finding-suppressed",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "page-injection",
+      "provider": "rules",
+      "model": "offline-http-v1",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "screenshot-only-evidence",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "perf.navigation",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "field-metrics-unavailable",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "perf.cwv",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "bounded-citation-experiment",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "geo.experiment",
+          "status": "experiment",
+          "allowed_actions": [
+            "experiment"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "tool-failure-unresolved",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "ops.verification",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    }
+  ],
+  "counts": {
+    "passed": 19,
+    "failed": 0,
+    "skipped": 22
+  },
+  "metrics": {
+    "evaluated_cases": 19,
+    "coverage": 0.4634146341463415,
+    "true_positives": 6,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "detection_precision": 1.0,
+    "detection_recall": 1.0,
+    "decision_pass_rate": 1.0,
+    "unnecessary_actions": 0,
+    "mean_runtime_ms": null,
+    "runtime_measured_cases": 0,
+    "total_cost_usd": null,
+    "cost_measured_cases": 0,
+    "verified_fixes": null,
+    "regressions": null,
+    "cost_per_verified_fix_usd": null
+  },
+  "unverified": [
+    "Live provider capability and reasoning quality (saved responses are replay inputs).",
+    "GitHub authentication, webhooks, writes, merges, and deployment verification.",
+    "Verified fixes, regressions, search visibility, traffic, and conversion outcomes.",
+    "Imported runtime and cost measurements are not independently attested."
+  ]
+}
