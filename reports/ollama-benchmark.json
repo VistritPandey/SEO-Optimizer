@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated_at": "2026-10-12T22:48:30.059733Z",
+  "generated_at": "2026-10-12T22:57:42.707000Z",
   "knowledge_version": "1.0.0",
   "split": "development",
   "results": [
@@ -22,15 +22,46 @@
           "automatic": false
         }
       ],
-      "observed": [],
-      "failures": [
-        "provider/tool run failed: ReadTimeout"
+      "observed": [
+        {
+          "check_id": "tech.title",
+          "summary": "Public page at https://example.test/ lacks a descriptive title.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "propose_patch",
+            "rationale": "The page is a public production route (intended_indexable: true) and the HTML response contains no <title> element. A descriptive title is required to help users and search engines identify the page content.",
+            "automatic": false,
+            "target_paths": [
+              "web"
+            ],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Verify that the <title> tag is present in the HTML response.",
+            "Confirm the title accurately reflects the 'Actual product details' content."
+          ],
+          "dependencies": []
+        }
       ],
-      "runtime_ms": null,
+      "failures": [
+        "incorrect action for tech.title"
+      ],
+      "runtime_ms": 56074.95341700269,
       "usage": {
-        "input_tokens": null,
-        "output_tokens": null,
-        "api_cost_usd": null,
+        "input_tokens": 2136,
+        "output_tokens": 342,
+        "api_cost_usd": 0.0,
         "electricity_cost_usd": null,
         "hardware_cost_usd": null
       }
@@ -39,17 +70,15 @@
       "case_id": "public-healthy-title",
       "provider": "ollama",
       "model": "gemma4:12b",
-      "status": "failed",
+      "status": "passed",
       "expected": [],
       "observed": [],
-      "failures": [
-        "provider/tool run failed: ReadTimeout"
-      ],
-      "runtime_ms": null,
+      "failures": [],
+      "runtime_ms": 12911.837417050265,
       "usage": {
-        "input_tokens": null,
-        "output_tokens": null,
-        "api_cost_usd": null,
+        "input_tokens": 2143,
+        "output_tokens": 72,
+        "api_cost_usd": 0.0,
         "electricity_cost_usd": null,
         "hardware_cost_usd": null
       }
@@ -62,7 +91,7 @@
       "expected": [],
       "observed": [],
       "failures": [
-        "provider/tool run failed: ReadTimeout"
+        "provider/tool run failed: ValidationError"
       ],
       "runtime_ms": null,
       "usage": {
@@ -91,15 +120,46 @@
           "automatic": false
         }
       ],
-      "observed": [],
-      "failures": [
-        "provider/tool run failed: ReadTimeout"
+      "observed": [
+        {
+          "check_id": "tech.indexability",
+          "summary": "Public intent conflicts with HTML noindex.",
+          "status": "defect",
+          "severity": "high",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-essentials",
+            "google-js"
+          ],
+          "action": {
+            "kind": "propose_patch",
+            "rationale": "The production environment for the root URL (https://example.test/) is marked as 'intended_indexable: true', but the served HTML contains a <meta name=\"robots\" content=\"noindex\"> tag. This creates a conflict between the business goal of making the product visible and the technical implementation which instructs search engines to ignore the page.",
+            "automatic": false,
+            "target_paths": [
+              "web"
+            ],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Refetch the response for https://example.test/ to confirm the removal of the noindex meta tag.",
+            "Verify that the X-Robots-Tag header (if present) also permits indexing."
+          ],
+          "dependencies": []
+        }
       ],
-      "runtime_ms": null,
+      "failures": [
+        "incorrect action for tech.indexability"
+      ],
+      "runtime_ms": 45337.443624972366,
       "usage": {
-        "input_tokens": null,
-        "output_tokens": null,
-        "api_cost_usd": null,
+        "input_tokens": 2131,
+        "output_tokens": 386,
+        "api_cost_usd": 0.0,
         "electricity_cost_usd": null,
         "hardware_cost_usd": null
       }
@@ -108,39 +168,37 @@
       "case_id": "intentional-noindex",
       "provider": "ollama",
       "model": "gemma4:12b",
-      "status": "failed",
+      "status": "passed",
       "expected": [],
       "observed": [],
-      "failures": [
-        "provider/tool run failed: ReadTimeout"
-      ],
-      "runtime_ms": null,
+      "failures": [],
+      "runtime_ms": 19291.798582999036,
       "usage": {
-        "input_tokens": null,
-        "output_tokens": null,
-        "api_cost_usd": null,
+        "input_tokens": 2140,
+        "output_tokens": 99,
+        "api_cost_usd": 0.0,
         "electricity_cost_usd": null,
         "hardware_cost_usd": null
       }
     }
   ],
   "counts": {
-    "passed": 0,
-    "failed": 5,
+    "passed": 2,
+    "failed": 3,
     "skipped": 0
   },
   "metrics": {
     "evaluated_cases": 5,
     "coverage": 1.0,
-    "true_positives": 0,
+    "true_positives": 2,
     "false_positives": 0,
-    "false_negatives": 2,
-    "detection_precision": null,
-    "detection_recall": 0.0,
-    "decision_pass_rate": 0.0,
+    "false_negatives": 0,
+    "detection_precision": 1.0,
+    "detection_recall": 1.0,
+    "decision_pass_rate": 0.4,
     "unnecessary_actions": 0,
-    "mean_runtime_ms": null,
-    "runtime_measured_cases": 0,
+    "mean_runtime_ms": 33404.00826050609,
+    "runtime_measured_cases": 4,
     "total_cost_usd": null,
     "cost_measured_cases": 0,
     "verified_fixes": null,
