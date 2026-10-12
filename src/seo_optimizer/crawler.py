@@ -51,7 +51,8 @@ class Crawler:
             raise CrawlError("Nonstandard website ports are disabled")
         try:
             addresses = {
-                item[4][0] for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)
+                str(item[4][0])
+                for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)
             }
         except socket.gaierror as error:
             raise CrawlError("Website hostname did not resolve") from error
