@@ -61,6 +61,7 @@ class ProjectSpec(Contract):
     check_commands: list[list[str]] = Field(default_factory=list)
     sandbox_image: str = "python:3.12-slim"
     browser_enabled: bool = False
+    measure_performance: bool = False
     rollback_on_regression: bool = True
 
     @model_validator(mode="after")
@@ -86,6 +87,7 @@ class ProjectSpec(Contract):
 
 class ProjectSecrets(Contract):
     provider_key: str = ""
+    pagespeed_key: str = ""
     github_token: str = ""
     webhook_secret: str = ""
     github_app_id: str = ""
