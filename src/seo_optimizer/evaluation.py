@@ -5,7 +5,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Literal
 
-from pydantic import TypeAdapter, ValidationError
+from pydantic import JsonValue, TypeAdapter, ValidationError
 
 from seo_optimizer.contracts import (
     BenchmarkCase,
@@ -21,7 +21,7 @@ from seo_optimizer.providers import parse_assessment
 
 
 def load_cases(path: Path, package: KnowledgePackage) -> list[BenchmarkCase]:
-    cases = TypeAdapter(list[BenchmarkCase]).validate_json(path.read_text())
+    cases = TypeAdapter(list[BenchmarkCase]).validate_json(path.read_text(), strict=True)
     if len({case.id for case in cases}) != len(cases):
         raise ValueError("duplicate benchmark case identifiers")
     for case in cases:
@@ -32,14 +32,18 @@ def load_cases(path: Path, package: KnowledgePackage) -> list[BenchmarkCase]:
 
 
 def load_responses(path: Path) -> list[ResponseRecord]:
-    return TypeAdapter(list[ResponseRecord]).validate_json(path.read_text())
+    return TypeAdapter(list[ResponseRecord]).validate_json(path.read_text(), strict=True)
 
 
 def evaluate_case(
-    case: BenchmarkCase, record: ResponseRecord | None, package: KnowledgePackage,
+    case: BenchmarkCase,
+    record: ResponseRecord | None,
+    package: KnowledgePackage,
 ) -> EvaluationResult:
     base = EvaluationResult(
-        case_id=case.id, status="skipped", expected=case.expected_findings,
+        case_id=case.id,
+        status="skipped",
+        expected=case.expected_findings,
         failures=["no saved response supplied"],
     )
     if record is None:
@@ -56,8 +60,10 @@ def evaluate_case(
     except ValidationError as error:
         base.status = "failed"
         # Validation locations/types are useful; raw input may contain sensitive data.
-        base.failures = [f"invalid assessment: {item['loc']} ({item['type']})"
-                         for item in error.errors(include_input=False)]
+        base.failures = [
+            f"invalid assessment: {item['loc']} ({item['type']})"
+            for item in error.errors(include_input=False)
+        ]
         return base
     base.observed = assessment.findings
     base.failures.extend(validate_assessment(assessment, case, package, record.capabilities))
@@ -80,7 +86,9 @@ def evaluate_case(
 
 
 def evaluate(
-    cases: list[BenchmarkCase], records: list[ResponseRecord], package: KnowledgePackage,
+    cases: list[BenchmarkCase],
+    records: list[ResponseRecord],
+    package: KnowledgePackage,
     split: Literal["development", "held_out", "all"] = "development",
 ) -> EvaluationReport:
     known = {case.id for case in cases}
@@ -106,8 +114,14 @@ def evaluate(
         found = {item.check_id for item in result.observed if item.status == FindingStatus.DEFECT}
         # Invalid grounding cannot count as a true positive even with the right check ID.
         if result.status == "failed" and any(
-            marker in failure for failure in result.failures
-            for marker in ("unknown evidence", "unrelated sources", "boundary", "invalid assessment")
+            marker in failure
+            for failure in result.failures
+            for marker in (
+                "unknown evidence",
+                "unrelated sources",
+                "boundary",
+                "invalid assessment",
+            )
         ):
             tp += 0
             fp += len(found)
@@ -118,27 +132,45 @@ def evaluate(
             fn += len(wanted - found)
     completed = [result for result in results if result.status != "skipped"]
     measured = [result.usage.total_cost() for result in completed if result.usage is not None]
-    complete_cost = bool(completed) and len(measured) == len(completed) and all(
-        value is not None for value in measured
+    complete_cost = (
+        bool(completed)
+        and len(measured) == len(completed)
+        and all(value is not None for value in measured)
     )
     runtimes = [result.runtime_ms for result in completed if result.runtime_ms is not None]
-    metrics = {
+    metrics: dict[str, JsonValue] = {
         "evaluated_cases": len(completed),
         "coverage": len(completed) / len(selected),
-        "true_positives": tp, "false_positives": fp, "false_negatives": fn,
+        "true_positives": tp,
+        "false_positives": fp,
+        "false_negatives": fn,
         "detection_precision": tp / (tp + fp) if tp + fp else None,
         "detection_recall": tp / (tp + fn) if tp + fn else None,
         "decision_pass_rate": counts["passed"] / len(completed) if completed else None,
+        "unnecessary_actions": sum(
+            finding.action.kind != "none"
+            for result in completed
+            for finding in result.observed
+            if (finding.check_id, finding.status)
+            not in {(expected.check_id, expected.status) for expected in result.expected}
+        ),
         "mean_runtime_ms": sum(runtimes) / len(runtimes) if runtimes else None,
         "runtime_measured_cases": len(runtimes),
         "total_cost_usd": sum(value for value in measured if value is not None)
-        if complete_cost else None,
+        if complete_cost
+        else None,
         "cost_measured_cases": sum(value is not None for value in measured),
-        "verified_fixes": None, "regressions": None, "cost_per_verified_fix_usd": None,
+        "verified_fixes": None,
+        "regressions": None,
+        "cost_per_verified_fix_usd": None,
     }
     return EvaluationReport(
-        generated_at=utc_now(), knowledge_version=package.catalog.version, split=split,
-        results=results, counts=counts, metrics=metrics,
+        generated_at=utc_now(),
+        knowledge_version=package.catalog.version,
+        split=split,
+        results=results,
+        counts=counts,
+        metrics=metrics,
         unverified=[
             "Live provider capability and reasoning quality (saved responses are replay inputs).",
             "GitHub authentication, webhooks, writes, merges, and deployment verification.",
