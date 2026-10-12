@@ -9,6 +9,11 @@
           "title": "Provider Key",
           "type": "string"
         },
+        "pagespeed_key": {
+          "default": "",
+          "title": "Pagespeed Key",
+          "type": "string"
+        },
         "github_token": {
           "default": "",
           "title": "Github Token",
@@ -225,6 +230,11 @@
         "browser_enabled": {
           "default": false,
           "title": "Browser Enabled",
+          "type": "boolean"
+        },
+        "measure_performance": {
+          "default": false,
+          "title": "Measure Performance",
           "type": "boolean"
         },
         "rollback_on_regression": {
