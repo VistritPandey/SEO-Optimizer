@@ -115,6 +115,11 @@ def apply_changes(
 ) -> dict[str, str]:
     if len(changes) > spec.max_files_changed:
         raise ValueError("Patch exceeds the configured file limit")
+    if (
+        sum(len(change.before.encode()) + len(change.after.encode()) for change in changes)
+        > 750_000
+    ):
+        raise ValueError("Patch exceeds the total content budget")
     seen: set[str] = set()
     result: dict[str, str] = {}
     for change in changes:
