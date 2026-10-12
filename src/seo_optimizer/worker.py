@@ -533,6 +533,8 @@ class Worker:
             existing_paths = {change.path for change in changes}
             changes.extend(change for change in candidates if change.path not in existing_paths)
             usage, model_name = inference.usage.model_dump(mode="json"), inference.model
+            report["tool_trace"] = inference.tool_trace
+            report["model_runtime_ms"] = inference.runtime_ms
         evidence_by_id = {item.id: item for item in evidence}
         enriched = [
             {
