@@ -360,8 +360,9 @@ class Store:
             project = session.scalar(
                 select(Project).where(Project.id == job.project_id, Project.tenant_id == tenant)
             )
-            if project is not None and result.get("report"):
-                project.last_report = result["report"]
+            if project is not None:
+                if result.get("report"):
+                    project.last_report = result["report"]
                 project.updated_at = time.time()
                 if result.get("revision") and status in {
                     "complete",
