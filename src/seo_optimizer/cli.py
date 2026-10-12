@@ -2,7 +2,9 @@
 
 import argparse
 import json
+import os
 import sys
+import time
 from pathlib import Path
 from typing import Literal, cast
 
@@ -33,10 +35,52 @@ def main(argv: list[str] | None = None) -> int:
     baseline = commands.add_parser("rules", help="Run the limited offline deterministic baseline")
     baseline.add_argument("--cases", type=Path, required=True)
     baseline.add_argument("--output", type=Path, required=True)
+    serve = commands.add_parser("serve", help="Run the dashboard and management API")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8000)
+    worker = commands.add_parser("worker", help="Run the durable autonomous worker")
+    worker.add_argument("--once", action="store_true")
+    worker.add_argument("--remote", action="store_true")
+    worker.add_argument("--interval", type=float, default=3)
+    commands.add_parser("demo", help="Create a local demo repository and account")
     args = parser.parse_args(argv)
     try:
         package = load_knowledge(args.knowledge)
-        if args.command == "validate":
+        if args.command == "serve":
+            import uvicorn
+
+            from seo_optimizer.web import create_app
+
+            uvicorn.run(create_app(), host=args.host, port=args.port, access_log=False)
+        elif args.command == "worker":
+            from seo_optimizer.settings import Settings
+            from seo_optimizer.store import Store
+            from seo_optimizer.worker import Worker
+
+            settings = Settings.from_env()
+            control: Store
+            if args.remote:
+                from seo_optimizer.remote import RemoteStore
+
+                control = RemoteStore(
+                    settings,
+                    os.environ.get("OPT_CONTROL_URL", ""),
+                    os.environ.get("OPT_WORKER_TOKEN", ""),
+                )
+            else:
+                control = Store(settings)
+            service = Worker(control, settings)
+            while True:
+                worked = service.tick()
+                if args.once:
+                    break
+                if not worked:
+                    time.sleep(max(1, args.interval))
+        elif args.command == "demo":
+            from seo_optimizer.demo import create_demo
+
+            create_demo()
+        elif args.command == "validate":
             print(
                 json.dumps(
                     {
