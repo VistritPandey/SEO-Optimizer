@@ -1,119 +1,328 @@
 # SEO Optimizer
 
-A Python application that observes websites and repositories, proposes grounded improvements,
-verifies them, and publishes permitted changes autonomously. Run the dashboard locally or host
-it on Vercel; keep the portable worker beside Ollama or use a cloud model provider.
+**A Python worker that finds supported website improvements, checks its changes, and verifies the result.**
+
+Connect a website and its Git repository. SEO Optimizer gathers page and source evidence,
+uses rules or a model to assess it, and makes the changes your project policy permits.
+The dashboard shows what it found, what it changed, what passed verification, and what still
+needs evidence. Run everything locally, or host the dashboard while the worker runs beside Ollama.
+
+[Start locally](#start-locally) · [How it works](#how-it-works) · [Test your own site](#test-your-own-site) · [Deployment](docs/deployment.md)
+
+**Explore the interactive guide:** start the dashboard and open
+[localhost:8000/guide](http://127.0.0.1:8000/guide).
+Click through a job, compare evidence/policy decisions, and switch installation setups.
+If your server uses another port, open `/guide` on that server.
+
+[![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
+
+The README includes expandable examples and diagrams. Its JavaScript interactions live in the
+companion app page. GitHub supports [Mermaid diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
+and [expandable sections](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-collapsed-sections).
+
+## What it does
+
+| You connect | The worker does | You can inspect |
+|---|---|---|
+| A repository and served website | Maps source files to routes; audits affected pages after changes | Revision, URLs, coverage and collected findings |
+| Owner policy and business facts | Preserves private pages, crawler opt-outs and existing behavior | Evidence, source references, dependencies and proposed edits |
+| Rules, Ollama or a cloud model | Uses bounded inspection tools and locally validated output | Provider, available tokens/cost and actual tool results |
+| Build commands and publishing permissions | Verifies a patch, commits each file, checks and merges permitted work | Checks, PR/revisions, deployment confirmation and verified fixes |
+
+The private knowledge covers technical SEO, page experience, content strategy, AI search,
+local businesses, ecommerce, international sites and measurement. It contains eight focused
+references, 39 checks and 30 attributed sources reviewed October 12, 2026.
+
+**Coverage is explicit.** The catalog is broader than the deterministic scanners. A check can
+be assessed, need model interpretation, need external evidence, or not apply. Unavailable
+rankings, field performance, citations and conversions remain unknown. Observed audit health
+summarizes completed checks; it is not a search ranking or a guaranteed visibility score.
 
 ## Start locally
 
-Requires Python 3.12, `uv` and Git.
+Requires **Python 3.12**, **uv** and **Git**. Run commands from this repository's root.
 
 ```sh
 uv sync --locked
+```
+
+Run these in separate terminals:
+
+```sh
+# Terminal 1 — dashboard and API
 uv run seo-optimizer serve
 ```
 
-Open http://127.0.0.1:8000, create an account and connect a website. Start the worker in a second
-terminal:
-
 ```sh
+# Terminal 2 — background worker
 uv run seo-optimizer worker
 ```
 
-The default rules provider needs no model account. Ollama, OpenAI, Anthropic and Google use
-native adapters with independently configured tool calling, JSON Schema and vision capabilities.
-Select an actual model ID; declared capabilities still need verification against that model.
-Keys are entered through authenticated project settings and encrypted at rest.
+Open [localhost:8000](http://127.0.0.1:8000), create an account, then **Connect website**.
+Provide the served URL and either a GitHub `owner/repository` or a permitted local path.
+Choose the project's actual branch; it may be `master` rather than the default `main`.
+The initial audit queues automatically.
 
-For a complete local example, run `uv run seo-optimizer demo`. It creates a real Git repository,
-a queued project and a one-time account password. Start the printed fixture-site command before
-running the worker. Local repositories must be inside `OPT_REPO_ROOTS`; the default is `.data`.
-The demo repair changes a missing title using the page's actual H1, commits, merges and checks
-its served response. Repeated audits do not create another fix commit.
+The default **rules** provider requires no model account. Local state is in ignored `.data/`:
+SQLite, encrypted credentials, the local secret key and isolated workspaces. Keep the key with
+backups; replacing it makes previously encrypted credentials unreadable.
 
-Optional rendered/visual collection:
+<details>
+<summary><strong>Try the small built-in demo first</strong></summary>
 
 ```sh
-uv sync --locked --extra browser
-uv run playwright install chromium
+uv run seo-optimizer demo
 ```
 
-Enable `browser_enabled` in project configuration. Vision is optional and never establishes
-indexing, ranking or field performance by itself. Enable `measure_performance` for an optional
-public-URL mobile PageSpeed diagnostic; configure its key in project settings if required by quota.
+This creates a real local Git repository, a queued project and a one-time demo login. Start the
+fixture website using the command it prints, then start the dashboard and worker.
+The worker adds a missing title using observed page text, verifies it, commits and merges it,
+and fetches the served page again. A repeated audit creates no additional fix commit.
 
-## What ships
+</details>
 
-- A responsive server-rendered dashboard, account sessions, CSRF protection, encrypted project
-  credentials, scoped API/worker tokens and tenant-scoped SQL persistence.
-- A durable queue with leases, per-project exclusion, bounded retries, duplicate event suppression,
-  incremental route auditing, periodic reconciliation and persistent finding memory.
-- Bounded same-origin HTTP collection with validated/pinned addresses; optional rendered DOM,
-  screenshots and official performance diagnostics. Missing evidence stays unknown.
-- Native provider adapters, bounded tool execution, local output validation, token/cost accounting
-  and conservative application-enforced patch checks.
-- Local Git and GitHub App/token integration: isolated snapshots, one file per commit, pull
-  requests, required-check gates, guarded merging, deployment-SHA confirmation and verification.
-  A confirmed regression permits guarded rollback only while no newer branch change exists.
-- A private skill with eight focused references, 39 checks and 30 primary/official research sources
-  reviewed October 12, 2026; 21 exported JSON Schemas and offline evaluation tooling.
-- Deployment configuration for Vercel and containers, CI checks, temporary Git/HTTP integration
-  tests, provider-protocol tests and reproducible benchmark reports.
+<details>
+<summary><strong>Connect an existing local repository</strong></summary>
 
-The 39-check catalog covers technical SEO, experience, strategy/content, AI search, local,
-ecommerce, international and operations. It is a decision system: it does not imply 39 complete
-deterministic scanners or direct access to external search/business accounts. Runtime reports
-show which checks were assessed, need a model, need data or do not apply. The observed health
-score covers assessed checks; it is not a ranking or universal AI-visibility score.
+Local paths must fall inside administrator-configured roots. The default permitted root is
+`.data/`. To work with other folders, set an absolute root before starting the processes:
 
-Metadata fixes are autonomous within project policy. Framework edits require isolated build
-checks. Broader content publication additionally requires supported claims, owner-verified
-facts and explicit publication policy. External business listings, merchant feeds, search analytics
-and causal search uplift require their own authorized evidence; missing access is a dependency.
+```sh
+# In an ignored .env file, for example
+OPT_REPO_ROOTS=/absolute/path/to/your/projects
+```
 
-## Validate and evaluate
+Configure `local_path`, the checked-out `branch`, `allowed_paths` and `route_map` in the project.
+The worker snapshots committed code. It refuses a local merge if the target branch changes,
+is not checked out, or has uncommitted work.
+
+For a static site, a route map might contain `"/": "public/index.html"`. Shared layouts,
+response configuration and uncertain dependencies can trigger a broader audit.
+
+</details>
+
+<details>
+<summary><strong>Use Ollama or another provider</strong></summary>
+
+Start Ollama separately and inspect your installed models:
+
+```sh
+ollama list
+```
+
+Select **Ollama** and an actual model ID in the project. The default worker-side endpoint is
+`http://127.0.0.1:11434`. Tool calling, JSON Schema and vision are separate capabilities; enable
+only capabilities supported by the selected model. Context size, thinking, steps and timeouts
+are explicit project settings.
+
+OpenAI, Anthropic and Google use native adapters. Enter their model ID and credential through
+authenticated settings. Configure current token prices if you need monetary accounting.
+Missing usage or pricing remains unknown; the app cannot retroactively cap provider billing.
+
+A working tool call or schema response is not a quality benchmark. Test the model's decisions
+before allowing autonomous publication. Earlier local-model trials retained failed decisions;
+rules remain the default.
+
+</details>
+
+## How it works
+
+```mermaid
+flowchart LR
+    Event[Push, schedule or manual audit] --> Queue[Durable project job]
+    Queue --> Scope[Revision and affected routes]
+    Scope --> Evidence[HTTP, source and optional rendered DOM]
+    Evidence --> Assess[Rules and optional model]
+    Assess --> Gate[Schema, evidence and policy checks]
+    Gate --> Verify[Exact patch and isolated verification]
+    Verify --> Publish[File commits and permitted merge]
+    Publish --> Confirm[Deployment and served-page checks]
+    Confirm --> Memory[Findings and verification history]
+```
+
+1. **Trigger and scope.** Signed GitHub events, manual audits and periodic reconciliation queue
+   work. Duplicate events reuse jobs; stale pushes are superseded. Known unrelated changes skip
+   model work. Backend response and shared layout changes can affect website pages too.
+2. **Observe.** Bounded same-origin collection records responses, metadata, directives and links.
+   Optional Chromium supplies rendered DOM and screenshots. Evidence has project scope and dates.
+3. **Assess.** Rules identify directly observable issues. A configured model loads relevant private
+   references and can inspect confined files, collected routes, diffs and configured checks.
+   Page and repository text are evidence, not instructions that grant authority.
+4. **Gate and verify.** The application validates output locally, checks source/evidence references,
+   applies exact permitted replacements and runs applicable verification. Stale context, wrong
+   paths, failed tools, privacy changes and unsupported claims prevent publication.
+5. **Publish and confirm.** Local merges require a clean, unchanged target. GitHub uses PRs,
+   required-check gates and rebase merging. The worker waits for the merged deployment SHA,
+   then re-fetches affected pages. A confirmed failed fix can permit a guarded rollback while
+   no newer branch change exists. An unavailable site is inconclusive.
+6. **Remember.** Stable finding identities suppress repeated wording; re-audits resolve findings
+   only on observed pages. Jobs retain outcomes, revisions, checks and available model usage.
+
+### A concrete example
+
+A public page has no `<title>`, but its actual main heading is “Field Notes.” A supported
+metadata change is:
+
+```diff
+ <head>
++<title>Field Notes</title>
+```
+
+That becomes a verified fix only after the source patch passes policy and checks and the
+served response contains the expected title. For a JavaScript-rendered page, the worker can
+use a settled same-page DOM heading, keeping its HTTP and DOM evidence references.
+A screenshot alone cannot justify the title or establish indexing status.
+
+<details>
+<summary><strong>When does it deliberately leave a page alone?</strong></summary>
+
+- The page is already adequate for the assessed requirement.
+- A preview/private page is intentionally excluded from search.
+- Training is blocked while search discovery remains allowed by owner policy.
+- A new content claim lacks current authoritative facts.
+- A required inspection/build fails, the source has changed, or evidence is inconclusive.
+
+“No change” is a useful outcome. A model's declared action or success cannot override these gates.
+
+</details>
+
+## What automatic changes are allowed?
+
+| Change | Prerequisites |
+|---|---|
+| Static HTML metadata | Real finding, exact source, allowed path, preserved privacy/behavior and direct checks |
+| Framework metadata | The same boundaries plus configured isolated build verification |
+| Simple crawler-policy repair | Explicit matching owner bot intent; preserve independent training/discovery preferences |
+| Broader static HTML/Markdown content | Explicit publication policy, current owner fact references, source material and configured checks |
+| GitHub merge | Allowed by project policy, exact PR/base revisions, passing required checks and repository permissions |
+
+Build commands run in a **Docker sandbox** with no network, a read-only source mount, non-root
+UID and resource limits. Prebuild dependencies into the verification image. Worktree isolation
+alone does not sandbox execution. Missing prerequisites block the job with a recorded dependency.
+
+Content permission does not grant arbitrary application-code changes. Fact references and
+schema validation establish provenance and structure; they do not prove every sentence true.
+Business profiles, merchant feeds, search analytics and citation reports require their own
+authorized account evidence. Repository access does not grant those permissions.
+
+## Test your own site
+
+### Offline suite
 
 ```sh
 uv run seo-optimizer validate
 uv run pytest -q
-uv run ruff check src tests
-uv run ruff format --check src tests
+uv run ruff check src tests scripts api
+uv run ruff format --check src tests scripts api
 uv run mypy
 uv build
-uv run seo-optimizer schemas --output schemas
 ```
 
-Ordinary tests block network access. Local Git/HTTP integration tests explicitly allow loopback
-only. No GitHub credentials or paid model access is needed for the suite.
+Ordinary tests block network access. Explicit loopback integration tests exercise temporary
+Git commits/merges and HTTP verification. No GitHub credential or paid model is required.
+The suite also checks tenants, CSRF, encrypted secrets, replayed webhooks, native provider
+protocols, leases, repeated findings and recovery/rollback gates.
+
+### Real portfolio experiment
+
+The opt-in test downloads [the supplied portfolio](https://github.com/VistritPandey/Vistrit-Portfolio),
+builds its React application in Docker, and tests a separate local branch. It never pushes
+upstream. The historical biography is test data, not evidence of a current role or affiliation.
 
 ```sh
-uv run seo-optimizer evaluate --cases tests/fixtures/cases.json --responses tests/fixtures/reference-responses.json --split all --output reports/reference-replay.json
-uv run seo-optimizer rules --cases tests/fixtures/cases.json --output reports/rules-responses.json
-uv run seo-optimizer evaluate --cases tests/fixtures/cases.json --responses reports/rules-responses.json --split all --output reports/rules-baseline.json
-uv run seo-optimizer benchmark-live --cases tests/fixtures/cases.json --model YOUR_INSTALLED_MODEL --provider ollama --arm hybrid --limit 17 --output reports/my-model.json
+uv sync --locked --extra browser
+uv run playwright install chromium
+
+# Build dependencies and compiled preview assets; requires running Docker
+uv run python scripts/test_portfolio.py --skip-model
 ```
 
-Synthetic reference replay tests the rubric, not model quality. The limited rules replay leaves
-unsupported cases skipped. Hybrid evaluation runs rules first and calls the selected model only for unsupported checks;
-its protocol records how many cases actually used inference. `--arm model-only` measures the
-model without rules. A live benchmark retains malformed outputs and wrong decisions as
-failures. Evaluation exits: 0 all passed; 1 failed/invalid; 2 incomplete with no failures.
-Unknown costs remain null; a local model's zero API cost does not imply zero electricity or
-hardware cost. Held-out cases remain separate from development runs.
+The runner creates `.data/portfolio-test` and `.data/portfolio-built` and starts its own temporary
+loopback fixture server. To explore the resulting site after the test, run:
 
-Read [deployment](docs/deployment.md), [architecture](docs/architecture.md),
-[benchmark methodology](docs/benchmark.md) and the [verified delivery report](reports/delivery.md).
-The delivery report identifies passed, failed, skipped and unverified work separately.
+```sh
+uv run python scripts/portfolio_fixture.py \
+  --repository .data/portfolio-test --build .data/portfolio-built --port 8811
+```
 
-## Hosting and live projects
+The fixture serves the real compiled React assets and reflects `public/index.html` head edits.
+This is an explicit metadata deployment simulation, not a live cloud deployment. The runner
+checks the existing site, introduces a missing title, repairs it from rendered evidence, runs a
+real isolated build, merges the local fix, and verifies that repeating the audit creates no commit.
 
-The web process handles short requests; the worker handles repositories, builds and inference.
-Production requires PostgreSQL, a stable secret key and HTTPS. Vercel uses `api.index:app`;
-its ephemeral filesystem is never the production queue. The local worker connects outbound
-with `OPT_CONTROL_URL` and a scoped token, keeping Ollama private. See `.env.example`.
+With Ollama running, run the model-assisted metadata audit too:
 
-For live project testing, configure the repository/branch, deployed URL/environment, allowed
-paths and route map, real build/test commands and verification image, exact model endpoint/ID,
-verified facts and crawler policy. Supply repository-scoped GitHub access and a signed push
-webhook secret through the app. Deployments must report the merged SHA to GitHub. Configure
-hosting and provider secrets outside tracked files; do not paste secrets into reports or chat.
+```sh
+uv run python scripts/test_portfolio.py --reuse-build --model gemma4:12b
+```
+
+The runner selects a fresh test branch from the downloaded upstream revision on each invocation. Reports preserve actual model
+failures and publication decisions. It refuses to proceed over uncommitted test-checkout work.
+Read [the portfolio test report](reports/portfolio-test.md) and its
+[machine-readable results](reports/portfolio-test.json).
+
+### Evaluate model decisions
+
+```sh
+uv run seo-optimizer benchmark-live \
+  --cases tests/fixtures/cases.json --provider ollama --model YOUR_MODEL \
+  --arm hybrid --limit 17 --output reports/my-model.json
+```
+
+Hybrid evaluation uses rules first and calls the model only for unsupported checks. The protocol
+records how many cases actually used inference; a combined score is not a model-only score.
+Use `--arm model-only` to isolate model behavior. Keep held-out cases separate from tuning.
+
+<details>
+<summary><strong>Replay saved fixtures and export schemas</strong></summary>
+
+```sh
+uv run seo-optimizer schemas --output schemas
+uv run seo-optimizer evaluate --cases tests/fixtures/cases.json \
+  --responses tests/fixtures/reference-responses.json --split all \
+  --output reports/reference-replay.json
+uv run seo-optimizer rules --cases tests/fixtures/cases.json \
+  --output reports/rules-responses.json
+uv run seo-optimizer evaluate --cases tests/fixtures/cases.json \
+  --responses reports/rules-responses.json --split all \
+  --output reports/rules-baseline.json
+```
+
+The 41 authored reference responses test the rubric, not inference quality. The limited rules
+replay leaves unsupported cases skipped. Deliberately adversarial responses must fail.
+Evaluation exits: `0` all passed, `1` failed/invalid, `2` incomplete with no failures.
+Unknown cost components remain null; zero Ollama API cost does not mean zero operating cost.
+
+</details>
+
+## Local worker, hosted dashboard
+
+```mermaid
+flowchart LR
+    GitHub[GitHub events] --> Web[Hosted Python dashboard and API]
+    Web <--> SQL[(PostgreSQL)]
+    Local[Portable worker] -->|Outbound HTTPS and scoped token| Web
+    Local --> Model[Nearby Ollama or configured provider]
+    Local --> Check[Isolated build executor]
+    Local --> Repo[Repository and website]
+```
+
+Vercel serves `api.index:app`; production persistence uses PostgreSQL and a stable secret.
+Repository processing, builds and inference stay in the portable worker. A local worker connects
+outbound with `OPT_CONTROL_URL` and a scoped token, so Ollama needs no public tunnel.
+Production cookies require HTTPS. See [deployment setup](docs/deployment.md) and [.env.example](.env.example).
+
+## Find your way around
+
+| Location | Responsibility |
+|---|---|
+| `src/seo_optimizer/contracts.py`, `application_models.py` | Typed inputs, observations, findings, project/provider policy and decisions |
+| `knowledge/`, `knowledge.py`, `policy.py` | Private references, check/source integrity and evidence/policy validation |
+| `crawler.py`, `scanner.py`, `performance.py` | HTTP/rendered collection, assessed coverage and optional official diagnostics |
+| `llm.py` | Native provider requests, bounded tools, schema validation and measured usage |
+| `execution.py`, `github.py`, `worker.py` | Confined edits, isolated checks, commits, publication and verification |
+| `store.py`, `remote.py`, `web.py`, `ui/` | Tenant persistence, connected workers, APIs, dashboard and interactive guide |
+| `scripts/`, `tests/`, `reports/` | Reproducible experiments, offline regression checks and actual outcomes |
+
+Read the [architecture](docs/architecture.md), [benchmark protocol](docs/benchmark.md) and
+[delivery evidence](reports/delivery.md) for implementation details and unverified external outcomes.
