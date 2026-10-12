@@ -8,15 +8,26 @@ from typing import Any
 
 from seo_optimizer.application_models import FileChange, ProjectSpec
 
-SECRET_NAMES = re.compile(r"(^\.env($|\.)|\.pem$|\.key$|credentials|secret|id_rsa|id_ed25519)", re.I)
+SECRET_NAMES = re.compile(
+    r"(^\.env($|\.)|\.pem$|\.key$|credentials|secret|id_rsa|id_ed25519)", re.I
+)
 
 
 def run_git(root: Path, *arguments: str) -> str:
-    environment = {"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(root),
-                   "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1",
-                   "GIT_TERMINAL_PROMPT": "0"}
-    result = subprocess.run(["git", "-c", "core.hooksPath=/dev/null", "-C", str(root), *arguments],
-                            capture_output=True, text=True, timeout=60, env=environment)
+    environment = {
+        "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
+        "HOME": str(root),
+        "GIT_CONFIG_GLOBAL": os.devnull,
+        "GIT_CONFIG_NOSYSTEM": "1",
+        "GIT_TERMINAL_PROMPT": "0",
+    }
+    result = subprocess.run(
+        ["git", "-c", "core.hooksPath=/dev/null", "-C", str(root), *arguments],
+        capture_output=True,
+        text=True,
+        timeout=60,
+        env=environment,
+    )
     if result.returncode:
         raise ValueError("Git operation failed: " + arguments[0])
     return result.stdout.strip()
@@ -24,27 +35,50 @@ def run_git(root: Path, *arguments: str) -> str:
 
 def confined(root: Path, path: str, allowed: list[str]) -> Path:
     target = (root / path).resolve()
-    if (not target.is_relative_to(root.resolve()) or Path(path).is_absolute()
-            or ".." in Path(path).parts or "\\" in path or SECRET_NAMES.search(Path(path).name)
-            or ".git" in Path(path).parts):
+    if (
+        not target.is_relative_to(root.resolve())
+        or Path(path).is_absolute()
+        or ".." in Path(path).parts
+        or "\\" in path
+        or SECRET_NAMES.search(Path(path).name)
+        or ".git" in Path(path).parts
+    ):
         raise ValueError("File is outside the permitted repository scope")
-    if not any(target == (root / item).resolve() or target.is_relative_to((root / item).resolve()) for item in allowed):
+    if not any(
+        target == (root / item).resolve() or target.is_relative_to((root / item).resolve())
+        for item in allowed
+    ):
         raise ValueError("File path is not allowed by project policy")
     return target
 
 
-def snapshot_local(source: Path, destination: Path, branch: str, allowed_roots: tuple[Path, ...]) -> str:
+def snapshot_local(
+    source: Path, destination: Path, branch: str, allowed_roots: tuple[Path, ...]
+) -> str:
     source = source.resolve()
     if not any(source.is_relative_to(root) for root in allowed_roots):
         raise ValueError("Local repository is outside administrator-configured roots")
     sha = run_git(source, "rev-parse", branch)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    run_git(destination.parent, "clone", "--no-hardlinks", "--no-checkout", str(source), str(destination))
+    run_git(
+        destination.parent,
+        "clone",
+        "--no-hardlinks",
+        "--no-checkout",
+        str(source),
+        str(destination),
+    )
     run_git(destination, "checkout", "--detach", sha)
     return sha
 
 
-def apply_changes(root: Path, spec: ProjectSpec, changes: list[FileChange], evidence_ids: set[str], check_ids: set[str]) -> dict[str, str]:
+def apply_changes(
+    root: Path,
+    spec: ProjectSpec,
+    changes: list[FileChange],
+    evidence_ids: set[str],
+    check_ids: set[str],
+) -> dict[str, str]:
     if len(changes) > spec.max_files_changed:
         raise ValueError("Patch exceeds the configured file limit")
     seen: set[str] = set()
@@ -79,7 +113,9 @@ def apply_changes(root: Path, spec: ProjectSpec, changes: list[FileChange], evid
     return result
 
 
-def verify_workspace(root: Path, spec: ProjectSpec, changes: dict[str, str]) -> list[dict[str, Any]]:
+def verify_workspace(
+    root: Path, spec: ProjectSpec, changes: dict[str, str]
+) -> list[dict[str, Any]]:
     from seo_optimizer.audit import PageParser
 
     checks: list[dict[str, Any]] = []
@@ -99,14 +135,41 @@ def verify_workspace(root: Path, spec: ProjectSpec, changes: dict[str, str]) -> 
     for command in spec.check_commands:
         if not command or not all(isinstance(argument, str) for argument in command):
             raise ValueError("Verification commands must be explicit argument lists")
-        argv = ["docker", "run", "--rm", "--network", "none", "--read-only", "--cap-drop", "ALL",
-                "--security-opt", "no-new-privileges", "--pids-limit", "128", "--memory", "1g",
-                "--cpus", "1", "--tmpfs", "/tmp:rw,size=256m", "--user", "65534:65534",
-                "--mount", f"type=bind,source={root.resolve()},target=/workspace,readonly",
-                "--workdir", "/workspace", spec.sandbox_image, *command]
+        argv = [
+            "docker",
+            "run",
+            "--rm",
+            "--network",
+            "none",
+            "--read-only",
+            "--cap-drop",
+            "ALL",
+            "--security-opt",
+            "no-new-privileges",
+            "--pids-limit",
+            "128",
+            "--memory",
+            "1g",
+            "--cpus",
+            "1",
+            "--tmpfs",
+            "/tmp:rw,size=256m",
+            "--user",
+            "65534:65534",
+            "--mount",
+            f"type=bind,source={root.resolve()},target=/workspace,readonly",
+            "--workdir",
+            "/workspace",
+            spec.sandbox_image,
+            *command,
+        ]
         try:
-            value = subprocess.run(argv, capture_output=True, timeout=180,
-                env={"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(root)})
+            value = subprocess.run(
+                argv,
+                capture_output=True,
+                timeout=180,
+                env={"PATH": os.environ.get("PATH", "/usr/bin:/bin"), "HOME": str(root)},
+            )
         except (OSError, subprocess.TimeoutExpired) as error:
             raise ValueError("Verification sandbox is unavailable or timed out") from error
         if value.returncode:
@@ -115,15 +178,30 @@ def verify_workspace(root: Path, spec: ProjectSpec, changes: dict[str, str]) -> 
     return checks
 
 
-def commit_local(source: Path, workspace: Path, branch: str, base_sha: str, files: list[str]) -> str:
+def commit_local(
+    source: Path, workspace: Path, branch: str, base_sha: str, files: list[str]
+) -> str:
     if run_git(source, "rev-parse", branch) != base_sha or run_git(source, "status", "--porcelain"):
         raise ValueError("Target repository changed or contains uncommitted work")
     if run_git(source, "branch", "--show-current") != branch:
         raise ValueError("Target branch is not checked out in the local repository")
     for path in files:
         run_git(workspace, "add", "--", path)
-        run_git(workspace, "-c", "user.name=Optimizer", "-c", "user.email=optimizer@localhost",
-                "-c", "commit.gpgsign=false", "commit", "--only", "-m", "Fix " + Path(path).name, "--", path)
+        run_git(
+            workspace,
+            "-c",
+            "user.name=Optimizer",
+            "-c",
+            "user.email=optimizer@localhost",
+            "-c",
+            "commit.gpgsign=false",
+            "commit",
+            "--only",
+            "-m",
+            "Fix " + Path(path).name,
+            "--",
+            path,
+        )
     sha = run_git(workspace, "rev-parse", "HEAD")
     run_git(source, "fetch", str(workspace), sha)
     if run_git(source, "rev-parse", branch) != base_sha:
