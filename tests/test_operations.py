@@ -371,3 +371,25 @@ def test_worker_recovers_merge_after_lost_response(tmp_path):
     assert status == "waiting_deployment" and result["merged_sha"] == "merged"
     github.merge.assert_not_called()
     store.engine.dispose()
+
+
+def test_finding_memory_does_not_depend_on_model_wording(tmp_path):
+    store, settings = make_store(tmp_path)
+    original = {
+        "check_id": "tech.title",
+        "url": "https://example.test/",
+        "status": "defect",
+        "summary": "A title is missing",
+    }
+    assert store.remember_findings("tenant", "project", [original], [original["url"]]) == 1
+    assert (
+        store.remember_findings(
+            "tenant",
+            "project",
+            [{**original, "summary": "This public document needs a title"}],
+            [original["url"]],
+        )
+        == 0
+    )
+    assert len(store.findings("tenant", "project")) == 1
+    store.engine.dispose()
