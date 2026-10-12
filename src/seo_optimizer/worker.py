@@ -122,6 +122,11 @@ class Worker:
                 job.tenant_id, job.id, self.id, "blocked", {"summary": "Project no longer exists"}
             )
             return True
+        if job.attempts > 3:
+            self.store.finish(
+                job.tenant_id, job.id, self.id, "failed", {"summary": "Job retry budget exhausted"}
+            )
+            return True
         try:
             status, result, delay = self.process(project, job)
         except (httpx.HTTPError, OSError) as error:
@@ -142,7 +147,17 @@ class Worker:
                 if secret:
                     message = message.replace(secret, "[redacted]")
             result = {"summary": message[:500], "error_type": type(error).__name__}
+        if result.get("stage") == "verified":
+            self.store.remember_findings(
+                job.tenant_id,
+                job.project_id,
+                result.get("findings", []),
+                result.get("audited_urls", []),
+            )
         self.store.finish(job.tenant_id, job.id, self.id, status, result, delay)
+        snapshot = self.settings.data_dir / "workspaces" / job.id / "repository"
+        if snapshot.is_dir():
+            shutil.rmtree(snapshot)
         return True
 
     def process(self, project: Project, job: Job) -> tuple[str, dict[str, Any], float]:
@@ -203,6 +218,7 @@ class Worker:
         github: GitHubClient | None,
     ) -> tuple[str, dict[str, Any], float]:
         started = time.monotonic()
+        credentials = self.store.secrets(project)
         root = self.settings.data_dir / "workspaces" / job.id
         if root.exists():
             shutil.rmtree(root)
@@ -305,16 +321,16 @@ class Worker:
                         return {"success": True, "evidence_id": item.id, "text": text[:20000]}
                     if name in {"inspect_route", "crawl_page"}:
                         url = str(arguments["url"])
-                        item = next((item for item in evidence if str(item.url) == url), None)
-                        if item is None:
+                        observed = next((item for item in evidence if str(item.url) == url), None)
+                        if observed is None:
                             raise ValueError("Route is outside the collected job scope")
                         return {
                             "success": True,
-                            "evidence_id": item.id,
+                            "evidence_id": observed.id,
                             "data": {
-                                key: value for key, value in item.data.items() if key != "html"
+                                key: value for key, value in observed.data.items() if key != "html"
                             },
-                            "html": str(item.data.get("html", ""))[:12000],
+                            "html": str(observed.data.get("html", ""))[:12000],
                         }
                     if name == "get_diff":
                         return {
@@ -479,7 +495,7 @@ class Worker:
             enriched,
             [str(item.url) for item in evidence if item.kind == "http"],
         )
-        result = {
+        result: dict[str, Any] = {
             "summary": f"Audited {report['pages']} pages; {fresh} new findings",
             "report": report,
             "findings": enriched,
@@ -602,11 +618,31 @@ class Worker:
                 },
                 0,
             )
+        after_ids = {item.id: item for item in after}
+        enriched = [
+            {
+                **item.model_dump(mode="json"),
+                "url": next(
+                    (
+                        str(after_ids[id].url)
+                        for id in item.evidence_ids
+                        if id in after_ids and after_ids[id].url
+                    ),
+                    None,
+                ),
+            }
+            for item in findings
+        ]
+        report.update(
+            usage=result.get("report", {}).get("usage"),
+            model=result.get("report", {}).get("model", "rules"),
+        )
         result.update(
             summary="Changes verified on the deployed website",
             stage="verified",
             report=report,
             verified_fixes=len(fixed),
             after_report=report,
+            findings=enriched,
         )
         return "complete", result, 0
