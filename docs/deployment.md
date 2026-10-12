@@ -44,7 +44,8 @@ installation ID and its private key through the authenticated credentials API. C
 encrypted and excluded from ordinary API exports. App credentials are supplied per workspace;
 the service does not let users guess an installation ID to use another customer's server key.
 
-For code publication, grant Contents read/write and Pull requests read/write; reading Checks,
+For code publication, grant Contents read/write and Pull requests read/write; enable rebase merging to preserve
+the individual file commits; reading Checks,
 commit statuses and Deployments is required for verification. Configure a push webhook at the
 project's displayed endpoint and set its matching secret in project settings or through the API. Signatures,
 repository identity and target branch are checked before work is queued. Duplicate pushes reuse a
@@ -98,3 +99,9 @@ for Ollama or a custom gateway; do not enable private network access on a public
 Vercel's [FastAPI deployment guide](https://vercel.com/docs/frameworks/backend/fastapi) documents
 the Python function boundary. The repository packages its control plane as api/index.py;
 repository processing remains in the portable worker and is never a serverless request loop.
+
+For a private deployment, temporarily enable registration to create the owner account, then
+disable it. Container verification images must contain dependencies before execution because
+verification has no network access. The optional PageSpeed adapter uses its official public-URL
+API; quota errors or absent field observations remain recorded dependencies. This does not grant
+Search Console, business-profile, merchant-feed or AI-citation account access.
