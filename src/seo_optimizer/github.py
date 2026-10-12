@@ -248,7 +248,7 @@ class GitHubClient:
                 f"/repos/{repo}/pulls/{number}/merge",
                 json={
                     "sha": sha,
-                    "merge_method": "squash",
+                    "merge_method": "rebase",
                     "commit_title": "Improve website search metadata",
                 },
             )
