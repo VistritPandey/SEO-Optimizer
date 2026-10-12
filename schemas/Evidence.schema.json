@@ -1,0 +1,108 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "additionalProperties": false,
+  "properties": {
+    "tenant_id": {
+      "minLength": 1,
+      "title": "Tenant Id",
+      "type": "string"
+    },
+    "project_id": {
+      "minLength": 1,
+      "title": "Project Id",
+      "type": "string"
+    },
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "environment": {
+      "minLength": 1,
+      "title": "Environment",
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "source",
+        "http",
+        "dom",
+        "screenshot",
+        "field_metric",
+        "research",
+        "tool"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "observation": {
+      "minLength": 1,
+      "title": "Observation",
+      "type": "string"
+    },
+    "collected_at": {
+      "format": "date-time",
+      "title": "Collected At",
+      "type": "string"
+    },
+    "url": {
+      "anyOf": [
+        {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Url"
+    },
+    "source_file": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Source File"
+    },
+    "screenshot": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Screenshot"
+    },
+    "data": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Data",
+      "type": "object"
+    }
+  },
+  "required": [
+    "tenant_id",
+    "project_id",
+    "id",
+    "environment",
+    "kind",
+    "observation",
+    "collected_at"
+  ],
+  "title": "Evidence",
+  "type": "object"
+}
