@@ -52,10 +52,13 @@ class Crawler:
         if parts.port and parts.port not in {80, 443} and not self.allow_private:
             raise CrawlError("Nonstandard website ports are disabled")
         try:
-            addresses = {
-                str(item[4][0])
-                for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)
-            }
+            try:
+                addresses = {str(ipaddress.ip_address(parts.hostname or ""))}
+            except ValueError:
+                addresses = {
+                    str(item[4][0])
+                    for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)
+                }
         except socket.gaierror as error:
             raise CrawlError("Website hostname did not resolve") from error
         for address in addresses:
