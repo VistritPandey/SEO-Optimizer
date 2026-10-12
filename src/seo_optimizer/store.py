@@ -4,7 +4,7 @@ import hashlib
 import json
 import secrets
 import time
-from typing import Any
+from typing import Any, cast
 from uuid import uuid4
 
 from sqlalchemy import (
@@ -19,6 +19,7 @@ from sqlalchemy import (
     select,
     update,
 )
+from sqlalchemy.engine import CursorResult
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
@@ -308,7 +309,7 @@ class Store:
                     updated_at=now,
                 )
             )
-            if changed.rowcount != 1:
+            if cast(CursorResult[Any], changed).rowcount != 1:
                 return None
             session.refresh(candidate)
             return candidate
