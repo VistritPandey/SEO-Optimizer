@@ -1,67 +1,70 @@
-# Architecture boundaries for the next milestone
+# Application architecture
 
-## Current implementation
+The package separates knowledge/contracts/evaluation from the web application and worker.
+`contracts.py`, `knowledge.py`, `policy.py`, `audit.py` and `evaluation.py` work without a web
+server or provider credential. The private knowledge and UI resources ship inside the wheel.
 
-The Python package separates contracts, knowledge loading, structural policy validation,
-provider/tool interfaces, a limited rule baseline and evaluation. None imports a web framework,
-provider SDK or GitHub client. Private knowledge resources are included in the Python wheel.
+## Control plane
 
-`ProjectContext` carries tenant/project identifiers, website types, environments, exact URL
-intent, dated business facts, goals, crawler preferences and allowed actions/paths. Each piece
-of evidence carries its tenant/project/environment. Assessment validation rejects cross-scope
-references. These checks are internal invariants, not a replacement for authenticated access.
+FastAPI serves Jinja templates and versioned `/api/v1` management/worker endpoints. Templates
+use the same tenant-scoped store as APIs. A future frontend can replace templates without
+changing worker execution. Signed sessions, CSRF validation and scoped bearer tokens establish
+account identity. Project IDs supplied by callers never grant ownership.
 
-`AuditRequest` deliberately excludes benchmark expectations. Findings refer to supplied
-observations and attributed checks. Severity and evidence strength are distinct fields. A
-missing prerequisite is represented by an unresolved finding with named dependencies.
+SQLAlchemy stores accounts, encrypted project secrets, policies, findings, jobs and leases.
+SQLite supports local use; production requires PostgreSQL. Startup records schema version 1
+and uses an advisory lock for concurrent PostgreSQL initialization. Future deployed schema
+changes require explicit migrations. No global mutable project configuration is used.
 
-`ProviderCapabilities` treats tool calling, JSON Schema output and vision independently.
-No capability or model endpoint is assumed. All raw responses receive strict Pydantic validation,
-then knowledge/policy checks. Schemas express structural constraints; cross-record semantics
-and several model validators still require the Python validation layer.
+The queue claims work with compare-and-swap updates and excludes a second active job for a
+project. Waiting checks/deployments release leases. Expired leases recover; stale workers cannot
+finish another worker's job. Periodic reconciliation schedules missed work even without webhooks.
+Remote workers authenticate outbound over HTTPS with one account's revocable scoped token.
+They receive only that account's claimed project and encrypted-at-rest credentials.
 
-## Hosting and UI
+## Execution
 
-Use FastAPI with server-rendered templates and minimal browser JavaScript for the first UI.
-Keep versioned management APIs separate from templates so a later Next.js frontend can use
-the same service. Authentication supplies the tenant; user-submitted identifiers must not
-establish ownership. Require tenant-scoped storage and queries before accepting public users.
+1. Verify GitHub webhook signatures, repository/branch and revision; enqueue durable work.
+2. Snapshot the selected revision; supersede stale pushes and map changed files to affected URLs.
+3. Fetch bounded same-origin responses through resolved, checked IP addresses. Optionally collect
+   rendered DOM/screenshots or official performance diagnostics. Record collection failures.
+4. Run deterministic checks. Select relevant skill references and invoke a configured provider
+   when needed. Page/repository text is untrusted evidence, not executable agent instructions.
+5. Validate structured findings, source/evidence references and policy. Tools can inspect known
+   routes, confined files/diffs, run configured checks or stage exact patch proposals.
+6. Independently check actual patches: paths, private intent, stale/ambiguous replacements,
+   file limits, script/body preservation and configured publication policy. Build commands run
+   only in an isolated Docker sandbox with explicit project commands and prebuilt dependencies.
+7. Commit each changed file separately. Publish a GitHub PR, check its exact head/current base,
+   wait for required checks, merge when authorized and wait for the merged deployment SHA.
+8. Re-fetch affected pages, verify specific fixes and detect new observed defects. Confirmed
+   failures permit a guarded revert while no newer branch change exists. Inconclusive evidence
+   blocks verification and never fabricates success or proof of a regression.
 
-Host management routes and short webhook handlers independently from the portable worker.
-Vercel or another host can serve suitable dashboard/API workloads; do not put an unbounded
-repository/build/model loop in a request handler. Deployment selection and persistence/auth
-implementation belong to the next milestone, not this knowledge deliverable.
+Local repository integration follows the same inspection/verification path with isolated clones
+and a clean, unchanged checked-out target branch. Repository hooks and global Git config are
+disabled. Hosted workers cannot accept arbitrary server filesystem paths.
 
-A local worker authenticates outbound to claim durable jobs and calls nearby Ollama. An
-always-on cloud worker can later use the same contracts with other provider adapters. No public
-exposure of a local model endpoint is needed. A disconnected worker leaves jobs queued.
+## Providers and authority
 
-## Future execution flow
+Adapters support Ollama chat, OpenAI Responses, Anthropic Messages and Google generation.
+Tool calling, schema output and vision are separate capabilities. All responses are locally
+validated, with bounded explicit regeneration for invalid JSON when schema mode is configured.
+Tool failure, missing keys, unsupported capabilities or invalid decisions cannot publish a patch.
+Model time, step/token/file limits and configured cost limits bound work. Unknown token/cost data
+stays unknown. Shared production workers accept official model endpoints; custom/local endpoints
+belong on account-scoped local workers.
 
-1. Accept and verify a GitHub event; durably enqueue scoped work and acknowledge promptly.
-2. Resolve the last successfully analyzed revision and changed page dependencies.
-3. Collect affected response/DOM/source observations; reconcile periodically for missed events.
-4. Run deterministic checks, then invoke relevant skill references for reasoning that needs AI.
-5. Validate structured decisions and independent factual/policy prerequisites.
-6. Apply permitted changes in isolated workspaces and an actual execution sandbox.
-7. Verify the patch, current revision, relevant checks and deployment before declaring success.
+Policy grants action categories independently of prompts. Models cannot authorize merges,
+change privacy/training preferences, attest their own fixes or invent owner facts. Content
+truth requires authoritative evidence beyond structural validation. Repository permissions never
+imply business-profile, merchant or search-account access. These remain explicit dependencies.
 
-The queue needs idempotency, bounded retries, revision supersession and per-project locking.
-Bot-generated events must not create fix loops. Findings need evidence-aware fingerprints so
-an unchanged problem does not create repeated work. Shared templates, configuration and
-backend render/response changes invalidate affected page evidence.
+## Measurement
 
-## Authority and verification
-
-Project policy grants action categories once; the runtime need not seek approval for each
-permitted, verified action. Model text cannot grant additional authority. Never treat a model's
-declared patch effects, referenced fact IDs or claimed tool success as independent proof.
-
-Tenant isolation, secret protection, network restrictions, sandboxing, argument validation,
-content claim verification, actual patch inspection, GitHub permissions and deployed checks
-remain mandatory runtime work. Business-profile/merchant permissions are separate from repo
-permissions. Missing facts or integration access stop the affected job with a dependency.
-
-Keep the knowledge package private in application/worker distribution. Do not expose its
-instruction content through future customer management APIs. Backend API versioning will
-initially mirror schema version 1.0, but no HTTP endpoints are implemented in Phase 1.
+Each finding records evidence and sources separately from severity. Per-page target verification
+avoids blaming a new patch for a pre-existing defect on another page. Repeated findings retain
+memory; successful re-audits resolve findings only on observed URLs. Reports record coverage,
+actual usage, checks, PR/revisions and deployed verification, with missing outcomes exposed.
+Performance lab snapshots, field metrics, citations, rankings, visits and conversions are separate.
+An observed technical repair is not proof of search uplift.
