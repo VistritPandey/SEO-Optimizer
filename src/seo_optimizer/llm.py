@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 import httpx
+from pydantic import ValidationError
 
 from seo_optimizer.application_models import AgentDecision, ProviderConfig
 from seo_optimizer.contracts import Usage
@@ -307,8 +308,20 @@ class ModelClient:
             if input_tokens + output_tokens > 100_000:
                 raise ProviderError("Model token budget exhausted")
             if not calls:
+                try:
+                    decision = AgentDecision.model_validate_json(text, strict=True)
+                except ValidationError:
+                    if not self.config.capabilities.json_schema or step + 1 >= max_steps:
+                        raise
+                    # Explicit, bounded re-generation; never strip/repair raw JSON locally.
+                    tools = []
+                    correction = "Return the final decision again as schema-compliant JSON only. No Markdown fences. Keep all conclusions grounded in the observations already collected."
+                    history.append({"role": "user", "content": correction})
+                    native_input.append({"role": "user", "content": correction})
+                    google_history.append({"role": "user", "parts": [{"text": correction}]})
+                    continue
                 return Inference(
-                    decision=AgentDecision.model_validate_json(text, strict=True),
+                    decision=decision,
                     usage=Usage(
                         input_tokens=input_tokens,
                         output_tokens=output_tokens,
