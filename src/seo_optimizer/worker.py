@@ -533,6 +533,12 @@ class Worker:
         )
         result["verification"] = verify_workspace(repository, spec, files)
         result["fixed_checks"] = sorted({change.check_id for change in changes})
+        result["fixed_targets"] = [
+            {"check_id": change.check_id, "url": str(evidence_by_id[id].url)}
+            for change in changes
+            for id in change.evidence_ids
+            if evidence_by_id[id].url is not None
+        ]
         if time.monotonic() - started > spec.max_job_seconds:
             raise ValueError("Job budget exhausted before publication")
         if spec.local_path and spec.auto_merge:
@@ -614,12 +620,21 @@ class Worker:
         project_context = context(after[0].tenant_id, after[0].project_id, spec)
         findings, report = scan(project_context, spec, after, self.knowledge)
         fixed = set(result.get("fixed_checks", []))
+        after_ids = {item.id: item for item in after}
+        targets = {(item["check_id"], item["url"]) for item in result.get("fixed_targets", [])}
         still_broken = [
             item
             for item in findings
-            if item.check_id in fixed and item.status == FindingStatus.DEFECT
+            if item.check_id in fixed
+            and item.status == FindingStatus.DEFECT
+            and (
+                not targets
+                or any(
+                    id in after_ids and (item.check_id, str(after_ids[id].url)) in targets
+                    for id in item.evidence_ids
+                )
+            )
         ]
-        after_ids = {item.id: item for item in after}
         before = {(item["check_id"], item["url"]) for item in result.get("before_defects", [])}
         audited_urls = set(result.get("audited_urls", []))
         regressions = [
@@ -670,7 +685,7 @@ class Worker:
             summary="Changes verified on the deployed website",
             stage="verified",
             report=report,
-            verified_fixes=len(fixed),
+            verified_fixes=len(targets) if targets else len(fixed),
             after_report=report,
             findings=enriched,
             prior_revision=result.get("revision"),
