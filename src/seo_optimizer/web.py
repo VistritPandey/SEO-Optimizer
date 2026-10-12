@@ -7,14 +7,14 @@ import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from pydantic import ValidationError
+from pydantic import HttpUrl, ValidationError
 from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware
 
@@ -24,6 +24,7 @@ from seo_optimizer.application_models import (
     ProjectSpec,
     Registration,
 )
+from seo_optimizer.contracts import WebsiteType
 from seo_optimizer.github import verify_signature
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store, User
@@ -293,17 +294,17 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             provider = str(form.get("provider", "rules"))
             spec = ProjectSpec(
                 name=str(form.get("name", "")),
-                website_url=str(form.get("website_url", "")),
+                website_url=HttpUrl(str(form.get("website_url", ""))),
                 repository=str(form.get("repository", "")).strip(),
                 local_path=str(form.get("local_path", "")).strip() or None,
                 provider=ProviderConfig(
-                    kind=provider,
+                    kind=cast(Any, provider),
                     model=str(form.get("model", "")).strip(),
                     capabilities=ProviderCapabilities(
                         tool_calling=provider != "rules", json_schema=provider == "ollama"
                     ),
                 ),
-                website_types=[str(form.get("website_type", "generic"))],
+                website_types=[WebsiteType(str(form.get("website_type", "generic")))],
             )
             validate_host_policy(spec)
             value = storage.create_project(
