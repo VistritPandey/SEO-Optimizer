@@ -1,0 +1,1724 @@
+{
+  "version": "1.0.0",
+  "checks": [
+    {
+      "id": "tech.indexability",
+      "module": "technical",
+      "title": "Indexability matches declared intent",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "environment and exact URL intent"
+      ],
+      "evidence_requirements": [
+        "HTTP response, robots meta and X-Robots-Tag"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Repair accidental directives only for explicitly public pages",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Intent is known; original privacy behavior preserved",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Refetch response and rendered directives; compare intended visibility"
+      ],
+      "no_op_conditions": [
+        "Private, authenticated, preview or intentionally excluded route"
+      ],
+      "source_ids": [
+        "google-essentials",
+        "google-js"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.robots",
+      "module": "technical",
+      "title": "Crawl access and indexing are distinct",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "crawler preferences and public-route intent"
+      ],
+      "evidence_requirements": [
+        "robots rules, HTTP behavior, affected URL"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Diagnose blocked discovery without pretending robots disallow removes indexed URLs",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Owner crawl policy and path scope explicitly allow the change",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Validate matching robots rules and response directives independently"
+      ],
+      "no_op_conditions": [
+        "Intentional crawl block or missing crawler policy"
+      ],
+      "source_ids": [
+        "google-essentials",
+        "google-ai"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.title",
+      "module": "technical",
+      "title": "Descriptive page titles",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "page purpose and public-route intent"
+      ],
+      "evidence_requirements": [
+        "Successful page response and title element"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Add a factual descriptive title for an untitled public page",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Page purpose is supported by visible content; editable owner known",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Inspect response and rendered title; confirm it describes this page"
+      ],
+      "no_op_conditions": [
+        "Private page or adequate existing title; no arbitrary character threshold"
+      ],
+      "source_ids": [
+        "google-starter",
+        "google-js"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.metadata",
+      "module": "technical",
+      "title": "Snippets describe actual content",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "page purpose and actual content"
+      ],
+      "evidence_requirements": [
+        "Visible text, title and description values"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Improve misleading or unhelpful snippets with supported descriptions",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "No invented benefits, promises or unsupported keyword targets",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare description to page facts; observe search snippets separately"
+      ],
+      "no_op_conditions": [
+        "Existing description is accurate; search may rewrite it"
+      ],
+      "source_ids": [
+        "google-starter",
+        "google-js"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.canonical",
+      "module": "technical",
+      "title": "Consistent canonical declarations",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "preferred URL and equivalence of alternatives"
+      ],
+      "evidence_requirements": [
+        "Response HTML, rendered canonical and HTTP Link header"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Resolve contradictory canonical declarations using verified URL intent",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Preferred URL is established and contains equivalent content",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare all declarations, redirects and URL Inspection when available"
+      ],
+      "no_op_conditions": [
+        "No canonical conflict or insufficient evidence of intended preferred URL"
+      ],
+      "source_ids": [
+        "google-canonical",
+        "google-js"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.status",
+      "module": "technical",
+      "title": "Meaningful HTTP and redirect behavior",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "route existence and migration map"
+      ],
+      "evidence_requirements": [
+        "HTTP chain, destination and page body"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Repair soft errors, loops or wrong destinations while preserving valid redirects",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Route mapping and public behavior confirmed",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Follow redirect chain; verify final status and content"
+      ],
+      "no_op_conditions": [
+        "Valid redirect, intentional removal or authentication response"
+      ],
+      "source_ids": [
+        "google-js",
+        "google-starter"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.links",
+      "module": "technical",
+      "title": "Discoverable working internal links",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "base URL and supported route map"
+      ],
+      "evidence_requirements": [
+        "Anchor href and observed destination response"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Repair confirmed broken internal links or inaccessible navigation",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Correct destination exists and is relevant; no speculative replacements",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Recheck source anchor and destination; preserve navigation behavior"
+      ],
+      "no_op_conditions": [
+        "External link, deliberate fragment or destination not yet observed"
+      ],
+      "source_ids": [
+        "google-starter",
+        "google-js"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.sitemap",
+      "module": "technical",
+      "title": "Sitemap reflects preferred public pages",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "public canonical URL inventory"
+      ],
+      "evidence_requirements": [
+        "Sitemap entries, page statuses, canonicals and modification history"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Remove invalid entries and include relevant discoverable public canonicals",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Verified inventory; genuine lastmod history only",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Parse sitemap; sample statuses, canonicals and indexability"
+      ],
+      "no_op_conditions": [
+        "No sitemap is not itself an indexing failure; unsupported lastmod inference"
+      ],
+      "source_ids": [
+        "google-starter",
+        "google-canonical"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.rendering",
+      "module": "technical",
+      "title": "Important content is available to crawlers",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "page purpose and required content"
+      ],
+      "evidence_requirements": [
+        "Initial response, rendered DOM, blocked assets and errors"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Repair missing content or inaccessible rendering dependencies",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Confirmed functional parity and route-specific coverage",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare initial/rendered content and application tests; distinguish crawler simulation"
+      ],
+      "no_op_conditions": [
+        "Content is available or visibility issue has no verified rendering cause"
+      ],
+      "source_ids": [
+        "google-js",
+        "google-ai"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "tech.migration",
+      "module": "technical",
+      "title": "Preserve search behavior during migrations",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "old/new URL map and baseline inventory"
+      ],
+      "evidence_requirements": [
+        "Redirects, links, canonicals and pre/post responses"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Maintain equivalent destinations and update stale internal references",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Documented migration intent; no bulk guessing of replacements",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Check mapped URLs, redirects, sitemap, canonicals and deployed responses"
+      ],
+      "no_op_conditions": [
+        "No migration or intentional content removal"
+      ],
+      "source_ids": [
+        "google-canonical",
+        "google-starter"
+      ],
+      "reference": "references/technical.md"
+    },
+    {
+      "id": "perf.cwv",
+      "module": "performance",
+      "title": "Measure performance with correct evidence",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "measurement method, device and time window"
+      ],
+      "evidence_requirements": [
+        "LCP, INP and CLS field percentiles or explicitly labeled lab measurements"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Investigate measured bottlenecks; improve the demonstrated cause",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Reproducible profile; no feature removal merely to raise a score",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Repeat comparable runs and inspect field metrics over their collection window"
+      ],
+      "no_op_conditions": [
+        "Single screenshot, missing field data or incomparable test conditions"
+      ],
+      "source_ids": [
+        "google-cwv",
+        "web-vitals"
+      ],
+      "reference": "references/performance.md"
+    },
+    {
+      "id": "perf.media",
+      "module": "performance",
+      "title": "Useful media and stable layout",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "media purpose and mobile page behavior"
+      ],
+      "evidence_requirements": [
+        "Image dimensions, payload, alt text, visible media and layout shifts"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Improve media loading and meaningful alternatives while retaining useful content",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Visual finding corroborated by DOM or measured trace",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare relevant viewports, loading trace and accessible text"
+      ],
+      "no_op_conditions": [
+        "Decorative image correctly has empty alt text; no observed shift"
+      ],
+      "source_ids": [
+        "google-images",
+        "google-cwv"
+      ],
+      "reference": "references/performance.md"
+    },
+    {
+      "id": "perf.navigation",
+      "module": "performance",
+      "title": "Main content and navigation remain usable",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "supported viewports and primary user tasks"
+      ],
+      "evidence_requirements": [
+        "DOM/accessibility evidence plus screenshots where needed"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Repair inaccessible navigation or obscured content without redesigning the brand",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Reproducible interaction failure and non-visual corroboration",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Run navigation tasks and inspect focus, links and main content"
+      ],
+      "no_op_conditions": [
+        "Stylistic preference alone or screenshot without behavioral evidence"
+      ],
+      "source_ids": [
+        "google-ai",
+        "google-js"
+      ],
+      "reference": "references/performance.md"
+    },
+    {
+      "id": "content.strategy",
+      "module": "content",
+      "title": "Prioritize work against business intent",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "business goals, audience and baseline"
+      ],
+      "evidence_requirements": [
+        "Product facts, search demand observations and current landing pages"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Rank opportunities by relevance, evidence, effort and measurable outcome",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Goals and demand provenance known; no invented search-volume values",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Review intent-to-page mapping and evaluate outcomes over a stated period"
+      ],
+      "no_op_conditions": [
+        "Missing goals or demand data; treat ideas as hypotheses"
+      ],
+      "source_ids": [
+        "google-helpful",
+        "google-starter"
+      ],
+      "reference": "references/content.md"
+    },
+    {
+      "id": "content.competitors",
+      "module": "content",
+      "title": "Research gaps without copying competitors",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "target topics and competitors"
+      ],
+      "evidence_requirements": [
+        "Dated competitor observations and existing own coverage"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Find useful unmet questions and credible differentiators",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Research attributable; own original contribution available",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Validate gap against user needs and factual coverage"
+      ],
+      "no_op_conditions": [
+        "Competitor has more words or pages but no demonstrated user-value gap"
+      ],
+      "source_ids": [
+        "google-helpful",
+        "google-ai"
+      ],
+      "reference": "references/content.md"
+    },
+    {
+      "id": "content.factual",
+      "module": "content",
+      "title": "Ground claims and business details",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "trusted facts and allowed sources"
+      ],
+      "evidence_requirements": [
+        "Specific claim, source and applicable date"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Correct unsupported assertions or collect missing proof before publishing",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Claims supported by applicable verified facts; original value documented",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Trace each material claim to its source and compare visible content"
+      ],
+      "no_op_conditions": [
+        "Evidence absent; do not invent testimonials, studies, features or expertise"
+      ],
+      "source_ids": [
+        "google-helpful",
+        "google-spam"
+      ],
+      "reference": "references/content.md"
+    },
+    {
+      "id": "content.originality",
+      "module": "content",
+      "title": "Create useful content rather than scaled filler",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "audience problem and original material"
+      ],
+      "evidence_requirements": [
+        "Brief, existing coverage, draft and first-hand or primary evidence"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Write a focused brief and factual draft that adds distinct user value",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "publish_content"
+      ],
+      "automatic_prerequisites": [
+        "Fact support, differentiated contribution and publishing policy present",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Check duplication, factual support, task usefulness and existing coverage"
+      ],
+      "no_op_conditions": [
+        "Only query variants, arbitrary word-count targets or generic copied summaries"
+      ],
+      "source_ids": [
+        "google-ai",
+        "google-spam",
+        "google-helpful"
+      ],
+      "reference": "references/content.md"
+    },
+    {
+      "id": "content.refresh",
+      "module": "content",
+      "title": "Refresh or consolidate with measured intent",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "change history, intent and content ownership"
+      ],
+      "evidence_requirements": [
+        "Dated facts, page overlap and performance observations"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Update obsolete facts; consolidate only genuinely equivalent user intents",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Current fact source and consolidation/redirect mapping verified",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Confirm factual update and preserve useful coverage, links and redirects"
+      ],
+      "no_op_conditions": [
+        "Old publication date alone; overlapping terms with distinct purposes"
+      ],
+      "source_ids": [
+        "google-helpful",
+        "google-canonical"
+      ],
+      "reference": "references/content.md"
+    },
+    {
+      "id": "geo.crawlers",
+      "module": "geo",
+      "title": "Respect independent search and training access",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "provider-specific crawler preferences"
+      ],
+      "evidence_requirements": [
+        "robots configuration, verified bot purpose and actual response"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Repair mismatches with explicit policy without enabling training by default",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "change_crawler_policy"
+      ],
+      "automatic_prerequisites": [
+        "Bot names and intent verified for that provider",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Reparse effective rules for search/training/user bots independently"
+      ],
+      "no_op_conditions": [
+        "Search allowed and training blocked by preference"
+      ],
+      "source_ids": [
+        "openai-bots",
+        "anthropic-bots"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "geo.google-llms",
+      "module": "geo",
+      "title": "Do not prescribe llms.txt for Google ranking",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "target engine and stated reason for file"
+      ],
+      "evidence_requirements": [
+        "Recommendation or configuration claiming a Google visibility benefit"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Correct the unsupported recommendation; leave useful files for other consumers intact",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "No autonomous file deletion based on this check",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Validate engine scope and any independently documented consumer"
+      ],
+      "no_op_conditions": [
+        "File absent or intentionally provided for a non-Google consumer"
+      ],
+      "source_ids": [
+        "google-ai"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "geo.google-faq",
+      "module": "geo",
+      "title": "Keep FAQ content separate from deprecated rich results",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "target engine and feature date"
+      ],
+      "evidence_requirements": [
+        "FAQ recommendation and the current feature changelog"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Correct obsolete promised Google rich-result benefits; preserve helpful answers",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "Do not delete content or markup solely for a discontinued display feature",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Check current supported-feature guidance and retain useful reader content"
+      ],
+      "no_op_conditions": [
+        "Helpful FAQ without a deprecated ranking/display promise"
+      ],
+      "source_ids": [
+        "google-updates",
+        "google-ai"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "geo.entities",
+      "module": "geo",
+      "title": "Consistent, attributable entities and answers",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "verified company/product identities and facts"
+      ],
+      "evidence_requirements": [
+        "Visible content, structured data and source-backed answers"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Clarify ambiguous identity and substantiate answers in useful readable formats",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Real identity and facts; do not force fixed chunk lengths or keyword density",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare claims across relevant pages and markup"
+      ],
+      "no_op_conditions": [
+        "Clear factual content; no requirement for AI-specific writing style"
+      ],
+      "source_ids": [
+        "google-ai",
+        "microsoft-content",
+        "google-schema"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "geo.experiment",
+      "module": "geo",
+      "title": "Test citation hypotheses rather than promise ranking",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "engine/version, fixed query set, baseline and controls"
+      ],
+      "evidence_requirements": [
+        "Research method, source availability and repeated query observations"
+      ],
+      "assessment": "experimental",
+      "recommended_action": "Run a bounded content experiment and record discoverability and citation fidelity separately",
+      "allowed_actions": [
+        "none",
+        "experiment"
+      ],
+      "automatic_prerequisites": [
+        "Experiment policy, truthful content, baseline and stopping rule configured",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Repeat across query paraphrases/runs; hold out queries; inspect source attribution"
+      ],
+      "no_op_conditions": [
+        "No baseline or platform access; never infer durable traffic effects from one answer"
+      ],
+      "source_ids": [
+        "geo-paper",
+        "geo-survey"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "geo.visibility",
+      "module": "geo",
+      "title": "Observe engine-specific visibility",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "report definition, time window and access"
+      ],
+      "evidence_requirements": [
+        "Available engine reports, citations, queries and referenced URLs"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Report observed coverage and citation accuracy without claiming internal ranking access",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "Supported data access separately verified; missing observations remain unknown",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Retain sample scope and separate citation/traffic/conversion metrics"
+      ],
+      "no_op_conditions": [
+        "No report access; unavailable API; one stochastic answer"
+      ],
+      "source_ids": [
+        "bing-ai",
+        "google-ai-report"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "geo.google-inclusion",
+      "module": "geo",
+      "title": "Preserve Google AI inclusion preferences",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "verified owner inclusion preference"
+      ],
+      "evidence_requirements": [
+        "Configured Search Console control and applicable property"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Diagnose exclusion against stated owner intent; record external dependency",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "Owner permission and supported integration confirmed outside the prompt",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Inspect actual property control and eligible indexed page evidence"
+      ],
+      "no_op_conditions": [
+        "Intentional exclusion or no property access"
+      ],
+      "source_ids": [
+        "google-ai-control",
+        "google-ai"
+      ],
+      "reference": "references/geo.md"
+    },
+    {
+      "id": "local.identity",
+      "module": "local",
+      "title": "Use real consistent local business facts",
+      "website_types": [
+        "local"
+      ],
+      "page_types": [
+        "location",
+        "contact",
+        "service"
+      ],
+      "required_context": [
+        "verified name, address/service area and contact details"
+      ],
+      "evidence_requirements": [
+        "Location page, facts and authorized profile observations"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Align inconsistent details with verified real-world identity",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "update_business_profile"
+      ],
+      "automatic_prerequisites": [
+        "Eligibility confirmed; no invented address or keyword-stuffed business name",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare website and authorized listing details for each actual location"
+      ],
+      "no_op_conditions": [
+        "Online-only business or unverified location facts"
+      ],
+      "source_ids": [
+        "google-business-policy",
+        "google-local-ranking"
+      ],
+      "reference": "references/local.md"
+    },
+    {
+      "id": "local.hours",
+      "module": "local",
+      "title": "Do not invent operating hours",
+      "website_types": [
+        "local"
+      ],
+      "page_types": [
+        "location",
+        "contact"
+      ],
+      "required_context": [
+        "verified current operating hours"
+      ],
+      "evidence_requirements": [
+        "Visible hours, LocalBusiness markup and owner facts"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Correct verified discrepancies or request the missing fact",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "update_business_profile"
+      ],
+      "automatic_prerequisites": [
+        "Current authoritative hours and location scope available",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare visible hours, markup and profile; account for exceptional dates"
+      ],
+      "no_op_conditions": [
+        "No authoritative hours or intentionally appointment-only behavior"
+      ],
+      "source_ids": [
+        "google-local-schema",
+        "google-business-policy"
+      ],
+      "reference": "references/local.md"
+    },
+    {
+      "id": "local.schema",
+      "module": "local",
+      "title": "Local markup describes visible real locations",
+      "website_types": [
+        "local"
+      ],
+      "page_types": [
+        "location",
+        "contact"
+      ],
+      "required_context": [
+        "business type and verified facts"
+      ],
+      "evidence_requirements": [
+        "JSON-LD, visible page and actual business identifiers"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Repair missing/contradictory applicable facts without creating self-serving ratings",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Page supports represented facts; review eligibility is understood",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Validate type-specific requirements and compare visible details"
+      ],
+      "no_op_conditions": [
+        "LocalBusiness does not apply or proposed reviews are self-serving"
+      ],
+      "source_ids": [
+        "google-local-schema",
+        "google-schema"
+      ],
+      "reference": "references/local.md"
+    },
+    {
+      "id": "local.relevance",
+      "module": "local",
+      "title": "Create useful local pages without fake reach",
+      "website_types": [
+        "local"
+      ],
+      "page_types": [
+        "location",
+        "service"
+      ],
+      "required_context": [
+        "real service footprint and user needs"
+      ],
+      "evidence_requirements": [
+        "Service/location facts and page coverage"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Explain actual services and locations; assess profile completeness",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Real locations and distinct user value; no doorway-page factory",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Confirm real coverage and measure location/query-specific results"
+      ],
+      "no_op_conditions": [
+        "Distance disadvantage cannot be repaired with fabricated locations"
+      ],
+      "source_ids": [
+        "google-local-ranking",
+        "google-spam"
+      ],
+      "reference": "references/local.md"
+    },
+    {
+      "id": "commerce.facts",
+      "module": "ecommerce",
+      "title": "Prices and stock match the actual offer",
+      "website_types": [
+        "ecommerce"
+      ],
+      "page_types": [
+        "product",
+        "category"
+      ],
+      "required_context": [
+        "authoritative current offer facts"
+      ],
+      "evidence_requirements": [
+        "Visible price/stock, markup and feed observations"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Correct contradictions using current commerce facts",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Currency, variant, market and validity period confirmed",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare visible offer, JSON-LD and authorized feed data"
+      ],
+      "no_op_conditions": [
+        "Stale or missing catalog access; do not invent prices or availability"
+      ],
+      "source_ids": [
+        "google-product",
+        "google-schema"
+      ],
+      "reference": "references/ecommerce.md"
+    },
+    {
+      "id": "commerce.variants",
+      "module": "ecommerce",
+      "title": "Represent real product variants consistently",
+      "website_types": [
+        "ecommerce"
+      ],
+      "page_types": [
+        "product"
+      ],
+      "required_context": [
+        "variant model and URL selection behavior"
+      ],
+      "evidence_requirements": [
+        "ProductGroup/Product data, selected variant and canonical behavior"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Map real variants and equivalent URLs accurately",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Verified product relationships and route behavior",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Select variants, inspect markup/URLs and validate the actual grouped offers"
+      ],
+      "no_op_conditions": [
+        "No variants or an unsupported assumed URL architecture"
+      ],
+      "source_ids": [
+        "google-variants",
+        "google-canonical"
+      ],
+      "reference": "references/ecommerce.md"
+    },
+    {
+      "id": "commerce.navigation",
+      "module": "ecommerce",
+      "title": "Manage category and faceted discovery",
+      "website_types": [
+        "ecommerce"
+      ],
+      "page_types": [
+        "category",
+        "product"
+      ],
+      "required_context": [
+        "valuable category inventory and filter policy"
+      ],
+      "evidence_requirements": [
+        "Internal links, faceted URLs, canonicals and public intent"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Make useful categories discoverable and control low-value duplicates",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Business category intent and representative URL equivalence established",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Inspect category-to-product links and relevant filtered route behavior"
+      ],
+      "no_op_conditions": [
+        "Do not noindex every filter indiscriminately; missing business intent"
+      ],
+      "source_ids": [
+        "google-ecommerce",
+        "google-canonical"
+      ],
+      "reference": "references/ecommerce.md"
+    },
+    {
+      "id": "commerce.merchants",
+      "module": "ecommerce",
+      "title": "Keep merchant accounts and feeds distinct from code",
+      "website_types": [
+        "ecommerce"
+      ],
+      "page_types": [
+        "product",
+        "policy"
+      ],
+      "required_context": [
+        "authorized merchant account and return/shipping policies"
+      ],
+      "evidence_requirements": [
+        "Feed/account observations and visible policy details"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Identify applicable feed and policy mismatches; record unavailable access",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "Verified account permission and factual policies",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Validate authorized feed status and website consistency"
+      ],
+      "no_op_conditions": [
+        "Repository access does not grant merchant account access"
+      ],
+      "source_ids": [
+        "google-ecommerce",
+        "google-ai"
+      ],
+      "reference": "references/ecommerce.md"
+    },
+    {
+      "id": "intl.hreflang",
+      "module": "international",
+      "title": "Reciprocal equivalent language alternatives",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "actual language/region variants and URL map"
+      ],
+      "evidence_requirements": [
+        "Declared hreflang, returning links and canonical/status observations"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Correct invalid/one-way alternatives using the actual locale map",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Equivalence and language-region identifiers verified",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Check return/self references, final statuses and canonical consistency"
+      ],
+      "no_op_conditions": [
+        "Single-language site or non-equivalent alternatives"
+      ],
+      "source_ids": [
+        "google-hreflang"
+      ],
+      "reference": "references/international.md"
+    },
+    {
+      "id": "intl.localization",
+      "module": "international",
+      "title": "Localized content and facts are genuine",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "target market, language and localized product facts"
+      ],
+      "evidence_requirements": [
+        "Visible localized copy, currency, services and route behavior"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Improve accurate locale-specific content without inventing local presence",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Supported market facts and actual translation verified",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Inspect language, locale facts and navigation; avoid forced geolocation gates"
+      ],
+      "no_op_conditions": [
+        "No localized offering or missing authoritative market facts"
+      ],
+      "source_ids": [
+        "google-hreflang",
+        "google-helpful"
+      ],
+      "reference": "references/international.md"
+    },
+    {
+      "id": "ops.metrics",
+      "module": "operations",
+      "title": "Separate measurements and unknown values",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "baseline, metric definition, window and change history"
+      ],
+      "evidence_requirements": [
+        "Source reports and units with collection scope"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Report measured dimensions separately and retain unavailable values",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "Comparable definitions; no invented search-volume, CTR or AI rank values",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Compare like windows and controls; label sampled versus complete data"
+      ],
+      "no_op_conditions": [
+        "Missing metric is unknown, not zero; no causal claim from before/after alone"
+      ],
+      "source_ids": [
+        "google-search-analytics",
+        "bing-ai",
+        "web-vitals"
+      ],
+      "reference": "references/operations.md"
+    },
+    {
+      "id": "ops.incremental",
+      "module": "operations",
+      "title": "Audit affected pages and reconcile periodically",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "last successful revision, URL mapping and dependencies"
+      ],
+      "evidence_requirements": [
+        "Diff, shared layouts/content/config, baseline fingerprints"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Assess changed dependencies and resulting pages; deduplicate stable findings",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Actual route/dependency mapping; preserve full-audit fallback when uncertain",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Cover shared layouts and SEO-affecting backend changes; confirm replay idempotence"
+      ],
+      "no_op_conditions": [
+        "Unrelated code with no demonstrated page impact; unchanged finding already recorded"
+      ],
+      "source_ids": [
+        "google-js",
+        "google-starter"
+      ],
+      "reference": "references/operations.md"
+    },
+    {
+      "id": "ops.indexnow",
+      "module": "operations",
+      "title": "Notify supported engines after verified changes",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "changed public URLs and permitted submission policy"
+      ],
+      "evidence_requirements": [
+        "Successful deployed response, ownership key and participating engine"
+      ],
+      "assessment": "deterministic",
+      "recommended_action": "Submit verified additions/updates/removals to supported IndexNow engines",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence"
+      ],
+      "automatic_prerequisites": [
+        "Deployment verified; ownership and submission permission configured",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Validate request acceptance separately from eventual indexing"
+      ],
+      "no_op_conditions": [
+        "Private URL, unsuccessful deployment or unsupported engine"
+      ],
+      "source_ids": [
+        "indexnow"
+      ],
+      "reference": "references/operations.md"
+    },
+    {
+      "id": "ops.verification",
+      "module": "operations",
+      "title": "Verify the specific change before shipping",
+      "website_types": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "page_types": [
+        "any"
+      ],
+      "required_context": [
+        "action scope, baseline and relevant verification method"
+      ],
+      "evidence_requirements": [
+        "Build/tests plus before/after response or DOM evidence"
+      ],
+      "assessment": "model_assisted",
+      "recommended_action": "Require applicable checks; stop unresolved jobs and record reproducible failures",
+      "allowed_actions": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch"
+      ],
+      "automatic_prerequisites": [
+        "Policy permits mutation; tests and deployed validation pass; revision still current",
+        "Project policy permits action; required verification is completed by the runtime before actual execution"
+      ],
+      "verification": [
+        "Inspect actual patch and relevant behavior; do not claim success from tool invocation alone"
+      ],
+      "no_op_conditions": [
+        "Failed tools, unknown baseline or screenshot-only proof"
+      ],
+      "source_ids": [
+        "google-js",
+        "google-schema",
+        "google-starter"
+      ],
+      "reference": "references/operations.md"
+    }
+  ]
+}

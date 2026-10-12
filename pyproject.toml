@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling>=1.26,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "seo-optimizer"
+version = "0.1.0"
+description = "Private search-optimization knowledge and offline agent evaluation"
+requires-python = ">=3.12"
+dependencies = ["pydantic>=2.10,<3", "PyYAML>=6.0,<7"]
+
+[project.scripts]
+seo-optimizer = "seo_optimizer.cli:main"
+
+[dependency-groups]
+dev = ["pytest>=8.3,<9", "pytest-socket>=0.7,<1", "ruff>=0.9,<1", "mypy>=1.14,<2", "types-PyYAML>=6.0", "jsonschema>=4.23,<5", "build>=1.2,<2"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/seo_optimizer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--disable-socket -ra"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src/seo_optimizer"]
+

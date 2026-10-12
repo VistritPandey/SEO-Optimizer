@@ -1,0 +1,508 @@
+{
+  "version": "1.0.0",
+  "as_of": "2026-10-12",
+  "sources": [
+    {
+      "id": "google-essentials",
+      "title": "Google Search Essentials",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/essentials",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "technical"
+      ],
+      "supports": [
+        "tech.indexability",
+        "tech.robots"
+      ],
+      "limitations": "Google Search eligibility; not a ranking guarantee"
+    },
+    {
+      "id": "google-starter",
+      "title": "SEO Starter Guide",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/fundamentals/seo-starter-guide",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "content",
+        "operations",
+        "technical"
+      ],
+      "supports": [
+        "tech.title",
+        "tech.metadata",
+        "tech.status",
+        "tech.links",
+        "tech.sitemap",
+        "tech.migration",
+        "content.strategy",
+        "ops.incremental",
+        "ops.verification"
+      ],
+      "limitations": "General guidance, not mandatory word counts or guaranteed improvements"
+    },
+    {
+      "id": "google-ai",
+      "title": "AI optimization guide",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "content",
+        "ecommerce",
+        "geo",
+        "performance",
+        "technical"
+      ],
+      "supports": [
+        "tech.robots",
+        "tech.rendering",
+        "perf.navigation",
+        "content.competitors",
+        "content.originality",
+        "geo.google-llms",
+        "geo.google-faq",
+        "geo.entities",
+        "geo.google-inclusion",
+        "commerce.merchants"
+      ],
+      "limitations": "Google Search only; do not generalize engine behavior"
+    },
+    {
+      "id": "google-updates",
+      "title": "Search documentation updates",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/updates",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.google-faq"
+      ],
+      "limitations": "Changelog facts are dated; refresh before feature-dependent advice"
+    },
+    {
+      "id": "google-js",
+      "title": "JavaScript SEO basics",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "operations",
+        "performance",
+        "technical"
+      ],
+      "supports": [
+        "tech.indexability",
+        "tech.title",
+        "tech.metadata",
+        "tech.canonical",
+        "tech.status",
+        "tech.links",
+        "tech.rendering",
+        "perf.navigation",
+        "ops.incremental",
+        "ops.verification"
+      ],
+      "limitations": "A local browser does not reproduce every Google rendering condition"
+    },
+    {
+      "id": "google-canonical",
+      "title": "Canonical URL consolidation",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "content",
+        "ecommerce",
+        "technical"
+      ],
+      "supports": [
+        "tech.canonical",
+        "tech.sitemap",
+        "tech.migration",
+        "content.refresh",
+        "commerce.variants",
+        "commerce.navigation"
+      ],
+      "limitations": "Canonical declarations are signals; chosen canonicals require Search Console evidence"
+    },
+    {
+      "id": "google-schema",
+      "title": "Structured data guidelines",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/appearance/structured-data/sd-policies",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "ecommerce",
+        "geo",
+        "local",
+        "operations"
+      ],
+      "supports": [
+        "geo.entities",
+        "local.schema",
+        "commerce.facts",
+        "ops.verification"
+      ],
+      "limitations": "Valid markup does not guarantee a rich result"
+    },
+    {
+      "id": "google-helpful",
+      "title": "Helpful reliable content",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "content",
+        "international"
+      ],
+      "supports": [
+        "content.strategy",
+        "content.competitors",
+        "content.factual",
+        "content.originality",
+        "content.refresh",
+        "intl.localization"
+      ],
+      "limitations": "Human judgment is still needed; expertise is not a numeric ranking score"
+    },
+    {
+      "id": "google-spam",
+      "title": "Spam policies",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/essentials/spam-policies",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "content",
+        "local"
+      ],
+      "supports": [
+        "content.factual",
+        "content.originality",
+        "local.relevance"
+      ],
+      "limitations": "Do not label a site penalized solely from a local audit"
+    },
+    {
+      "id": "google-cwv",
+      "title": "Core Web Vitals and Search",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/appearance/core-web-vitals",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "performance"
+      ],
+      "supports": [
+        "perf.cwv",
+        "perf.media"
+      ],
+      "limitations": "Performance is one aspect of experience; passing does not guarantee rank"
+    },
+    {
+      "id": "web-vitals",
+      "title": "Web Vitals",
+      "publisher": "Google web.dev",
+      "url": "https://web.dev/articles/vitals",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "operations",
+        "performance"
+      ],
+      "supports": [
+        "perf.cwv",
+        "ops.metrics"
+      ],
+      "limitations": "Field percentile metrics differ from individual lab runs"
+    },
+    {
+      "id": "google-images",
+      "title": "Image SEO",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/appearance/google-images",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "performance"
+      ],
+      "supports": [
+        "perf.media"
+      ],
+      "limitations": "Relevant media is context-dependent; do not keyword-stuff alt text"
+    },
+    {
+      "id": "google-local-schema",
+      "title": "LocalBusiness structured data",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/appearance/structured-data/local-business",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "local"
+      ],
+      "supports": [
+        "local.hours",
+        "local.schema"
+      ],
+      "limitations": "Location facts must be real; self-serving reviews do not qualify for review snippets"
+    },
+    {
+      "id": "google-local-ranking",
+      "title": "Local ranking guidance",
+      "publisher": "Google Business Profile Help",
+      "url": "https://support.google.com/business/answer/7091",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "local"
+      ],
+      "supports": [
+        "local.identity",
+        "local.relevance"
+      ],
+      "limitations": "Distance is not something a code patch can control"
+    },
+    {
+      "id": "google-business-policy",
+      "title": "Representing a business",
+      "publisher": "Google Business Profile Help",
+      "url": "https://support.google.com/business/answer/3038177",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "local"
+      ],
+      "supports": [
+        "local.identity",
+        "local.hours"
+      ],
+      "limitations": "Eligibility and real-world identity are prerequisites to profile changes"
+    },
+    {
+      "id": "google-product",
+      "title": "Product structured data",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/appearance/structured-data/product",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "ecommerce"
+      ],
+      "supports": [
+        "commerce.facts"
+      ],
+      "limitations": "Product snippets, merchant listings and feeds have distinct eligibility"
+    },
+    {
+      "id": "google-variants",
+      "title": "Product variants",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/appearance/structured-data/product-variants",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "ecommerce"
+      ],
+      "supports": [
+        "commerce.variants"
+      ],
+      "limitations": "Variant URLs and grouping must match the actual commerce implementation"
+    },
+    {
+      "id": "google-ecommerce",
+      "title": "Ecommerce structured data",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/specialty/ecommerce/include-structured-data-relevant-to-ecommerce",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "ecommerce"
+      ],
+      "supports": [
+        "commerce.navigation",
+        "commerce.merchants"
+      ],
+      "limitations": "Feeds and merchant accounts cannot be inferred from repository access"
+    },
+    {
+      "id": "google-hreflang",
+      "title": "Localized page versions",
+      "publisher": "Google Search Central",
+      "url": "https://developers.google.com/search/docs/specialty/international/localized-versions",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "international"
+      ],
+      "supports": [
+        "intl.hreflang",
+        "intl.localization"
+      ],
+      "limitations": "hreflang maps alternatives; it does not translate content or guarantee targeting"
+    },
+    {
+      "id": "openai-bots",
+      "title": "OpenAI crawler controls",
+      "publisher": "OpenAI",
+      "url": "https://developers.openai.com/api/docs/bots",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.crawlers"
+      ],
+      "limitations": "Search, training and user-directed access have different purposes"
+    },
+    {
+      "id": "anthropic-bots",
+      "title": "Anthropic crawler controls",
+      "publisher": "Anthropic",
+      "url": "https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.crawlers"
+      ],
+      "limitations": "Do not assume other providers share these bot names or behavior"
+    },
+    {
+      "id": "bing-ai",
+      "title": "Bing AI visibility reporting",
+      "publisher": "Microsoft Bing",
+      "url": "https://blogs.bing.com/search/2026/6/New-AI-Visibility-Insights-in-Bing-Webmaster-Tools-Intents-Topics-Citation-Share-Compare/",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo",
+        "operations"
+      ],
+      "supports": [
+        "geo.visibility",
+        "ops.metrics"
+      ],
+      "limitations": "Preview reporting; sampled/aggregated observations, not proof of causal uplift or API availability"
+    },
+    {
+      "id": "microsoft-content",
+      "title": "Content inclusion in AI answers",
+      "publisher": "Microsoft Advertising",
+      "url": "https://about.ads.microsoft.com/en/blog/post/october-2025/optimizing-your-content-for-inclusion-in-ai-search-answers",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.entities"
+      ],
+      "limitations": "Publisher guidance for AI experiences; recommendations are not universal eligibility requirements"
+    },
+    {
+      "id": "indexnow",
+      "title": "IndexNow protocol",
+      "publisher": "IndexNow",
+      "url": "https://www.indexnow.org/documentation",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "operations"
+      ],
+      "supports": [
+        "ops.indexnow"
+      ],
+      "limitations": "Notifies participating engines; not an indexing guarantee or universal Google submission API"
+    },
+    {
+      "id": "geo-paper",
+      "title": "GEO foundational study",
+      "publisher": "Aggarwal et al., KDD 2024",
+      "url": "https://arxiv.org/abs/2311.09735",
+      "verified_on": "2026-10-12",
+      "source_type": "research",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.experiment"
+      ],
+      "limitations": "Experimental gains depend on the studied models, queries, sources and visibility metrics"
+    },
+    {
+      "id": "geo-survey",
+      "title": "Critical GEO survey 2023\u20132026",
+      "publisher": "Olivier Martinez, preprint",
+      "url": "https://arxiv.org/abs/2607.14035",
+      "verified_on": "2026-10-12",
+      "source_type": "research",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.experiment"
+      ],
+      "limitations": "A preprint synthesis, not an engine specification; follow its cited methods before adopting a tactic"
+    },
+    {
+      "id": "google-search-analytics",
+      "title": "Search Analytics API",
+      "publisher": "Google Search Console",
+      "url": "https://developers.google.com/webmaster-tools/v1/searchanalytics/query",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "operations"
+      ],
+      "supports": [
+        "ops.metrics"
+      ],
+      "limitations": "Top rows and aggregation limits; do not assume new dashboard reports are exposed by this API"
+    },
+    {
+      "id": "google-ai-report",
+      "title": "Generative AI performance report",
+      "publisher": "Google Search Console Help",
+      "url": "https://support.google.com/webmasters/answer/16984139",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.visibility"
+      ],
+      "limitations": "Report definitions are product-specific; verify supported exports/APIs separately"
+    },
+    {
+      "id": "google-ai-control",
+      "title": "Search generative AI control",
+      "publisher": "Google Search Console Help",
+      "url": "https://support.google.com/webmasters/answer/16908024",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo"
+      ],
+      "supports": [
+        "geo.google-inclusion"
+      ],
+      "limitations": "Owner-configured inclusion controls must be respected"
+    }
+  ]
+}
