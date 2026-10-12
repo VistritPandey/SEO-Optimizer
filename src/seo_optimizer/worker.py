@@ -438,7 +438,11 @@ class Worker:
                 if spec.provider.capabilities.vision
                 else []
             )
-            client = ModelClient(spec.provider, credentials.provider_key)
+            client = ModelClient(
+                spec.provider,
+                credentials.provider_key,
+                allow_custom_endpoint=self.settings.allow_private_network,
+            )
             try:
                 inference = client.complete(
                     instructions,
@@ -615,7 +619,21 @@ class Worker:
             for item in findings
             if item.check_id in fixed and item.status == FindingStatus.DEFECT
         ]
-        if still_broken:
+        after_ids = {item.id: item for item in after}
+        before = {(item["check_id"], item["url"]) for item in result.get("before_defects", [])}
+        audited_urls = set(result.get("audited_urls", []))
+        regressions = [
+            item
+            for item in findings
+            if item.status == FindingStatus.DEFECT
+            and any(
+                id in after_ids
+                and str(after_ids[id].url) in audited_urls
+                and (item.check_id, str(after_ids[id].url)) not in before
+                for id in item.evidence_ids
+            )
+        ]
+        if still_broken or regressions:
             if github and spec.rollback_on_regression:
                 result["rollback_sha"] = github.revert(
                     spec.repository, spec.branch, result["merged_sha"], result["revision"]
@@ -624,12 +642,12 @@ class Worker:
                 "blocked",
                 {
                     **result,
-                    "summary": "Confirmed deployed fix failed verification",
+                    "summary": "Confirmed deployed fix failed verification or introduced a defect",
+                    "regressions": len(regressions),
                     "after_report": report,
                 },
                 0,
             )
-        after_ids = {item.id: item for item in after}
         enriched = [
             {
                 **item.model_dump(mode="json"),
@@ -655,5 +673,8 @@ class Worker:
             verified_fixes=len(fixed),
             after_report=report,
             findings=enriched,
+            prior_revision=result.get("revision"),
+            revision=result.get("merged_sha", result.get("revision")),
+            regressions=0,
         )
         return "complete", result, 0
