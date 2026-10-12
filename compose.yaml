@@ -1,0 +1,39 @@
+services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: optimizer
+      POSTGRES_USER: optimizer
+      POSTGRES_PASSWORD: ${OPT_POSTGRES_PASSWORD:?Set OPT_POSTGRES_PASSWORD}
+    volumes:
+      - database:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U optimizer"]
+      interval: 5s
+      timeout: 3s
+      retries: 15
+  web:
+    build: .
+    ports: ["8000:8000"]
+    environment: &service_environment
+      OPT_ENV: production
+      OPT_DATABASE_URL: postgresql+psycopg://optimizer:${OPT_POSTGRES_PASSWORD}@database:5432/optimizer
+      OPT_SECRET_KEY: ${OPT_SECRET_KEY:?Set a long OPT_SECRET_KEY}
+      OPT_PUBLIC_URL: ${OPT_PUBLIC_URL:-http://localhost:8000}
+      OPT_REGISTRATION: ${OPT_REGISTRATION:-0}
+    depends_on:
+      database: {condition: service_healthy}
+    volumes: ["webdata:/data"]
+  worker:
+    build: .
+    command: ["seo-optimizer", "worker"]
+    environment: *service_environment
+    depends_on:
+      database: {condition: service_healthy}
+    volumes: ["workerdata:/data"]
+    # Configure an isolated execution service/image for project build commands.
+    # Do not expose the host Docker socket to a public shared worker.
+volumes:
+  database:
+  webdata:
+  workerdata:
