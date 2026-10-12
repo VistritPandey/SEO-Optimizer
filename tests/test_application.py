@@ -9,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import update
 
-from seo_optimizer.application_models import ProjectCreate, ProjectSecrets, ProjectSpec
+from seo_optimizer.application_models import ProjectCreate
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Store
 from seo_optimizer.web import create_app, hash_password
@@ -17,8 +17,12 @@ from seo_optimizer.web import create_app, hash_password
 
 @pytest.fixture
 def application(tmp_path: Path):
-    settings = Settings(data_dir=tmp_path, database_url=f"sqlite:///{tmp_path}/db.sqlite",
-                        secret_key="fixture-secret-key-which-is-long-enough", allowed_repo_roots=(tmp_path,))
+    settings = Settings(
+        data_dir=tmp_path,
+        database_url=f"sqlite:///{tmp_path}/db.sqlite",
+        secret_key="fixture-secret-key-which-is-long-enough",
+        allowed_repo_roots=(tmp_path,),
+    )
     store = Store(settings)
     alice, token = store.create_user("alice@example.test", hash_password("fixture-password-123"))
     bob, bob_token = store.create_user("bob@example.test", hash_password("fixture-password-456"))
@@ -28,19 +32,37 @@ def application(tmp_path: Path):
 
 
 def project_value() -> dict:
-    return {"spec": {"name": "Fixture project", "website_url": "https://example.test/", "repository": "owner/site"},
-            "credentials": {"github_token": "fixture-private-value", "webhook_secret": "webhook-fixture-secret"}}
+    return {
+        "spec": {
+            "name": "Fixture project",
+            "website_url": "https://example.test/",
+            "repository": "owner/site",
+        },
+        "credentials": {
+            "github_token": "fixture-private-value",
+            "webhook_secret": "webhook-fixture-secret",
+        },
+    }
 
 
 def test_registration_login_csrf_and_secret_exports(application):
     client, store, alice, token, _, _ = application
     page = client.get("/login")
     csrf = re.search(r'name="csrf" value="([^"]+)"', page.text)[1]
-    assert client.post("/login", data={"email": alice.email, "password": "fixture-password-123"}).status_code == 403
-    login = client.post("/login", data={"csrf": csrf, "email": alice.email, "password": "fixture-password-123"})
+    assert (
+        client.post(
+            "/login", data={"email": alice.email, "password": "fixture-password-123"}
+        ).status_code
+        == 403
+    )
+    login = client.post(
+        "/login", data={"csrf": csrf, "email": alice.email, "password": "fixture-password-123"}
+    )
     assert login.status_code == 200 and "Your websites" in login.text
     assert client.post("/api/v1/projects", json=project_value()).status_code == 403
-    response = client.post("/api/v1/projects", headers={"Authorization": "Bearer " + token}, json=project_value())
+    response = client.post(
+        "/api/v1/projects", headers={"Authorization": "Bearer " + token}, json=project_value()
+    )
     assert response.status_code == 201
     assert "fixture-private-value" not in response.text
     assert "credentials" not in response.json()
@@ -54,25 +76,51 @@ def test_cross_tenant_access_and_worker_scope(application):
     project = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
     headers = {"Authorization": "Bearer " + bob_token}
     assert client.get(f"/api/v1/projects/{project.id}", headers=headers).status_code == 404
-    assert client.patch(f"/api/v1/projects/{project.id}", headers=headers, json=project.spec).status_code == 404
+    assert (
+        client.patch(
+            f"/api/v1/projects/{project.id}", headers=headers, json=project.spec
+        ).status_code
+        == 404
+    )
     assert client.get("/api/v1/projects", headers=headers).json() == []
-    assert client.post("/api/v1/worker/claim", headers=headers, json={"worker_id": "bob-worker"}).json() is None
+    assert (
+        client.post(
+            "/api/v1/worker/claim", headers=headers, json={"worker_id": "bob-worker"}
+        ).json()
+        is None
+    )
     job = store.jobs(alice.id)[0]
     assert client.get(f"/api/v1/jobs/{job.id}", headers=headers).status_code == 404
-    own = client.post("/api/v1/worker/claim", headers={"Authorization": "Bearer " + token}, json={"worker_id": "alice-worker"})
+    own = client.post(
+        "/api/v1/worker/claim",
+        headers={"Authorization": "Bearer " + token},
+        json={"worker_id": "alice-worker"},
+    )
     assert own.json()["credentials"]["github_token"] == "fixture-private-value"
-    assert client.post(f"/api/v1/worker/jobs/{job.id}/finish", headers=headers, json={"worker_id":"alice-worker","status":"complete","result":{}}).status_code == 409
+    assert (
+        client.post(
+            f"/api/v1/worker/jobs/{job.id}/finish",
+            headers=headers,
+            json={"worker_id": "alice-worker", "status": "complete", "result": {}},
+        ).status_code
+        == 409
+    )
 
 
 def test_webhook_signature_replay_branch_and_repository(application):
     client, store, alice, _, _, _ = application
     project = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
-    payload = {"repository": {"full_name": "owner/site"}, "ref": "refs/heads/main", "after": "a"*40, "before": "b"*40}
+    payload = {
+        "repository": {"full_name": "owner/site"},
+        "ref": "refs/heads/main",
+        "after": "a" * 40,
+        "before": "b" * 40,
+    }
     body = json.dumps(payload).encode()
     signature = "sha256=" + hmac.new(b"webhook-fixture-secret", body, hashlib.sha256).hexdigest()
     path = f"/webhooks/github/{project.id}"
-    assert client.post(path, content=body, headers={"x-github-event":"push"}).status_code == 403
-    headers={"x-github-event":"push","x-hub-signature-256":signature}
+    assert client.post(path, content=body, headers={"x-github-event": "push"}).status_code == 403
+    headers = {"x-github-event": "push", "x-hub-signature-256": signature}
     first = client.post(path, content=body, headers=headers)
     second = client.post(path, content=body, headers=headers)
     assert first.json()["job_id"] == second.json()["job_id"]
@@ -81,24 +129,24 @@ def test_webhook_signature_replay_branch_and_repository(application):
 
 def test_job_claim_lease_and_wrong_worker(application):
     _, store, alice, _, _, _ = application
-    project = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
+    store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
     claimed = store.claim("first", alice.id)
     assert claimed is not None
     assert store.claim("second", alice.id) is None
     with pytest.raises(ValueError, match="lease"):
         store.finish(alice.id, claimed.id, "second", "complete", {})
     with store.sessions.begin() as session:
-        session.execute(update(Job).where(Job.id == claimed.id).values(lease_until=time.time()-1))
+        session.execute(update(Job).where(Job.id == claimed.id).values(lease_until=time.time() - 1))
     recovered = store.claim("second", alice.id)
     assert recovered.id == claimed.id and recovered.attempts == 2
-    store.finish(alice.id, recovered.id, "second", "complete", {"summary":"Recovered"})
+    store.finish(alice.id, recovered.id, "second", "complete", {"summary": "Recovered"})
     assert store.job(alice.id, claimed.id).status == "complete"
 
 
 def test_findings_deduplicate_and_resolve(application):
     _, store, alice, _, _, _ = application
     project = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
-    finding = {"check_id":"tech.title","url":"https://example.test/","summary":"Missing title"}
+    finding = {"check_id": "tech.title", "url": "https://example.test/", "summary": "Missing title"}
     assert store.remember_findings(alice.id, project.id, [finding], [finding["url"]]) == 1
     assert store.remember_findings(alice.id, project.id, [finding], [finding["url"]]) == 0
     store.remember_findings(alice.id, project.id, [], [finding["url"]])
@@ -107,9 +155,10 @@ def test_findings_deduplicate_and_resolve(application):
 
 def test_html_views_escape_untrusted_project_names(application):
     client, store, alice, token, _, _ = application
-    value = project_value(); value["spec"]["name"] = '<script>alert("x")</script>'
+    value = project_value()
+    value["spec"]["name"] = '<script>alert("x")</script>'
     project = store.create_project(alice.id, ProjectCreate.model_validate(value))
-    page = client.get(f"/projects/{project.id}", headers={"Authorization":"Bearer "+token})
+    page = client.get(f"/projects/{project.id}", headers={"Authorization": "Bearer " + token})
     assert page.status_code == 200
     assert '<script>alert("x")</script>' not in page.text
     assert "&lt;script&gt;" in page.text
@@ -120,27 +169,40 @@ def test_public_host_disables_local_repositories(application):
     client, store, alice, token, _, _ = application
     settings = store.settings
     from dataclasses import replace
+
     app = create_app(replace(settings, allow_local_repositories=False), store)
     with TestClient(app) as hosted:
-        value = project_value(); value["spec"]["repository"]="";value["spec"]["local_path"]="/tmp/private"
-        assert hosted.post("/api/v1/projects", headers={"Authorization":"Bearer "+token},json=value).status_code==400
+        value = project_value()
+        value["spec"]["repository"] = ""
+        value["spec"]["local_path"] = "/tmp/private"
+        assert (
+            hosted.post(
+                "/api/v1/projects", headers={"Authorization": "Bearer " + token}, json=value
+            ).status_code
+            == 400
+        )
 
 
 def test_registration_creates_separate_workspace(application):
     client, store, _, _, _, _ = application
-    page=client.get('/register');csrf=re.search(r'name="csrf" value="([^"]+)"',page.text)[1]
-    response=client.post('/register',data={'csrf':csrf,'email':'new@example.test','password':'new-password-1234'})
-    assert response.status_code==200 and 'Connect your first website' in response.text
-    assert store.user(email='new@example.test') is not None
+    page = client.get("/register")
+    csrf = re.search(r'name="csrf" value="([^"]+)"', page.text)[1]
+    response = client.post(
+        "/register",
+        data={"csrf": csrf, "email": "new@example.test", "password": "new-password-1234"},
+    )
+    assert response.status_code == 200 and "Connect your first website" in response.text
+    assert store.user(email="new@example.test") is not None
 
 
 def test_reconcile_is_scoped(application):
     client, store, alice, token, bob, _ = application
-    a=store.create_project(alice.id,ProjectCreate.model_validate(project_value()))
-    b=store.create_project(bob.id,ProjectCreate.model_validate(project_value()))
+    a = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
+    b = store.create_project(bob.id, ProjectCreate.model_validate(project_value()))
     from seo_optimizer.store import Project
+
     with store.sessions.begin() as session:
-        session.execute(update(Project).where(Project.id.in_([a.id,b.id])).values(next_audit=0))
-    result=client.post('/api/v1/reconcile',headers={'Authorization':'Bearer '+token})
-    assert result.json()['scheduled']==1
-    assert len(store.jobs(alice.id))==2 and len(store.jobs(bob.id))==1
+        session.execute(update(Project).where(Project.id.in_([a.id, b.id])).values(next_audit=0))
+    result = client.post("/api/v1/reconcile", headers={"Authorization": "Bearer " + token})
+    assert result.json()["scheduled"] == 1
+    assert len(store.jobs(alice.id)) == 2 and len(store.jobs(bob.id)) == 1
