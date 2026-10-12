@@ -199,7 +199,7 @@ def main():
 
     def run(label, enqueue=True, kind="audit"):
         if enqueue:
-            store.enqueue(account.id, project.id, "audit", label + ":" + uuid4().hex, {})
+            store.enqueue(account.id, project.id, kind, label + ":" + uuid4().hex, {})
         started = time.monotonic()
         worker.tick(account.id)
         job = store.jobs(account.id, project.id)[0]
