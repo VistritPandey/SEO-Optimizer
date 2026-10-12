@@ -141,6 +141,7 @@ class ModelClient:
                 [{"inlineData": {"mimeType": "image/png", "data": image}} for image in images]
             )
         input_tokens, output_tokens = 0, 0
+        input_available, output_available = True, True
         trace: list[dict[str, Any]] = []
         started = time.monotonic()
         for step in range(max_steps):
@@ -180,6 +181,8 @@ class ModelClient:
                     ]
                 result = self._post("/api/chat", payload, {})
                 message = result["message"]
+                input_available &= "prompt_eval_count" in result
+                output_available &= "eval_count" in result
                 text = message.get("content", "")
                 input_tokens += result.get("prompt_eval_count", 0)
                 output_tokens += result.get("eval_count", 0)
@@ -224,6 +227,8 @@ class ModelClient:
                 )
                 result = self._post("/responses", payload, {"Authorization": f"Bearer {self.key}"})
                 native_input.extend(result.get("output", []))
+                input_available &= "input_tokens" in result.get("usage", {})
+                output_available &= "output_tokens" in result.get("usage", {})
                 input_tokens += result.get("usage", {}).get("input_tokens", 0)
                 output_tokens += result.get("usage", {}).get("output_tokens", 0)
                 for item in result.get("output", []):
@@ -275,6 +280,8 @@ class ModelClient:
                     "/messages", payload, {"x-api-key": self.key, "anthropic-version": "2023-06-01"}
                 )
                 history.append({"role": "assistant", "content": result["content"]})
+                input_available &= "input_tokens" in result.get("usage", {})
+                output_available &= "output_tokens" in result.get("usage", {})
                 input_tokens += result.get("usage", {}).get("input_tokens", 0)
                 output_tokens += result.get("usage", {}).get("output_tokens", 0)
                 for item in result["content"]:
@@ -313,6 +320,8 @@ class ModelClient:
                 result = self._post(
                     f"/models/{model}:generateContent", payload, {"x-goog-api-key": self.key}
                 )
+                input_available &= "promptTokenCount" in result.get("usageMetadata", {})
+                output_available &= "candidatesTokenCount" in result.get("usageMetadata", {})
                 message = result.get("candidates", [{}])[0].get("content", {})
                 google_history.append(message)
                 input_tokens += result.get("usageMetadata", {}).get("promptTokenCount", 0)
@@ -331,7 +340,9 @@ class ModelClient:
                         text += item.get("text", "")
             cost = None
             if (
-                self.config.input_usd_per_million is not None
+                input_available
+                and output_available
+                and self.config.input_usd_per_million is not None
                 and self.config.output_usd_per_million is not None
             ):
                 cost = (
@@ -362,8 +373,8 @@ class ModelClient:
                 return Inference(
                     decision=decision,
                     usage=Usage(
-                        input_tokens=input_tokens,
-                        output_tokens=output_tokens,
+                        input_tokens=input_tokens if input_available else None,
+                        output_tokens=output_tokens if output_available else None,
                         api_cost_usd=0 if kind == "ollama" else cost,
                     ),
                     model=model,
