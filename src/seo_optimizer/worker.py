@@ -1,7 +1,6 @@
 """Portable autonomous worker: observe, reason, verify, publish and reconcile."""
 
 import base64
-import json
 import re
 import shutil
 import time
@@ -13,9 +12,23 @@ import httpx
 from pydantic import ValidationError
 
 from seo_optimizer.application_models import FileChange, ProjectSpec
-from seo_optimizer.contracts import Assessment, AuditRequest, Evidence, Finding, FindingStatus, utc_now
+from seo_optimizer.contracts import (
+    Assessment,
+    AuditRequest,
+    Evidence,
+    Finding,
+    FindingStatus,
+    utc_now,
+)
 from seo_optimizer.crawler import Crawler, capture_browser, page_excerpt
-from seo_optimizer.execution import apply_changes, commit_local, confined, run_git, snapshot_local, verify_workspace
+from seo_optimizer.execution import (
+    apply_changes,
+    commit_local,
+    confined,
+    run_git,
+    snapshot_local,
+    verify_workspace,
+)
 from seo_optimizer.github import GitHubClient
 from seo_optimizer.knowledge import load_knowledge
 from seo_optimizer.llm import ModelClient
@@ -32,7 +45,11 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
         if not directory.is_dir():
             continue
         for path in sorted(directory.rglob("*")):
-            if not path.is_file() or path.is_symlink() or any(part in {"node_modules", ".git", ".venv"} for part in path.parts):
+            if (
+                not path.is_file()
+                or path.is_symlink()
+                or any(part in {"node_modules", ".git", ".venv"} for part in path.parts)
+            ):
                 continue
             relative = path.relative_to(directory)
             route: str | None = None
@@ -47,7 +64,9 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
     return mapping
 
 
-def builtin_changes(root: Path, spec: ProjectSpec, findings: list[Finding], evidence: list[Evidence]) -> list[FileChange]:
+def builtin_changes(
+    root: Path, spec: ProjectSpec, findings: list[Finding], evidence: list[Evidence]
+) -> list[FileChange]:
     """A deterministic title repair uses observed H1 text, never invented business claims."""
     changes = []
     for finding in findings:
@@ -57,6 +76,7 @@ def builtin_changes(root: Path, spec: ProjectSpec, findings: list[Finding], evid
         if page is None or page.url is None:
             continue
         from urllib.parse import urlparse
+
         route = urlparse(str(page.url)).path or "/"
         path = spec.route_map.get(route)
         if not path or not path.endswith(".html"):
@@ -68,13 +88,20 @@ def builtin_changes(root: Path, spec: ProjectSpec, findings: list[Finding], evid
         if not heading or not head or re.search(r"<title\b", text, re.I):
             continue
         from html import escape, unescape
+
         title = unescape(re.sub(r"<[^>]+>", "", heading.group(1))).strip()
         if not title or len(title) > 160:
             continue
-        changes.append(FileChange(path=path, before=head.group(0),
-            after=head.group(0) + "\n<title>" + escape(title) + "</title>",
-            reason="Use the page's observed main heading as its descriptive title.",
-            check_id=finding.check_id, evidence_ids=finding.evidence_ids))
+        changes.append(
+            FileChange(
+                path=path,
+                before=head.group(0),
+                after=head.group(0) + "\n<title>" + escape(title) + "</title>",
+                reason="Use the page's observed main heading as its descriptive title.",
+                check_id=finding.check_id,
+                evidence_ids=finding.evidence_ids,
+            )
+        )
     return changes
 
 
@@ -91,16 +118,25 @@ class Worker:
             return False
         project = self.store.project(job.tenant_id, job.project_id)
         if project is None:
-            self.store.finish(job.tenant_id, job.id, self.id, "blocked", {"summary": "Project no longer exists"})
+            self.store.finish(
+                job.tenant_id, job.id, self.id, "blocked", {"summary": "Project no longer exists"}
+            )
             return True
         try:
             status, result, delay = self.process(project, job)
         except (httpx.HTTPError, OSError) as error:
             status = "queued" if job.attempts < 3 else "failed"
-            result, delay = {"summary": f"Transient integration failure: {type(error).__name__}"}, 30 * max(1, job.attempts)
+            result, delay = (
+                {"summary": f"Transient integration failure: {type(error).__name__}"},
+                30 * max(1, job.attempts),
+            )
         except Exception as error:
             status, delay = "blocked", 0
-            message = "Structured model output failed local validation" if isinstance(error, ValidationError) else str(error)
+            message = (
+                "Structured model output failed local validation"
+                if isinstance(error, ValidationError)
+                else str(error)
+            )
             credentials = self.store.secrets(project)
             for secret in credentials.model_dump().values():
                 if secret:
@@ -120,18 +156,37 @@ class Worker:
             if job.result.get("stage") == "checks" and github:
                 return self.finish_pr(project, job, spec, github)
             if job.result.get("stage") == "deployment" and github:
-                deployments = github.request("GET", f"/repos/{spec.repository}/deployments", params={"sha": job.result["merged_sha"]})
+                deployments = github.request(
+                    "GET",
+                    f"/repos/{spec.repository}/deployments",
+                    params={"sha": job.result["merged_sha"]},
+                )
                 deployed = False
                 for deployment in deployments:
-                    statuses = github.request("GET", f"/repos/{spec.repository}/deployments/{deployment['id']}/statuses")
-                    if statuses and statuses[0].get("state") == "success" and deployment.get("environment") == spec.environment:
+                    statuses = github.request(
+                        "GET", f"/repos/{spec.repository}/deployments/{deployment['id']}/statuses"
+                    )
+                    if (
+                        statuses
+                        and statuses[0].get("state") == "success"
+                        and deployment.get("environment") == spec.environment
+                    ):
                         deployed = True
                         break
                 if not deployed:
                     if time.time() - job.created_at > 3600:
-                        return "blocked", {**job.result, "summary": "Deployment of the merged revision has not been confirmed"}, 0
+                        return (
+                            "blocked",
+                            {
+                                **job.result,
+                                "summary": "Deployment of the merged revision has not been confirmed",
+                            },
+                            0,
+                        )
                     return "waiting_deployment", job.result, 30
-                after = crawler.collect(project.tenant_id, project.id, spec, job.result["audited_urls"])
+                after = crawler.collect(
+                    project.tenant_id, project.id, spec, job.result["audited_urls"]
+                )
                 return self.verify_deployment(spec, job.result, after, github)
             return self.audit_job(project, job, spec, crawler, github)
         finally:
@@ -139,7 +194,14 @@ class Worker:
             if github:
                 github.close()
 
-    def audit_job(self, project: Project, job: Job, spec: ProjectSpec, crawler: Crawler, github: GitHubClient | None) -> tuple[str, dict[str, Any], float]:
+    def audit_job(
+        self,
+        project: Project,
+        job: Job,
+        spec: ProjectSpec,
+        crawler: Crawler,
+        github: GitHubClient | None,
+    ) -> tuple[str, dict[str, Any], float]:
         started = time.monotonic()
         root = self.settings.data_dir / "workspaces" / job.id
         if root.exists():
@@ -151,17 +213,32 @@ class Worker:
             if not self.settings.allow_local_repositories:
                 raise ValueError("Local repositories are disabled on this host")
             repository = root / "repository"
-            revision = snapshot_local(Path(spec.local_path), repository, spec.branch, self.settings.allowed_repo_roots)
+            revision = snapshot_local(
+                Path(spec.local_path), repository, spec.branch, self.settings.allowed_repo_roots
+            )
             if project.last_revision:
                 try:
-                    changed = run_git(repository, "diff", "--name-only", project.last_revision, revision).splitlines()
+                    changed = run_git(
+                        repository, "diff", "--name-only", project.last_revision, revision
+                    ).splitlines()
                 except ValueError:
                     changed = None
         elif github:
             revision = github.head(spec.repository, spec.branch)
             if job.payload.get("after") and job.payload["after"] != revision:
-                return "superseded", {"summary": "A newer repository revision superseded this job", "revision": revision}, 0
-            changed = github.changed_files(spec.repository, project.last_revision, revision) if project.last_revision else None
+                return (
+                    "superseded",
+                    {
+                        "summary": "A newer repository revision superseded this job",
+                        "revision": revision,
+                    },
+                    0,
+                )
+            changed = (
+                github.changed_files(spec.repository, project.last_revision, revision)
+                if project.last_revision
+                else None
+            )
             repository = root / "repository"
             github.checkout(spec.repository, revision, repository)
         else:
@@ -170,16 +247,35 @@ class Worker:
         spec.route_map = infer_route_map(repository, spec)
         urls = affected_urls(spec, changed) if job.kind == "push" else None
         if urls == []:
-            return "complete", {"summary": "No affected website routes; model work skipped", "revision": revision}, 0
+            return (
+                "complete",
+                {"summary": "No affected website routes; model work skipped", "revision": revision},
+                0,
+            )
         evidence = crawler.collect(project.tenant_id, project.id, spec, urls)
         if not any(item.data.get("status_code") == 200 for item in evidence):
             raise ValueError("No successful public page could be collected")
         if spec.browser_enabled:
-            evidence.extend(capture_browser(str(spec.website_url), crawler, project.tenant_id, project.id, spec.environment, root / "artifacts"))
+            evidence.extend(
+                capture_browser(
+                    str(spec.website_url),
+                    crawler,
+                    project.tenant_id,
+                    project.id,
+                    spec.environment,
+                    root / "artifacts",
+                )
+            )
         project_context = context(project.tenant_id, project.id, spec)
         findings, report = scan(project_context, spec, evidence, self.knowledge)
         changes = builtin_changes(repository, spec, findings, evidence) if spec.auto_fix else []
-        usage: dict[str, Any] = {"input_tokens": 0, "output_tokens": 0, "api_cost_usd": 0, "electricity_cost_usd": None, "hardware_cost_usd": None}
+        usage: dict[str, Any] = {
+            "input_tokens": 0,
+            "output_tokens": 0,
+            "api_cost_usd": 0,
+            "electricity_cost_usd": None,
+            "hardware_cost_usd": None,
+        }
         model_name = "rules"
         if spec.provider.kind != "rules":
             tool_changes: list[FileChange] = []
@@ -194,9 +290,17 @@ class Worker:
                         if target.stat().st_size > 100000:
                             raise ValueError("File exceeds the read budget")
                         text = target.read_text()
-                        item = Evidence(id=str(uuid4()), tenant_id=project.tenant_id, project_id=project.id,
-                            environment=spec.environment, kind="source", source_file=path,
-                            collected_at=utc_now(), observation="Read current repository file", data={"text": text})
+                        item = Evidence(
+                            id=str(uuid4()),
+                            tenant_id=project.tenant_id,
+                            project_id=project.id,
+                            environment=spec.environment,
+                            kind="source",
+                            source_file=path,
+                            collected_at=utc_now(),
+                            observation="Read current repository file",
+                            data={"text": text},
+                        )
                         evidence.append(item)
                         return {"success": True, "evidence_id": item.id, "text": text[:20000]}
                     if name in {"inspect_route", "crawl_page"}:
@@ -204,9 +308,20 @@ class Worker:
                         item = next((item for item in evidence if str(item.url) == url), None)
                         if item is None:
                             raise ValueError("Route is outside the collected job scope")
-                        return {"success": True, "evidence_id": item.id, "data": {key: value for key, value in item.data.items() if key != "html"}, "html": str(item.data.get("html", ""))[:12000]}
+                        return {
+                            "success": True,
+                            "evidence_id": item.id,
+                            "data": {
+                                key: value for key, value in item.data.items() if key != "html"
+                            },
+                            "html": str(item.data.get("html", ""))[:12000],
+                        }
                     if name == "get_diff":
-                        return {"success": True, "changed_files": changed, "route_map": spec.route_map}
+                        return {
+                            "success": True,
+                            "changed_files": changed,
+                            "route_map": spec.route_map,
+                        }
                     if name == "apply_patch":
                         change = FileChange.model_validate(arguments)
                         confined(repository, change.path, spec.allowed_paths)
@@ -217,87 +332,218 @@ class Worker:
                     raise ValueError("Unknown tool")
                 except (ValueError, OSError, KeyError):
                     trace_failed = True
-                    return {"success": False, "error": "Tool arguments or project policy prevented the operation"}
+                    return {
+                        "success": False,
+                        "error": "Tool arguments or project policy prevented the operation",
+                    }
 
-            def definition(name: str, description: str, properties: dict[str, Any]) -> dict[str, Any]:
-                return {"name": name, "description": description,
-                        "parameters": {"type": "object", "properties": properties, "required": list(properties), "additionalProperties": False}}
+            def definition(
+                name: str, description: str, properties: dict[str, Any]
+            ) -> dict[str, Any]:
+                return {
+                    "name": name,
+                    "description": description,
+                    "parameters": {
+                        "type": "object",
+                        "properties": properties,
+                        "required": list(properties),
+                        "additionalProperties": False,
+                    },
+                }
 
-            tools = [definition("read_file", "Read an allowed repository file and obtain its evidence ID", {"path": {"type": "string"}}),
-                     definition("inspect_route", "Inspect an already collected route", {"url": {"type": "string"}}),
-                     definition("get_diff", "Inspect the changed files and route mapping", {}),
-                     definition("run_checks", "Run explicitly configured isolated verification", {})]
+            tools = [
+                definition(
+                    "read_file",
+                    "Read an allowed repository file and obtain its evidence ID",
+                    {"path": {"type": "string"}},
+                ),
+                definition(
+                    "inspect_route",
+                    "Inspect an already collected route",
+                    {"url": {"type": "string"}},
+                ),
+                definition("get_diff", "Inspect the changed files and route mapping", {}),
+                definition("run_checks", "Run explicitly configured isolated verification", {}),
+            ]
             if spec.auto_fix:
-                tools.append({"name": "apply_patch", "description": "Stage a grounded exact replacement for independent validation", "parameters": FileChange.model_json_schema()})
+                tools.append(
+                    {
+                        "name": "apply_patch",
+                        "description": "Stage a grounded exact replacement for independent validation",
+                        "parameters": FileChange.model_json_schema(),
+                    }
+                )
             modules = {self.knowledge.checks[item.check_id].module.value for item in findings}
             if not modules:
                 modules = {"content"}
             instructions = (self.knowledge.root / "SKILL.md").read_text()
             for module in sorted(modules)[:2]:
-                instructions += "\n" + (self.knowledge.root / "references" / f"{module}.md").read_text()
+                instructions += (
+                    "\n" + (self.knowledge.root / "references" / f"{module}.md").read_text()
+                )
             instructions += "\nReturn only an AgentDecision JSON object with findings, changes and summary. Changes must fix evidenced problems, preserve privacy and stay within project policy. Use tools to read exact source before proposing replacements. No change is better than unsupported work. Never claim tools have merged or deployed a change."
-            observations = [{"id": item.id, "url": str(item.url), "kind": item.kind,
-                             "excerpt": page_excerpt(str(item.data.get("html", ""))),
-                             "status_code": item.data.get("status_code")} for item in evidence[:6]]
-            request = {"project": project_context.model_dump(mode="json"), "observations": observations,
-                       "deterministic_findings": [item.model_dump(mode="json") for item in findings[:10]],
-                       "route_map": spec.route_map,
-                       "checks": [{"id": item.id, "title": item.title, "sources": item.source_ids} for item in self.knowledge.catalog.checks]}
-            images = [base64.b64encode(Path(item.screenshot).read_bytes()).decode() for item in evidence if item.kind == "screenshot" and item.screenshot] if spec.provider.capabilities.vision else []
+            observations = [
+                {
+                    "id": item.id,
+                    "url": str(item.url),
+                    "kind": item.kind,
+                    "excerpt": page_excerpt(str(item.data.get("html", ""))),
+                    "status_code": item.data.get("status_code"),
+                }
+                for item in evidence[:6]
+            ]
+            request = {
+                "project": project_context.model_dump(mode="json"),
+                "observations": observations,
+                "deterministic_findings": [item.model_dump(mode="json") for item in findings[:10]],
+                "route_map": spec.route_map,
+                "checks": [
+                    {"id": item.id, "title": item.title, "sources": item.source_ids}
+                    for item in self.knowledge.catalog.checks
+                ],
+            }
+            images = (
+                [
+                    base64.b64encode(Path(item.screenshot).read_bytes()).decode()
+                    for item in evidence
+                    if item.kind == "screenshot" and item.screenshot
+                ]
+                if spec.provider.capabilities.vision
+                else []
+            )
             client = ModelClient(spec.provider, credentials.provider_key)
             try:
-                inference = client.complete(instructions, request, tools, execute, spec.max_tool_steps,
-                    max(5, spec.max_job_seconds-(time.monotonic()-started)), spec.max_cost_usd, images)
+                inference = client.complete(
+                    instructions,
+                    request,
+                    tools,
+                    execute,
+                    spec.max_tool_steps,
+                    max(5, spec.max_job_seconds - (time.monotonic() - started)),
+                    spec.max_cost_usd,
+                    images,
+                )
             finally:
                 client.close()
-            assessment = Assessment(tenant_id=project.tenant_id, project_id=project.id, environment=spec.environment, findings=inference.decision.findings)
-            errors = validate_assessment(assessment, AuditRequest(project=project_context, environment=spec.environment,
-                                        evidence=evidence, allowed_check_ids=list(self.knowledge.checks)), self.knowledge, spec.provider.capabilities)
+            assessment = Assessment(
+                tenant_id=project.tenant_id,
+                project_id=project.id,
+                environment=spec.environment,
+                findings=inference.decision.findings,
+            )
+            errors = validate_assessment(
+                assessment,
+                AuditRequest(
+                    project=project_context,
+                    environment=spec.environment,
+                    evidence=evidence,
+                    allowed_check_ids=list(self.knowledge.checks),
+                ),
+                self.knowledge,
+                spec.provider.capabilities,
+            )
             if errors:
-                raise ValueError("Model assessment failed grounding/policy validation: " + errors[0])
+                raise ValueError(
+                    "Model assessment failed grounding/policy validation: " + errors[0]
+                )
             if trace_failed and (inference.decision.changes or tool_changes):
                 raise ValueError("Failed model tools prevent automatic publication")
-            findings.extend(item for item in inference.decision.findings if item.model_dump() not in [existing.model_dump() for existing in findings])
+            findings.extend(
+                item
+                for item in inference.decision.findings
+                if item.model_dump() not in [existing.model_dump() for existing in findings]
+            )
             candidates = inference.decision.changes + tool_changes
             existing_paths = {change.path for change in changes}
             changes.extend(change for change in candidates if change.path not in existing_paths)
             usage, model_name = inference.usage.model_dump(mode="json"), inference.model
         evidence_by_id = {item.id: item for item in evidence}
-        enriched = [{**finding.model_dump(mode="json"), "url": next((str(evidence_by_id[id].url) for id in finding.evidence_ids if id in evidence_by_id and evidence_by_id[id].url), None)} for finding in findings]
+        enriched = [
+            {
+                **finding.model_dump(mode="json"),
+                "url": next(
+                    (
+                        str(evidence_by_id[id].url)
+                        for id in finding.evidence_ids
+                        if id in evidence_by_id and evidence_by_id[id].url
+                    ),
+                    None,
+                ),
+            }
+            for finding in findings
+        ]
         report.update(findings=len(findings), usage=usage, model=model_name)
-        fresh = self.store.remember_findings(project.tenant_id, project.id, enriched, [str(item.url) for item in evidence if item.kind == "http"])
-        result = {"summary": f"Audited {report['pages']} pages; {fresh} new findings", "report": report,
-                  "findings": enriched, "revision": revision, "audited_urls": [str(item.url) for item in evidence if item.kind == "http"],
-                  "before_defects": [{"check_id": item["check_id"], "url": item["url"]} for item in enriched if item["status"] == "defect"]}
+        fresh = self.store.remember_findings(
+            project.tenant_id,
+            project.id,
+            enriched,
+            [str(item.url) for item in evidence if item.kind == "http"],
+        )
+        result = {
+            "summary": f"Audited {report['pages']} pages; {fresh} new findings",
+            "report": report,
+            "findings": enriched,
+            "revision": revision,
+            "audited_urls": [str(item.url) for item in evidence if item.kind == "http"],
+            "before_defects": [
+                {"check_id": item["check_id"], "url": item["url"]}
+                for item in enriched
+                if item["status"] == "defect"
+            ],
+        }
         if not changes or not spec.auto_fix:
             return "complete", result, 0
-        files = apply_changes(repository, spec, changes, set(evidence_by_id), {item.check_id for item in findings if item.status == FindingStatus.DEFECT})
+        files = apply_changes(
+            repository,
+            spec,
+            changes,
+            set(evidence_by_id),
+            {item.check_id for item in findings if item.status == FindingStatus.DEFECT},
+        )
         result["verification"] = verify_workspace(repository, spec, files)
         result["fixed_checks"] = sorted({change.check_id for change in changes})
-        if time.monotonic()-started > spec.max_job_seconds:
+        if time.monotonic() - started > spec.max_job_seconds:
             raise ValueError("Job budget exhausted before publication")
         if spec.local_path and spec.auto_merge:
-            result["merged_sha"] = commit_local(Path(spec.local_path), repository, spec.branch, revision, list(files))
+            result["merged_sha"] = commit_local(
+                Path(spec.local_path), repository, spec.branch, revision, list(files)
+            )
             after = crawler.collect(project.tenant_id, project.id, spec, result["audited_urls"])
             return self.verify_deployment(spec, result, after, None)
         if github:
-            result["pr"] = github.create_pr(spec.repository, spec.branch, revision, job.id, files,
-                                          "Fixes: " + ", ".join(result["fixed_checks"]))
+            result["pr"] = github.create_pr(
+                spec.repository,
+                spec.branch,
+                revision,
+                job.id,
+                files,
+                "Fixes: " + ", ".join(result["fixed_checks"]),
+            )
             result["stage"] = "checks"
             result["summary"] = "Verified changes published to a pull request"
             return "waiting_checks", result, 15
         result["summary"] = "Verified changes prepared; automatic merge is disabled"
         return "complete", result, 0
 
-    def finish_pr(self, project: Project, job: Job, spec: ProjectSpec, github: GitHubClient) -> tuple[str, dict[str, Any], float]:
+    def finish_pr(
+        self, project: Project, job: Job, spec: ProjectSpec, github: GitHubClient
+    ) -> tuple[str, dict[str, Any], float]:
         result = dict(job.result)
         pr = result["pr"]
         ready = github.checks_ready(spec.repository, pr["head_sha"], spec.required_checks)
         if ready == "failed":
-            return "blocked", {**result, "summary": "Repository checks rejected the proposed change"}, 0
+            return (
+                "blocked",
+                {**result, "summary": "Repository checks rejected the proposed change"},
+                0,
+            )
         if ready == "pending":
-            if time.time()-job.created_at > 86400:
-                return "blocked", {**result, "summary": "Required repository checks did not complete"}, 0
+            if time.time() - job.created_at > 86400:
+                return (
+                    "blocked",
+                    {**result, "summary": "Required repository checks did not complete"},
+                    0,
+                )
             return "waiting_checks", result, 30
         if not spec.auto_merge:
             return "complete", {**result, "summary": "Pull request is verified and ready"}, 0
@@ -306,21 +552,61 @@ class Worker:
             return "superseded", {**result, "summary": "Base changed; a fresh audit was queued"}, 0
         merged = github.merge(spec.repository, pr["number"], pr["head_sha"])
         if not merged.get("merged"):
-            return "blocked", {**result, "summary": "Repository policy prevented automatic merge"}, 0
-        result.update(merged_sha=merged["sha"], stage="deployment", summary="Merged; waiting for deployment confirmation")
+            return (
+                "blocked",
+                {**result, "summary": "Repository policy prevented automatic merge"},
+                0,
+            )
+        result.update(
+            merged_sha=merged["sha"],
+            stage="deployment",
+            summary="Merged; waiting for deployment confirmation",
+        )
         return "waiting_deployment", result, 15
 
-    def verify_deployment(self, spec: ProjectSpec, result: dict[str, Any], after: list[Evidence], github: GitHubClient | None) -> tuple[str, dict[str, Any], float]:
+    def verify_deployment(
+        self,
+        spec: ProjectSpec,
+        result: dict[str, Any],
+        after: list[Evidence],
+        github: GitHubClient | None,
+    ) -> tuple[str, dict[str, Any], float]:
         if not after or any(item.data.get("status_code") != 200 for item in after):
-            return "blocked", {**result, "summary": "Deployment verification is inconclusive; no rollback performed"}, 0
+            return (
+                "blocked",
+                {
+                    **result,
+                    "summary": "Deployment verification is inconclusive; no rollback performed",
+                },
+                0,
+            )
         project_context = context(after[0].tenant_id, after[0].project_id, spec)
         findings, report = scan(project_context, spec, after, self.knowledge)
         fixed = set(result.get("fixed_checks", []))
-        still_broken = [item for item in findings if item.check_id in fixed and item.status == FindingStatus.DEFECT]
+        still_broken = [
+            item
+            for item in findings
+            if item.check_id in fixed and item.status == FindingStatus.DEFECT
+        ]
         if still_broken:
             if github and spec.rollback_on_regression:
-                result["rollback_sha"] = github.revert(spec.repository, spec.branch, result["merged_sha"], result["revision"])
-            return "blocked", {**result, "summary": "Confirmed deployed fix failed verification", "after_report": report}, 0
-        result.update(summary="Changes verified on the deployed website", stage="verified", report=report,
-                      verified_fixes=len(fixed), after_report=report)
+                result["rollback_sha"] = github.revert(
+                    spec.repository, spec.branch, result["merged_sha"], result["revision"]
+                )
+            return (
+                "blocked",
+                {
+                    **result,
+                    "summary": "Confirmed deployed fix failed verification",
+                    "after_report": report,
+                },
+                0,
+            )
+        result.update(
+            summary="Changes verified on the deployed website",
+            stage="verified",
+            report=report,
+            verified_fixes=len(fixed),
+            after_report=report,
+        )
         return "complete", result, 0
