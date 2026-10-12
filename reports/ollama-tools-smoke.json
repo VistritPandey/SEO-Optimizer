@@ -1,0 +1,18 @@
+{
+  "model": "gemma4:12b",
+  "runtime_ms": 19812.253582989797,
+  "tool_trace": [],
+  "usage": {
+    "input_tokens": 112,
+    "output_tokens": 124,
+    "api_cost_usd": 0.0,
+    "electricity_cost_usd": null,
+    "hardware_cost_usd": null
+  },
+  "decision": {
+    "findings": [],
+    "changes": [],
+    "summary": "The observed title is: [Title from tool output]"
+  },
+  "scope": "Live native tool loop smoke test"
+}
