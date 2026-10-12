@@ -84,8 +84,8 @@ def prepare_build(repository, build):
     )
 
 
-def commit_fixture(repository, message):
-    run_git(repository, "add", "public/index.html")
+def commit_fixture(repository, message, path="public/index.html"):
+    run_git(repository, "add", path)
     run_git(
         repository,
         "-c",
@@ -197,7 +197,7 @@ def main():
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(json.dumps(report, indent=2) + "\n")
 
-    def run(label, enqueue=True):
+    def run(label, enqueue=True, kind="audit"):
         if enqueue:
             store.enqueue(account.id, project.id, "audit", label + ":" + uuid4().hex, {})
         started = time.monotonic()
@@ -235,6 +235,29 @@ def main():
     assert run_git(repository, "diff", "--name-only", defect_sha, fixed_sha) == "public/index.html"
     repeated = run("repeat-audit")
     assert repeated.status == "complete" and run_git(repository, "rev-parse", "HEAD") == fixed_sha
+    data_path = repository / "public/resumeData.json"
+    original_data = data_path.read_text()
+    changed_data = json.loads(original_data)
+    changed_data["_optimizer_fixture_marker"] = "incremental-scope-test"
+    data_path.write_text(json.dumps(changed_data, indent=2) + "\n")
+    commit_fixture(repository, "Test content data event", "public/resumeData.json")
+    event = run("json-data-push", kind="push")
+    assert event.status == "complete" and event.result["report"]["pages"] == 1
+    readme_path = repository / "README.md"
+    original_readme = readme_path.read_text()
+    readme_path.write_text(original_readme + "\nLocal test marker\n")
+    commit_fixture(repository, "Test irrelevant event", "README.md")
+    irrelevant = run("irrelevant-readme-push", kind="push")
+    assert "No affected website routes" in irrelevant.result["summary"]
+    assert store.project(account.id, project.id).last_revision == run_git(
+        repository, "rev-parse", "HEAD"
+    )
+    data_path.write_text(original_data)
+    commit_fixture(repository, "Restore fixture data", "public/resumeData.json")
+    readme_path.write_text(original_readme)
+    commit_fixture(repository, "Restore fixture readme", "README.md")
+    report["json_data_audited"] = True
+    report["irrelevant_event_skipped"] = True
     report["rules_cycle"] = "passed"
     report["repeat_created_commit"] = False
     report["rendered_title"] = re.search(r"<title>(.*?)</title>", source.read_text(), re.S).group(1)
