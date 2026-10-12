@@ -16,7 +16,9 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     create_engine,
+    insert,
     select,
+    text,
     update,
 )
 from sqlalchemy.engine import CursorResult
@@ -29,6 +31,12 @@ from seo_optimizer.settings import Settings
 
 class Base(DeclarativeBase):
     pass
+
+
+class SchemaVersion(Base):
+    __tablename__ = "schema_version"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    version: Mapped[int] = mapped_column(Integer)
 
 
 class User(Base):
@@ -111,7 +119,15 @@ class Store:
             pool_pre_ping=True,
         )
         self.sessions = sessionmaker(self.engine, expire_on_commit=False)
-        Base.metadata.create_all(self.engine)
+        with self.engine.begin() as connection:
+            if connection.dialect.name == "postgresql":
+                connection.execute(text("SELECT pg_advisory_xact_lock(701032021)"))
+            Base.metadata.create_all(connection)
+            version = connection.execute(select(SchemaVersion.version)).scalar_one_or_none()
+            if version is None:
+                connection.execute(insert(SchemaVersion).values(id=1, version=1))
+            elif version != 1:
+                raise ValueError("Database schema requires an explicit migration")
 
     def create_user(self, email: str, password_hash: str) -> tuple[User, str]:
         token = secrets.token_urlsafe(40)
