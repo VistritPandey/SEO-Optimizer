@@ -1,4 +1,4 @@
-"""Offline CLI. All filesystem/network side effects are explicit in commands."""
+"""Validation, benchmarking, dashboard and portable worker entrypoints."""
 
 import argparse
 import json
@@ -94,7 +94,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "benchmark-live":
             from seo_optimizer.live_benchmark import benchmark
 
-            benchmark(
+            return benchmark(
                 args.cases,
                 args.output,
                 args.provider,
