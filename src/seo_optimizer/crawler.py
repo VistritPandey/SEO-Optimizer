@@ -219,6 +219,7 @@ class Crawler:
 def capture_browser(
     url: str, crawler: Crawler, tenant: str, project: str, environment: str, output: Path
 ) -> list[Evidence]:
+    from playwright.sync_api import TimeoutError as BrowserTimeout
     from playwright.sync_api import sync_playwright
 
     crawler.check_url(url)
@@ -246,6 +247,11 @@ def capture_browser(
         context.route("**/*", route)
         page = context.new_page()
         page.goto(url, wait_until="domcontentloaded", timeout=30000)
+        settled = True
+        try:
+            page.wait_for_load_state("networkidle", timeout=5000)
+        except BrowserTimeout:
+            settled = False
         html = page.content()
         screenshot = output / "page.png"
         page.screenshot(path=str(screenshot), full_page=True)
@@ -261,7 +267,7 @@ def capture_browser(
             url=HttpUrl(url),
             collected_at=utc_now(),
             observation="Observed rendered browser DOM",
-            data={"html": html},
+            data={"html": html, "render_settled": settled},
         ),
         Evidence(
             id=str(uuid4()),
