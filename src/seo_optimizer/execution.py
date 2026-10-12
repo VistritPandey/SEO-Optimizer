@@ -175,10 +175,10 @@ def apply_changes(
                     raise ValueError("Edit removes the document head")
 
                 def fixed_head(value: str) -> str:
-                    value = re.sub(r"<title\b[^>]*>.*?</title>", "", value, flags=re.S | re.I)
-                    value = re.sub(r"<meta\b[^>]*>", "", value, flags=re.I)
+                    value = re.sub(r"\s*<title\b[^>]*>.*?</title>\s*", "", value, flags=re.S | re.I)
+                    value = re.sub(r"\s*<meta\b[^>]*>\s*", "", value, flags=re.I)
                     value = re.sub(
-                        r"<link\b(?=[^>]*\brel\s*=\s*['\"](?:canonical|alternate)['\"])[^>]*>",
+                        r"\s*<link\b(?=[^>]*\brel\s*=\s*['\"](?:canonical|alternate)['\"])[^>]*>\s*",
                         "",
                         value,
                         flags=re.I,
