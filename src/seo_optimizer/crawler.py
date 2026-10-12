@@ -3,6 +3,7 @@
 import ipaddress
 import re
 import socket
+import time
 from collections import deque
 from pathlib import Path
 from typing import Any
@@ -33,6 +34,7 @@ class Crawler:
         )
         self.owns_client = client is None
         self.requests = 0
+        self.deadline: float | None = None
 
     def close(self) -> None:
         if self.owns_client:
@@ -69,6 +71,11 @@ class Crawler:
 
     def fetch(self, url: str) -> httpx.Response:
         for _ in range(6):
+            if self.deadline is not None:
+                remaining = self.deadline - time.monotonic()
+                if remaining <= 0:
+                    raise CrawlError("Crawl time budget exhausted")
+                self.client.timeout = httpx.Timeout(min(15, remaining))
             addresses = self.check_url(url)
             self.requests += 1
             if self.requests > 250:
@@ -106,6 +113,8 @@ class Crawler:
     def collect(
         self, tenant: str, project: str, spec: ProjectSpec, seeds: list[str] | None = None
     ) -> list[Evidence]:
+        if self.deadline is None:
+            self.deadline = time.monotonic() + min(120, spec.max_job_seconds / 2)
         queue = deque(seeds or [str(spec.website_url)])
         visited: set[str] = set()
         evidence: list[Evidence] = []
@@ -121,6 +130,8 @@ class Crawler:
             except (httpx.HTTPError, CrawlError):
                 pass
         while queue and len(evidence) < spec.max_pages:
+            if time.monotonic() >= self.deadline:
+                break
             url = urldefrag(queue.popleft())[0]
             if url in visited:
                 continue
