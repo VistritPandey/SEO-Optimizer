@@ -104,6 +104,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     app.mount("/static", StaticFiles(directory=ASSETS / "static"), name="static")
     templates = Jinja2Templates(directory=ASSETS / "templates")
 
+    @app.get("/guide", response_class=HTMLResponse, include_in_schema=False)
+    def guide(request: Request) -> HTMLResponse:
+        return templates.TemplateResponse(request=request, name="guide.html", context={})
+
     @app.middleware("http")
     async def security_headers(request: Request, call_next: Any) -> Any:
         if request.method in {"POST", "PATCH", "PUT"}:
