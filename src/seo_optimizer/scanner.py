@@ -29,6 +29,8 @@ def context(tenant: str, project: str, spec: ProjectSpec) -> ProjectContext:
         actions += [ActionKind.PROPOSE_PATCH]
     if spec.allow_content_publication:
         actions += [ActionKind.PUBLISH_CONTENT]
+    if any(value != "unchanged" for value in spec.crawler_preferences.values()):
+        actions += [ActionKind.CHANGE_CRAWLER_POLICY]
     return ProjectContext(
         tenant_id=tenant,
         project_id=project,
@@ -151,23 +153,35 @@ def scan(
                 emit("geo.entities", item, "Structured data is not valid JSON.")
         raw_robots = item.data.get("robots_txt")
         if isinstance(raw_robots, str) and spec.crawler_preferences:
-            rules = RobotFileParser()
-            rules.parse(raw_robots.splitlines())
-            mismatch = [
-                bot
-                for bot, preference in spec.crawler_preferences.items()
-                if preference != "unchanged"
-                and rules.can_fetch(bot, url) != (preference == "allow")
-            ]
-            if mismatch:
+            if re.search(r"(?:Allow|Disallow)\s*:[^\n]*[\*$]", raw_robots, re.I):
                 emit(
                     "geo.crawlers",
                     item,
-                    "Crawler rules conflict with explicit owner preferences: "
-                    + ", ".join(mismatch),
+                    "Crawler patterns need engine-specific interpretation.",
+                    Severity.INFO,
+                    unresolved=True,
+                    dependencies=[
+                        "Verify wildcard/end-anchor behavior for the configured engines."
+                    ],
                 )
             else:
-                outcomes.setdefault("geo.crawlers", "healthy")
+                rules = RobotFileParser()
+                rules.parse(raw_robots.splitlines())
+                mismatch = [
+                    bot
+                    for bot, preference in spec.crawler_preferences.items()
+                    if preference != "unchanged"
+                    and rules.can_fetch(bot, url) != (preference == "allow")
+                ]
+                if mismatch:
+                    emit(
+                        "geo.crawlers",
+                        item,
+                        "Crawler rules conflict with explicit owner preferences: "
+                        + ", ".join(mismatch),
+                    )
+                else:
+                    outcomes.setdefault("geo.crawlers", "healthy")
         locale_links = re.findall(r'<link\b[^>]*hreflang=["\']([^"\']+)["\'][^>]*>', html, re.I)
         if locale_links:
             emit(
