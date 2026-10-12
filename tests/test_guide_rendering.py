@@ -88,3 +88,51 @@ def test_spa_title_uses_only_settled_same_page_scoped_dom(tmp_path: Path, mismat
         assert changes[0].evidence_ids == ["http", "dom"]
     else:
         assert changes == []
+
+
+def test_json_content_changes_need_route_reconciliation():
+    from seo_optimizer.scanner import affected_urls
+
+    spec = ProjectSpec(
+        name="SPA", website_url="https://example.test/", route_map={"/": "public/index.html"}
+    )
+    assert affected_urls(spec, ["public/resumeData.json"]) is None
+    assert affected_urls(spec, ["README.md"]) == []
+
+
+def test_completed_irrelevant_revision_preserves_report_and_advances_scope(tmp_path):
+    from seo_optimizer.application_models import ProjectCreate
+    from seo_optimizer.store import Store
+    from seo_optimizer.web import hash_password
+
+    settings = Settings(
+        data_dir=tmp_path,
+        database_url=f"sqlite:///{tmp_path}/scope.sqlite",
+        secret_key="scope-fixture-secret",
+    )
+    store = Store(settings)
+    account, _ = store.create_user("scope@example.test", hash_password("scope-password-123"))
+    project = store.create_project(
+        account.id, ProjectCreate(spec=ProjectSpec(name="SPA", website_url="https://example.test/"))
+    )
+    job = store.claim("scope-worker", account.id)
+    store.finish(
+        account.id,
+        job.id,
+        "scope-worker",
+        "complete",
+        {"revision": "previous", "report": {"score": 83}},
+    )
+    queued = store.enqueue(account.id, project.id, "push", "readme-change", {})
+    store.claim("scope-worker", account.id)
+    store.finish(
+        account.id,
+        queued.id,
+        "scope-worker",
+        "complete",
+        {"revision": "next", "summary": "No affected routes"},
+    )
+    updated = store.project(account.id, project.id)
+    assert updated.last_revision == "next"
+    assert updated.last_report == {"score": 83}
+    store.engine.dispose()
