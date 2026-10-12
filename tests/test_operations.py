@@ -393,3 +393,16 @@ def test_finding_memory_does_not_depend_on_model_wording(tmp_path):
     )
     assert len(store.findings("tenant", "project")) == 1
     store.engine.dispose()
+
+
+def test_local_crawl_cannot_read_another_port_or_scheme():
+    crawler = Crawler("http://127.0.0.1:8081/", allow_private=True)
+    from seo_optimizer.crawler import CrawlError
+
+    try:
+        with pytest.raises(CrawlError, match="configured website"):
+            crawler.check_url("http://127.0.0.1:11434/api/tags")
+        with pytest.raises(CrawlError, match="configured website"):
+            crawler.check_url("https://127.0.0.1:8081/")
+    finally:
+        crawler.close()
