@@ -144,36 +144,55 @@ class GitHubClient:
         changes: dict[str, str],
         summary: str,
     ) -> dict[str, Any]:
+        name = f"optimizer/{job_id}"
+        existing = self.request(
+            "GET",
+            f"/repos/{repo}/pulls",
+            params={"head": repo.split("/")[0] + ":" + name, "state": "all"},
+        )
+        if existing:
+            prior = existing[0]
+            if prior["state"] != "open":
+                raise ValueError("The job's existing pull request is closed")
+            return {
+                "number": prior["number"],
+                "url": prior["html_url"],
+                "head_sha": prior["head"]["sha"],
+                "base_sha": base_sha,
+            }
         if self.head(repo, branch) != base_sha:
             raise ValueError("Target revision changed before publication")
         base = self.request("GET", f"/repos/{repo}/git/commits/{base_sha}")
-        entries = []
+        parent_sha, tree_sha = base_sha, base["tree"]["sha"]
         for path, content in changes.items():
             blob = self.request(
                 "POST",
                 f"/repos/{repo}/git/blobs",
                 json={"content": base64.b64encode(content.encode()).decode(), "encoding": "base64"},
             )
-            entries.append({"path": path, "mode": "100644", "type": "blob", "sha": blob["sha"]})
-        tree = self.request(
-            "POST",
-            f"/repos/{repo}/git/trees",
-            json={"base_tree": base["tree"]["sha"], "tree": entries},
-        )
-        commit = self.request(
-            "POST",
-            f"/repos/{repo}/git/commits",
-            json={
-                "message": "Improve website metadata",
-                "tree": tree["sha"],
-                "parents": [base_sha],
-            },
-        )
+            tree = self.request(
+                "POST",
+                f"/repos/{repo}/git/trees",
+                json={
+                    "base_tree": tree_sha,
+                    "tree": [{"path": path, "mode": "100644", "type": "blob", "sha": blob["sha"]}],
+                },
+            )
+            commit = self.request(
+                "POST",
+                f"/repos/{repo}/git/commits",
+                json={
+                    "message": "Fix " + Path(path).name,
+                    "tree": tree["sha"],
+                    "parents": [parent_sha],
+                },
+            )
+            parent_sha, tree_sha = commit["sha"], tree["sha"]
         name = f"optimizer/{job_id}"
         self.request(
             "POST",
             f"/repos/{repo}/git/refs",
-            json={"ref": "refs/heads/" + name, "sha": commit["sha"]},
+            json={"ref": "refs/heads/" + name, "sha": parent_sha},
         )
         value = self.request(
             "POST",
@@ -189,23 +208,29 @@ class GitHubClient:
         return {
             "number": value["number"],
             "url": value["html_url"],
-            "head_sha": commit["sha"],
+            "head_sha": parent_sha,
             "base_sha": base_sha,
         }
 
     def checks_ready(self, repo: str, sha: str, required: list[str]) -> str:
-        statuses = self.request("GET", f"/repos/{repo}/commits/{sha}/status")
-        checks = self.request("GET", f"/repos/{repo}/commits/{sha}/check-runs")
-        by_name = {item["context"]: item["state"] for item in statuses.get("statuses", [])}
+        statuses = self.request(
+            "GET", f"/repos/{repo}/commits/{sha}/status", params={"per_page": 100}
+        )
+        checks = self.request(
+            "GET",
+            f"/repos/{repo}/commits/{sha}/check-runs",
+            params={"per_page": 100, "filter": "latest"},
+        )
+        by_name = {}
+        for item in statuses.get("statuses", []):
+            by_name.setdefault(item["context"], item["state"])
+        if checks.get("total_count", 0) > len(checks.get("check_runs", [])):
+            return "pending"
         for item in checks.get("check_runs", []):
             by_name[item["name"]] = (
                 "pending"
                 if item.get("status") != "completed"
-                else (
-                    "success"
-                    if item.get("conclusion") in {"success", "neutral", "skipped"}
-                    else "failure"
-                )
+                else ("success" if item.get("conclusion") == "success" else "failure")
             )
         if any(value in {"failure", "error"} for value in by_name.values()):
             return "failed"
