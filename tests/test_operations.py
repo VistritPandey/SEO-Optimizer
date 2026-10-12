@@ -406,3 +406,108 @@ def test_local_crawl_cannot_read_another_port_or_scheme():
             crawler.check_url("https://127.0.0.1:8081/")
     finally:
         crawler.close()
+
+
+def test_owner_crawler_repair_preserves_training_opt_out(tmp_path):
+    from seo_optimizer.execution import validate_robots_policy, verify_workspace
+
+    original = "User-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nDisallow: /\n"
+    updated = original.replace(
+        "User-agent: OAI-SearchBot\nDisallow: /", "User-agent: OAI-SearchBot\nDisallow: "
+    )
+    spec = ProjectSpec(
+        name="Site",
+        website_url="https://example.test/",
+        allowed_paths=["public"],
+        crawler_preferences={"GPTBot": "block", "OAI-SearchBot": "allow"},
+    )
+    (tmp_path / "public").mkdir()
+    (tmp_path / "public/robots.txt").write_text(original)
+    change = FileChange(
+        path="public/robots.txt",
+        before=original,
+        after=updated,
+        reason="Apply explicit discovery preference",
+        check_id="geo.crawlers",
+        evidence_ids=["page"],
+    )
+    changed = apply_changes(tmp_path, spec, [change], {"page"}, {"geo.crawlers"})
+    assert "User-agent: GPTBot\nDisallow: /" in changed[change.path]
+    assert verify_workspace(tmp_path, spec, changed)[0]["passed"]
+    with pytest.raises(ValueError, match="intent|block"):
+        validate_robots_policy(
+            original, updated.replace("GPTBot\nDisallow: /", "GPTBot\nDisallow: "), spec
+        )
+
+
+def test_unconfigured_training_preference_cannot_change():
+    from seo_optimizer.execution import validate_robots_policy
+
+    spec = ProjectSpec(
+        name="Site",
+        website_url="https://example.test/",
+        crawler_preferences={"OAI-SearchBot": "allow"},
+    )
+    with pytest.raises(ValueError, match="intent"):
+        validate_robots_policy(
+            "User-agent: GPTBot\nDisallow: /", "User-agent: GPTBot\nDisallow: ", spec
+        )
+
+
+def test_content_policy_cannot_authorize_script_changes(tmp_path):
+    (tmp_path / "web").mkdir()
+    (tmp_path / "web/index.html").write_text(HEALTHY)
+    spec = ProjectSpec(
+        name="Site",
+        website_url="https://example.test/",
+        allowed_paths=["web"],
+        allow_content_publication=True,
+    )
+    change = FileChange(
+        path="web/index.html",
+        before="<head>",
+        after="<head><script>window.location='https://other.test/'</script>",
+        reason="Controlled attempt",
+        check_id="content.factual",
+        evidence_ids=["page"],
+    )
+    with pytest.raises(ValueError, match="scripts"):
+        apply_changes(tmp_path, spec, [change], {"page"}, {"content.factual"})
+    assert (tmp_path / "web/index.html").read_text() == HEALTHY
+
+
+def test_content_publication_requires_current_fact_references(tmp_path):
+    from datetime import timedelta
+
+    from seo_optimizer.contracts import TrustedFact
+
+    (tmp_path / "web").mkdir()
+    (tmp_path / "web/index.html").write_text(HEALTHY)
+    fact = TrustedFact(
+        id="heading",
+        name="heading",
+        value="Observed guide",
+        source="Owner verified copy",
+        verified_at=utc_now() - timedelta(days=2),
+        valid_until=utc_now() - timedelta(days=1),
+    )
+    spec = ProjectSpec(
+        name="Site",
+        website_url="https://example.test/",
+        allowed_paths=["web"],
+        allow_content_publication=True,
+        facts=[fact],
+    )
+    change = FileChange(
+        path="web/index.html",
+        before="<h1>Observed guide</h1>",
+        after="<h1>A guide with unsupported claims</h1>",
+        reason="Controlled attempt",
+        check_id="content.factual",
+        evidence_ids=["page"],
+    )
+    with pytest.raises(ValueError, match="referenced"):
+        apply_changes(tmp_path, spec, [change], {"page"}, {"content.factual"})
+    change.fact_ids = ["heading"]
+    with pytest.raises(ValueError, match="expired"):
+        apply_changes(tmp_path, spec, [change], {"page"}, {"content.factual"})
