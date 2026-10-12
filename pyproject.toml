@@ -44,3 +44,6 @@ python_version = "3.12"
 strict = true
 files = ["src/seo_optimizer"]
 
+
+[tool.vercel]
+entrypoint = "api.index:app"
