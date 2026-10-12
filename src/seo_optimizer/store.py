@@ -346,6 +346,7 @@ class Store:
                     Job.tenant_id == tenant,
                     Job.worker_id == worker,
                     Job.status == "running",
+                    Job.lease_until > time.time(),
                 )
             )
             if job is None:
