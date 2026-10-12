@@ -120,7 +120,8 @@ class ModelClient:
             google_history[0]["parts"].extend(
                 [{"inlineData": {"mimeType": "image/png", "data": image}} for image in images]
             )
-        input_tokens, output_tokens, trace = 0, 0, []
+        input_tokens, output_tokens = 0, 0
+        trace: list[dict[str, Any]] = []
         started = time.monotonic()
         for step in range(max_steps):
             if time.monotonic() - started > max_seconds:
