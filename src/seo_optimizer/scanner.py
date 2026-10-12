@@ -304,7 +304,7 @@ def affected_urls(spec: ProjectSpec, changed: list[str] | None) -> list[str] | N
     ]
     unknown = [path for path in changed if path not in spec.route_map.values()]
     if unknown and any(
-        path.endswith((".html", ".tsx", ".jsx", ".js", ".py", ".md", ".mdx", ".css"))
+        path.endswith((".html", ".tsx", ".jsx", ".js", ".py", ".md", ".mdx", ".css", ".json"))
         for path in unknown
     ):
         return None
