@@ -5,7 +5,10 @@
 Compare three declared arms: the implemented rules baseline; rules plus one named Ollama
 model; rules plus one named paid-provider model. Use the same knowledge version, cases,
 observations, tools, step/time budget and allowed actions. Give the models only AuditRequest
-inputs and relevant references. Native provider/tool adapters and live fixture evaluation are implemented.
+inputs and relevant references. Native provider/tool adapters and live fixture evaluation are implemented. The CLI
+`--arm hybrid` runs the supported rule checks first and passes only remaining checks to the
+model; `--arm model-only` isolates model decisions. Protocol files record actual inference
+counts so rules-only routes cannot inflate claims of model quality.
 Saved-output replay remains available for controlled, offline grading.
 
 Record exact model/version, capability verification, sampling parameters, context budget,
