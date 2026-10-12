@@ -115,6 +115,23 @@ class ProjectContext(Scope):
     )
     allowed_paths: list[str] = Field(default_factory=list)
 
+    @field_validator("allowed_paths")
+    @classmethod
+    def confined_paths(cls, values: list[str]) -> list[str]:
+        from pathlib import PurePosixPath
+
+        for value in values:
+            path = PurePosixPath(value)
+            if (
+                not value
+                or path.is_absolute()
+                or ".." in path.parts
+                or "\\" in value
+                or str(path) == "."
+            ):
+                raise ValueError("allowed paths must be named relative repository roots")
+        return values
+
     @model_validator(mode="after")
     def unique_context(self) -> Self:
         for values in (
@@ -177,7 +194,9 @@ class Finding(Contract):
             if not self.dependencies:
                 raise ValueError("unresolved findings require recorded dependencies")
             if self.action.kind not in {
-                ActionKind.NONE, ActionKind.INVESTIGATE, ActionKind.COLLECT_EVIDENCE
+                ActionKind.NONE,
+                ActionKind.INVESTIGATE,
+                ActionKind.COLLECT_EVIDENCE,
             }:
                 raise ValueError("unresolved findings cannot propose a fix or publish")
         elif not self.evidence_ids:
@@ -198,7 +217,9 @@ class Finding(Contract):
 
 class ToolCall(Contract):
     id: str = Field(min_length=1)
-    name: Literal["read_file", "get_diff", "inspect_route", "crawl_page", "apply_patch", "run_checks"]
+    name: Literal[
+        "read_file", "get_diff", "inspect_route", "crawl_page", "apply_patch", "run_checks"
+    ]
     arguments: dict[str, JsonValue]
 
 
@@ -254,18 +275,26 @@ class ExpectedFinding(Contract):
     automatic: bool = False
 
 
-class BenchmarkCase(Contract):
-    id: str = Field(min_length=1)
-    split: Literal["development", "held_out"]
-    description: str = Field(min_length=1)
+class AuditRequest(Contract):
+    """Only observations and scope; benchmark answers never enter the model request."""
+
     project: ProjectContext
     environment: str
     evidence: list[Evidence]
     allowed_check_ids: list[str] = Field(min_length=1)
-    expected_findings: list[ExpectedFinding]
     required_capabilities: list[Literal["tool_calling", "json_schema", "vision"]] = Field(
         default_factory=list
     )
+
+
+class BenchmarkCase(AuditRequest):
+    id: str = Field(min_length=1)
+    split: Literal["development", "held_out"]
+    description: str = Field(min_length=1)
+    expected_findings: list[ExpectedFinding]
+
+    def to_request(self) -> AuditRequest:
+        return AuditRequest.model_validate(self.model_dump(include=set(AuditRequest.model_fields)))
 
 
 class ResponseRecord(Contract):
@@ -357,9 +386,20 @@ def schema_models() -> dict[str, type[BaseModel]]:
     return {
         model.__name__: model
         for model in (
-            ProjectContext, Evidence, Finding, Assessment, ProviderCapabilities,
-            ToolCall, ToolResult, ResponseRecord, BenchmarkCase, EvaluationResult,
-            EvaluationReport, SourceRegistry, CheckCatalog,
+            ProjectContext,
+            Evidence,
+            Finding,
+            Assessment,
+            AuditRequest,
+            ProviderCapabilities,
+            ToolCall,
+            ToolResult,
+            ResponseRecord,
+            BenchmarkCase,
+            EvaluationResult,
+            EvaluationReport,
+            SourceRegistry,
+            CheckCatalog,
         )
     }
 
