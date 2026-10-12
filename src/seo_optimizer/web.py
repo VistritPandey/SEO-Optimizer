@@ -304,6 +304,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                 provider=ProviderConfig(
                     kind=cast(Any, provider),
                     model=str(form.get("model", "")).strip(),
+                    base_url=str(form.get("base_url", "")).strip() or None,
                     capabilities=ProviderCapabilities(
                         tool_calling=provider != "rules", json_schema=provider == "ollama"
                     ),
@@ -382,6 +383,24 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             "job.html",
             {"job": job, "project": storage.project(account.id, job.project_id)},
         )
+
+    @app.post("/projects/{id}/credentials")
+    async def project_credentials(request: Request, id: str) -> Any:
+        project = owned(request, id)
+        form = await request.form()
+        csrf(request, str(form.get("csrf", "")))
+        credentials = storage.secrets(project).model_dump()
+        for name in credentials:
+            value = str(form.get(name, "")).strip()
+            if value:
+                credentials[name] = value
+        storage.update_project(
+            project.tenant_id,
+            id,
+            ProjectSpec.model_validate(project.spec),
+            ProjectSecrets.model_validate(credentials),
+        )
+        return RedirectResponse("/projects/" + id, status_code=303)
 
     @app.get("/settings")
     def settings_page(request: Request) -> Any:
