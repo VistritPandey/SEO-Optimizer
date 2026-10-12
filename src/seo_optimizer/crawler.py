@@ -10,6 +10,7 @@ from urllib.parse import urldefrag, urljoin, urlparse
 from uuid import uuid4
 
 import httpx
+from pydantic import HttpUrl
 
 from seo_optimizer.application_models import ProjectSpec
 from seo_optimizer.audit import PageParser
@@ -120,7 +121,7 @@ class Crawler:
                         project_id=project,
                         environment=spec.environment,
                         kind="http",
-                        url=url,
+                        url=HttpUrl(url),
                         observation="Page collection failed",
                         collected_at=utc_now(),
                         data={"collection_error": type(error).__name__},
@@ -165,7 +166,7 @@ class Crawler:
                     project_id=project,
                     environment=spec.environment,
                     kind="http",
-                    url=url,
+                    url=HttpUrl(url),
                     observation="Collected live HTTP page and same-origin link responses",
                     collected_at=utc_now(),
                     data=data,
@@ -209,7 +210,7 @@ def capture_browser(
             project_id=project,
             environment=environment,
             kind="dom",
-            url=url,
+            url=HttpUrl(url),
             collected_at=utc_now(),
             observation="Observed rendered browser DOM",
             data={"html": html},
@@ -220,7 +221,7 @@ def capture_browser(
             project_id=project,
             environment=environment,
             kind="screenshot",
-            url=url,
+            url=HttpUrl(url),
             collected_at=utc_now(),
             screenshot=str(screenshot),
             observation="Captured desktop viewport screenshot",
