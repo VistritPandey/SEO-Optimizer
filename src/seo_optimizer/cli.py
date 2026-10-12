@@ -54,6 +54,7 @@ def main(argv: list[str] | None = None) -> int:
     live.add_argument("--model", required=True)
     live.add_argument("--limit", type=int, default=5)
     live.add_argument("--split", choices=["development", "held_out"], default="development")
+    live.add_argument("--arm", choices=["model-only", "hybrid"], default="model-only")
     args = parser.parse_args(argv)
     try:
         package = load_knowledge(args.knowledge)
@@ -101,6 +102,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.model,
                 max(1, min(100, args.limit)),
                 args.split,
+                args.arm,
             )
         elif args.command == "validate":
             print(
