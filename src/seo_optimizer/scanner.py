@@ -40,7 +40,10 @@ def context(tenant: str, project: str, spec: ProjectSpec) -> ProjectContext:
                 intended_indexable=spec.environment == "production",
             )
         ],
-        page_intents=spec.page_intents,
+        page_intents={
+            urljoin(str(spec.website_url), route): intent
+            for route, intent in spec.page_intents.items()
+        },
         trusted_facts=spec.facts,
         goals=spec.goals,
         crawler_preferences=spec.crawler_preferences,
