@@ -129,15 +129,11 @@ rules remain the default.
 
 ```mermaid
 flowchart LR
-    Event[Push, schedule or manual audit] --> Queue[Durable project job]
-    Queue --> Scope[Revision and affected routes]
-    Scope --> Evidence[HTTP, source and optional rendered DOM]
-    Evidence --> Assess[Rules and optional model]
-    Assess --> Gate[Schema, evidence and policy checks]
-    Gate --> Verify[Exact patch and isolated verification]
-    Verify --> Publish[File commits and permitted merge]
-    Publish --> Confirm[Deployment and served-page checks]
-    Confirm --> Memory[Findings and verification history]
+    Event[Event] --> Evidence[Scope and observe]
+    Evidence --> Assess[Assess]
+    Assess --> Verify[Gate and verify]
+    Verify --> Publish[Publish]
+    Publish --> Confirm[Confirm and remember]
 ```
 
 1. **Trigger and scope.** Signed GitHub events, manual audits and periodic reconciliation queue
