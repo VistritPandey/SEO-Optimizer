@@ -202,7 +202,8 @@ class GitHubClient:
                 "head": name,
                 "base": branch,
                 "body": summary
-                + "\n\nValidated against the configured website and project checks. Automated by the repository's configured optimization policy.",
+                + "\n\nValidated against the configured website and project checks. "
+                "Automated by the repository's configured optimization policy.",
             },
         )
         return {
