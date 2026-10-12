@@ -11,9 +11,12 @@ import re
 import secrets
 import shutil
 import subprocess
+import threading
 import time
 from pathlib import Path
 from uuid import uuid4
+
+from portfolio_fixture import serve
 
 from seo_optimizer.application_models import ProjectCreate, ProjectSpec, ProviderConfig
 from seo_optimizer.contracts import ProviderCapabilities, TrustedFact, utc_now
@@ -102,7 +105,7 @@ def main():
     parser.add_argument("--model", default="gemma4:12b")
     parser.add_argument("--skip-model", action="store_true")
     parser.add_argument("--reuse-build", action="store_true")
-    parser.add_argument("--port", type=int, default=8811)
+    parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--output", type=Path, default=ROOT / "reports/portfolio-test.json")
     args = parser.parse_args()
     repository, build = ROOT / ".data/portfolio-test", ROOT / ".data/portfolio-built"
@@ -112,9 +115,9 @@ def main():
         raise ValueError(
             "The local test checkout has uncommitted work; preserve it before rerunning"
         )
-    original_sha = run_git(repository, "rev-parse", "HEAD")
+    original_sha = run_git(repository, "rev-parse", "refs/remotes/origin/HEAD")
     branch = "optimizer/portfolio-test-" + uuid4().hex[:8]
-    run_git(repository, "checkout", "-b", branch)
+    run_git(repository, "checkout", "-b", branch, original_sha)
     source = repository / "public/index.html"
     original = source.read_text()
     # Repeated tests start from the upstream title rather than a previous experiment's copy.
@@ -136,7 +139,9 @@ def main():
     )
     data = json.loads((repository / "public/resumeData.json").read_text())
     name = data["main"]["name"]
-    url = f"http://127.0.0.1:{args.port}/"
+    server = serve(repository, build, args.port)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    url = f"http://127.0.0.1:{server.server_port}/"
     spec = ProjectSpec.model_validate(
         {
             "name": "Historical portfolio integration test",
@@ -259,6 +264,8 @@ def main():
         ["docker", "image", "inspect", "--format", "{{.Id}}", IMAGE], text=True
     ).strip()
     save()
+    server.shutdown()
+    server.server_close()
     store.engine.dispose()
     return 0 if report["model_outcome"] in {"complete", "skipped"} else 1
 
