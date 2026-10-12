@@ -38,7 +38,7 @@ class Crawler:
         if self.owns_client:
             self.client.close()
 
-    def check_url(self, url: str) -> None:
+    def check_url(self, url: str) -> list[str]:
         parts = urlparse(url)
         if (
             parts.scheme not in {"http", "https"}
@@ -64,15 +64,23 @@ class Crawler:
                 or (not ip.is_global and not self.allow_private)
             ):
                 raise CrawlError("Website resolves to a restricted network address")
+        return sorted(addresses, key=lambda value: ipaddress.ip_address(value).version)
 
     def fetch(self, url: str) -> httpx.Response:
         for _ in range(6):
-            self.check_url(url)
+            addresses = self.check_url(url)
             self.requests += 1
             if self.requests > 250:
                 raise CrawlError("Crawl request budget exhausted")
             # Resolve again for every hop. No model-supplied off-origin fetches.
-            with self.client.stream("GET", url) as streamed:
+            original = httpx.URL(url)
+            pinned = original.copy_with(host=addresses[0])
+            with self.client.stream(
+                "GET",
+                pinned,
+                headers={"Host": original.netloc.decode()},
+                extensions={"sni_hostname": original.host},
+            ) as streamed:
                 body = bytearray()
                 for chunk in streamed.iter_bytes():
                     body.extend(chunk)
@@ -80,9 +88,14 @@ class Crawler:
                         raise CrawlError("Page response exceeded the size limit")
                 response = httpx.Response(
                     streamed.status_code,
-                    headers=streamed.headers,
+                    headers={
+                        key: value
+                        for key, value in streamed.headers.items()
+                        if key.lower()
+                        not in {"content-encoding", "content-length", "transfer-encoding"}
+                    },
                     content=bytes(body),
-                    request=streamed.request,
+                    request=httpx.Request("GET", url),
                 )
             if response.status_code not in {301, 302, 303, 307, 308}:
                 return response
@@ -190,9 +203,16 @@ def capture_browser(
 
         def route(request: Any) -> None:
             try:
-                crawler.check_url(request.request.url)
-                request.continue_()
-            except CrawlError:
+                if request.request.method != "GET":
+                    request.abort()
+                    return
+                response = crawler.fetch(request.request.url)
+                request.fulfill(
+                    status=response.status_code,
+                    headers=dict(response.headers),
+                    body=response.content,
+                )
+            except (CrawlError, httpx.HTTPError):
                 request.abort()
 
         context.route("**/*", route)
