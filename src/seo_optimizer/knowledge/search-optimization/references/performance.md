@@ -1,6 +1,6 @@
 # Performance and page experience
 
-Checks: perf.cwv, perf.media, perf.navigation. Sources: google-cwv, web-vitals, google-images, google-ai, google-js in the [registry](../sources.json).
+Checks: perf.cwv, perf.media, perf.navigation. Sources: google-pagespeed, google-cwv, web-vitals, google-images, google-ai, google-js in the [registry](../sources.json).
 
 ## Measurement evidence
 
@@ -19,3 +19,8 @@ Images should support the page's content, have appropriate sizes/formats, preser
 Vision may help identify overlays, clipped text, mobile layout problems or mismatched media. Pair the screenshot with the relevant DOM/accessibility structure and interaction trace. State the viewport and reproduction steps. A stylistic dislike is not a search defect.
 
 Check keyboard/accessible navigation and the visibility of primary content against actual user tasks. Preserve branding and interaction behavior. Verification uses comparable browser runs and task checks; field metrics need time to reflect deployed changes. Passing all Web Vitals does not guarantee search rankings.
+
+The optional runtime PageSpeed adapter records mobile lab diagnostics and available URL/origin
+field observations separately. It preserves device, scope, provider timestamp and Lighthouse
+version. Sparse or unavailable field data stays unknown. A low lab score calls for investigation,
+not an automatic behavior change or a guaranteed ranking gain.
