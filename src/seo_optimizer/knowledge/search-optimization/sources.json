@@ -503,6 +503,21 @@
         "geo.google-inclusion"
       ],
       "limitations": "Owner-configured inclusion controls must be respected"
+    },
+    {
+      "id": "google-pagespeed",
+      "title": "PageSpeed Insights API and measurement interpretation",
+      "publisher": "Google for Developers",
+      "url": "https://developers.google.com/speed/docs/insights/v5/reference/pagespeedapi/runpagespeed",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "performance"
+      ],
+      "supports": [
+        "perf.cwv"
+      ],
+      "limitations": "Remote mobile lab diagnostics and available URL/origin field observations; missing field data is unknown and lab scores do not prove rankings or real-user INP."
     }
   ]
 }
