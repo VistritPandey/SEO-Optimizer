@@ -1,0 +1,354 @@
+{
+  "$defs": {
+    "ActionKind": {
+      "enum": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "publish_content",
+        "change_crawler_policy",
+        "update_business_profile",
+        "merge",
+        "deploy",
+        "experiment"
+      ],
+      "title": "ActionKind",
+      "type": "string"
+    },
+    "Environment": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "base_url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Base Url",
+          "type": "string"
+        },
+        "intended_indexable": {
+          "title": "Intended Indexable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "base_url",
+        "intended_indexable"
+      ],
+      "title": "Environment",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "environment": {
+          "minLength": 1,
+          "title": "Environment",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "source",
+            "http",
+            "dom",
+            "screenshot",
+            "field_metric",
+            "research",
+            "tool"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "observation": {
+          "minLength": 1,
+          "title": "Observation",
+          "type": "string"
+        },
+        "collected_at": {
+          "format": "date-time",
+          "title": "Collected At",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "format": "uri",
+              "maxLength": 2083,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "source_file": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source File"
+        },
+        "screenshot": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Screenshot"
+        },
+        "data": {
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          },
+          "title": "Data",
+          "type": "object"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "project_id",
+        "id",
+        "environment",
+        "kind",
+        "observation",
+        "collected_at"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "JsonValue": {},
+    "ProjectContext": {
+      "additionalProperties": false,
+      "properties": {
+        "tenant_id": {
+          "minLength": 1,
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "project_id": {
+          "minLength": 1,
+          "title": "Project Id",
+          "type": "string"
+        },
+        "schema_version": {
+          "const": "1.0",
+          "default": "1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "website_types": {
+          "items": {
+            "$ref": "#/$defs/WebsiteType"
+          },
+          "minItems": 1,
+          "title": "Website Types",
+          "type": "array"
+        },
+        "environments": {
+          "items": {
+            "$ref": "#/$defs/Environment"
+          },
+          "minItems": 1,
+          "title": "Environments",
+          "type": "array"
+        },
+        "page_intents": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Page Intents",
+          "type": "object"
+        },
+        "trusted_facts": {
+          "items": {
+            "$ref": "#/$defs/TrustedFact"
+          },
+          "title": "Trusted Facts",
+          "type": "array"
+        },
+        "goals": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Goals",
+          "type": "array"
+        },
+        "crawler_preferences": {
+          "additionalProperties": {
+            "enum": [
+              "allow",
+              "block",
+              "unchanged"
+            ],
+            "type": "string"
+          },
+          "title": "Crawler Preferences",
+          "type": "object"
+        },
+        "permitted_actions": {
+          "items": {
+            "$ref": "#/$defs/ActionKind"
+          },
+          "title": "Permitted Actions",
+          "type": "array"
+        },
+        "allowed_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Allowed Paths",
+          "type": "array"
+        }
+      },
+      "required": [
+        "tenant_id",
+        "project_id",
+        "website_types",
+        "environments"
+      ],
+      "title": "ProjectContext",
+      "type": "object"
+    },
+    "TrustedFact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "verified_at": {
+          "format": "date-time",
+          "title": "Verified At",
+          "type": "string"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "value",
+        "source",
+        "verified_at"
+      ],
+      "title": "TrustedFact",
+      "type": "object"
+    },
+    "WebsiteType": {
+      "enum": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "title": "WebsiteType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "description": "Only observations and scope; benchmark answers never enter the model request.",
+  "properties": {
+    "project": {
+      "$ref": "#/$defs/ProjectContext"
+    },
+    "environment": {
+      "title": "Environment",
+      "type": "string"
+    },
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "allowed_check_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Allowed Check Ids",
+      "type": "array"
+    },
+    "required_capabilities": {
+      "items": {
+        "enum": [
+          "tool_calling",
+          "json_schema",
+          "vision"
+        ],
+        "type": "string"
+      },
+      "title": "Required Capabilities",
+      "type": "array"
+    }
+  },
+  "required": [
+    "project",
+    "environment",
+    "evidence",
+    "allowed_check_ids"
+  ],
+  "title": "AuditRequest",
+  "type": "object"
+}
