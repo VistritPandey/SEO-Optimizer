@@ -9,16 +9,16 @@
       "vision": false,
       "context_tokens": null
     },
-    "raw_response": "",
-    "runtime_ms": null,
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.title\",\"summary\":\"Public page at https://example.test/ lacks a descriptive title.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-starter\",\"google-js\"],\"action\":{\"kind\":\"propose_patch\",\"rationale\":\"The page is a public production route (intended_indexable: true) and the HTML response contains no <title> element. A descriptive title is required to help users and search engines identify the page content.\",\"automatic\":false,\"target_paths\":[\"web\"],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Verify that the <title> tag is present in the HTML response.\",\"Confirm the title accurately reflects the 'Actual product details' content.\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": 56074.95341700269,
     "usage": {
-      "input_tokens": null,
-      "output_tokens": null,
-      "api_cost_usd": null,
+      "input_tokens": 2136,
+      "output_tokens": 342,
+      "api_cost_usd": 0.0,
       "electricity_cost_usd": null,
       "hardware_cost_usd": null
     },
-    "run_error": "ReadTimeout"
+    "run_error": null
   },
   {
     "case_id": "public-healthy-title",
@@ -30,16 +30,16 @@
       "vision": false,
       "context_tokens": null
     },
-    "raw_response": "",
-    "runtime_ms": null,
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": 12911.837417050265,
     "usage": {
-      "input_tokens": null,
-      "output_tokens": null,
-      "api_cost_usd": null,
+      "input_tokens": 2143,
+      "output_tokens": 72,
+      "api_cost_usd": 0.0,
       "electricity_cost_usd": null,
       "hardware_cost_usd": null
     },
-    "run_error": "ReadTimeout"
+    "run_error": null
   },
   {
     "case_id": "private-untitled",
@@ -60,7 +60,7 @@
       "electricity_cost_usd": null,
       "hardware_cost_usd": null
     },
-    "run_error": "ReadTimeout"
+    "run_error": "ValidationError"
   },
   {
     "case_id": "accidental-noindex",
@@ -72,16 +72,16 @@
       "vision": false,
       "context_tokens": null
     },
-    "raw_response": "",
-    "runtime_ms": null,
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.indexability\",\"summary\":\"Public intent conflicts with HTML noindex.\",\"status\":\"defect\",\"severity\":\"high\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-essentials\",\"google-js\"],\"action\":{\"kind\":\"propose_patch\",\"rationale\":\"The production environment for the root URL (https://example.test/) is marked as 'intended_indexable: true', but the served HTML contains a <meta name=\\\"robots\\\" content=\\\"noindex\\\"> tag. This creates a conflict between the business goal of making the product visible and the technical implementation which instructs search engines to ignore the page.\",\"automatic\":false,\"target_paths\":[\"web\"],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Refetch the response for https://example.test/ to confirm the removal of the noindex meta tag.\",\"Verify that the X-Robots-Tag header (if present) also permits indexing.\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": 45337.443624972366,
     "usage": {
-      "input_tokens": null,
-      "output_tokens": null,
-      "api_cost_usd": null,
+      "input_tokens": 2131,
+      "output_tokens": 386,
+      "api_cost_usd": 0.0,
       "electricity_cost_usd": null,
       "hardware_cost_usd": null
     },
-    "run_error": "ReadTimeout"
+    "run_error": null
   },
   {
     "case_id": "intentional-noindex",
@@ -93,15 +93,15 @@
       "vision": false,
       "context_tokens": null
     },
-    "raw_response": "",
-    "runtime_ms": null,
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": 19291.798582999036,
     "usage": {
-      "input_tokens": null,
-      "output_tokens": null,
-      "api_cost_usd": null,
+      "input_tokens": 2140,
+      "output_tokens": 99,
+      "api_cost_usd": 0.0,
       "electricity_cost_usd": null,
       "hardware_cost_usd": null
     },
-    "run_error": "ReadTimeout"
+    "run_error": null
   }
 ]
