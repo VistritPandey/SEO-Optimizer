@@ -20,7 +20,7 @@
     </section>
 
     <section id="workflow" aria-labelledby="workflow-heading">
-      <div class="section-heading"><div><span class="eyebrow">01 / THE WORKFLOW</span><h2>Every action has a reason.</h2></div><p>Select a step to inspect its input and output.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">01 / THE WORKFLOW</span><h2 id="workflow-heading">Every action has a reason.</h2></div><p>Select a step to inspect its input and output.</p></div>
       <div class="workflow-steps" role="group" aria-label="Job workflow steps">
         <button type="button" data-step="0" aria-pressed="true"><span>01</span>Trigger</button>
         <button type="button" data-step="1" aria-pressed="false"><span>02</span>Scope</button>
@@ -39,7 +39,7 @@
     </section>
 
     <section id="decisions" aria-labelledby="decision-heading">
-      <div class="section-heading"><div><span class="eyebrow">02 / EVIDENCE BEFORE ACTION</span><h2>Sometimes the right fix<br>is <em>no change.</em></h2></div><p>Illustrative examples. These controls do not run a real audit or change a repository.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">02 / EVIDENCE BEFORE ACTION</span><h2 id="decision-heading">Sometimes the right fix<br>is <em>no change.</em></h2></div><p>Illustrative examples. These controls do not run a real audit or change a repository.</p></div>
       <div class="decision-layout">
         <div class="decision-controls"><label for="scenario">What did the worker observe?</label><select id="scenario"><option value="title">Public page missing its title</option><option value="healthy">Healthy page</option><option value="private">An intentionally private page</option><option value="training">Training blocked, search allowed</option><option value="facts">Content needs unverified facts</option><option value="tool">A required tool failed</option></select><label class="check"><input id="auto-fix" type="checkbox" checked> Automatic fixes enabled</label><p class="aside-note">Models may propose work. Application code checks paths, evidence, privacy and permissions independently.</p></div>
         <article class="decision-result" aria-live="polite" aria-atomic="true"><span id="decision-status" class="status">Supported proposal</span><h3 id="decision-title">Use the observed heading as a title</h3><p id="decision-reason">The page is public and the title is absent. An actual heading supplies useful text without inventing business claims.</p><dl><div><dt>Evidence</dt><dd id="decision-evidence">HTTP response, mapped source and observed heading</dd></div><div><dt>Next step</dt><dd id="decision-next">Validate the exact metadata patch before committing it</dd></div></dl></article>
@@ -47,7 +47,7 @@
     </section>
 
     <section id="setup" aria-labelledby="setup-heading">
-      <div class="section-heading"><div><span class="eyebrow">03 / RUN IT YOUR WAY</span><h2>The worker goes<br>where your model lives.</h2></div><p>Python 3.12, uv and Git. A web process and a worker run separately.</p></div>
+      <div class="section-heading"><div><span class="eyebrow">03 / RUN IT YOUR WAY</span><h2 id="setup-heading">The worker goes<br>where your model lives.</h2></div><p>Python 3.12, uv and Git. A web process and a worker run separately.</p></div>
       <div class="setup-options" role="group" aria-label="Installation setup"><button type="button" data-setup="rules" aria-pressed="true">Local rules</button><button type="button" data-setup="ollama" aria-pressed="false">Local Ollama</button><button type="button" data-setup="hosted" aria-pressed="false">Hosted + local worker</button></div>
       <div class="setup-detail"><div><h3 id="setup-title">Start without model credentials</h3><p id="setup-description">Rules are the default. Run the dashboard in one terminal and the worker in another. Connect a website through the workspace.</p><p id="setup-dependency" class="aside-note">Default local URL: http://127.0.0.1:8000. Local repositories must be inside OPT_REPO_ROOTS.</p></div><pre><code id="setup-command">uv sync --locked
 
