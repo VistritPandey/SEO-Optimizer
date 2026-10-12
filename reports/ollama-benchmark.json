@@ -1,0 +1,156 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-12T22:48:30.059733Z",
+  "knowledge_version": "1.0.0",
+  "split": "development",
+  "results": [
+    {
+      "case_id": "public-missing-title",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ReadTimeout"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "public-healthy-title",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ReadTimeout"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "private-untitled",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ReadTimeout"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "accidental-noindex",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ReadTimeout"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "intentional-noindex",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ReadTimeout"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    }
+  ],
+  "counts": {
+    "passed": 0,
+    "failed": 5,
+    "skipped": 0
+  },
+  "metrics": {
+    "evaluated_cases": 5,
+    "coverage": 1.0,
+    "true_positives": 0,
+    "false_positives": 0,
+    "false_negatives": 2,
+    "detection_precision": null,
+    "detection_recall": 0.0,
+    "decision_pass_rate": 0.0,
+    "unnecessary_actions": 0,
+    "mean_runtime_ms": null,
+    "runtime_measured_cases": 0,
+    "total_cost_usd": null,
+    "cost_measured_cases": 0,
+    "verified_fixes": null,
+    "regressions": null,
+    "cost_per_verified_fix_usd": null
+  },
+  "unverified": [
+    "Provider used live; only the selected fixture decisions were measured, not general reasoning quality.",
+    "GitHub authentication, webhooks, writes, merges, and deployment verification.",
+    "Verified fixes, regressions, search visibility, traffic, and conversion outcomes.",
+    "Imported runtime and cost measurements are not independently attested."
+  ]
+}
