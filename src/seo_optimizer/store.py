@@ -387,7 +387,7 @@ class Store:
             for finding in findings:
                 key = token_hash(
                     json.dumps(
-                        {key: finding.get(key) for key in ("check_id", "url", "summary")},
+                        {key: finding.get(key) for key in ("check_id", "url", "status")},
                         sort_keys=True,
                     )
                 )
