@@ -1,0 +1,138 @@
+{
+  "$defs": {
+    "ProviderCapabilities": {
+      "additionalProperties": false,
+      "properties": {
+        "tool_calling": {
+          "default": false,
+          "title": "Tool Calling",
+          "type": "boolean"
+        },
+        "json_schema": {
+          "default": false,
+          "title": "Json Schema",
+          "type": "boolean"
+        },
+        "vision": {
+          "default": false,
+          "title": "Vision",
+          "type": "boolean"
+        },
+        "context_tokens": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Tokens"
+        }
+      },
+      "title": "ProviderCapabilities",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "default": "rules",
+      "enum": [
+        "rules",
+        "ollama",
+        "openai",
+        "anthropic",
+        "google"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "model": {
+      "default": "",
+      "title": "Model",
+      "type": "string"
+    },
+    "base_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Url"
+    },
+    "capabilities": {
+      "$ref": "#/$defs/ProviderCapabilities"
+    },
+    "max_output_tokens": {
+      "default": 4096,
+      "maximum": 16384,
+      "minimum": 256,
+      "title": "Max Output Tokens",
+      "type": "integer"
+    },
+    "request_timeout_seconds": {
+      "default": 180,
+      "maximum": 300,
+      "minimum": 5,
+      "title": "Request Timeout Seconds",
+      "type": "integer"
+    },
+    "ollama_think": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": false,
+      "title": "Ollama Think"
+    },
+    "ollama_num_ctx": {
+      "default": 8192,
+      "maximum": 32768,
+      "minimum": 2048,
+      "title": "Ollama Num Ctx",
+      "type": "integer"
+    },
+    "input_usd_per_million": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Input Usd Per Million"
+    },
+    "output_usd_per_million": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Output Usd Per Million"
+    }
+  },
+  "title": "ProviderConfig",
+  "type": "object"
+}
