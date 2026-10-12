@@ -194,7 +194,9 @@ class Worker:
                             "blocked",
                             {
                                 **job.result,
-                                "summary": "Deployment of the merged revision has not been confirmed",
+                                "summary": (
+                                    "Deployment of the merged revision has not been confirmed"
+                                ),
                             },
                             0,
                         )
@@ -385,7 +387,9 @@ class Worker:
                 tools.append(
                     {
                         "name": "apply_patch",
-                        "description": "Stage a grounded exact replacement for independent validation",
+                        "description": (
+                            "Stage a grounded exact replacement for independent validation"
+                        ),
                         "parameters": FileChange.model_json_schema(),
                     }
                 )
@@ -397,7 +401,14 @@ class Worker:
                 instructions += (
                     "\n" + (self.knowledge.root / "references" / f"{module}.md").read_text()
                 )
-            instructions += "\nReturn only an AgentDecision JSON object with findings, changes and summary. Changes must fix evidenced problems, preserve privacy and stay within project policy. Use tools to read exact source before proposing replacements. No change is better than unsupported work. Never claim tools have merged or deployed a change."
+            instructions += (
+                "\nReturn only an AgentDecision JSON object with findings, changes and summary. "
+                "Changes must fix evidenced problems, preserve privacy "
+                "and stay within project policy. "
+                "Use tools to read exact source before proposing replacements. "
+                "No change is better than unsupported work. "
+                "Never claim tools have merged or deployed a change."
+            )
             observations = [
                 {
                     "id": item.id,
