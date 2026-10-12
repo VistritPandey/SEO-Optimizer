@@ -51,7 +51,9 @@ Adapters support Ollama chat, OpenAI Responses, Anthropic Messages and Google ge
 Tool calling, schema output and vision are separate capabilities. All responses are locally
 validated, with bounded explicit regeneration for invalid JSON when schema mode is configured.
 Tool failure, missing keys, unsupported capabilities or invalid decisions cannot publish a patch.
-Model time, step/token/file limits and configured cost limits bound work. Unknown token/cost data
+Model time, step/token/file limits bound work. Monetary guards stop further steps when
+reported usage and configured prices show the budget is exhausted; they do not cap upstream
+billing retroactively. Missing usage/prices stay unknown. Unknown token/cost data
 stays unknown. Shared production workers accept official model endpoints; custom/local endpoints
 belong on account-scoped local workers.
 
