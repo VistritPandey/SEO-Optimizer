@@ -163,3 +163,31 @@ def test_unsupported_vision_rejected():
     with pytest.raises(ProviderError, match="Vision"):
         client.complete("", {}, [], lambda n, a: {}, images=["image"])
     client.close()
+
+
+def test_missing_usage_remains_unknown_with_configured_prices():
+    client = ModelClient(
+        ProviderConfig(
+            kind="openai", model="fixture", input_usd_per_million=1, output_usd_per_million=1
+        ),
+        "fixture-key",
+        httpx.Client(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(
+                    200,
+                    json={
+                        "output": [
+                            {
+                                "type": "message",
+                                "role": "assistant",
+                                "content": [{"type": "output_text", "text": json.dumps(FINAL)}],
+                            }
+                        ],
+                    },
+                )
+            )
+        ),
+    )
+    result = client.complete("Return JSON", {}, [], lambda n, a: {})
+    assert result.usage.input_tokens is None and result.usage.output_tokens is None
+    assert result.usage.api_cost_usd is None
