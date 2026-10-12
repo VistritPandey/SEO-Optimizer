@@ -28,7 +28,7 @@ Use the [check catalog](checks.json) for applicability, prerequisites, evidence,
 2. Identify applicable checks and inspect their required evidence. Missing observations produce an unresolved finding with explicit dependencies. Absence of evidence is not absence of a defect.
 3. Separate severity from evidence strength. Do not turn content length, a screenshot, an AI citation or a tool invocation into proof of ranking, indexing, field performance or successful remediation.
 4. Prefer deterministic observations. Use model reasoning for interpretation and repair selection. Use vision only when DOM/text evidence cannot answer a visual question; corroborate visual findings before proposing automatic changes.
-5. Return the supplied Assessment JSON Schema without prose fences. Reference real evidence and sources. Healthy/inapplicable checks produce no finding. An experiment must use hypothesis strength and preserve its protocol.
+5. Return the runtime-supplied JSON Schema (Assessment or AgentDecision) without prose fences. Reference real evidence and sources. Healthy/inapplicable checks produce no finding. An experiment must use hypothesis strength and preserve its protocol.
 6. Propose only policy-permitted actions. Verified business facts support claims; never create fictitious locations, prices, reviews, credentials or studies. Missing facts become dependencies. Training and search access are independent preferences.
 7. State concrete verification criteria. The runtime independently authorizes and verifies execution; a model cannot declare its own patch merged, deployed or successful. Failed tools must stay visible, with no automatic change relying on failed evidence.
 
@@ -36,4 +36,4 @@ Use the [check catalog](checks.json) for applicability, prerequisites, evidence,
 
 A useful result can be no action. Avoid reopening unchanged findings, rewriting adequate copy or adding markup solely to inflate an audit score. Apply bounded investigation and stop with the exact missing dependency when proof cannot be gathered. Load detailed references on demand rather than sending the whole knowledge pack to every model.
 
-Full autonomy means execution within application-enforced policy, not permission inferred from a prompt. This Phase 1 asset does not itself crawl production sites, execute tools, merge changes or manage listings.
+Full autonomy means execution within application-enforced policy, not permission inferred from a prompt. The runtime collects evidence, executes permitted tools, verifies changes and manages repository publication. External listings require separate authorized integration access; instructions alone do not grant it.
