@@ -72,7 +72,7 @@ dependency; successful local metadata fixes need no shell-based build step.
 
 Content publication is off by default, independently of automatic metadata fixes. Enable it only
 with current owner-verified facts, allowed content paths and applicable sandbox checks. Models can
-stage exact replacements or new content; grounding, path limits, stale context and project policy
+stage exact replacements or new content; fact references/expiry, path limits, stale context and project policy
 are checked before filesystem changes. Model declarations cannot authorize a merge or prove facts.
 
 ## Operations
@@ -105,3 +105,10 @@ disable it. Container verification images must contain dependencies before execu
 verification has no network access. The optional PageSpeed adapter uses its official public-URL
 API; quota errors or absent field observations remain recorded dependencies. This does not grant
 Search Console, business-profile, merchant-feed or AI-citation account access.
+
+Broader publication is confined to static HTML/Markdown; content permission does not grant
+application execution changes. Scripts, styles, interactive controls and private/indexing intent
+are independently guarded. Content proposals must cite current owner fact IDs, and factual
+meaning still requires supported source material and applicable checks. Simple robots policy
+repairs may change only explicitly configured bot groups; training and discovery preferences
+remain separate. Wildcard policies require engine-specific evidence and remain unresolved.
