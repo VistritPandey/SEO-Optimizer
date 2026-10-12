@@ -16,6 +16,6 @@ Use the specific applicable LocalBusiness subtype and visible real details for e
 
 ## External profiles
 
-Repository access does not authorize a Business Profile or other listing change. Report a verified website/profile discrepancy as an external dependency until account access and project policy permit action. No outreach, reviews or profile edits are performed by this Phase 1 package.
+Repository access does not authorize a Business Profile or other listing change. Report a verified website/profile discrepancy as an external dependency until account access and project policy permit action. Unconfigured external listing access remains a recorded dependency. Repository automation never invents reviews or authorizes outreach.
 
 Verify location facts, page content and schema consistently. When observing local outcomes, retain geography, query and time. Do not claim an onsite fix controls all external citations, reputation or distance.
