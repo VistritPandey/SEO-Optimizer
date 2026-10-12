@@ -4,9 +4,10 @@ import hashlib
 import hmac
 import json
 import secrets
+from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, AsyncIterator
+from typing import Any
 from uuid import uuid4
 
 from fastapi import FastAPI, HTTPException, Request
@@ -17,7 +18,12 @@ from pydantic import ValidationError
 from sqlalchemy.exc import IntegrityError
 from starlette.middleware.sessions import SessionMiddleware
 
-from seo_optimizer.application_models import ProjectCreate, ProjectSecrets, ProjectSpec, Registration
+from seo_optimizer.application_models import (
+    ProjectCreate,
+    ProjectSecrets,
+    ProjectSpec,
+    Registration,
+)
 from seo_optimizer.github import verify_signature
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store, User
@@ -27,28 +33,45 @@ ASSETS = Path(__file__).parent / "ui"
 
 def hash_password(value: str) -> str:
     salt = secrets.token_bytes(16)
-    digest = hashlib.scrypt(value.encode(), salt=salt, n=16384, r=8, p=1, maxmem=64*1024*1024)
+    digest = hashlib.scrypt(value.encode(), salt=salt, n=16384, r=8, p=1, maxmem=64 * 1024 * 1024)
     return salt.hex() + ":" + digest.hex()
 
 
 def check_password(value: str, encoded: str) -> bool:
     try:
         salt, expected = encoded.split(":")
-        actual = hashlib.scrypt(value.encode(), salt=bytes.fromhex(salt), n=16384, r=8, p=1, maxmem=64*1024*1024).hex()
+        actual = hashlib.scrypt(
+            value.encode(), salt=bytes.fromhex(salt), n=16384, r=8, p=1, maxmem=64 * 1024 * 1024
+        ).hex()
         return hmac.compare_digest(actual, expected)
     except (ValueError, TypeError):
         return False
 
 
 def project_json(project: Project) -> dict[str, Any]:
-    return {"id": project.id, "spec": project.spec, "last_report": project.last_report,
-            "last_revision": project.last_revision, "updated_at": project.updated_at}
+    return {
+        "id": project.id,
+        "spec": project.spec,
+        "last_report": project.last_report,
+        "last_revision": project.last_revision,
+        "updated_at": project.updated_at,
+    }
 
 
 def job_json(job: Job) -> dict[str, Any]:
-    return {"id": job.id, "tenant_id": job.tenant_id, "project_id": job.project_id, "kind": job.kind,
-            "status": job.status, "result": job.result, "events": job.events, "payload": job.payload,
-            "attempts": job.attempts, "created_at": job.created_at, "updated_at": job.updated_at}
+    return {
+        "id": job.id,
+        "tenant_id": job.tenant_id,
+        "project_id": job.project_id,
+        "kind": job.kind,
+        "status": job.status,
+        "result": job.result,
+        "events": job.events,
+        "payload": job.payload,
+        "attempts": job.attempts,
+        "created_at": job.created_at,
+        "updated_at": job.updated_at,
+    }
 
 
 def create_app(settings: Settings | None = None, store: Store | None = None) -> FastAPI:
@@ -61,12 +84,22 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         if store is None:
             storage.engine.dispose()
 
-    app = FastAPI(title="SEO Optimizer API", version="1.0.0", lifespan=lifespan,
-                  docs_url=None if configuration.production else "/api/docs",
-                  redoc_url=None, openapi_url="/api/v1/openapi.json")
+    app = FastAPI(
+        title="SEO Optimizer API",
+        version="1.0.0",
+        lifespan=lifespan,
+        docs_url=None if configuration.production else "/api/docs",
+        redoc_url=None,
+        openapi_url="/api/v1/openapi.json",
+    )
     app.state.store, app.state.settings = storage, configuration
-    app.add_middleware(SessionMiddleware, secret_key=configuration.secret_key,
-                       same_site="lax", https_only=configuration.production, max_age=604800)
+    app.add_middleware(
+        SessionMiddleware,
+        secret_key=configuration.secret_key,
+        same_site="lax",
+        https_only=configuration.production,
+        max_age=604800,
+    )
     app.mount("/static", StaticFiles(directory=ASSETS / "static"), name="static")
     templates = Jinja2Templates(directory=ASSETS / "templates")
 
@@ -80,14 +113,20 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "same-origin"
         response.headers["X-Frame-Options"] = "DENY"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; form-action 'self'"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; form-action 'self'"
+        )
         if not request.url.path.startswith("/static"):
             response.headers["Cache-Control"] = "no-store"
         return response
 
     def user(request: Request, required: bool = True) -> User | None:
         authorization = request.headers.get("authorization", "")
-        authenticated = storage.user(token=authorization[7:]) if authorization.startswith("Bearer ") else storage.user(id=request.session.get("user_id"))
+        authenticated = (
+            storage.user(token=authorization[7:])
+            if authorization.startswith("Bearer ")
+            else storage.user(id=request.session.get("user_id"))
+        )
         if authenticated is None and required:
             raise HTTPException(401, "Sign in to continue")
         return authenticated
@@ -105,10 +144,20 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         if not expected or not hmac.compare_digest(expected, actual):
             raise HTTPException(403, "Request verification failed; reload the page")
 
-    def render(request: Request, name: str, values: dict[str, Any] | None = None, status: int = 200) -> HTMLResponse:
+    def render(
+        request: Request, name: str, values: dict[str, Any] | None = None, status: int = 200
+    ) -> HTMLResponse:
         request.session.setdefault("csrf", secrets.token_urlsafe(32))
-        return templates.TemplateResponse(request=request, name=name, context={
-            "user": user(request, False), "csrf": request.session["csrf"], **(values or {})}, status_code=status)
+        return templates.TemplateResponse(
+            request=request,
+            name=name,
+            context={
+                "user": user(request, False),
+                "csrf": request.session["csrf"],
+                **(values or {}),
+            },
+            status_code=status,
+        )
 
     def owned(request: Request, id: str) -> Project:
         account = require_user(request)
@@ -120,7 +169,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     def validate_host_policy(spec: ProjectSpec) -> None:
         if spec.local_path and not configuration.allow_local_repositories:
             raise HTTPException(400, "This host accepts GitHub repositories only")
-        if spec.local_path and not any(Path(spec.local_path).resolve().is_relative_to(root) for root in configuration.allowed_repo_roots):
+        if spec.local_path and not any(
+            Path(spec.local_path).resolve().is_relative_to(root)
+            for root in configuration.allowed_repo_roots
+        ):
             raise HTTPException(400, "Local repository is outside configured roots")
 
     @app.exception_handler(HTTPException)
@@ -135,6 +187,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     def health() -> dict[str, str]:
         with storage.engine.connect() as connection:
             from sqlalchemy import text
+
             connection.execute(text("SELECT 1"))
         return {"status": "ready", "version": "1.0.0"}
 
@@ -155,10 +208,20 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         if not configuration.registration_enabled:
             raise HTTPException(403, "Registration is disabled")
         try:
-            value = Registration(email=str(form.get("email", "")), password=str(form.get("password", "")))
+            value = Registration(
+                email=str(form.get("email", "")), password=str(form.get("password", ""))
+            )
             account, _ = storage.create_user(value.email, hash_password(value.password))
         except (ValidationError, IntegrityError):
-            return render(request, "auth.html", {"register": True, "error": "Use a valid email and at least 12 password characters. The email must be available."}, 400)
+            return render(
+                request,
+                "auth.html",
+                {
+                    "register": True,
+                    "error": "Use a valid email and at least 12 password characters. The email must be available.",
+                },
+                400,
+            )
         request.session.clear()
         request.session["user_id"] = account.id
         return RedirectResponse("/", status_code=303)
@@ -173,7 +236,12 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             raise HTTPException(429, "Too many sign-in attempts; try again later")
         account = storage.user(email=email)
         if not account or not check_password(str(form.get("password", "")), account.password_hash):
-            return render(request, "auth.html", {"register": False, "error": "Email or password is incorrect."}, 400)
+            return render(
+                request,
+                "auth.html",
+                {"register": False, "error": "Email or password is incorrect."},
+                400,
+            )
         request.session.clear()
         request.session["user_id"] = account.id
         return RedirectResponse("/", status_code=303)
@@ -191,14 +259,27 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         projects = storage.projects(account.id)
         jobs = storage.jobs(account.id)
         lookup = {project.id: project.spec["name"] for project in projects}
-        return render(request, "dashboard.html", {"projects": projects, "jobs": jobs[:8], "lookup": lookup,
-            "active": sum(job.status in {"queued", "running", "waiting_checks", "waiting_deployment"} for job in jobs),
-            "verified": sum(job.result.get("verified_fixes", 0) for job in jobs)})
+        return render(
+            request,
+            "dashboard.html",
+            {
+                "projects": projects,
+                "jobs": jobs[:8],
+                "lookup": lookup,
+                "active": sum(
+                    job.status in {"queued", "running", "waiting_checks", "waiting_deployment"}
+                    for job in jobs
+                ),
+                "verified": sum(job.result.get("verified_fixes", 0) for job in jobs),
+            },
+        )
 
     @app.get("/projects/new")
     def new_project(request: Request) -> Any:
         require_user(request)
-        return render(request, "project_form.html", {"local_allowed": configuration.allow_local_repositories})
+        return render(
+            request, "project_form.html", {"local_allowed": configuration.allow_local_repositories}
+        )
 
     @app.post("/projects/new")
     async def new_project_form(request: Request) -> Any:
@@ -208,26 +289,61 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         try:
             from seo_optimizer.application_models import ProviderConfig
             from seo_optimizer.contracts import ProviderCapabilities
+
             provider = str(form.get("provider", "rules"))
-            spec = ProjectSpec(name=str(form.get("name", "")), website_url=str(form.get("website_url", "")),
-                repository=str(form.get("repository", "")).strip(), local_path=str(form.get("local_path", "")).strip() or None,
-                provider=ProviderConfig(kind=provider, model=str(form.get("model", "")).strip(),
-                    capabilities=ProviderCapabilities(tool_calling=provider != "rules", json_schema=provider == "ollama")),
-                website_types=[str(form.get("website_type", "generic"))])
+            spec = ProjectSpec(
+                name=str(form.get("name", "")),
+                website_url=str(form.get("website_url", "")),
+                repository=str(form.get("repository", "")).strip(),
+                local_path=str(form.get("local_path", "")).strip() or None,
+                provider=ProviderConfig(
+                    kind=provider,
+                    model=str(form.get("model", "")).strip(),
+                    capabilities=ProviderCapabilities(
+                        tool_calling=provider != "rules", json_schema=provider == "ollama"
+                    ),
+                ),
+                website_types=[str(form.get("website_type", "generic"))],
+            )
             validate_host_policy(spec)
-            value = storage.create_project(account.id, ProjectCreate(spec=spec, credentials=ProjectSecrets(
-                github_token=str(form.get("github_token", "")), provider_key=str(form.get("provider_key", "")),
-                webhook_secret=str(form.get("webhook_secret", "")) or secrets.token_urlsafe(32))))
+            value = storage.create_project(
+                account.id,
+                ProjectCreate(
+                    spec=spec,
+                    credentials=ProjectSecrets(
+                        github_token=str(form.get("github_token", "")),
+                        provider_key=str(form.get("provider_key", "")),
+                        webhook_secret=str(form.get("webhook_secret", ""))
+                        or secrets.token_urlsafe(32),
+                    ),
+                ),
+            )
         except (ValueError, ValidationError):
-            return render(request, "project_form.html", {"error": "Check the website URL, repository, model and selected project type.", "local_allowed": configuration.allow_local_repositories}, 400)
+            return render(
+                request,
+                "project_form.html",
+                {
+                    "error": "Check the website URL, repository, model and selected project type.",
+                    "local_allowed": configuration.allow_local_repositories,
+                },
+                400,
+            )
         return RedirectResponse("/projects/" + value.id, status_code=303)
 
     @app.get("/projects/{id}")
     def project_page(request: Request, id: str) -> Any:
         project = owned(request, id)
-        return render(request, "project.html", {"project": project, "jobs": storage.jobs(project.tenant_id, id),
-            "findings": storage.findings(project.tenant_id, id), "configuration": json.dumps(project.spec, indent=2),
-            "webhook_url": configuration.public_url.rstrip("/") + "/webhooks/github/" + id})
+        return render(
+            request,
+            "project.html",
+            {
+                "project": project,
+                "jobs": storage.jobs(project.tenant_id, id),
+                "findings": storage.findings(project.tenant_id, id),
+                "configuration": json.dumps(project.spec, indent=2),
+                "webhook_url": configuration.public_url.rstrip("/") + "/webhooks/github/" + id,
+            },
+        )
 
     @app.post("/projects/{id}/run")
     async def project_run(request: Request, id: str) -> Any:
@@ -256,7 +372,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         job = storage.job(account.id, id)
         if job is None:
             raise HTTPException(404, "Job not found")
-        return render(request, "job.html", {"job": job, "project": storage.project(account.id, job.project_id)})
+        return render(
+            request,
+            "job.html",
+            {"job": job, "project": storage.project(account.id, job.project_id)},
+        )
 
     @app.get("/settings")
     def settings_page(request: Request) -> Any:
@@ -298,14 +418,18 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     def api_credentials(request: Request, id: str, value: ProjectSecrets) -> Any:
         project = owned(request, id)
         csrf(request)
-        storage.update_project(project.tenant_id, id, ProjectSpec.model_validate(project.spec), value)
+        storage.update_project(
+            project.tenant_id, id, ProjectSpec.model_validate(project.spec), value
+        )
         return {"status": "configured"}
 
     @app.post("/api/v1/projects/{id}/jobs", status_code=202)
     def api_run(request: Request, id: str) -> Any:
         project = owned(request, id)
         csrf(request)
-        return job_json(storage.enqueue(project.tenant_id, id, "audit", "manual:" + str(uuid4()), {}))
+        return job_json(
+            storage.enqueue(project.tenant_id, id, "audit", "manual:" + str(uuid4()), {})
+        )
 
     @app.get("/api/v1/jobs/{id}")
     def api_job(request: Request, id: str) -> Any:
@@ -328,18 +452,37 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             return None
         project = storage.project(account.id, job.project_id)
         assert project is not None
-        return {"job": job_json(job), "project": project_json(project),
-                "credentials": storage.secrets(project).model_dump()}
+        return {
+            "job": job_json(job),
+            "project": project_json(project),
+            "credentials": storage.secrets(project).model_dump(),
+        }
 
     @app.post("/api/v1/worker/jobs/{id}/finish")
     def api_finish(request: Request, id: str, value: dict[str, Any]) -> Any:
         account = require_user(request)
         if not request.headers.get("authorization", "").startswith("Bearer "):
             raise HTTPException(403, "Worker requires a scoped API token")
-        if value.get("status") not in {"complete", "queued", "failed", "blocked", "canceled", "superseded", "waiting_checks", "waiting_deployment"}:
+        if value.get("status") not in {
+            "complete",
+            "queued",
+            "failed",
+            "blocked",
+            "canceled",
+            "superseded",
+            "waiting_checks",
+            "waiting_deployment",
+        }:
             raise HTTPException(400, "Invalid job status")
         try:
-            storage.finish(account.id, id, value["worker_id"], value["status"], value["result"], min(3600, max(0, float(value.get("delay", 0)))))
+            storage.finish(
+                account.id,
+                id,
+                value["worker_id"],
+                value["status"],
+                value["result"],
+                min(3600, max(0, float(value.get("delay", 0)))),
+            )
         except (ValueError, KeyError):
             raise HTTPException(409, "Job lease is not owned by this worker") from None
         return {"status": "recorded"}
@@ -351,8 +494,29 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             raise HTTPException(403, "Worker requires a scoped API token")
         if storage.project(account.id, value["project_id"]) is None:
             raise HTTPException(404, "Project not found")
-        fresh = storage.remember_findings(account.id, value["project_id"], value["findings"], value["audited_urls"])
+        fresh = storage.remember_findings(
+            account.id, value["project_id"], value["findings"], value["audited_urls"]
+        )
         return {"fresh": fresh}
+
+    @app.post("/api/v1/worker/enqueue")
+    def worker_enqueue(request: Request, value: dict[str, Any]) -> Any:
+        account = require_user(request)
+        if not request.headers.get("authorization", "").startswith("Bearer "):
+            raise HTTPException(403, "Worker requires a scoped API token")
+        if storage.project(account.id, value["project_id"]) is None:
+            raise HTTPException(404, "Project not found")
+        if value.get("kind") not in {"audit", "push"}:
+            raise HTTPException(400, "Invalid job kind")
+        return job_json(
+            storage.enqueue(
+                account.id,
+                value["project_id"],
+                value["kind"],
+                value["key"],
+                value.get("payload", {}),
+            )
+        )
 
     @app.post("/api/v1/reconcile")
     def api_reconcile(request: Request) -> Any:
@@ -366,7 +530,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         if project is None:
             raise HTTPException(404, "Project not found")
         raw = await request.body()
-        if not verify_signature(storage.secrets(project).webhook_secret, raw, request.headers.get("x-hub-signature-256", "")):
+        if not verify_signature(
+            storage.secrets(project).webhook_secret,
+            raw,
+            request.headers.get("x-hub-signature-256", ""),
+        ):
             raise HTTPException(403, "Webhook signature is invalid")
         try:
             payload = json.loads(raw)
@@ -376,13 +544,25 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         if payload.get("repository", {}).get("full_name") != spec.repository:
             raise HTTPException(403, "Repository does not match this connection")
         event = request.headers.get("x-github-event", "")
-        if event == "push" and payload.get("ref") == "refs/heads/" + spec.branch and not payload.get("deleted"):
+        if (
+            event == "push"
+            and payload.get("ref") == "refs/heads/" + spec.branch
+            and not payload.get("deleted")
+        ):
             sha = str(payload.get("after", ""))
             if not re_sha(sha):
                 raise HTTPException(400, "Invalid commit revision")
-            if any(job.result.get("merged_sha") == sha for job in storage.jobs(project.tenant_id, id)):
+            if any(
+                job.result.get("merged_sha") == sha for job in storage.jobs(project.tenant_id, id)
+            ):
                 return {"status": "own_change_suppressed"}
-            job = storage.enqueue(project.tenant_id, id, "push", "push:" + sha, {"before": payload.get("before"), "after": sha})
+            job = storage.enqueue(
+                project.tenant_id,
+                id,
+                "push",
+                "push:" + sha,
+                {"before": payload.get("before"), "after": sha},
+            )
             return {"status": "queued", "job_id": job.id}
         return {"status": "ignored"}
 
@@ -391,9 +571,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
 
 def re_worker_id(value: str) -> bool:
     import re
+
     return bool(re.fullmatch(r"[A-Za-z0-9_-]{1,100}", value))
 
 
 def re_sha(value: str) -> bool:
     import re
+
     return bool(re.fullmatch(r"[0-9a-f]{40,64}", value))
