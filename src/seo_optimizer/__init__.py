@@ -1,3 +1,3 @@
-"""Provider-independent search knowledge and evaluation. No live integrations."""
+"""Autonomous website optimization, portable execution and evidence-led evaluation."""
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"
