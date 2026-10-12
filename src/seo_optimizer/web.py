@@ -115,7 +115,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         response.headers["Referrer-Policy"] = "same-origin"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Content-Security-Policy"] = (
-            "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'; form-action 'self'"
+            "default-src 'self'; script-src 'self'; style-src 'self'; "
+            "img-src 'self' data:; frame-ancestors 'none'; form-action 'self'"
         )
         if not request.url.path.startswith("/static"):
             response.headers["Cache-Control"] = "no-store"
@@ -219,7 +220,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                 "auth.html",
                 {
                     "register": True,
-                    "error": "Use a valid email and at least 12 password characters. The email must be available.",
+                    "error": (
+                        "Use a valid email and at least 12 password characters. "
+                        "The email must be available."
+                    ),
                 },
                 400,
             )
