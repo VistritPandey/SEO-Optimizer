@@ -97,7 +97,7 @@ class ProjectCreate(Contract):
 
 class FileChange(Contract):
     path: str
-    before: str = Field(min_length=1, max_length=100000)
+    before: str = Field(max_length=100000)
     after: str = Field(max_length=100000)
     reason: str = Field(min_length=1)
     check_id: str
