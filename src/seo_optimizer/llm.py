@@ -57,7 +57,9 @@ class ProviderError(RuntimeError):
 class ModelClient:
     def __init__(self, config: ProviderConfig, key: str = "", client: httpx.Client | None = None):
         self.config, self.key = config, key
-        self.client = client or httpx.Client(timeout=90, follow_redirects=False)
+        self.client = client or httpx.Client(
+            timeout=config.request_timeout_seconds, follow_redirects=False
+        )
         self.owns_client = client is None
         self.url = (config.base_url or DEFAULT_URLS.get(config.kind, "")).rstrip("/")
 
@@ -134,10 +136,17 @@ class ModelClient:
                 payload: dict[str, Any] = {
                     "model": model,
                     "stream": False,
+                    "think": self.config.ollama_think,
                     "messages": [{"role": "system", "content": instructions}, *history],
-                    "options": {"temperature": 0, "num_predict": self.config.max_output_tokens},
+                    "options": {
+                        "temperature": 0,
+                        "num_predict": self.config.max_output_tokens,
+                        "num_ctx": self.config.ollama_num_ctx,
+                    },
                 }
-                if self.config.capabilities.json_schema and (not definitions or step == max_steps - 1):
+                if self.config.capabilities.json_schema and (
+                    not definitions or step == max_steps - 1
+                ):
                     payload["format"] = schema
                 if definitions:
                     payload["tools"] = [
@@ -315,7 +324,11 @@ class ModelClient:
                         raise
                     # Explicit, bounded re-generation; never strip/repair raw JSON locally.
                     tools = []
-                    correction = "Return the final decision again as schema-compliant JSON only. No Markdown fences. Keep all conclusions grounded in the observations already collected."
+                    correction = (
+                        "Return the final decision again as schema-compliant JSON only. "
+                        "No Markdown fences. Keep all conclusions grounded in "
+                        "the observations already collected."
+                    )
                     history.append({"role": "user", "content": correction})
                     native_input.append({"role": "user", "content": correction})
                     google_history.append({"role": "user", "parts": [{"text": correction}]})
