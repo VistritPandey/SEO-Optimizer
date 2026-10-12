@@ -327,6 +327,7 @@ def test_required_check_failure_and_stale_base_block_merge(tmp_path):
         result={"pr": {"number": 1, "head_sha": "candidate", "base_sha": "before"}},
     )
     spec = ProjectSpec.model_validate(project.spec)
+    github.request.return_value = {"head": {"sha": "candidate"}, "state": "open"}
     github.checks_ready.return_value = "failed"
     assert worker.finish_pr(project, job, spec, github)[0] == "blocked"
     github.merge.assert_not_called()
@@ -335,4 +336,38 @@ def test_required_check_failure_and_stale_base_block_merge(tmp_path):
     assert worker.finish_pr(project, job, spec, github)[0] == "superseded"
     github.merge.assert_not_called()
     assert any(item.dedupe_key == "supersede:test" for item in store.jobs(account.id))
+    store.engine.dispose()
+
+
+def test_worker_recovers_merge_after_lost_response(tmp_path):
+    store, settings = make_store(tmp_path)
+    account, _ = store.create_user("recovery@example.test", hash_password("fixture-password-123"))
+    project = store.create_project(
+        account.id,
+        ProjectCreate(
+            spec=ProjectSpec(
+                name="Site", website_url="https://example.test/", repository="owner/site"
+            )
+        ),
+    )
+    worker = Worker(store, settings)
+    github = Mock()
+    github.request.return_value = {
+        "head": {"sha": "candidate"},
+        "merged": True,
+        "merge_commit_sha": "merged",
+    }
+    job = Job(
+        id="recovery",
+        created_at=0,
+        result={
+            "stage": "checks",
+            "pr": {"number": 1, "head_sha": "candidate", "base_sha": "before"},
+        },
+    )
+    status, result, _ = worker.finish_pr(
+        project, job, ProjectSpec.model_validate(project.spec), github
+    )
+    assert status == "waiting_deployment" and result["merged_sha"] == "merged"
+    github.merge.assert_not_called()
     store.engine.dispose()
