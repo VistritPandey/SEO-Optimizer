@@ -1601,5 +1601,10 @@
   "changed_upstream_paths": [
     "public/index.html"
   ],
-  "image_id": "sha256:32aa3d5cb47fb75f7cc9ce67970edc7f1f07c0785664b083c62b9a0a5ea8d742"
+  "image_id": "sha256:32aa3d5cb47fb75f7cc9ce67970edc7f1f07c0785664b083c62b9a0a5ea8d742",
+  "dashboard_project": {
+    "url": "http://127.0.0.1:8787/projects/e4cc37c7-b682-4a1b-bcb9-0cb47dc460cd",
+    "read_only": true,
+    "audit_status": "complete"
+  }
 }
