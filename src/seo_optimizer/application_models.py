@@ -76,6 +76,8 @@ class ProjectSpec(Contract):
                 raise ValueError("repository paths must be confined relative paths")
         if self.provider.kind not in {"rules", "ollama"} and not self.provider.model:
             raise ValueError("cloud provider requires an explicit model identifier")
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./:@-]*", self.sandbox_image):
+            raise ValueError("invalid sandbox image identifier")
         return self
 
 
