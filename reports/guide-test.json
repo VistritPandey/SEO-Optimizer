@@ -1,0 +1,21 @@
+{
+  "status": "passed",
+  "checks": [
+    "public guide route",
+    "eight workflow selections",
+    "six decision scenarios",
+    "automatic-fix toggle",
+    "three setup selections",
+    "no horizontal overflow at 320/390/768/1440",
+    "reduced motion",
+    "no JavaScript errors",
+    "accessible heading references"
+  ],
+  "browser": "Actual Playwright Chromium",
+  "viewport_widths": [
+    320,
+    390,
+    768,
+    1440
+  ]
+}
