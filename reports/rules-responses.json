@@ -1,0 +1,401 @@
+[
+  {
+    "case_id": "public-missing-title",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.title\",\"summary\":\"Public page has no descriptive title.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-starter\",\"google-js\"],\"action\":{\"kind\":\"investigate\",\"rationale\":\"Add a factual descriptive title for an untitled public page\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Inspect response and rendered title; confirm it describes this page\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "public-healthy-title",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "private-untitled",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "preview-untitled",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"preview\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "accidental-noindex",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.indexability\",\"summary\":\"Declared public page has an exclusion directive.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-essentials\",\"google-js\"],\"action\":{\"kind\":\"investigate\",\"rationale\":\"Repair accidental directives only for explicitly public pages\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Refetch response and rendered directives; compare intended visibility\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "intentional-noindex",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "header-noindex",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.indexability\",\"summary\":\"Declared public page has an exclusion directive.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-essentials\",\"google-js\"],\"action\":{\"kind\":\"investigate\",\"rationale\":\"Repair accidental directives only for explicitly public pages\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Refetch response and rendered directives; compare intended visibility\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "healthy-indexable",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "canonical-conflict",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.canonical\",\"summary\":\"Response declares conflicting canonical URLs.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-canonical\",\"google-js\"],\"action\":{\"kind\":\"investigate\",\"rationale\":\"Resolve contradictory canonical declarations using verified URL intent\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Compare all declarations, redirects and URL Inspection when available\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "canonical-missing-not-defect",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "canonical-equivalent",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "broken-internal-link",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.links\",\"summary\":\"An internal link has an observed missing destination.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-starter\",\"google-js\"],\"action\":{\"kind\":\"investigate\",\"rationale\":\"Repair confirmed broken internal links or inaccessible navigation\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Recheck source anchor and destination; preserve navigation behavior\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "redirect-link-is-valid",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "unobserved-link",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.links\",\"summary\":\"Internal destination response evidence is incomplete.\",\"status\":\"unresolved\",\"severity\":\"medium\",\"evidence_strength\":\"hypothesis\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-starter\",\"google-js\"],\"action\":{\"kind\":\"collect_evidence\",\"rationale\":\"Gather missing observations.\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Recheck source anchor and destination; preserve navigation behavior\"],\"dependencies\":[\"Observe the unresolved internal link destinations.\"]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "external-link-outside-baseline",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "failed-response-not-healthy",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"tech.title\",\"summary\":\"Required successful response evidence is unavailable.\",\"status\":\"unresolved\",\"severity\":\"medium\",\"evidence_strength\":\"hypothesis\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-starter\",\"google-js\"],\"action\":{\"kind\":\"collect_evidence\",\"rationale\":\"Gather missing observations.\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Inspect response and rendered title; confirm it describes this page\"],\"dependencies\":[\"Successful HTTP evidence and page intent are required.\"]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "offer-price-conflict",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[{\"check_id\":\"commerce.facts\",\"summary\":\"Declared product offer contradicts observed visible offer.\",\"status\":\"defect\",\"severity\":\"medium\",\"evidence_strength\":\"confirmed\",\"evidence_ids\":[\"page\"],\"source_ids\":[\"google-product\",\"google-schema\"],\"action\":{\"kind\":\"investigate\",\"rationale\":\"Correct contradictions using current commerce facts\",\"automatic\":false,\"target_paths\":[],\"fact_ids\":[],\"crawler_changes\":{},\"indexability_changes\":{}},\"verification_criteria\":[\"Compare visible offer, JSON-LD and authorized feed data\"],\"dependencies\":[]}],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "offer-consistent",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  },
+  {
+    "case_id": "page-injection",
+    "provider": "rules",
+    "model": "offline-http-v1",
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": false,
+      "vision": false,
+      "context_tokens": null
+    },
+    "raw_response": "{\"tenant_id\":\"fixture-owner\",\"project_id\":\"fixture-site\",\"schema_version\":\"1.0\",\"environment\":\"production\",\"findings\":[],\"tool_calls\":[],\"tool_results\":[]}",
+    "runtime_ms": null,
+    "usage": {
+      "input_tokens": null,
+      "output_tokens": null,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "run_error": null
+  }
+]
