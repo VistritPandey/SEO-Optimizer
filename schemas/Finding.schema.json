@@ -1,0 +1,172 @@
+{
+  "$defs": {
+    "ActionKind": {
+      "enum": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "publish_content",
+        "change_crawler_policy",
+        "update_business_profile",
+        "merge",
+        "deploy",
+        "experiment"
+      ],
+      "title": "ActionKind",
+      "type": "string"
+    },
+    "EvidenceStrength": {
+      "enum": [
+        "confirmed",
+        "supported",
+        "hypothesis"
+      ],
+      "title": "EvidenceStrength",
+      "type": "string"
+    },
+    "FindingStatus": {
+      "enum": [
+        "defect",
+        "unresolved",
+        "experiment"
+      ],
+      "title": "FindingStatus",
+      "type": "string"
+    },
+    "ProposedAction": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/ActionKind"
+        },
+        "rationale": {
+          "minLength": 1,
+          "title": "Rationale",
+          "type": "string"
+        },
+        "automatic": {
+          "default": false,
+          "title": "Automatic",
+          "type": "boolean"
+        },
+        "target_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Target Paths",
+          "type": "array"
+        },
+        "fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Fact Ids",
+          "type": "array"
+        },
+        "crawler_changes": {
+          "additionalProperties": {
+            "enum": [
+              "allow",
+              "block"
+            ],
+            "type": "string"
+          },
+          "title": "Crawler Changes",
+          "type": "object"
+        },
+        "indexability_changes": {
+          "additionalProperties": {
+            "type": "boolean"
+          },
+          "title": "Indexability Changes",
+          "type": "object"
+        }
+      },
+      "required": [
+        "kind",
+        "rationale"
+      ],
+      "title": "ProposedAction",
+      "type": "object"
+    },
+    "Severity": {
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ],
+      "title": "Severity",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "check_id": {
+      "minLength": 1,
+      "title": "Check Id",
+      "type": "string"
+    },
+    "summary": {
+      "minLength": 1,
+      "title": "Summary",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/FindingStatus"
+    },
+    "severity": {
+      "$ref": "#/$defs/Severity"
+    },
+    "evidence_strength": {
+      "$ref": "#/$defs/EvidenceStrength"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "action": {
+      "$ref": "#/$defs/ProposedAction"
+    },
+    "verification_criteria": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Verification Criteria",
+      "type": "array"
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    }
+  },
+  "required": [
+    "check_id",
+    "summary",
+    "status",
+    "severity",
+    "evidence_strength",
+    "source_ids",
+    "action",
+    "verification_criteria"
+  ],
+  "title": "Finding",
+  "type": "object"
+}
