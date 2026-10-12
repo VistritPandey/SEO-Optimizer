@@ -6,7 +6,7 @@ from uuid import uuid4
 import httpx
 
 from seo_optimizer.contracts import Evidence, utc_now
-from seo_optimizer.crawler import Crawler
+from seo_optimizer.crawler import Crawler, CrawlError
 
 ENDPOINT = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed"
 
@@ -58,7 +58,7 @@ def collect_performance(
             "runtime_error": lighthouse.get("runtimeError"),
             "limits": "Lab snapshots do not establish field INP, ranking or causal search uplift.",
         }
-    except (httpx.HTTPError, ValueError, KeyError, AttributeError, TypeError) as error:
+    except (httpx.HTTPError, CrawlError, ValueError, KeyError, AttributeError, TypeError) as error:
         observation = {"provider": "pagespeed", "collection_error": type(error).__name__}
     finally:
         if owned:
