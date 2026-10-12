@@ -12,5 +12,6 @@
     "CSS and JS assets",
     "authenticated dashboard",
     "SQLite initialization"
-  ]
+  ],
+  "current_fact_contract": true
 }
