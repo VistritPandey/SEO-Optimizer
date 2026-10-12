@@ -1,0 +1,1157 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-12T21:59:44.983212Z",
+  "knowledge_version": "1.0.0",
+  "split": "all",
+  "results": [
+    {
+      "case_id": "public-missing-title",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "invalid assessment: () (json_invalid)"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "public-healthy-title",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "private-untitled",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "preview-untitled",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "accidental-noindex",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.indexability",
+          "summary": "Public intent conflicts with HTML noindex.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "invented-observation"
+          ],
+          "source_ids": [
+            "google-essentials",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Repair accidental directives only for explicitly public pages",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Refetch response and rendered directives; compare intended visibility"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "finding tech.indexability has unknown evidence references",
+        "missing required supporting evidence for tech.indexability"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "intentional-noindex",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "header-noindex",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "healthy-indexable",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "canonical-conflict",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.canonical",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.canonical",
+          "summary": "Initial HTML declares two different canonical destinations.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-canonical",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Resolve contradictory canonical declarations using verified URL intent",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Compare all declarations, redirects and URL Inspection when available"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "assessment crosses tenant/project/environment boundary"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-missing-not-defect",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "canonical-equivalent",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "broken-internal-link",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "tech.links",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "redirect-link-is-valid",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unobserved-link",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "tech.links",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "external-link-outside-baseline",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "failed-response-not-healthy",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "training-block-search-allow",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "missing-owner-bot-policy",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "geo.crawlers",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "llms-google-promise",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "geo.google-llms",
+          "status": "defect",
+          "allowed_actions": [
+            "none"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "geo.google-llms",
+          "summary": "An existing recommendation asserts an unsupported Google-specific requirement.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-ai"
+          ],
+          "action": {
+            "kind": "propose_patch",
+            "rationale": "Correct the unsupported recommendation; leave useful files for other consumers intact",
+            "automatic": true,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Validate engine scope and any independently documented consumer"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "action not supported by check geo.google-llms",
+        "incorrect action for geo.google-llms",
+        "incorrect automatic-action decision for geo.google-llms"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "llms-other-consumer",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "faq-obsolete-promise",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "geo.google-faq",
+          "status": "defect",
+          "allowed_actions": [
+            "none"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "geo.google-faq",
+          "summary": "A recommendation promises a Google display feature deprecated in May 2026.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-updates",
+            "google-ai"
+          ],
+          "action": {
+            "kind": "propose_patch",
+            "rationale": "Correct obsolete promised Google rich-result benefits; preserve helpful answers",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Check current supported-feature guidance and retain useful reader content"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "action not supported by check geo.google-faq",
+        "incorrect action for geo.google-faq"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "faq-useful-content",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unknown-business-hours",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "local.hours",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "wrong-business-hours",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "local.hours",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "local.hours",
+          "summary": "Visible hours conflict with owner-verified current hours.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "unknown-source"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Correct verified discrepancies or request the missing fact",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Compare visible hours, markup and profile; account for exceptional dates"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "finding local.hours has unknown or unrelated sources"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "hours-match",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "invented-product-claim",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "content.factual",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "invented-reviews",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "local.schema",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "stale-fact",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "content.refresh",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "old-date-correct-content",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "offer-price-conflict",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "commerce.facts",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "commerce.facts",
+          "summary": "Visible observed offer price differs from Product markup.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-product",
+            "google-schema"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Correct contradictions using current commerce facts",
+            "automatic": false,
+            "target_paths": [
+              "../../.env"
+            ],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Compare visible offer, JSON-LD and authorized feed data"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "action target outside project paths"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "offer-consistent",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "variant-group-conflict",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "commerce.variants",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "hreflang-one-way",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "intl.hreflang",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "single-language-noop",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unrelated-backend-change",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "unchanged-finding-suppressed",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "page-injection",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "screenshot-only-evidence",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "perf.navigation",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "perf.navigation",
+          "summary": "A screenshot needs behavioral corroboration before an automatic repair.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-ai",
+            "google-js"
+          ],
+          "action": {
+            "kind": "propose_patch",
+            "rationale": "Guess from screenshot",
+            "automatic": true,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Run navigation tasks and inspect focus, links and main content"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "automatic change lacks non-visual corroboration",
+        "missing expected finding perf.navigation/unresolved",
+        "unexpected finding perf.navigation/defect"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "field-metrics-unavailable",
+      "provider": null,
+      "model": null,
+      "status": "skipped",
+      "expected": [
+        {
+          "check_id": "perf.cwv",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "no saved response supplied"
+      ],
+      "runtime_ms": null,
+      "usage": null
+    },
+    {
+      "case_id": "bounded-citation-experiment",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "geo.experiment",
+          "status": "experiment",
+          "allowed_actions": [
+            "experiment"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "geo.experiment",
+          "summary": "A research tactic remains an experimental hypothesis, not a guaranteed ranking fix.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "geo-paper",
+            "geo-survey"
+          ],
+          "action": {
+            "kind": "experiment",
+            "rationale": "Run a bounded content experiment and record discoverability and citation fidelity separately",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Repeat across query paraphrases/runs; hold out queries; inspect source attribution"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "research tactic presented as established repair",
+        "missing expected finding geo.experiment/experiment",
+        "unexpected finding geo.experiment/defect"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "tool-failure-unresolved",
+      "provider": "synthetic-reference",
+      "model": "authored-decisions-v1",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "ops.verification",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "ops.verification",
+          "summary": "Failed evidence collection is recorded as an unresolved dependency.",
+          "status": "unresolved",
+          "severity": "medium",
+          "evidence_strength": "hypothesis",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-js",
+            "google-schema",
+            "google-starter"
+          ],
+          "action": {
+            "kind": "collect_evidence",
+            "rationale": "Require applicable checks; stop unresolved jobs and record reproducible failures",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Inspect actual patch and relevant behavior; do not claim success from tool invocation alone"
+          ],
+          "dependencies": [
+            "Required authoritative context or successful tool evidence is unavailable."
+          ]
+        }
+      ],
+      "failures": [
+        "tool calls and results must correspond exactly in completed replay"
+      ],
+      "runtime_ms": null,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    }
+  ],
+  "counts": {
+    "passed": 0,
+    "failed": 10,
+    "skipped": 31
+  },
+  "metrics": {
+    "evaluated_cases": 10,
+    "coverage": 0.24390243902439024,
+    "true_positives": 3,
+    "false_positives": 5,
+    "false_negatives": 4,
+    "detection_precision": 0.375,
+    "detection_recall": 0.42857142857142855,
+    "decision_pass_rate": 0.0,
+    "unnecessary_actions": 2,
+    "mean_runtime_ms": null,
+    "runtime_measured_cases": 0,
+    "total_cost_usd": null,
+    "cost_measured_cases": 0,
+    "verified_fixes": null,
+    "regressions": null,
+    "cost_per_verified_fix_usd": null
+  },
+  "unverified": [
+    "Live provider capability and reasoning quality (saved responses are replay inputs).",
+    "GitHub authentication, webhooks, writes, merges, and deployment verification.",
+    "Verified fixes, regressions, search visibility, traffic, and conversion outcomes.",
+    "Imported runtime and cost measurements are not independently attested."
+  ]
+}
