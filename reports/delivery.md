@@ -30,7 +30,7 @@ structural validation cannot prove every sentence true.
 
 | Check | Result | Scope |
 |---|---|---|
-| Pytest | **144 passed; 0 failed; 0 skipped** | Contracts, policy, tenant isolation, credentials, CSRF, webhook replay, native adapters, leases, remote workers, publication and recovery |
+| Pytest | **145 passed; 0 failed; 0 skipped** | Contracts, policy, tenant isolation, credentials, CSRF, webhook replay, native adapters, leases, remote workers, publication and recovery |
 | Lint, formatting and strict types | Passed | Source, tests and hosting entrypoint; 22 typed source modules |
 | Knowledge and skill validators | Passed | Source/check relationships, module routing, local references and skill format |
 | Build and isolated wheel | Passed | Installed package, knowledge, schemas, SQLite initialization, authenticated templates and CSS/JS outside source imports |
