@@ -221,7 +221,7 @@ class GitHubClient:
             f"/repos/{repo}/commits/{sha}/check-runs",
             params={"per_page": 100, "filter": "latest"},
         )
-        by_name = {}
+        by_name: dict[str, str] = {}
         for item in statuses.get("statuses", []):
             by_name.setdefault(item["context"], item["state"])
         if checks.get("total_count", 0) > len(checks.get("check_runs", [])):
