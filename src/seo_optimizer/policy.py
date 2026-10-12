@@ -5,6 +5,7 @@ from pathlib import PurePosixPath
 from seo_optimizer.contracts import (
     ActionKind,
     Assessment,
+    AuditRequest,
     BenchmarkCase,
     EvidenceStrength,
     FindingStatus,
@@ -20,7 +21,7 @@ def _allowed_path(target: str, roots: list[str]) -> bool:
     return any(path == PurePosixPath(root) or path.is_relative_to(root) for root in roots)
 
 
-def validate_case(case: BenchmarkCase, package: KnowledgePackage) -> list[str]:
+def validate_request(case: AuditRequest, package: KnowledgePackage) -> list[str]:
     errors: list[str] = []
     envs = {env.name for env in case.project.environments}
     if case.environment not in envs:
@@ -30,7 +31,8 @@ def validate_case(case: BenchmarkCase, package: KnowledgePackage) -> list[str]:
         errors.append("duplicate evidence identifiers")
     for evidence in case.evidence:
         if (evidence.tenant_id, evidence.project_id) != (
-            case.project.tenant_id, case.project.project_id
+            case.project.tenant_id,
+            case.project.project_id,
         ):
             errors.append(f"{evidence.id}: evidence crosses tenant/project boundary")
         if evidence.environment != case.environment:
@@ -40,6 +42,12 @@ def validate_case(case: BenchmarkCase, package: KnowledgePackage) -> list[str]:
     for check_id in case.allowed_check_ids:
         if check_id not in package.checks:
             errors.append(f"unknown allowed check {check_id}")
+    return errors
+
+
+def validate_case(case: BenchmarkCase, package: KnowledgePackage) -> list[str]:
+    errors = validate_request(case, package)
+    ids = [evidence.id for evidence in case.evidence]
     keys = [(item.check_id, item.status) for item in case.expected_findings]
     if len(keys) != len(set(keys)):
         errors.append("duplicate expected findings")
@@ -48,17 +56,24 @@ def validate_case(case: BenchmarkCase, package: KnowledgePackage) -> list[str]:
             errors.append(f"expected finding {expected.check_id} is outside allowed checks")
         if not set(expected.required_evidence_ids).issubset(ids):
             errors.append("expected finding references unknown evidence")
+        check = package.checks.get(expected.check_id)
+        if check and not set(expected.allowed_actions).issubset(check.allowed_actions):
+            errors.append("expected action is unsupported by the check")
     return errors
 
 
 def validate_assessment(
-    assessment: Assessment, case: BenchmarkCase, package: KnowledgePackage,
+    assessment: Assessment,
+    case: AuditRequest,
+    package: KnowledgePackage,
     capabilities: ProviderCapabilities,
 ) -> list[str]:
-    errors: list[str] = []
+    errors = validate_request(case, package)
     project = case.project
     if (assessment.tenant_id, assessment.project_id, assessment.environment) != (
-        project.tenant_id, project.project_id, case.environment
+        project.tenant_id,
+        project.project_id,
+        case.environment,
     ):
         errors.append("assessment crosses tenant/project/environment boundary")
     evidence_by_id = {item.id: item for item in case.evidence}
@@ -114,9 +129,9 @@ def validate_assessment(
         for bot, intent in finding.action.crawler_changes.items():
             if project.crawler_preferences.get(bot, "unchanged") != intent:
                 errors.append(f"crawler change conflicts with configured preference: {bot}")
-        for url, intent in finding.action.indexability_changes.items():
+        for url, indexable in finding.action.indexability_changes.items():
             # Mutating an unconfigured URL is never inferred from environment defaults.
-            if project.page_intents.get(url) != intent:
+            if project.page_intents.get(url) != indexable:
                 errors.append("indexability change lacks explicit matching URL intent")
         if check.assessment == "experimental" and (
             finding.status != FindingStatus.EXPERIMENT
@@ -124,8 +139,9 @@ def validate_assessment(
         ):
             errors.append("research tactic presented as established repair")
         if finding.action.automatic:
-            supporting = [evidence_by_id[item] for item in finding.evidence_ids
-                          if item in evidence_by_id]
+            supporting = [
+                evidence_by_id[item] for item in finding.evidence_ids if item in evidence_by_id
+            ]
             if not supporting or all(item.kind == "screenshot" for item in supporting):
                 errors.append("automatic change lacks non-visual corroboration")
             if tool_failed:
