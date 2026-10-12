@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-12T23:05:57.614895Z",
+  "knowledge_version": "1.0.0",
+  "split": "development",
+  "results": [
+    {
+      "case_id": "public-missing-title",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ValidationError: 1 validation error for AgentDecision\nfindings.0\n  Value error, unresolved findings require recorded dependencies [type=value_error, input_value={'check_id': 'tech.title'....'], 'dependencies': []}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+      ],
+      "runtime_ms": 54594.716541992966,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "public-healthy-title",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 12566.449042002205,
+      "usage": {
+        "input_tokens": 2149,
+        "output_tokens": 72,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "private-untitled",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ValidationError: 1 validation error for AgentDecision\nfindings.0\n  Value error, unresolved findings require recorded dependencies [type=value_error, input_value={'check_id': 'tech.title'....\"], 'dependencies': []}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+      ],
+      "runtime_ms": 40001.85491703451,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "accidental-noindex",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ValidationError: 1 validation error for AgentDecision\nfindings.0\n  Value error, unresolved findings require recorded dependencies [type=value_error, input_value={'check_id': 'tech.indexa...y'], 'dependencies': []}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+      ],
+      "runtime_ms": 40736.60608299542,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "intentional-noindex",
+      "provider": "ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ValidationError: 1 validation error for AgentDecision\nfindings.0\n  Value error, unresolved findings require recorded dependencies [type=value_error, input_value={'check_id': 'tech.indexa....\"], 'dependencies': []}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+      ],
+      "runtime_ms": 46943.815249949694,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    }
+  ],
+  "counts": {
+    "passed": 1,
+    "failed": 4,
+    "skipped": 0
+  },
+  "metrics": {
+    "evaluated_cases": 5,
+    "coverage": 1.0,
+    "true_positives": 0,
+    "false_positives": 0,
+    "false_negatives": 2,
+    "detection_precision": null,
+    "detection_recall": 0.0,
+    "decision_pass_rate": 0.2,
+    "unnecessary_actions": 0,
+    "mean_runtime_ms": 38968.68836679496,
+    "runtime_measured_cases": 5,
+    "total_cost_usd": null,
+    "cost_measured_cases": 0,
+    "verified_fixes": null,
+    "regressions": null,
+    "cost_per_verified_fix_usd": null
+  },
+  "unverified": [
+    "Provider used live; only the selected fixture decisions were measured, not general reasoning quality.",
+    "GitHub authentication, webhooks, writes, merges, and deployment verification.",
+    "Verified fixes, regressions, search visibility, traffic, and conversion outcomes.",
+    "Imported runtime and cost measurements are not independently attested."
+  ]
+}
