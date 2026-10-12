@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "Source": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "publisher": {
+          "minLength": 1,
+          "title": "Publisher",
+          "type": "string"
+        },
+        "url": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Url",
+          "type": "string"
+        },
+        "verified_on": {
+          "format": "date",
+          "title": "Verified On",
+          "type": "string"
+        },
+        "source_type": {
+          "enum": [
+            "official",
+            "research"
+          ],
+          "title": "Source Type",
+          "type": "string"
+        },
+        "applicability": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Applicability",
+          "type": "array"
+        },
+        "supports": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Supports",
+          "type": "array"
+        },
+        "limitations": {
+          "minLength": 1,
+          "title": "Limitations",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "publisher",
+        "url",
+        "verified_on",
+        "source_type",
+        "applicability",
+        "supports",
+        "limitations"
+      ],
+      "title": "Source",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "as_of": {
+      "format": "date",
+      "title": "As Of",
+      "type": "string"
+    },
+    "sources": {
+      "items": {
+        "$ref": "#/$defs/Source"
+      },
+      "minItems": 1,
+      "title": "Sources",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "as_of",
+    "sources"
+  ],
+  "title": "SourceRegistry",
+  "type": "object"
+}
