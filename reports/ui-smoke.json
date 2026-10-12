@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "scope": "Real Chromium against current dashboard server",
+  "desktop_viewport": [
+    1440,
+    1000
+  ],
+  "mobile_viewport": [
+    390,
+    844
+  ],
+  "checks": [
+    "login",
+    "authenticated overview",
+    "verified job rendering",
+    "credential form",
+    "mobile layout width",
+    "no JavaScript errors"
+  ]
+}
