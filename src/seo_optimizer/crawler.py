@@ -6,13 +6,13 @@ import socket
 from collections import deque
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin, urlparse, urldefrag
+from urllib.parse import urldefrag, urljoin, urlparse
 from uuid import uuid4
 
 import httpx
 
-from seo_optimizer.audit import PageParser
 from seo_optimizer.application_models import ProjectSpec
+from seo_optimizer.audit import PageParser
 from seo_optimizer.contracts import Evidence, utc_now
 
 
@@ -21,11 +21,15 @@ class CrawlError(RuntimeError):
 
 
 class Crawler:
-    def __init__(self, base_url: str, allow_private: bool = False, client: httpx.Client | None = None):
+    def __init__(
+        self, base_url: str, allow_private: bool = False, client: httpx.Client | None = None
+    ):
         self.base_url = base_url
         self.host = urlparse(base_url).hostname
         self.allow_private = allow_private
-        self.client = client or httpx.Client(timeout=15, follow_redirects=False, headers={"User-Agent": "SEOOptimizer/1.0"})
+        self.client = client or httpx.Client(
+            timeout=15, follow_redirects=False, headers={"User-Agent": "SEOOptimizer/1.0"}
+        )
         self.owns_client = client is None
         self.requests = 0
 
@@ -35,17 +39,29 @@ class Crawler:
 
     def check_url(self, url: str) -> None:
         parts = urlparse(url)
-        if parts.scheme not in {"http", "https"} or parts.username or parts.password or parts.hostname != self.host:
+        if (
+            parts.scheme not in {"http", "https"}
+            or parts.username
+            or parts.password
+            or parts.hostname != self.host
+        ):
             raise CrawlError("URL is outside the configured website")
         if parts.port and parts.port not in {80, 443} and not self.allow_private:
             raise CrawlError("Nonstandard website ports are disabled")
         try:
-            addresses = {item[4][0] for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)}
+            addresses = {
+                item[4][0] for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)
+            }
         except socket.gaierror as error:
             raise CrawlError("Website hostname did not resolve") from error
         for address in addresses:
             ip = ipaddress.ip_address(address)
-            if ip.is_link_local or ip.is_multicast or ip.is_unspecified or (not ip.is_global and not self.allow_private):
+            if (
+                ip.is_link_local
+                or ip.is_multicast
+                or ip.is_unspecified
+                or (not ip.is_global and not self.allow_private)
+            ):
                 raise CrawlError("Website resolves to a restricted network address")
 
     def fetch(self, url: str) -> httpx.Response:
@@ -61,14 +77,20 @@ class Crawler:
                     body.extend(chunk)
                     if len(body) > 2_000_000:
                         raise CrawlError("Page response exceeded the size limit")
-                response = httpx.Response(streamed.status_code, headers=streamed.headers,
-                                          content=bytes(body), request=streamed.request)
+                response = httpx.Response(
+                    streamed.status_code,
+                    headers=streamed.headers,
+                    content=bytes(body),
+                    request=streamed.request,
+                )
             if response.status_code not in {301, 302, 303, 307, 308}:
                 return response
             url = urljoin(url, response.headers.get("location", ""))
         raise CrawlError("Redirect chain exceeded the limit")
 
-    def collect(self, tenant: str, project: str, spec: ProjectSpec, seeds: list[str] | None = None) -> list[Evidence]:
+    def collect(
+        self, tenant: str, project: str, spec: ProjectSpec, seeds: list[str] | None = None
+    ) -> list[Evidence]:
         queue = deque(seeds or [str(spec.website_url)])
         visited: set[str] = set()
         evidence: list[Evidence] = []
@@ -91,11 +113,19 @@ class Crawler:
             try:
                 response = self.fetch(url)
             except (httpx.HTTPError, CrawlError) as error:
-                evidence.append(Evidence(
-                    id=str(uuid4()), tenant_id=tenant, project_id=project, environment=spec.environment,
-                    kind="http", url=url, observation="Page collection failed", collected_at=utc_now(),
-                    data={"collection_error": type(error).__name__},
-                ))
+                evidence.append(
+                    Evidence(
+                        id=str(uuid4()),
+                        tenant_id=tenant,
+                        project_id=project,
+                        environment=spec.environment,
+                        kind="http",
+                        url=url,
+                        observation="Page collection failed",
+                        collected_at=utc_now(),
+                        data={"collection_error": type(error).__name__},
+                    )
+                )
                 continue
             if "html" not in response.headers.get("content-type", "text/html"):
                 continue
@@ -116,25 +146,46 @@ class Crawler:
                     except (httpx.HTTPError, CrawlError):
                         pass
             data: dict[str, Any] = {
-                "status_code": response.status_code, "html": response.text,
-                "headers": {key: value for key, value in response.headers.items() if key.lower() in {"x-robots-tag", "link", "content-type"}},
-                "link_status": links, "robots_txt": robots, "sitemap_xml": sitemap,
+                "status_code": response.status_code,
+                "html": response.text,
+                "headers": {
+                    key: value
+                    for key, value in response.headers.items()
+                    if key.lower() in {"x-robots-tag", "link", "content-type"}
+                },
+                "link_status": links,
+                "robots_txt": robots,
+                "sitemap_xml": sitemap,
                 "final_url": str(response.url),
             }
-            evidence.append(Evidence(id=str(uuid4()), tenant_id=tenant, project_id=project,
-                environment=spec.environment, kind="http", url=url, observation="Collected live HTTP page and same-origin link responses",
-                collected_at=utc_now(), data=data))
+            evidence.append(
+                Evidence(
+                    id=str(uuid4()),
+                    tenant_id=tenant,
+                    project_id=project,
+                    environment=spec.environment,
+                    kind="http",
+                    url=url,
+                    observation="Collected live HTTP page and same-origin link responses",
+                    collected_at=utc_now(),
+                    data=data,
+                )
+            )
         return evidence
 
 
-def capture_browser(url: str, crawler: Crawler, tenant: str, project: str, environment: str, output: Path) -> list[Evidence]:
+def capture_browser(
+    url: str, crawler: Crawler, tenant: str, project: str, environment: str, output: Path
+) -> list[Evidence]:
     from playwright.sync_api import sync_playwright
 
     crawler.check_url(url)
     output.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as runtime:
         browser = runtime.chromium.launch()
-        context = browser.new_context(viewport={"width": 1280, "height": 900}, service_workers="block")
+        context = browser.new_context(
+            viewport={"width": 1280, "height": 900}, service_workers="block"
+        )
 
         def route(request: Any) -> None:
             try:
@@ -151,10 +202,30 @@ def capture_browser(url: str, crawler: Crawler, tenant: str, project: str, envir
         page.screenshot(path=str(screenshot), full_page=True)
         context.close()
         browser.close()
-    return [Evidence(id=str(uuid4()), tenant_id=tenant, project_id=project, environment=environment,
-        kind="dom", url=url, collected_at=utc_now(), observation="Observed rendered browser DOM", data={"html": html}),
-        Evidence(id=str(uuid4()), tenant_id=tenant, project_id=project, environment=environment,
-        kind="screenshot", url=url, collected_at=utc_now(), screenshot=str(screenshot), observation="Captured desktop viewport screenshot")]
+    return [
+        Evidence(
+            id=str(uuid4()),
+            tenant_id=tenant,
+            project_id=project,
+            environment=environment,
+            kind="dom",
+            url=url,
+            collected_at=utc_now(),
+            observation="Observed rendered browser DOM",
+            data={"html": html},
+        ),
+        Evidence(
+            id=str(uuid4()),
+            tenant_id=tenant,
+            project_id=project,
+            environment=environment,
+            kind="screenshot",
+            url=url,
+            collected_at=utc_now(),
+            screenshot=str(screenshot),
+            observation="Captured desktop viewport screenshot",
+        ),
+    ]
 
 
 def page_excerpt(html: str) -> str:
