@@ -21,6 +21,9 @@ class ProviderConfig(Contract):
     base_url: str | None = None
     capabilities: ProviderCapabilities = Field(default_factory=ProviderCapabilities)
     max_output_tokens: int = Field(default=4096, ge=256, le=16384)
+    request_timeout_seconds: int = Field(default=180, ge=5, le=300)
+    ollama_think: bool | str | None = False
+    ollama_num_ctx: int = Field(default=8192, ge=2048, le=32768)
     input_usd_per_million: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     output_usd_per_million: float | None = Field(default=None, ge=0, allow_inf_nan=False)
 
