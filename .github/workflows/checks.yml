@@ -11,7 +11,7 @@ jobs:
       - run: uv sync --locked --extra browser
       - run: uv run seo-optimizer validate
       - run: uv run pytest -q
-      - run: uv run ruff check src tests api
-      - run: uv run ruff format --check src tests api
+      - run: uv run ruff check src tests scripts api
+      - run: uv run ruff format --check src tests scripts api
       - run: uv run mypy
       - run: uv build
