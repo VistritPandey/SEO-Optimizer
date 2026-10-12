@@ -1,0 +1,18 @@
+{
+  "provider": "ollama",
+  "model": "gemma4:12b",
+  "runtime_ms": 40127.664583968,
+  "usage": {
+    "input_tokens": 58,
+    "output_tokens": 247,
+    "api_cost_usd": 0.0,
+    "electricity_cost_usd": null,
+    "hardware_cost_usd": null
+  },
+  "decision": {
+    "findings": [],
+    "changes": [],
+    "summary": "The page is healthy."
+  },
+  "scope": "A live structured-output smoke test, not a quality benchmark"
+}
