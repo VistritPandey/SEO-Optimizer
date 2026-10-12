@@ -1,0 +1,29 @@
+{
+  "arm": "hybrid",
+  "provider": "ollama",
+  "model": "gemma4:12b",
+  "inference_cases": 5,
+  "cases": 17,
+  "split": "development",
+  "sampling_temperature": 0,
+  "max_steps": 1,
+  "max_seconds": 180,
+  "configuration": {
+    "kind": "ollama",
+    "model": "gemma4:12b",
+    "base_url": null,
+    "capabilities": {
+      "tool_calling": false,
+      "json_schema": true,
+      "vision": false,
+      "context_tokens": null
+    },
+    "max_output_tokens": 1024,
+    "request_timeout_seconds": 180,
+    "ollama_think": false,
+    "ollama_num_ctx": 8192,
+    "input_usd_per_million": null,
+    "output_usd_per_million": null
+  },
+  "knowledge_version": "1.0.0"
+}
