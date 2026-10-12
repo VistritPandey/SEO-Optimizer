@@ -27,7 +27,13 @@ class Crawler:
         self, base_url: str, allow_private: bool = False, client: httpx.Client | None = None
     ):
         self.base_url = base_url
-        self.host = urlparse(base_url).hostname
+        base = urlparse(base_url)
+        self.host = base.hostname
+        self.origin = (
+            base.scheme,
+            base.hostname,
+            base.port or (443 if base.scheme == "https" else 80),
+        )
         self.allow_private = allow_private
         self.client = client or httpx.Client(
             timeout=15, follow_redirects=False, headers={"User-Agent": "SEOOptimizer/1.0"}
@@ -46,7 +52,12 @@ class Crawler:
             parts.scheme not in {"http", "https"}
             or parts.username
             or parts.password
-            or parts.hostname != self.host
+            or (
+                parts.scheme,
+                parts.hostname,
+                parts.port or (443 if parts.scheme == "https" else 80),
+            )
+            != self.origin
         ):
             raise CrawlError("URL is outside the configured website")
         if parts.port and parts.port not in {80, 443} and not self.allow_private:
@@ -57,7 +68,9 @@ class Crawler:
             except ValueError:
                 addresses = {
                     str(item[4][0])
-                    for item in socket.getaddrinfo(parts.hostname or "", parts.port or 443)
+                    for item in socket.getaddrinfo(
+                        parts.hostname or "", parts.port or (443 if parts.scheme == "https" else 80)
+                    )
                 }
         except socket.gaierror as error:
             raise CrawlError("Website hostname did not resolve") from error
