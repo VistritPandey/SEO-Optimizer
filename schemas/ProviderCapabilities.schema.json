@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "tool_calling": {
+      "default": false,
+      "title": "Tool Calling",
+      "type": "boolean"
+    },
+    "json_schema": {
+      "default": false,
+      "title": "Json Schema",
+      "type": "boolean"
+    },
+    "vision": {
+      "default": false,
+      "title": "Vision",
+      "type": "boolean"
+    },
+    "context_tokens": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Context Tokens"
+    }
+  },
+  "title": "ProviderCapabilities",
+  "type": "object"
+}
