@@ -6,7 +6,13 @@ from typing import Literal, Self
 
 from pydantic import Field, HttpUrl, model_validator
 
-from seo_optimizer.contracts import Contract, Finding, ProviderCapabilities, TrustedFact, WebsiteType
+from seo_optimizer.contracts import (
+    Contract,
+    Finding,
+    ProviderCapabilities,
+    TrustedFact,
+    WebsiteType,
+)
 
 
 class ProviderConfig(Contract):
@@ -27,12 +33,16 @@ class ProjectSpec(Contract):
     branch: str = "main"
     environment: str = "production"
     website_types: list[WebsiteType] = Field(default_factory=lambda: [WebsiteType.GENERIC])
-    allowed_paths: list[str] = Field(default_factory=lambda: ["public", "web", "src", "content", "app", "pages", "templates"])
+    allowed_paths: list[str] = Field(
+        default_factory=lambda: ["public", "web", "src", "content", "app", "pages", "templates"]
+    )
     page_intents: dict[str, bool] = Field(default_factory=dict)
     route_map: dict[str, str] = Field(default_factory=dict)
     facts: list[TrustedFact] = Field(default_factory=list)
     goals: list[str] = Field(default_factory=list)
-    crawler_preferences: dict[str, Literal["allow", "block", "unchanged"]] = Field(default_factory=dict)
+    crawler_preferences: dict[str, Literal["allow", "block", "unchanged"]] = Field(
+        default_factory=dict
+    )
     provider: ProviderConfig = Field(default_factory=ProviderConfig)
     enabled: bool = True
     auto_merge: bool = True
@@ -52,7 +62,9 @@ class ProjectSpec(Contract):
 
     @model_validator(mode="after")
     def valid_repository(self) -> Self:
-        if self.repository and not re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", self.repository):
+        if self.repository and not re.fullmatch(
+            r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", self.repository
+        ):
             raise ValueError("repository must be owner/name")
         if self.repository and self.local_path:
             raise ValueError("choose a GitHub repository or a local repository")
