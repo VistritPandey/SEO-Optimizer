@@ -46,7 +46,7 @@ the service does not let users guess an installation ID to use another customer'
 
 For code publication, grant Contents read/write and Pull requests read/write; reading Checks,
 commit statuses and Deployments is required for verification. Configure a push webhook at the
-project's displayed endpoint and set its matching secret through the credentials API. Signatures,
+project's displayed endpoint and set its matching secret in project settings or through the API. Signatures,
 repository identity and target branch are checked before work is queued. Duplicate pushes reuse a
 job, stale revisions are superseded, and known automated merge revisions do not create fix loops.
 
@@ -76,7 +76,7 @@ are checked before filesystem changes. Model declarations cannot authorize a mer
 
 ## Operations
 
-Health endpoint: /healthz. Authenticated API specification: route shapes are available from
+Health endpoint: /healthz. API specification: route shapes are available from
 /api/v1/openapi.json; interactive docs are disabled in production. Project/report data requires an
 account session or scoped bearer token. Cookie mutations require CSRF verification. Passwords use
 scrypt; login attempts are throttled and credentials are encrypted at rest.
@@ -90,3 +90,11 @@ the encryption key together. Jobs record verification, revisions, PRs, rollback 
 New installations create schema version 1. Existing schema changes must use explicit reviewed
 migrations before upgrading a deployed database. No live schema or secret rotation is performed by
 the application's install command.
+
+Provider request deadlines, Ollama thinking and context size are explicit project settings. Shared
+production workers accept official provider endpoints only. Use an account-scoped local worker
+for Ollama or a custom gateway; do not enable private network access on a public shared worker.
+
+Vercel's [FastAPI deployment guide](https://vercel.com/docs/frameworks/backend/fastapi) documents
+the Python function boundary. The repository packages its control plane as api/index.py;
+repository processing remains in the portable worker and is never a serverless request loop.
