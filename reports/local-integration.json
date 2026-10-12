@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "scope": "Actual local demo Git repository, served website, commit/merge and deployed-response verification",
+  "verified_fixes": 1,
+  "job_status": "complete",
+  "verification": [
+    {
+      "name": "HTML metadata",
+      "path": "web/index.html",
+      "passed": true
+    }
+  ],
+  "result_summary": "Changes verified on the deployed website"
+}
