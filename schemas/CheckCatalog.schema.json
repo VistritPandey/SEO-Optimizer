@@ -1,0 +1,195 @@
+{
+  "$defs": {
+    "ActionKind": {
+      "enum": [
+        "none",
+        "investigate",
+        "collect_evidence",
+        "propose_patch",
+        "publish_content",
+        "change_crawler_policy",
+        "update_business_profile",
+        "merge",
+        "deploy",
+        "experiment"
+      ],
+      "title": "ActionKind",
+      "type": "string"
+    },
+    "Check": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "module": {
+          "$ref": "#/$defs/Module"
+        },
+        "title": {
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "website_types": {
+          "items": {
+            "$ref": "#/$defs/WebsiteType"
+          },
+          "minItems": 1,
+          "title": "Website Types",
+          "type": "array"
+        },
+        "page_types": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Page Types",
+          "type": "array"
+        },
+        "required_context": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Required Context",
+          "type": "array"
+        },
+        "evidence_requirements": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Evidence Requirements",
+          "type": "array"
+        },
+        "assessment": {
+          "enum": [
+            "deterministic",
+            "model_assisted",
+            "experimental"
+          ],
+          "title": "Assessment",
+          "type": "string"
+        },
+        "recommended_action": {
+          "minLength": 1,
+          "title": "Recommended Action",
+          "type": "string"
+        },
+        "allowed_actions": {
+          "items": {
+            "$ref": "#/$defs/ActionKind"
+          },
+          "minItems": 1,
+          "title": "Allowed Actions",
+          "type": "array"
+        },
+        "automatic_prerequisites": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Automatic Prerequisites",
+          "type": "array"
+        },
+        "verification": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Verification",
+          "type": "array"
+        },
+        "no_op_conditions": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "No Op Conditions",
+          "type": "array"
+        },
+        "source_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Source Ids",
+          "type": "array"
+        },
+        "reference": {
+          "minLength": 1,
+          "title": "Reference",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "module",
+        "title",
+        "website_types",
+        "page_types",
+        "required_context",
+        "evidence_requirements",
+        "assessment",
+        "recommended_action",
+        "allowed_actions",
+        "automatic_prerequisites",
+        "verification",
+        "no_op_conditions",
+        "source_ids",
+        "reference"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "Module": {
+      "enum": [
+        "technical",
+        "performance",
+        "content",
+        "geo",
+        "local",
+        "ecommerce",
+        "international",
+        "operations"
+      ],
+      "title": "Module",
+      "type": "string"
+    },
+    "WebsiteType": {
+      "enum": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "title": "WebsiteType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "title": "Version",
+      "type": "string"
+    },
+    "checks": {
+      "items": {
+        "$ref": "#/$defs/Check"
+      },
+      "minItems": 1,
+      "title": "Checks",
+      "type": "array"
+    }
+  },
+  "required": [
+    "version",
+    "checks"
+  ],
+  "title": "CheckCatalog",
+  "type": "object"
+}
