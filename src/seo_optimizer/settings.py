@@ -47,14 +47,17 @@ class Settings:
                 pass
             secret = key_file.read_text().strip()
         roots = tuple(
-            Path(value).resolve() for value in os.getenv(
-                "OPT_REPO_ROOTS", str(data_dir)
-            ).split(os.pathsep) if value
+            Path(value).resolve()
+            for value in os.getenv("OPT_REPO_ROOTS", str(data_dir)).split(os.pathsep)
+            if value
         )
         return cls(
-            data_dir=data_dir, database_url=database or f"sqlite:///{data_dir / 'control.db'}",
-            secret_key=secret, production=production,
-            allow_private_network=os.getenv("OPT_ALLOW_PRIVATE_NETWORK", "0" if production else "1") == "1",
+            data_dir=data_dir,
+            database_url=database or f"sqlite:///{data_dir / 'control.db'}",
+            secret_key=secret,
+            production=production,
+            allow_private_network=os.getenv("OPT_ALLOW_PRIVATE_NETWORK", "0" if production else "1")
+            == "1",
             allow_local_repositories=not production,
             registration_enabled=os.getenv("OPT_REGISTRATION", "1") == "1",
             public_url=os.getenv("OPT_PUBLIC_URL", "http://127.0.0.1:8000"),
