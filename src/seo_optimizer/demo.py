@@ -22,7 +22,8 @@ def create_demo() -> None:
         '<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="description" content="Practical guides for a more useful website.">'
         '<meta name="viewport" content="width=device-width, initial-scale=1"></head>'
-        "<body><main><h1>Field Notes</h1><p>Practical guides for a more useful website.</p></main></body></html>"
+        "<body><main><h1>Field Notes</h1>"
+        "<p>Practical guides for a more useful website.</p></main></body></html>"
     )
     run_git(root, "init", "-b", "main")
     run_git(root, "add", "web/index.html")
