@@ -1,0 +1,403 @@
+{
+  "$defs": {
+    "JsonValue": {},
+    "ProviderCapabilities": {
+      "additionalProperties": false,
+      "properties": {
+        "tool_calling": {
+          "default": false,
+          "title": "Tool Calling",
+          "type": "boolean"
+        },
+        "json_schema": {
+          "default": false,
+          "title": "Json Schema",
+          "type": "boolean"
+        },
+        "vision": {
+          "default": false,
+          "title": "Vision",
+          "type": "boolean"
+        },
+        "context_tokens": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Tokens"
+        }
+      },
+      "title": "ProviderCapabilities",
+      "type": "object"
+    },
+    "ProviderConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "default": "rules",
+          "enum": [
+            "rules",
+            "ollama",
+            "openai",
+            "anthropic",
+            "google"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "model": {
+          "default": "",
+          "title": "Model",
+          "type": "string"
+        },
+        "base_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Base Url"
+        },
+        "capabilities": {
+          "$ref": "#/$defs/ProviderCapabilities"
+        },
+        "max_output_tokens": {
+          "default": 4096,
+          "maximum": 16384,
+          "minimum": 256,
+          "title": "Max Output Tokens",
+          "type": "integer"
+        },
+        "request_timeout_seconds": {
+          "default": 180,
+          "maximum": 300,
+          "minimum": 5,
+          "title": "Request Timeout Seconds",
+          "type": "integer"
+        },
+        "ollama_think": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Ollama Think"
+        },
+        "ollama_num_ctx": {
+          "default": 8192,
+          "maximum": 32768,
+          "minimum": 2048,
+          "title": "Ollama Num Ctx",
+          "type": "integer"
+        },
+        "input_usd_per_million": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Usd Per Million"
+        },
+        "output_usd_per_million": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Usd Per Million"
+        }
+      },
+      "title": "ProviderConfig",
+      "type": "object"
+    },
+    "TrustedFact": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/JsonValue"
+        },
+        "source": {
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "verified_at": {
+          "format": "date-time",
+          "title": "Verified At",
+          "type": "string"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "value",
+        "source",
+        "verified_at"
+      ],
+      "title": "TrustedFact",
+      "type": "object"
+    },
+    "WebsiteType": {
+      "enum": [
+        "saas",
+        "docs",
+        "publishing",
+        "local",
+        "ecommerce",
+        "generic"
+      ],
+      "title": "WebsiteType",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Name",
+      "type": "string"
+    },
+    "website_url": {
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1,
+      "title": "Website Url",
+      "type": "string"
+    },
+    "repository": {
+      "default": "",
+      "title": "Repository",
+      "type": "string"
+    },
+    "local_path": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Local Path"
+    },
+    "branch": {
+      "default": "main",
+      "title": "Branch",
+      "type": "string"
+    },
+    "environment": {
+      "default": "production",
+      "title": "Environment",
+      "type": "string"
+    },
+    "website_types": {
+      "items": {
+        "$ref": "#/$defs/WebsiteType"
+      },
+      "title": "Website Types",
+      "type": "array"
+    },
+    "allowed_paths": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Allowed Paths",
+      "type": "array"
+    },
+    "page_intents": {
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "title": "Page Intents",
+      "type": "object"
+    },
+    "route_map": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Route Map",
+      "type": "object"
+    },
+    "facts": {
+      "items": {
+        "$ref": "#/$defs/TrustedFact"
+      },
+      "title": "Facts",
+      "type": "array"
+    },
+    "goals": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Goals",
+      "type": "array"
+    },
+    "crawler_preferences": {
+      "additionalProperties": {
+        "enum": [
+          "allow",
+          "block",
+          "unchanged"
+        ],
+        "type": "string"
+      },
+      "title": "Crawler Preferences",
+      "type": "object"
+    },
+    "provider": {
+      "$ref": "#/$defs/ProviderConfig"
+    },
+    "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+    },
+    "auto_merge": {
+      "default": true,
+      "title": "Auto Merge",
+      "type": "boolean"
+    },
+    "auto_fix": {
+      "default": true,
+      "title": "Auto Fix",
+      "type": "boolean"
+    },
+    "allow_content_publication": {
+      "default": false,
+      "title": "Allow Content Publication",
+      "type": "boolean"
+    },
+    "max_pages": {
+      "default": 25,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Max Pages",
+      "type": "integer"
+    },
+    "max_files_changed": {
+      "default": 5,
+      "maximum": 20,
+      "minimum": 1,
+      "title": "Max Files Changed",
+      "type": "integer"
+    },
+    "max_tool_steps": {
+      "default": 6,
+      "maximum": 12,
+      "minimum": 1,
+      "title": "Max Tool Steps",
+      "type": "integer"
+    },
+    "max_job_seconds": {
+      "default": 480,
+      "maximum": 600,
+      "minimum": 30,
+      "title": "Max Job Seconds",
+      "type": "integer"
+    },
+    "max_cost_usd": {
+      "default": 2.0,
+      "exclusiveMinimum": 0,
+      "maximum": 100,
+      "title": "Max Cost Usd",
+      "type": "number"
+    },
+    "reconcile_seconds": {
+      "default": 3600,
+      "maximum": 604800,
+      "minimum": 300,
+      "title": "Reconcile Seconds",
+      "type": "integer"
+    },
+    "required_checks": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Required Checks",
+      "type": "array"
+    },
+    "check_commands": {
+      "items": {
+        "items": {
+          "type": "string"
+        },
+        "type": "array"
+      },
+      "title": "Check Commands",
+      "type": "array"
+    },
+    "sandbox_image": {
+      "default": "python:3.12-slim",
+      "title": "Sandbox Image",
+      "type": "string"
+    },
+    "browser_enabled": {
+      "default": false,
+      "title": "Browser Enabled",
+      "type": "boolean"
+    },
+    "rollback_on_regression": {
+      "default": true,
+      "title": "Rollback On Regression",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "name",
+    "website_url"
+  ],
+  "title": "ProjectSpec",
+  "type": "object"
+}
