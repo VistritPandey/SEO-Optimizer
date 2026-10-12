@@ -383,6 +383,16 @@ class CheckCatalog(Contract):
 
 
 def schema_models() -> dict[str, type[BaseModel]]:
+    from seo_optimizer.application_models import (
+        AgentDecision,
+        FileChange,
+        ProjectCreate,
+        ProjectSecrets,
+        ProjectSpec,
+        ProviderConfig,
+        Registration,
+    )
+
     return {
         model.__name__: model
         for model in (
@@ -400,6 +410,13 @@ def schema_models() -> dict[str, type[BaseModel]]:
             EvaluationReport,
             SourceRegistry,
             CheckCatalog,
+            AgentDecision,
+            FileChange,
+            ProjectCreate,
+            ProjectSecrets,
+            ProjectSpec,
+            ProviderConfig,
+            Registration,
         )
     }
 
