@@ -43,10 +43,14 @@ def main(argv: list[str] | None = None) -> int:
     worker.add_argument("--remote", action="store_true")
     worker.add_argument("--interval", type=float, default=3)
     commands.add_parser("demo", help="Create a local demo repository and account")
-    live = commands.add_parser("benchmark-live", help="Evaluate real model decisions without repository writes")
+    live = commands.add_parser(
+        "benchmark-live", help="Evaluate real model decisions without repository writes"
+    )
     live.add_argument("--cases", type=Path, required=True)
     live.add_argument("--output", type=Path, required=True)
-    live.add_argument("--provider", choices=["ollama", "openai", "anthropic", "google"], default="ollama")
+    live.add_argument(
+        "--provider", choices=["ollama", "openai", "anthropic", "google"], default="ollama"
+    )
     live.add_argument("--model", required=True)
     live.add_argument("--limit", type=int, default=5)
     live.add_argument("--split", choices=["development", "held_out"], default="development")
@@ -89,7 +93,15 @@ def main(argv: list[str] | None = None) -> int:
             create_demo()
         elif args.command == "benchmark-live":
             from seo_optimizer.live_benchmark import benchmark
-            benchmark(args.cases, args.output, args.provider, args.model, max(1, min(100, args.limit)), args.split)
+
+            benchmark(
+                args.cases,
+                args.output,
+                args.provider,
+                args.model,
+                max(1, min(100, args.limit)),
+                args.split,
+            )
         elif args.command == "validate":
             print(
                 json.dumps(
