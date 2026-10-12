@@ -132,7 +132,7 @@ class Worker:
         except (httpx.HTTPError, OSError) as error:
             status = "queued" if job.attempts < 3 else "failed"
             result, delay = (
-                {"summary": f"Transient integration failure: {type(error).__name__}"},
+                {**job.result, "summary": f"Transient integration failure: {type(error).__name__}"},
                 30 * max(1, job.attempts),
             )
         except Exception as error:
@@ -273,6 +273,26 @@ class Worker:
         evidence = crawler.collect(project.tenant_id, project.id, spec, urls)
         if not any(item.data.get("status_code") == 200 for item in evidence):
             raise ValueError("No successful public page could be collected")
+        if (
+            spec.measure_performance
+            and spec.environment == "production"
+            and (
+                context(project.tenant_id, project.id, spec).page_intents.get(
+                    str(spec.website_url), True
+                )
+            )
+        ):
+            from seo_optimizer.performance import collect_performance
+
+            evidence.append(
+                collect_performance(
+                    str(spec.website_url),
+                    project.tenant_id,
+                    project.id,
+                    spec.environment,
+                    credentials.pagespeed_key,
+                )
+            )
         if spec.browser_enabled:
             evidence.extend(
                 capture_browser(
@@ -416,8 +436,12 @@ class Worker:
                     "kind": item.kind,
                     "excerpt": page_excerpt(str(item.data.get("html", ""))),
                     "status_code": item.data.get("status_code"),
+                    "data": item.data if item.kind == "tool" else None,
                 }
-                for item in evidence[:6]
+                for item in (
+                    [e for e in evidence if e.kind == "http"][:6]
+                    + [e for e in evidence if e.kind != "http"][:6]
+                )
             ]
             request = {
                 "project": project_context.model_dump(mode="json"),
@@ -567,6 +591,18 @@ class Worker:
     ) -> tuple[str, dict[str, Any], float]:
         result = dict(job.result)
         pr = result["pr"]
+        current = github.request("GET", f"/repos/{spec.repository}/pulls/{pr['number']}")
+        if current.get("head", {}).get("sha") != pr["head_sha"]:
+            return "blocked", {**result, "summary": "Pull request revision changed"}, 0
+        if current.get("merged"):
+            result.update(
+                merged_sha=current["merge_commit_sha"],
+                stage="deployment",
+                summary="Merged revision recovered; waiting for deployment",
+            )
+            return "waiting_deployment", result, 15
+        if current.get("state") == "closed":
+            return "blocked", {**result, "summary": "Pull request was closed without merging"}, 0
         ready = github.checks_ready(spec.repository, pr["head_sha"], spec.required_checks)
         if ready == "failed":
             return (
