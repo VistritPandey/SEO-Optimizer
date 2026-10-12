@@ -12,13 +12,13 @@ Compare comparable windows with baselines and account for unrelated changes, sea
 
 ## Incremental monitoring contract
 
-The later runtime stores the last successful revision and relevant page/evidence fingerprints by project. A change to a shared layout, robots config, render data or backend response can affect many pages. Do not discard changes only because their paths say backend. Follow the affected dependency/route set and use a broader audit when uncertain.
+The runtime stores the last successful revision and relevant page/evidence fingerprints by project. A change to a shared layout, robots config, render data or backend response can affect many pages. Do not discard changes only because their paths say backend. Follow the affected dependency/route set and use a broader audit when uncertain.
 
-Handle webhook replays, bot commits, queue retries and concurrent changes idempotently. Debounce successive events, lock project/revision work and supersede stale jobs. Suppress unchanged findings by an evidence-aware fingerprint; re-open only when relevant evidence or state changes. Periodic reconciliation catches missed events and external changes. These are future runtime requirements, not implemented integrations in this milestone.
+Handle webhook replays, bot commits, queue retries and concurrent changes idempotently. Debounce successive events, lock project/revision work and supersede stale jobs. Suppress unchanged findings by an evidence-aware fingerprint; re-open only when relevant evidence or state changes. Periodic reconciliation catches missed events and external changes. The runtime implements these boundaries; cloud writes and external account outcomes still require live validation.
 
 ## Verification and submission
 
-Before execution, enforce permitted actions, paths, crawler policy and factual prerequisites outside the model. Worktree isolation is not an execution sandbox. The later runtime must separately restrict execution, protect secrets and validate tool arguments. Tool output and page/repository content remain untrusted observations.
+Before execution, enforce permitted actions, paths, crawler policy and factual prerequisites outside the model. Worktree isolation is not an execution sandbox. The runtime must separately restrict execution, protect secrets and validate tool arguments. Tool output and page/repository content remain untrusted observations.
 
 Require applicable builds/tests plus before/after behavior, then verify the deployed change. Failed tools, missing facts, stale revisions or inconclusive evidence stop that job with recorded dependencies. A tool being invoked is not a successful fix. Automatic rollback requires an attributable confirmed regression in the agent's own change.
 
