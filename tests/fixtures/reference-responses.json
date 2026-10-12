@@ -1,0 +1,535 @@
+[
+  {
+    "case_id": "public-missing-title",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.title\", \"summary\": \"A public successful HTML page lacks its title.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-starter\", \"google-js\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Add a factual descriptive title for an untitled public page\", \"automatic\": false}, \"verification_criteria\": [\"Inspect response and rendered title; confirm it describes this page\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "public-healthy-title",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "private-untitled",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "preview-untitled",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"preview\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "accidental-noindex",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.indexability\", \"summary\": \"Public intent conflicts with HTML noindex.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-essentials\", \"google-js\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Repair accidental directives only for explicitly public pages\", \"automatic\": false}, \"verification_criteria\": [\"Refetch response and rendered directives; compare intended visibility\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "intentional-noindex",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "header-noindex",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.indexability\", \"summary\": \"Public response is excluded by its header.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-essentials\", \"google-js\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Repair accidental directives only for explicitly public pages\", \"automatic\": false}, \"verification_criteria\": [\"Refetch response and rendered directives; compare intended visibility\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "healthy-indexable",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "canonical-conflict",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.canonical\", \"summary\": \"Initial HTML declares two different canonical destinations.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-canonical\", \"google-js\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Resolve contradictory canonical declarations using verified URL intent\", \"automatic\": false}, \"verification_criteria\": [\"Compare all declarations, redirects and URL Inspection when available\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "canonical-missing-not-defect",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "canonical-equivalent",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "broken-internal-link",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.links\", \"summary\": \"A linked internal destination was observed returning 404.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-starter\", \"google-js\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Repair confirmed broken internal links or inaccessible navigation\", \"automatic\": false}, \"verification_criteria\": [\"Recheck source anchor and destination; preserve navigation behavior\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "redirect-link-is-valid",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "unobserved-link",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.links\", \"summary\": \"Response evidence for the internal destination is unavailable.\", \"status\": \"unresolved\", \"severity\": \"info\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-starter\", \"google-js\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Observe the linked destination.\", \"automatic\": false}, \"verification_criteria\": [\"Recheck source anchor and destination; preserve navigation behavior\"], \"dependencies\": [\"Destination HTTP response\"]}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "external-link-outside-baseline",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "failed-response-not-healthy",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"tech.title\", \"summary\": \"Unavailable successful page evidence must remain unresolved.\", \"status\": \"unresolved\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-starter\", \"google-js\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Add a factual descriptive title for an untitled public page\", \"automatic\": false}, \"verification_criteria\": [\"Inspect response and rendered title; confirm it describes this page\"], \"dependencies\": [\"Required authoritative context or successful tool evidence is unavailable.\"]}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "training-block-search-allow",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "missing-owner-bot-policy",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"geo.crawlers\", \"summary\": \"Bot preference is absent; do not guess permission.\", \"status\": \"unresolved\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"openai-bots\", \"anthropic-bots\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Repair mismatches with explicit policy without enabling training by default\", \"automatic\": false}, \"verification_criteria\": [\"Reparse effective rules for search/training/user bots independently\"], \"dependencies\": [\"Required authoritative context or successful tool evidence is unavailable.\"]}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "llms-google-promise",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"geo.google-llms\", \"summary\": \"An existing recommendation asserts an unsupported Google-specific requirement.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-ai\"], \"action\": {\"kind\": \"none\", \"rationale\": \"Correct the unsupported recommendation; leave useful files for other consumers intact\", \"automatic\": false}, \"verification_criteria\": [\"Validate engine scope and any independently documented consumer\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "llms-other-consumer",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "faq-obsolete-promise",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"geo.google-faq\", \"summary\": \"A recommendation promises a Google display feature deprecated in May 2026.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-updates\", \"google-ai\"], \"action\": {\"kind\": \"none\", \"rationale\": \"Correct obsolete promised Google rich-result benefits; preserve helpful answers\", \"automatic\": false}, \"verification_criteria\": [\"Check current supported-feature guidance and retain useful reader content\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "faq-useful-content",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "unknown-business-hours",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"local.hours\", \"summary\": \"No authoritative hours exist; inventing a schedule is forbidden.\", \"status\": \"unresolved\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-local-schema\", \"google-business-policy\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Correct verified discrepancies or request the missing fact\", \"automatic\": false}, \"verification_criteria\": [\"Compare visible hours, markup and profile; account for exceptional dates\"], \"dependencies\": [\"Required authoritative context or successful tool evidence is unavailable.\"]}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "wrong-business-hours",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"local.hours\", \"summary\": \"Visible hours conflict with owner-verified current hours.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-local-schema\", \"google-business-policy\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Correct verified discrepancies or request the missing fact\", \"automatic\": false}, \"verification_criteria\": [\"Compare visible hours, markup and profile; account for exceptional dates\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "hours-match",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "invented-product-claim",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"content.factual\", \"summary\": \"The public claim has no applicable evidence; investigate without inventing support.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-helpful\", \"google-spam\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Correct unsupported assertions or collect missing proof before publishing\", \"automatic\": false}, \"verification_criteria\": [\"Trace each material claim to its source and compare visible content\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "invented-reviews",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"local.schema\", \"summary\": \"Self-serving unsupported business ratings do not justify review-snippet markup.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-local-schema\", \"google-schema\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Repair missing/contradictory applicable facts without creating self-serving ratings\", \"automatic\": false}, \"verification_criteria\": [\"Validate type-specific requirements and compare visible details\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "stale-fact",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"content.refresh\", \"summary\": \"A still-published service assertion conflicts with current owner facts.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-helpful\", \"google-canonical\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Update obsolete facts; consolidate only genuinely equivalent user intents\", \"automatic\": false}, \"verification_criteria\": [\"Confirm factual update and preserve useful coverage, links and redirects\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "old-date-correct-content",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "offer-price-conflict",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"commerce.facts\", \"summary\": \"Visible observed offer price differs from Product markup.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-product\", \"google-schema\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Correct contradictions using current commerce facts\", \"automatic\": false}, \"verification_criteria\": [\"Compare visible offer, JSON-LD and authorized feed data\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "offer-consistent",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "variant-group-conflict",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"commerce.variants\", \"summary\": \"Selected product variant differs from its represented variant.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-variants\", \"google-canonical\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Map real variants and equivalent URLs accurately\", \"automatic\": false}, \"verification_criteria\": [\"Select variants, inspect markup/URLs and validate the actual grouped offers\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "hreflang-one-way",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"intl.hreflang\", \"summary\": \"Observed equivalent alternatives lack return hreflang references.\", \"status\": \"defect\", \"severity\": \"medium\", \"evidence_strength\": \"confirmed\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-hreflang\"], \"action\": {\"kind\": \"investigate\", \"rationale\": \"Correct invalid/one-way alternatives using the actual locale map\", \"automatic\": false}, \"verification_criteria\": [\"Check return/self references, final statuses and canonical consistency\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "single-language-noop",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "unrelated-backend-change",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "unchanged-finding-suppressed",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "page-injection",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": []}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "screenshot-only-evidence",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"perf.navigation\", \"summary\": \"A screenshot needs behavioral corroboration before an automatic repair.\", \"status\": \"unresolved\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-ai\", \"google-js\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Repair inaccessible navigation or obscured content without redesigning the brand\", \"automatic\": false}, \"verification_criteria\": [\"Run navigation tasks and inspect focus, links and main content\"], \"dependencies\": [\"Required authoritative context or successful tool evidence is unavailable.\"]}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "field-metrics-unavailable",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"perf.cwv\", \"summary\": \"A lab score cannot establish real-user INP.\", \"status\": \"unresolved\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-cwv\", \"web-vitals\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Investigate measured bottlenecks; improve the demonstrated cause\", \"automatic\": false}, \"verification_criteria\": [\"Repeat comparable runs and inspect field metrics over their collection window\"], \"dependencies\": [\"Required authoritative context or successful tool evidence is unavailable.\"]}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "bounded-citation-experiment",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"geo.experiment\", \"summary\": \"A research tactic remains an experimental hypothesis, not a guaranteed ranking fix.\", \"status\": \"experiment\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"geo-paper\", \"geo-survey\"], \"action\": {\"kind\": \"experiment\", \"rationale\": \"Run a bounded content experiment and record discoverability and citation fidelity separately\", \"automatic\": false}, \"verification_criteria\": [\"Repeat across query paraphrases/runs; hold out queries; inspect source attribution\"], \"dependencies\": []}]}",
+    "runtime_ms": null,
+    "usage": {}
+  },
+  {
+    "case_id": "tool-failure-unresolved",
+    "provider": "synthetic-reference",
+    "model": "authored-decisions-v1",
+    "capabilities": {
+      "tool_calling": true,
+      "json_schema": true,
+      "vision": true
+    },
+    "raw_response": "{\"schema_version\": \"1.0\", \"tenant_id\": \"fixture-owner\", \"project_id\": \"fixture-site\", \"environment\": \"production\", \"findings\": [{\"check_id\": \"ops.verification\", \"summary\": \"Failed evidence collection is recorded as an unresolved dependency.\", \"status\": \"unresolved\", \"severity\": \"medium\", \"evidence_strength\": \"hypothesis\", \"evidence_ids\": [\"page\"], \"source_ids\": [\"google-js\", \"google-schema\", \"google-starter\"], \"action\": {\"kind\": \"collect_evidence\", \"rationale\": \"Require applicable checks; stop unresolved jobs and record reproducible failures\", \"automatic\": false}, \"verification_criteria\": [\"Inspect actual patch and relevant behavior; do not claim success from tool invocation alone\"], \"dependencies\": [\"Required authoritative context or successful tool evidence is unavailable.\"]}], \"tool_calls\": [{\"id\": \"inspect-1\", \"name\": \"inspect_route\", \"arguments\": {\"url\": \"https://example.test/\"}}], \"tool_results\": [{\"call_id\": \"inspect-1\", \"success\": false, \"error\": \"Fixture timeout\", \"output\": null}]}",
+    "runtime_ms": null,
+    "usage": {}
+  }
+]
