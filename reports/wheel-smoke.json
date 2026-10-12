@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "wheel": "seo_optimizer-1.0.0-py3-none-any.whl",
+  "version": "1.0.0",
+  "checks": 39,
+  "sources": 30,
+  "schemas": 21,
+  "scope": [
+    "isolated installed package",
+    "private knowledge resources",
+    "server templates",
+    "CSS and JS assets",
+    "authenticated dashboard",
+    "SQLite initialization"
+  ]
+}
