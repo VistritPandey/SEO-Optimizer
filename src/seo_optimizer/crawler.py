@@ -183,7 +183,7 @@ def capture_browser(
     crawler.check_url(url)
     output.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as runtime:
-        browser = runtime.chromium.launch()
+        browser = runtime.chromium.launch(channel="chromium")
         context = browser.new_context(
             viewport={"width": 1280, "height": 900}, service_workers="block"
         )
