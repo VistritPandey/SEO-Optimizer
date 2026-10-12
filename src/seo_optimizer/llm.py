@@ -6,6 +6,7 @@ import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 from pydantic import ValidationError
@@ -55,13 +56,29 @@ class ProviderError(RuntimeError):
 
 
 class ModelClient:
-    def __init__(self, config: ProviderConfig, key: str = "", client: httpx.Client | None = None):
+    def __init__(
+        self,
+        config: ProviderConfig,
+        key: str = "",
+        client: httpx.Client | None = None,
+        allow_custom_endpoint: bool = True,
+    ):
         self.config, self.key = config, key
         self.client = client or httpx.Client(
             timeout=config.request_timeout_seconds, follow_redirects=False
         )
         self.owns_client = client is None
         self.url = (config.base_url or DEFAULT_URLS.get(config.kind, "")).rstrip("/")
+        parts = urlparse(self.url)
+        if parts.scheme not in {"http", "https"} or parts.username or parts.password:
+            self.close()
+            raise ProviderError("Invalid provider endpoint")
+        if not allow_custom_endpoint and self.url != DEFAULT_URLS.get(config.kind):
+            self.close()
+            raise ProviderError("Custom model endpoints are disabled on this shared worker")
+        if not allow_custom_endpoint and config.kind == "ollama":
+            self.close()
+            raise ProviderError("Local models require an account-scoped local worker")
 
     def close(self) -> None:
         if self.owns_client:
@@ -129,6 +146,15 @@ class ModelClient:
         for step in range(max_steps):
             if time.monotonic() - started > max_seconds:
                 raise ProviderError("Model time budget exhausted")
+            self.client.timeout = httpx.Timeout(
+                max(
+                    0.1,
+                    min(
+                        self.config.request_timeout_seconds,
+                        max_seconds - (time.monotonic() - started),
+                    ),
+                )
+            )
             definitions = tools if self.config.capabilities.tool_calling else []
             calls: list[dict[str, Any]] = []
             text = ""
