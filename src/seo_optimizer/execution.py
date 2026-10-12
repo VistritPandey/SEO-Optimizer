@@ -5,6 +5,7 @@ import re
 import subprocess
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 from seo_optimizer.application_models import FileChange, ProjectSpec
 
@@ -123,6 +124,16 @@ def apply_changes(
         if not set(change.evidence_ids).issubset(evidence_ids) or change.check_id not in check_ids:
             raise ValueError("Patch is not supported by collected findings")
         target = confined(root, change.path, spec.allowed_paths)
+        intents = {
+            urlparse(route).path or "/": intent for route, intent in spec.page_intents.items()
+        }
+        private_paths = {
+            path
+            for route, path in spec.route_map.items()
+            if not intents.get(route, spec.environment == "production")
+        }
+        if change.path in private_paths:
+            raise ValueError("Intentional private pages must not be changed")
         creating = not target.exists()
         if creating and (
             change.before
@@ -159,6 +170,43 @@ def apply_changes(
                     head.start() <= start and start + len(change.before) <= head.end()
                 ):
                     raise ValueError("Automatic edit extends beyond permitted page metadata")
+                updated_head = re.search(r"<head\b[^>]*>(.*?)</head>", updated, flags=re.S | re.I)
+                if updated_head is None:
+                    raise ValueError("Edit removes the document head")
+
+                def fixed_head(value: str) -> str:
+                    value = re.sub(r"<title\b[^>]*>.*?</title>", "", value, flags=re.S | re.I)
+                    value = re.sub(r"<meta\b[^>]*>", "", value, flags=re.I)
+                    value = re.sub(
+                        r"<link\b(?=[^>]*\brel\s*=\s*['\"](?:canonical|alternate)['\"])[^>]*>",
+                        "",
+                        value,
+                        flags=re.I,
+                    )
+                    return value.strip()
+
+                if fixed_head(head.group(0)) != fixed_head(updated_head.group(0)):
+                    raise ValueError("Edit changes executable or unrelated head content")
+                if re.search(
+                    r"<meta\b[^>]*http-equiv\s*=\s*['\"]?refresh\b", updated_head.group(0), re.I
+                ):
+                    raise ValueError("Automatic metadata cannot introduce a redirect")
+                directives = re.compile(
+                    r"<meta\b(?=[^>]*\bname\s*=\s*['\"](?:robots|googlebot|bingbot)['\"])[^>]*>",
+                    re.I,
+                )
+                if directives.findall(original) != directives.findall(updated):
+                    routes = [
+                        route for route, path in spec.route_map.items() if path == change.path
+                    ]
+                    if (
+                        change.check_id != "tech.indexability"
+                        or not routes
+                        or not all(intents.get(route) is True for route in routes)
+                    ):
+                        raise ValueError(
+                            "Indexing directives require explicit matching public intent"
+                        )
             else:
                 raise ValueError("Application/content edits require explicit publication policy")
         elif not spec.facts:
