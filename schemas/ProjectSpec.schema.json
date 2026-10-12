@@ -388,6 +388,11 @@
       "title": "Browser Enabled",
       "type": "boolean"
     },
+    "measure_performance": {
+      "default": false,
+      "title": "Measure Performance",
+      "type": "boolean"
+    },
     "rollback_on_regression": {
       "default": true,
       "title": "Rollback On Regression",
