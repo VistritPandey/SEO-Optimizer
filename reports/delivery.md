@@ -30,7 +30,7 @@ structural validation cannot prove every sentence true.
 
 | Check | Result | Scope |
 |---|---|---|
-| Pytest | **145 passed; 0 failed; 0 skipped** | Contracts, policy, tenant isolation, credentials, CSRF, webhook replay, native adapters, leases, remote workers, publication and recovery |
+| Pytest | **154 passed; 0 failed; 0 skipped** | Contracts, policy, tenant isolation, credentials, CSRF, webhook replay, native adapters, leases, remote workers, publication and recovery |
 | Lint, formatting and strict types | Passed | Source, tests and hosting entrypoint; 22 typed source modules |
 | Knowledge and skill validators | Passed | Source/check relationships, module routing, local references and skill format |
 | Build and isolated wheel | Passed | Installed package, knowledge, schemas, SQLite initialization, authenticated templates and CSS/JS outside source imports |
@@ -78,8 +78,8 @@ reasoning quality and paid-provider quality/cost were not measured.
 ## Skipped and unverified external outcomes
 
 - **Hosting:** Vercel and container configuration is authored; no cloud deployment was performed
-  without deployment credentials. PostgreSQL production concurrency and a real Docker build
-  sandbox remain unverified in this environment; SQLite and sandbox refusal/policy gates are tested.
+  without deployment credentials. PostgreSQL production concurrency remains unverified. A real Docker build sandbox was
+  subsequently verified against the supplied portfolio; see `portfolio-test.md`.
 - **GitHub:** Signatures, native API protocols, commit/PR/check gates, merge recovery and guarded
   rollback are tested with controlled transports. Real App authentication, cloud writes, merges
   and deployment records require a connected test repository.
@@ -116,3 +116,15 @@ For a live project configure:
 
 See `../docs/deployment.md` for deployment commands and policy prerequisites. Configure secrets
 in the app or an ignored environment/host secret manager, never in Git-tracked files or chat.
+
+## Documentation and supplied-portfolio follow-up
+
+The README now includes workflow/setup diagrams, expandable examples and a packaged interactive
+`/guide` with decision examples. Real Chromium checked every selection, narrow widths, reduced
+motion and heading references. `guide-test.json` records those checks.
+
+The supplied historical React portfolio passed real isolated builds, a rendered-heading title
+repair, local commit/merge/HTTP verification and repeated-audit checks. Its real Ollama audit
+returned valid output without proposing changes or calling tools. The absent description remains
+a finding. This is separate from earlier model-quality fixtures and does not erase their failures.
+See `portfolio-test.md` and its JSON records for exact scope and limitations.
