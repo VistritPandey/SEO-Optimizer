@@ -1,10 +1,15 @@
 {
   "model": "gemma4:12b",
-  "runtime_ms": 19812.253582989797,
-  "tool_trace": [],
+  "runtime_ms": 17812.497334030923,
+  "tool_trace": [
+    {
+      "name": "inspect_route",
+      "success": true
+    }
+  ],
   "usage": {
-    "input_tokens": 112,
-    "output_tokens": 124,
+    "input_tokens": 472,
+    "output_tokens": 110,
     "api_cost_usd": 0.0,
     "electricity_cost_usd": null,
     "hardware_cost_usd": null
@@ -12,7 +17,7 @@
   "decision": {
     "findings": [],
     "changes": [],
-    "summary": "The observed title is: [Title from tool output]"
+    "summary": "The observed title is \"Observed Cedar Guide 731\"."
   },
-  "scope": "Live native tool loop smoke test"
+  "scope": "Live native tool loop smoke test; observed title supplied by controlled tool"
 }
