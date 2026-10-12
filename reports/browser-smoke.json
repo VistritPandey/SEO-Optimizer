@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "scope": "Real Chromium rendered DOM and PNG over pinned local HTTP collection",
+  "kinds": [
+    "dom",
+    "screenshot"
+  ],
+  "requests": 1,
+  "viewport": {
+    "width": 1280,
+    "height": 900
+  }
+}
