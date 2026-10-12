@@ -1,0 +1,39 @@
+{
+  "$defs": {
+    "JsonValue": {}
+  },
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "name": {
+      "enum": [
+        "read_file",
+        "get_diff",
+        "inspect_route",
+        "crawl_page",
+        "apply_patch",
+        "run_checks"
+      ],
+      "title": "Name",
+      "type": "string"
+    },
+    "arguments": {
+      "additionalProperties": {
+        "$ref": "#/$defs/JsonValue"
+      },
+      "title": "Arguments",
+      "type": "object"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "arguments"
+  ],
+  "title": "ToolCall",
+  "type": "object"
+}
