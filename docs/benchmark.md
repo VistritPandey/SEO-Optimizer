@@ -5,8 +5,8 @@
 Compare three declared arms: the implemented rules baseline; rules plus one named Ollama
 model; rules plus one named paid-provider model. Use the same knowledge version, cases,
 observations, tools, step/time budget and allowed actions. Give the models only AuditRequest
-inputs and relevant references. The two model arms and actual tool execution are not implemented
-yet; saved-output replay establishes the measurement interface.
+inputs and relevant references. Native provider/tool adapters and live fixture evaluation are implemented.
+Saved-output replay remains available for controlled, offline grading.
 
 Record exact model/version, capability verification, sampling parameters, context budget,
 provider errors, host hardware and collection time. Repeat real inference trials and retain
@@ -56,9 +56,10 @@ components null. Total cost stays unknown unless all components for all evaluate
 available. Runtime means include only cases with measurements, with their count exposed.
 Imported measurements are not independently attested by replay.
 
-Verified fixes, regressions and cost per verified fix remain null in Phase 1. To measure them,
-the later runtime must retain the actual patch, relevant before/after observations, test output,
-checked revision and deployed verification. Never derive them from a model's own claim.
+Decision-only fixtures leave verified fixes, regressions and cost per verified fix null.
+The operational runtime retains the actual patch, relevant before/after observations, test output,
+checked revision and deployed verification. Use that evidence for operational measurements;
+never derive them from a model's own claim.
 
 Search effects need a separate longitudinal study. Track crawl/index status, relevant query
 performance, citations/link fidelity, visits and conversions independently. Repeat AI queries
@@ -73,9 +74,19 @@ installed-wheel validation and expected rejection of adversarial replays must pa
 
 Next, simulate events against a temporary Git repository: initialize files, commit changes,
 create/merge a branch, replay push/deployment events and serve a local fixture website. Assert
-affected-page coverage, duplicate suppression, stale-job behavior and tool failures. These
-event integrations are future tests, not claimed by the current suite.
+affected-page coverage, duplicate suppression, stale-job behavior and tool failures. The current suite exercises real temporary commits/merges and local HTTP verification, signed
+webhook replay, remote-worker scope, native provider protocols and recovery/rollback gates.
+GitHub API mutations are controlled transport tests; real cloud writes require configured access.
 
 Finally, use a dedicated GitHub test project, real deployed URLs and declared model settings.
 Observe jobs without live mutations before enabling the configured action policy. Keep live
 outcomes distinct from synthetic evaluation reports.
+
+## Recorded local model runs
+
+The delivered reports retain successful schema/tool smoke tests and unsuccessful model-only
+fixture trials. These used the installed gemma4:12b model on an Apple M4, with explicit output
+and context limits. Development cases were used; no held-out inference was performed.
+A smoke test proves a particular capability invocation, not general autonomous reasoning quality.
+Unsuccessful fixture decisions remain failures and cannot qualify the model for production.
+The paid-provider arm is implemented but has not been measured without account credentials.
