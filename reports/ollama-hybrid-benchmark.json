@@ -1,0 +1,661 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-10-12T23:15:10.698560Z",
+  "knowledge_version": "1.0.0",
+  "split": "development",
+  "results": [
+    {
+      "case_id": "public-missing-title",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.title",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.title",
+          "summary": "Public page has no descriptive title.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Add a factual descriptive title for an untitled public page",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Inspect response and rendered title; confirm it describes this page"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": 0.18520798766985536,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "public-healthy-title",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.13629201566800475,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "private-untitled",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.060500053223222494,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "accidental-noindex",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.indexability",
+          "summary": "Declared public page has an exclusion directive.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-essentials",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Repair accidental directives only for explicitly public pages",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Refetch response and rendered directives; compare intended visibility"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": 0.1408749958500266,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "intentional-noindex",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.22612500470131636,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "header-noindex",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.indexability",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.indexability",
+          "summary": "Declared public page has an exclusion directive.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-essentials",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Repair accidental directives only for explicitly public pages",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Refetch response and rendered directives; compare intended visibility"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": 0.14575000386685133,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-conflict",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.canonical",
+          "status": "defect",
+          "allowed_actions": [
+            "investigate"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.canonical",
+          "summary": "Response declares conflicting canonical URLs.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-canonical",
+            "google-js"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "Resolve contradictory canonical declarations using verified URL intent",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Compare all declarations, redirects and URL Inspection when available"
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [],
+      "runtime_ms": 0.1032919972203672,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-missing-not-defect",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.1502500381320715,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "canonical-equivalent",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.1294169924221933,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "redirect-link-is-valid",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.11062499834224582,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "unobserved-link",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "tech.links",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "tech.links",
+          "summary": "Internal destination response evidence is incomplete.",
+          "status": "unresolved",
+          "severity": "medium",
+          "evidence_strength": "hypothesis",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-starter",
+            "google-js"
+          ],
+          "action": {
+            "kind": "collect_evidence",
+            "rationale": "Gather missing observations.",
+            "automatic": false,
+            "target_paths": [],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Recheck source anchor and destination; preserve navigation behavior"
+          ],
+          "dependencies": [
+            "Observe the unresolved internal link destinations."
+          ]
+        }
+      ],
+      "failures": [],
+      "runtime_ms": 0.15575002180412412,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "external-link-outside-baseline",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 0.10741600999608636,
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "training-block-search-allow",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [],
+      "observed": [],
+      "failures": [],
+      "runtime_ms": 35804.10354101332,
+      "usage": {
+        "input_tokens": 2221,
+        "output_tokens": 107,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "missing-owner-bot-policy",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "passed",
+      "expected": [
+        {
+          "check_id": "geo.crawlers",
+          "status": "unresolved",
+          "allowed_actions": [
+            "collect_evidence"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "geo.crawlers",
+          "summary": "Bot preference is absent; no evidence of specific crawler policies.",
+          "status": "unresolved",
+          "severity": "low",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "openai-bots",
+            "anthropic-bots"
+          ],
+          "action": {
+            "kind": "collect_evidence",
+            "rationale": "The current assessment shows a lack of robots.txt or header-based crawler instructions. To determine if there is a mismatch between owner intent and current configuration, specific evidence regarding the owner's stance on training vs. search access is required.",
+            "automatic": false,
+            "target_paths": [
+              "web"
+            ],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Identify if the owner intends to allow search discovery while blocking training for specific providers (OpenAI, Anthropic)."
+          ],
+          "dependencies": [
+            "owner_intent_on_training_vs_search"
+          ]
+        }
+      ],
+      "failures": [],
+      "runtime_ms": 53989.141958008986,
+      "usage": {
+        "input_tokens": 2155,
+        "output_tokens": 386,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "llms-google-promise",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "geo.google-llms",
+          "status": "defect",
+          "allowed_actions": [
+            "none"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "geo.google-llms",
+          "summary": "Recommendation incorrectly claims llms.txt is required for Google AI ranking.",
+          "status": "defect",
+          "severity": "medium",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-ai"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "The existing recommendation 'llms.txt is required for Google AI ranking' contradicts official Google guidance which states that llms.txt does not affect Google visibility. The recommendation should be updated to reflect that while the file may be useful for other AI consumers, it is not a requirement for Google's systems.",
+            "automatic": false,
+            "target_paths": [
+              "content"
+            ],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Update recommendation to remove the claim that llms.txt is a requirement for Google AI ranking.",
+            "Ensure the recommendation remains valid for other non-Google AI consumers if the file is present."
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "incorrect action for geo.google-llms"
+      ],
+      "runtime_ms": 40383.794708002824,
+      "usage": {
+        "input_tokens": 2194,
+        "output_tokens": 385,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "faq-obsolete-promise",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [
+        {
+          "check_id": "geo.google-faq",
+          "status": "defect",
+          "allowed_actions": [
+            "none"
+          ],
+          "required_evidence_ids": [
+            "page"
+          ],
+          "automatic": false
+        }
+      ],
+      "observed": [
+        {
+          "check_id": "geo.google-faq",
+          "summary": "Recommendation for FAQ rich results is based on a feature deprecated in May 2026.",
+          "status": "defect",
+          "severity": "low",
+          "evidence_strength": "confirmed",
+          "evidence_ids": [
+            "page"
+          ],
+          "source_ids": [
+            "google-updates"
+          ],
+          "action": {
+            "kind": "investigate",
+            "rationale": "The current recommendation 'Add FAQPage to obtain Google FAQ rich results' relies on a feature Google deprecated in May 2026. While the content remains useful for users, the specific promise of a rich result display is no longer valid. Investigation is required to update the recommendation to focus on maintaining helpful content rather than a deprecated technical feature.",
+            "automatic": false,
+            "target_paths": [
+              "content"
+            ],
+            "fact_ids": [],
+            "crawler_changes": {},
+            "indexability_changes": {}
+          },
+          "verification_criteria": [
+            "Update recommendation to remove mention of deprecated FAQ rich results while retaining the value of the content for users."
+          ],
+          "dependencies": []
+        }
+      ],
+      "failures": [
+        "incorrect action for geo.google-faq"
+      ],
+      "runtime_ms": 44960.024083033204,
+      "usage": {
+        "input_tokens": 2203,
+        "output_tokens": 385,
+        "api_cost_usd": 0.0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    },
+    {
+      "case_id": "faq-useful-content",
+      "provider": "rules+ollama",
+      "model": "gemma4:12b",
+      "status": "failed",
+      "expected": [],
+      "observed": [],
+      "failures": [
+        "provider/tool run failed: ValidationError: 1 validation error for AgentDecision\nfindings.0\n  Value error, unresolved findings require recorded dependencies [type=value_error, input_value={'check_id': 'geo.google-....'], 'dependencies': []}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.14/v/value_error"
+      ],
+      "runtime_ms": 48706.50104095694,
+      "usage": {
+        "input_tokens": null,
+        "output_tokens": null,
+        "api_cost_usd": null,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      }
+    }
+  ],
+  "counts": {
+    "passed": 14,
+    "failed": 3,
+    "skipped": 0
+  },
+  "metrics": {
+    "evaluated_cases": 17,
+    "coverage": 1.0,
+    "true_positives": 6,
+    "false_positives": 0,
+    "false_negatives": 0,
+    "detection_precision": 1.0,
+    "detection_recall": 1.0,
+    "decision_pass_rate": 0.8235294117647058,
+    "unnecessary_actions": 0,
+    "mean_runtime_ms": 13167.365695949069,
+    "runtime_measured_cases": 17,
+    "total_cost_usd": null,
+    "cost_measured_cases": 0,
+    "verified_fixes": null,
+    "regressions": null,
+    "cost_per_verified_fix_usd": null
+  },
+  "unverified": [
+    "Arm hybrid: live inference requested for 5/17 cases. Only selected fixture decisions were measured, not general reasoning quality.",
+    "GitHub authentication, webhooks, writes, merges, and deployment verification.",
+    "Verified fixes, regressions, search visibility, traffic, and conversion outcomes.",
+    "Imported runtime and cost measurements are not independently attested."
+  ]
+}
