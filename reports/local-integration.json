@@ -10,5 +10,8 @@
       "passed": true
     }
   ],
-  "result_summary": "Changes verified on the deployed website"
+  "result_summary": "Changes verified on the deployed website",
+  "repeat_audit_status": "complete",
+  "repeat_audit_created_commit": false,
+  "repeat_audit_via_dashboard_and_background_worker": true
 }
