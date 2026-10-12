@@ -92,7 +92,7 @@ class Store:
     def __init__(self, settings: Settings):
         self.settings = settings
         self.engine = create_engine(
-            settings.database_url,
+            settings.database_url.replace("postgresql://", "postgresql+psycopg://", 1),
             connect_args={"check_same_thread": False, "timeout": 30} if settings.database_url.startswith("sqlite") else {},
             pool_pre_ping=True,
         )
@@ -272,10 +272,13 @@ class Store:
             return list(session.scalars(select(FindingRecord).where(FindingRecord.tenant_id == tenant,
                 FindingRecord.project_id == project_id).order_by(FindingRecord.active.desc(), FindingRecord.last_seen.desc())))
 
-    def reconcile(self) -> int:
+    def reconcile(self, tenant: str | None = None) -> int:
         now, scheduled = time.time(), 0
         with self.sessions() as session:
-            due = list(session.scalars(select(Project).where(Project.next_audit <= now)))
+            query = select(Project).where(Project.next_audit <= now)
+            if tenant:
+                query = query.where(Project.tenant_id == tenant)
+            due = list(session.scalars(query))
         for project in due:
             spec = ProjectSpec.model_validate(project.spec)
             if spec.enabled:
