@@ -6,7 +6,7 @@ from pydantic import JsonValue
 
 from seo_optimizer.contracts import (
     Assessment,
-    Evidence,
+    AuditRequest,
     ProjectContext,
     ProviderCapabilities,
     ResponseRecord,
@@ -20,8 +20,10 @@ class Provider(Protocol):
     def capabilities(self) -> ProviderCapabilities: ...
 
     def assess(
-        self, project: ProjectContext, evidence: list[Evidence],
-        instructions: str, output_schema: dict[str, JsonValue],
+        self,
+        request: AuditRequest,
+        instructions: str,
+        output_schema: dict[str, JsonValue],
     ) -> ResponseRecord: ...
 
 
@@ -40,12 +42,14 @@ class SavedResponseProvider:
         return self.response.capabilities
 
     def assess(
-        self, project: ProjectContext, evidence: list[Evidence],
-        instructions: str, output_schema: dict[str, JsonValue],
+        self,
+        request: AuditRequest,
+        instructions: str,
+        output_schema: dict[str, JsonValue],
     ) -> ResponseRecord:
         return self.response
 
 
 def parse_assessment(raw: str) -> Assessment:
     # No markdown stripping or silent repairs: malformed outputs remain visible.
-    return Assessment.model_validate_json(raw)
+    return Assessment.model_validate_json(raw, strict=True)
