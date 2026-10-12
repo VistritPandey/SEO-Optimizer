@@ -1,0 +1,173 @@
+{
+  "$defs": {
+    "ProviderCapabilities": {
+      "additionalProperties": false,
+      "properties": {
+        "tool_calling": {
+          "default": false,
+          "title": "Tool Calling",
+          "type": "boolean"
+        },
+        "json_schema": {
+          "default": false,
+          "title": "Json Schema",
+          "type": "boolean"
+        },
+        "vision": {
+          "default": false,
+          "title": "Vision",
+          "type": "boolean"
+        },
+        "context_tokens": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Context Tokens"
+        }
+      },
+      "title": "ProviderCapabilities",
+      "type": "object"
+    },
+    "Usage": {
+      "additionalProperties": false,
+      "properties": {
+        "input_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
+        },
+        "output_tokens": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "api_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Api Cost Usd"
+        },
+        "electricity_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Electricity Cost Usd"
+        },
+        "hardware_cost_usd": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hardware Cost Usd"
+        }
+      },
+      "title": "Usage",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "case_id": {
+      "minLength": 1,
+      "title": "Case Id",
+      "type": "string"
+    },
+    "provider": {
+      "minLength": 1,
+      "title": "Provider",
+      "type": "string"
+    },
+    "model": {
+      "minLength": 1,
+      "title": "Model",
+      "type": "string"
+    },
+    "capabilities": {
+      "$ref": "#/$defs/ProviderCapabilities"
+    },
+    "raw_response": {
+      "title": "Raw Response",
+      "type": "string"
+    },
+    "runtime_ms": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Runtime Ms"
+    },
+    "usage": {
+      "$ref": "#/$defs/Usage"
+    },
+    "run_error": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Run Error"
+    }
+  },
+  "required": [
+    "case_id",
+    "provider",
+    "model",
+    "capabilities",
+    "raw_response"
+  ],
+  "title": "ResponseRecord",
+  "type": "object"
+}
