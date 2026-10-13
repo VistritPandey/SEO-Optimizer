@@ -53,6 +53,7 @@ class ProjectSpec(Contract):
     auto_merge: bool = True
     auto_fix: bool = True
     allow_content_publication: bool = False
+    auto_content_refresh: bool = False
     max_pages: int = Field(default=25, ge=1, le=100)
     max_files_changed: int = Field(default=5, ge=1, le=20)
     max_tool_steps: int = Field(default=6, ge=1, le=12)
