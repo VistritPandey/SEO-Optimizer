@@ -134,3 +134,39 @@ def test_real_firebase_identity_rejects_unverified_and_invalid_tokens(store, mon
     assert firebase_user("not-a-token", store.settings, store) is None
     auth.update_user(unverified["localId"], disabled=True, app=application)
     assert firebase_user(token, store.settings, store) is None
+
+
+def test_recreated_firebase_uid_does_not_inherit_existing_workspace(store):
+    if os.getenv("FIREBASE_AUTH_EMULATOR_HOST") != "127.0.0.1:9099":
+        pytest.skip("Auth emulator not running")
+    from firebase_admin import auth, get_app, initialize_app
+
+    from seo_optimizer.hosted import firebase_user
+
+    name = "your-optimiser-demo-your-optimiser"
+    try:
+        app = get_app(name)
+    except ValueError:
+        app = initialize_app(options={"projectId": "demo-your-optimiser"}, name=name)
+    email, password = f"recreated-{uuid4()}@example.test", "fixture-password-strong"
+
+    def sign_in():
+        with httpx.Client() as client:
+            result = client.post(
+                "http://127.0.0.1:9099/identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=example",
+                json={"email": email, "password": password, "returnSecureToken": True},
+            )
+            result.raise_for_status()
+            return result.json()["idToken"]
+
+    first = auth.create_user(email=email, password=password, email_verified=True, app=app)
+    token = sign_in()
+    owner = firebase_user(token, store.settings, store)
+    assert owner is not None
+    site = project(store, owner.id)
+    auth.delete_user(first.uid, app=app)
+    assert firebase_user(token, store.settings, store) is None
+    second = auth.create_user(email=email, password=password, email_verified=True, app=app)
+    assert first.uid != second.uid
+    assert firebase_user(sign_in(), store.settings, store) is None
+    assert store.project(owner.id, site.id) is not None
