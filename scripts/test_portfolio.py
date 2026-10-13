@@ -27,7 +27,6 @@ from seo_optimizer.web import hash_password
 from seo_optimizer.worker import Worker
 
 ROOT = Path(__file__).resolve().parents[1]
-UPSTREAM = "https://github.com/VistritPandey/Vistrit-Portfolio.git"
 IMAGE = "optimizer-portfolio-verify:local"
 
 
@@ -103,14 +102,19 @@ def commit_fixture(repository, message, path="public/index.html"):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default="gemma4:12b")
+    parser.add_argument("--repository-url", help="Private opt-in test repository; never hardcoded")
     parser.add_argument("--skip-model", action="store_true")
     parser.add_argument("--reuse-build", action="store_true")
     parser.add_argument("--port", type=int, default=0)
-    parser.add_argument("--output", type=Path, default=ROOT / "reports/portfolio-test.json")
+    parser.add_argument("--output", type=Path, default=ROOT / ".data/portfolio-runs/latest.json")
     args = parser.parse_args()
     repository, build = ROOT / ".data/portfolio-test", ROOT / ".data/portfolio-built"
     if not repository.exists():
-        command(["git", "-c", "core.hooksPath=/dev/null", "clone", UPSTREAM, str(repository)])
+        if not args.repository_url:
+            parser.error("--repository-url is required when the local test checkout is absent")
+        command(
+            ["git", "-c", "core.hooksPath=/dev/null", "clone", args.repository_url, str(repository)]
+        )
     if run_git(repository, "status", "--porcelain"):
         raise ValueError(
             "The local test checkout has uncommitted work; preserve it before rerunning"
@@ -176,7 +180,7 @@ def main():
     worker = Worker(store, settings)
     report = {
         "generated_at": utc_now().isoformat(),
-        "repository": UPSTREAM,
+        "repository": run_git(repository, "remote", "get-url", "origin"),
         "upstream_sha": original_sha,
         "test_branch": branch,
         "model": args.model,
