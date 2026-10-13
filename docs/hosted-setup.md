@@ -54,7 +54,9 @@ are configured. Local emulators validate the interfaces, not those account-level
 ## Account and repository access
 
 The browser obtains a Firebase ID token. The API verifies signature/audience/expiry, revocation,
-disabled status and verified email against the configured project. No browser database credentials
+disabled status and verified email against the configured project. Account bindings pin the Firebase UID; a newly created UID cannot inherit an old workspace
+by reusing its verified email. Legacy local accounts require an explicit identity migration.
+No browser database credentials
 or model keys are used. The Next proxy exposes an allowlist of user endpoints; worker/secrets routes
 are excluded, and the API independently denies managed worker credentials to customer tokens.
 
