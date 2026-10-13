@@ -6,6 +6,7 @@ import json
 import secrets
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from datetime import date
 from pathlib import Path
 from typing import Any, cast
 from uuid import uuid4
@@ -423,6 +424,37 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         return plan(
             ProjectSpec.model_validate(project.spec), storage.workspace(project.tenant_id, id)
         ).model_dump(mode="json")
+
+    @app.post("/api/v1/projects/{id}/search-console")
+    def api_search_console(request: Request, id: str, start: date, end: date) -> Any:
+        from seo_optimizer.search_console import collect_search
+
+        project = owned(request, id)
+        csrf(request)
+        try:
+            observations, coverage = collect_search(
+                str(project.spec["website_url"]),
+                start,
+                end,
+                storage.secrets(project).search_console_access_token,
+            )
+            workspace = storage.workspace(project.tenant_id, id)
+            replacement_ids = {row.id for row in observations}
+            workspace = Workspace.model_validate(
+                {
+                    **workspace.model_dump(),
+                    "search": [row for row in workspace.search if row.id not in replacement_ids]
+                    + observations,
+                }
+            )
+            storage.save_workspace(project.tenant_id, id, workspace)
+        except ValueError:
+            raise HTTPException(
+                400,
+                "Search Console import needs valid OAuth access, dates "
+                "and nonoverlapping project observations",
+            ) from None
+        return coverage
 
     @app.post("/api/v1/projects/{id}/strategy", status_code=202)
     def api_strategy_run(request: Request, id: str) -> Any:
