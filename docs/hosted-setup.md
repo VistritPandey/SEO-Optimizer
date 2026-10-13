@@ -46,6 +46,9 @@ flowchart LR
 8. Add the deployed frontend domain to Firebase Auth's authorized domains. Update
    `OPT_FRONTEND_URL` on the API if the final URL differs from the provisioning value.
 
+The application identity receives Firebase Auth viewer access for revoked/disabled-user checks;
+that permission is documented in [Firebase Auth IAM](https://docs.cloud.google.com/iam/docs/roles-permissions/firebaseauth).
+
 The script requires an explicit project and secret-resource configuration; it does not guess a
 project from an unrelated gcloud login. Actual production deployment, Firebase provider settings,
 GitHub installation permissions and cloud-executed builds remain unverified until these resources
@@ -120,7 +123,10 @@ not charged against hosted quotas. Paid billing is intentionally not activated; 
 needs authoritative subscription/entitlement records before these limits can change per account.
 
 Firestore persists project policy, encrypted credentials/grants, findings, leases, bounded activity,
-research and evidence/report chunks. Large JSON fields are content-addressed and verified on read.
+research and evidence/report chunks. Findings retain observation IDs, scoped metadata,
+canonical/robots observations, bounded source excerpts and full source hashes. Truncated evidence
+and ephemeral screenshot pixels are explicitly labelled. PR-branch observations do not overwrite
+the production report until deployment is verified. Large JSON fields are content-addressed and verified on read.
 Queue queries are bounded, and transactional per-project leases prevent concurrent publication.
 Deploy indexes, configure Firestore backups/PITR and Cloud Logging retention, and retain encryption
 keys with backups. Evidence/job history is currently retained; there is no automatic customer data
