@@ -58,9 +58,32 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
             if path.suffix == ".html":
                 route = "/" + str(relative).replace("index.html", "")
             elif path.name in {"page.tsx", "page.jsx", "page.js", "page.py"}:
-                route = "/" + str(relative.parent).replace(".", "")
-            elif base == "pages" and path.suffix in {".tsx", ".jsx", ".js", ".astro"}:
-                route = "/" + str(relative.with_suffix("")).replace("index", "")
+                parts = list(path.relative_to(root).parts[:-1])
+                if parts[:2] == ["src", "app"]:
+                    parts = parts[2:]
+                elif parts[:1] == ["app"]:
+                    parts = parts[1:]
+                else:
+                    parts = list(relative.parent.parts)
+                parts = [part for part in parts if not part.startswith(("(", "@"))]
+                if not any("[" in part for part in parts):
+                    route = "/" + "/".join(parts)
+            elif path.suffix in {".tsx", ".jsx", ".js", ".astro"}:
+                parts = list(path.relative_to(root).with_suffix("").parts)
+                if parts[:2] == ["src", "pages"]:
+                    parts = parts[2:]
+                elif parts[:1] == ["pages"]:
+                    parts = parts[1:]
+                else:
+                    continue
+                if parts and not (
+                    parts[0] == "api"
+                    or parts[-1].startswith("_")
+                    or any("[" in part for part in parts)
+                ):
+                    if parts[-1] == "index":
+                        parts = parts[:-1]
+                    route = "/" + "/".join(parts)
             if route is not None:
                 mapping.setdefault(route, str(path.relative_to(root)))
     return mapping
