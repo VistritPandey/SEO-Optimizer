@@ -129,6 +129,7 @@ def connected_create(
     value: ProjectCreate, tenant: str, store: Store, settings: Settings
 ) -> ProjectCreate:
     spec = managed_spec(value.spec, settings)
+    grant_token(store, tenant, settings)  # A cached repository cannot revive a disconnected grant.
     connection, _ = store.state("github-repo:" + tenant + ":" + spec.repository)
     if not connection or connection.get("until", 0) < time.time():
         raise HTTPException(409, "Select a repository from your verified GitHub connection")
