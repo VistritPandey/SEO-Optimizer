@@ -22,6 +22,7 @@ class ProviderConfig(Contract):
     capabilities: ProviderCapabilities = Field(default_factory=ProviderCapabilities)
     max_output_tokens: int = Field(default=4096, ge=256, le=16384)
     max_total_tokens: int = Field(default=100_000, ge=1024, le=1_000_000)
+    max_calls_per_step: int = Field(default=8, ge=1, le=16)
     request_timeout_seconds: int = Field(default=180, ge=5, le=300)
     ollama_think: bool | str | None = False
     ollama_num_ctx: int = Field(default=8192, ge=2048, le=32768)
