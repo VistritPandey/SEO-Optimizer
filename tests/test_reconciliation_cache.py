@@ -27,7 +27,8 @@ def test_irrelevant_merge_then_periodic_audit_reuses_identical_model_inputs(tmp_
     repo = tmp_path / "website"
     (repo / "web").mkdir(parents=True)
     (repo / "web/index.html").write_text(
-        '<html><head><title>Example</title><meta name="description" content="Example"></head><body><h1>Example</h1></body></html>'
+        '<html><head><title>Example</title><meta name="description" content="Example">'
+        "</head><body><h1>Example</h1></body></html>"
     )
     run_git(repo, "init", "-b", "main")
     run_git(repo, "add", ".")
