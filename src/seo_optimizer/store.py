@@ -248,6 +248,10 @@ class Store:
 
     def create_project(self, tenant: str, value: ProjectCreate) -> Project:
         with self.sessions.begin() as session:
+            if self.engine.dialect.name == "sqlite":
+                session.execute(text("BEGIN IMMEDIATE"))
+            else:
+                session.scalar(select(User).where(User.id == tenant).with_for_update())
             if len(
                 list(session.scalars(select(Project.id).where(Project.tenant_id == tenant)))
             ) >= (self.settings.free_projects if self.settings.hosted else 20):
