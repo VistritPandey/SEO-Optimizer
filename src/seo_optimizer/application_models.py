@@ -41,6 +41,22 @@ class ProjectSpec(Contract):
     allowed_paths: list[str] = Field(
         default_factory=lambda: ["public", "web", "src", "content", "app", "pages", "templates"]
     )
+    monitored_paths: list[str] = Field(default_factory=list)
+    audit_dependencies: list[str] = Field(
+        default_factory=lambda: [
+            "package.json",
+            "next.config.js",
+            "next.config.ts",
+            "next.config.mjs",
+            "astro.config.mjs",
+            "svelte.config.js",
+            "nuxt.config.ts",
+            "vite.config.ts",
+            "robots.txt",
+            "sitemap.xml",
+            "sitemap_index.xml",
+        ]
+    )
     page_intents: dict[str, bool] = Field(default_factory=dict)
     route_map: dict[str, str] = Field(default_factory=dict)
     facts: list[TrustedFact] = Field(default_factory=list)
@@ -77,7 +93,12 @@ class ProjectSpec(Contract):
             raise ValueError("choose a GitHub repository or a local repository")
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_./-]*", self.branch) or ".." in self.branch:
             raise ValueError("invalid branch")
-        for path in self.allowed_paths + list(self.route_map.values()):
+        for path in (
+            self.allowed_paths
+            + self.monitored_paths
+            + self.audit_dependencies
+            + list(self.route_map.values())
+        ):
             value = PurePosixPath(path)
             if value.is_absolute() or ".." in value.parts or str(value) == "." or "\\" in path:
                 raise ValueError("repository paths must be confined relative paths")
