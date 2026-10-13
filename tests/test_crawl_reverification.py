@@ -11,7 +11,7 @@ def test_new_collection_gets_a_fresh_budget_after_long_inference(monkeypatch):
     monkeypatch.setattr("seo_optimizer.crawler.time.monotonic", lambda: clock[0])
 
     def respond(request):
-        body = '<html><head><title>Cedar Workshop</title></head><body>Lighting</body></html>'
+        body = "<html><head><title>Cedar Workshop</title></head><body>Lighting</body></html>"
         if request.url.path == "/robots.txt":
             body = "User-agent: *\nAllow: /"
         return httpx.Response(200, text=body, headers={"Content-Type": "text/html"})
