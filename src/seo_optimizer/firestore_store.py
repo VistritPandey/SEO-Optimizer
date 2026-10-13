@@ -468,6 +468,7 @@ class FirestoreStore(Store):
                 transaction.update(project_ref, changes)
 
         finish_one(self.db.transaction())
+        self.index_pr(tenant, job.project_id, id, status, result)
 
     def remember_findings(
         self, tenant: str, project_id: str, findings: list[dict[str, Any]], audited_urls: list[str]
