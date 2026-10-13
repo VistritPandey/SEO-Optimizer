@@ -278,6 +278,12 @@ class Worker:
                 after = crawler.collect(
                     project.tenant_id, project.id, spec, job.result["audited_urls"]
                 )
+                self.observe_browser(
+                    spec,
+                    crawler,
+                    after,
+                    self.settings.data_dir / "artifacts" / job.id,
+                )
                 return self.verify_deployment(spec, job.result, after, github)
             return self.audit_job(project, job, spec, crawler, github)
         finally:
@@ -367,17 +373,7 @@ class Worker:
                     credentials.pagespeed_key,
                 )
             )
-        if spec.browser_enabled:
-            evidence.extend(
-                capture_browser(
-                    str(spec.website_url),
-                    crawler,
-                    project.tenant_id,
-                    project.id,
-                    spec.environment,
-                    root / "artifacts",
-                )
-            )
+        self.observe_browser(spec, crawler, evidence, root / "artifacts")
         project_context = context(project.tenant_id, project.id, spec)
         findings, report = scan(project_context, spec, evidence, self.knowledge)
         changes = (
@@ -769,6 +765,7 @@ class Worker:
             after = crawler.collect(
                 project.tenant_id, project.id, spec, result["verification_urls"]
             )
+            self.observe_browser(spec, crawler, after, root / "after-artifacts")
             return self.verify_deployment(spec, result, after, None)
         if github:
             result["pr"] = github.create_pr(
@@ -784,6 +781,35 @@ class Worker:
             return "waiting_checks", result, 15
         result["summary"] = "Verified changes prepared; automatic merge is disabled"
         return "complete", result, 0
+
+    def observe_browser(
+        self,
+        spec: ProjectSpec,
+        crawler: Crawler,
+        evidence: list[Evidence],
+        output: Path,
+    ) -> None:
+        if not spec.browser_enabled:
+            return
+        pages = [e for e in evidence if e.kind == "http" and e.data.get("status_code") == 200]
+        selected = [e for e in pages if str(e.url) == str(spec.website_url)]
+        selected += [
+            e for e in pages if e not in selected and '"Product"' in str(e.data.get("html", ""))
+        ][:2]
+        for index, item in enumerate(selected):
+            observed = capture_browser(
+                str(item.url),
+                crawler,
+                item.tenant_id,
+                item.project_id,
+                spec.environment,
+                output / str(index),
+            )
+            dom = next(e for e in observed if e.kind == "dom")
+            if dom.data.get("render_settled") and dom.data.get("visible_offer"):
+                item.data["visible_offer"] = dom.data["visible_offer"]
+                item.data["visible_offer_evidence_id"] = dom.id
+            evidence.extend(observed)
 
     def finish_pr(
         self, project: Project, job: Job, spec: ProjectSpec, github: GitHubClient
@@ -843,7 +869,8 @@ class Worker:
         after: list[Evidence],
         github: GitHubClient | None,
     ) -> tuple[str, dict[str, Any], float]:
-        if not after or any(item.data.get("status_code") != 200 for item in after):
+        pages = [item for item in after if item.kind == "http"]
+        if not pages or any(item.data.get("status_code") != 200 for item in pages):
             return (
                 "blocked",
                 {
