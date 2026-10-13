@@ -16,6 +16,14 @@ If your server uses another port, open `/guide` on that server.
 
 [![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
 
+**Watch the recorded demo:** real portfolio test commands, the title patch, verification,
+and the interactive guide. This rules-only run passed 154 tests and verified one controlled fix.
+
+[![Watch the worker demo](docs/assets/demo-poster.png)](docs/assets/optimizer-demo.mp4)
+
+[Recording evidence and reproduction instructions](docs/demo-video.md) ·
+[Editable Remotion composition](videos/src/Demo.tsx)
+
 The README includes expandable examples and diagrams. Its JavaScript interactions live in the
 companion app page. GitHub supports [Mermaid diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
 and [expandable sections](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-collapsed-sections).
@@ -318,6 +326,7 @@ Production cookies require HTTPS. See [deployment setup](docs/deployment.md) and
 | `llm.py` | Native provider requests, bounded tools, schema validation and measured usage |
 | `execution.py`, `github.py`, `worker.py` | Confined edits, isolated checks, commits, publication and verification |
 | `store.py`, `remote.py`, `web.py`, `ui/` | Tenant persistence, connected workers, APIs, dashboard and interactive guide |
+| `videos/` | Remotion composition, real terminal/browser recordings and render scripts |
 | `scripts/`, `tests/`, `reports/` | Reproducible experiments, offline regression checks and actual outcomes |
 
 Read the [architecture](docs/architecture.md), [benchmark protocol](docs/benchmark.md) and
