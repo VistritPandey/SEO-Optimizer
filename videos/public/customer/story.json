@@ -1,0 +1,66 @@
+[
+  {
+    "chapter": "ONGOING SEO CARE",
+    "title": "Your website changes. Your SEO needs to keep up.",
+    "narration": "Your website changes all the time. Your SEO needs to keep up.",
+    "audio": "customer/voice-0.mp3",
+    "frames": 164,
+    "audio_seconds": 3.938188
+  },
+  {
+    "chapter": "01 \u00b7 THE WEBSITE UPDATE",
+    "title": "A new homepage. A broken next step.",
+    "narration": "Your team merges a homepage update. It looks good, but the main shopping button now leads to a missing page.",
+    "audio": "customer/voice-1.mp3",
+    "frames": 236,
+    "audio_seconds": 6.364667
+  },
+  {
+    "chapter": "02 \u00b7 CHECK WHAT CHANGED",
+    "title": "The agent confirms what needs attention.",
+    "narration": "Your Optimiser checks the changed page and follows its links. It confirms the broken link and a missing page description.",
+    "audio": "customer/voice-2.mp3",
+    "frames": 262,
+    "audio_seconds": 7.222458
+  },
+  {
+    "chapter": "03 \u00b7 PREPARE A FOCUSED FIX",
+    "title": "Keep the design. Repair the problem.",
+    "narration": "The agent reads the existing website, restores the working link, and writes a description using the page's own content. It tests the proposed changes.",
+    "audio": "customer/voice-3.mp3",
+    "frames": 338,
+    "audio_seconds": 9.761917
+  },
+  {
+    "chapter": "04 \u00b7 YOUR TEAM REVIEWS",
+    "title": "A clear fix. Your decision.",
+    "narration": "Your team reviews a focused fix, with a clear explanation of what changed and why. You choose when it goes live.",
+    "audio": "customer/voice-4.mp3",
+    "frames": 249,
+    "audio_seconds": 6.792979
+  },
+  {
+    "chapter": "05 \u00b7 VERIFY AFTER DEPLOYMENT",
+    "title": "The fix is live. Does it actually work?",
+    "narration": "After deployment, the agent checks the website again. The collection opens, and the page description is restored. That closes this issue.",
+    "audio": "customer/voice-5.mp3",
+    "frames": 312,
+    "audio_seconds": 8.869167
+  },
+  {
+    "chapter": "06 \u00b7 THE NEXT UPDATE",
+    "title": "Nothing broken? Nothing to rewrite.",
+    "narration": "The next update only changes the spacing. Your Optimiser checks it and leaves it alone. No unnecessary fix or review.",
+    "audio": "customer/voice-6.mp3",
+    "frames": 273,
+    "audio_seconds": 7.567271
+  },
+  {
+    "chapter": "THE WORK KEEPS GOING",
+    "title": "You keep building. We keep watching.",
+    "narration": "Checks continue between updates, too. Your team keeps building. Your Optimiser keeps watching.",
+    "audio": "customer/voice-7.mp3",
+    "frames": 237,
+    "audio_seconds": 6.37575
+  }
+]
