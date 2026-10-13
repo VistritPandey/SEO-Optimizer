@@ -36,7 +36,7 @@ class Crawler:
         )
         self.allow_private = allow_private
         self.client = client or httpx.Client(
-            timeout=15, follow_redirects=False, headers={"User-Agent": "SEOOptimizer/1.0"}
+            timeout=15, follow_redirects=False, headers={"User-Agent": "YourOptimiser/1.0"}
         )
         self.owns_client = client is None
         self.requests = 0
