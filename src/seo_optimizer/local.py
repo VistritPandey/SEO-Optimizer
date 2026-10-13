@@ -136,9 +136,12 @@ def configure(args: argparse.Namespace) -> dict[str, Any]:
     )
     registration = Registration(email=email, password=password)
     paths = args.paths or (
-        ask("Directories to monitor (comma separated)", "public,web,src,app,pages,content")
+        ask(
+            "Directories to monitor (comma separated)",
+            "public,web,src/app,src/pages,src/components,app,pages,content",
+        )
         if interactive
-        else "public,web,src,app,pages,content"
+        else "public,web,src/app,src/pages,src/components,app,pages,content"
     )
     auto_fix = args.auto_fix or (
         interactive and ask("Allow verified metadata edits? yes/no", "no") == "yes"
