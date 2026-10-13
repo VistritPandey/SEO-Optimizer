@@ -29,3 +29,33 @@ IndexNow notifies participating engines about actual additions, updates or remov
 See the repository benchmark document for the executable fixture/replay interface. Freeze knowledge version, tool budget and cases for comparisons: rules-only, rules plus a declared Ollama model, rules plus a declared paid model. Record capability flags, model/version, hardware, latency, token usage, API charges, electricity and hardware amortization.
 
 Keep development and held-out cases separate. Evaluate observable check/status/action/evidence decisions, not exact prose. Count false positives on healthy/inapplicable pages, missed defects, unsupported changes and policy violations. Track coverage so missing responses cannot improve results. Verified fixes/regressions require actual before/after artifacts; replayed model assertions cannot supply these measurements. Live model quality and durable search outcomes remain unverified until measured.
+
+## Search observations and grounded API samples
+
+The Search Console connector reads finalized query/page/country/device observations from the
+configured URL-prefix property using an owner-supplied OAuth access token. A generative-model
+API key does not authorize this account. Keep measurement windows and slices distinct, reject
+overlapping imports, and record the top-row/1,000-row collection limit. Zero rows do not prove
+zero total demand. Business relevance is unknown until the owner confirms it.
+
+The grounded API collector records actual answers, observed search steps and URL annotations.
+Its observations describe that API, model version, query, market context and sampling time;
+they do not measure consumer AI Overview placement or every search engine. An opaque grounding
+redirect is unresolved attribution, not proof that the project was absent. Keep unresolved
+samples and citation-rate bounds visible. A citation is not a correctness review. Claim fidelity
+stays unreviewed until the cited source supports the relevant passage. Never turn one API answer
+into a universal SEO rule. See google-grounding-api in the registry.
+
+The current publication loop uses reviewed original owner passages that exactly match current
+trusted facts, with a business goal and mapped public target. It does not certify free-form model
+copy. Body-copy creation requires the supported content task; technical model repairs preserve
+body copy and may repair links only when the failed destination and public replacement are
+observed. Permission, original support, path guards, independent checks and served-page evidence
+are separate gates. A passage becoming public is a verified publication, not measured search uplift.
+
+For repository model comparisons, run rules alone plus minimal/full harness arms for the same
+local and paid models. The minimal arms retain common safety and publication guards but receive
+no private skill, deterministic hints or check retrieval. Freeze the repository, original owner
+facts, knowledge and budgets. Reserve the fixture's server before resuming work, isolate retries
+and give each healthy/irrelevant control its own baseline. Retain invalidated controls with their
+reason and retests; do not score contaminated observations as model-quality failures.
