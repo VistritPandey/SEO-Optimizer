@@ -1,0 +1,102 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "page": {
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1,
+      "title": "Page",
+      "type": "string"
+    },
+    "start": {
+      "format": "date",
+      "title": "Start",
+      "type": "string"
+    },
+    "end": {
+      "format": "date",
+      "title": "End",
+      "type": "string"
+    },
+    "impressions": {
+      "minimum": 0,
+      "title": "Impressions",
+      "type": "integer"
+    },
+    "clicks": {
+      "minimum": 0,
+      "title": "Clicks",
+      "type": "integer"
+    },
+    "position": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Position"
+    },
+    "source": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "market": {
+      "default": "unspecified",
+      "maxLength": 100,
+      "title": "Market",
+      "type": "string"
+    },
+    "device": {
+      "default": "all",
+      "maxLength": 30,
+      "title": "Device",
+      "type": "string"
+    },
+    "business_relevance": {
+      "default": "unknown",
+      "enum": [
+        "confirmed",
+        "unknown",
+        "irrelevant"
+      ],
+      "title": "Business Relevance",
+      "type": "string"
+    },
+    "synthetic": {
+      "default": false,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "query",
+    "page",
+    "start",
+    "end",
+    "impressions",
+    "clicks",
+    "source"
+  ],
+  "title": "SearchObservation",
+  "type": "object"
+}
