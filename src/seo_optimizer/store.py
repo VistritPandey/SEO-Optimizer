@@ -101,6 +101,13 @@ class LoginAttempt(Base):
     until: Mapped[float] = mapped_column(Float)
 
 
+class PrivateState(Base):
+    __tablename__ = "private_state"
+    key: Mapped[str] = mapped_column(String(200), primary_key=True)
+    body: Mapped[str] = mapped_column(Text)
+    version: Mapped[int] = mapped_column(Integer)
+
+
 class ResearchWorkspace(Base):
     __tablename__ = "research_workspaces"
     __table_args__ = (UniqueConstraint("tenant_id", "project_id"),)
@@ -139,6 +146,55 @@ class Store:
                 connection.execute(insert(SchemaVersion).values(id=1, version=1))
             elif version != 1:
                 raise ValueError("Database schema requires an explicit migration")
+
+    def health(self) -> None:
+        with self.engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+
+    def close(self) -> None:
+        self.engine.dispose()
+
+    def state(self, key: str) -> tuple[dict[str, Any], int]:
+        with self.sessions() as session:
+            value = session.get(PrivateState, key)
+            if value is None:
+                return {}, 0
+            return json.loads(self.settings.cipher.decrypt(value.body.encode())), value.version
+
+    def save_state(self, key: str, value: dict[str, Any], expected: int) -> bool:
+        encoded = self.settings.cipher.encrypt(json.dumps(value).encode()).decode()
+        try:
+            with self.sessions.begin() as session:
+                if expected == 0:
+                    session.add(PrivateState(key=key, body=encoded, version=1))
+                    return True
+                result = session.execute(
+                    update(PrivateState)
+                    .where(PrivateState.key == key, PrivateState.version == expected)
+                    .values(body=encoded, version=expected + 1)
+                )
+                return cast(CursorResult[Any], result).rowcount == 1
+        except IntegrityError:
+            return False
+
+    def reserve_job(self, tenant: str, key: str) -> None:
+        if not self.settings.hosted:
+            return
+        from datetime import UTC, datetime
+
+        month = datetime.now(UTC).strftime("%Y-%m")
+        state_key = f"usage:{tenant}:{month}"
+        digest = token_hash(key)
+        for _ in range(20):
+            value, version = self.state(state_key)
+            used = value.get("jobs", [])
+            if digest in used:
+                return
+            if len(used) >= self.settings.free_jobs_per_month:
+                raise ValueError("Monthly free audit/job limit reached")
+            if self.save_state(state_key, {"jobs": [*used, digest]}, version):
+                return
+        raise ValueError("Usage reservation contention; retry later")
 
     def create_user(self, email: str, password_hash: str) -> tuple[User, str]:
         token = secrets.token_urlsafe(40)
@@ -192,10 +248,9 @@ class Store:
 
     def create_project(self, tenant: str, value: ProjectCreate) -> Project:
         with self.sessions.begin() as session:
-            if (
-                len(list(session.scalars(select(Project.id).where(Project.tenant_id == tenant))))
-                >= 20
-            ):
+            if len(
+                list(session.scalars(select(Project.id).where(Project.tenant_id == tenant)))
+            ) >= (self.settings.free_projects if self.settings.hosted else 20):
                 raise ValueError("Project limit reached")
             project = Project(
                 id=identifier(),
@@ -290,6 +345,7 @@ class Store:
     ) -> Job:
         if self.project(tenant, project_id) is None:
             raise KeyError("Project not found")
+        self.reserve_job(tenant, project_id + ":" + key)
         now = time.time()
         job = Job(
             id=identifier(),
@@ -495,3 +551,11 @@ class Store:
                     .values(next_audit=now + spec.reconcile_seconds)
                 )
         return scheduled
+
+
+def open_store(settings: Settings) -> Store:
+    if settings.storage_backend == "firestore":
+        from seo_optimizer.firestore_store import FirestoreStore
+
+        return FirestoreStore(settings)
+    return Store(settings)
