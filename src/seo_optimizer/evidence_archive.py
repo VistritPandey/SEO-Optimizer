@@ -31,7 +31,7 @@ def archive_evidence(evidence: list[Evidence], budget: int = 550_000) -> list[di
                 headers={
                     key: value
                     for key, value in headers.items()
-                    if key.lower() in {"content-type", "x-robots-tag", "location"}
+                    if key.lower() in {"content-type", "x-robots-tag", "link", "location"}
                 },
                 visible_offer=item.data.get("visible_offer"),
                 render_settled=item.data.get("render_settled"),
@@ -42,6 +42,8 @@ def archive_evidence(evidence: list[Evidence], budget: int = 550_000) -> list[di
                 source_sha256=hashlib.sha256(text.encode()).hexdigest(),
                 source_excerpt=text[:2000],
                 source_excerpt_truncated=len(text) > 2000,
+                revision=item.data.get("revision"),
+                branch=item.data.get("branch"),
             )
         elif item.kind == "screenshot":
             # Worker filesystem artifacts are ephemeral; never pretend the stored path is a URL.
