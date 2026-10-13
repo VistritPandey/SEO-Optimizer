@@ -1,0 +1,62 @@
+{
+  "status": "passed",
+  "environment": "synthetic local Git repository and fixture website",
+  "model_inference": "actual paid-provider API, not stubbed",
+  "requests": 8,
+  "tool_calls": 14,
+  "before_defects": 4,
+  "after_defects": 0,
+  "changed_paths": [
+    "web/index.html",
+    "web/products/cedar-lamp/index.html"
+  ],
+  "verified_fixes": 2,
+  "independent_checks": [
+    {
+      "name": "HTML metadata",
+      "path": "web/index.html",
+      "passed": true
+    },
+    {
+      "name": "HTML metadata",
+      "path": "web/products/cedar-lamp/index.html",
+      "passed": true
+    },
+    {
+      "name": "python",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+      "stderr": ""
+    }
+  ],
+  "repeat": {
+    "status": "complete",
+    "created_commit": false,
+    "model_cache_hit": true,
+    "inference_requests": 0
+  },
+  "irrelevant_merge": {
+    "status": "complete",
+    "summary": "No affected website routes; model work skipped",
+    "inference_requests": 0
+  },
+  "private_preview_preserved": true,
+  "crawler_policy_preserved": true,
+  "github_writes": false,
+  "production_rankings": "unverified",
+  "cloud_execution": "unverified",
+  "initial_failure": "Build-valid patch lacked source-read reference; publication was blocked. Tool interface now attaches only observed current source evidence.",
+  "usage": {
+    "input_tokens": 82396,
+    "output_tokens": 8798,
+    "api_cost_usd": null,
+    "electricity_cost_usd": null,
+    "hardware_cost_usd": null
+  },
+  "limitations": [
+    "HTTP-only comparison leaves commerce.facts unresolved; the independent sandbox verifies the visible fixture price and JSON-LD.",
+    "Paid provider price rates were not configured; API cost is unknown.",
+    "No live GitHub, Cloud Build or ranking/traffic outcome is established."
+  ]
+}
