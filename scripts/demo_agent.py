@@ -204,7 +204,11 @@ def main():
                 event(
                     f"RESULT {name}: "
                     + json.dumps(
-                        {k: v for k, v in result.items() if k not in {"text", "html", "data"}}
+                        {
+                            k: v
+                            for k, v in result.items()
+                            if k not in {"text", "html", "data", "check"}
+                        }
                     )
                 )
                 return result
@@ -253,6 +257,7 @@ def main():
                 capabilities=ProviderCapabilities(tool_calling=True, json_schema=True),
                 max_output_tokens=8192,
                 max_total_tokens=150_000,
+                max_calls_per_step=16,
                 request_timeout_seconds=180,
                 ollama_num_ctx=16384,
             )
