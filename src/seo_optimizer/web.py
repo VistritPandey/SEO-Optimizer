@@ -27,7 +27,7 @@ from seo_optimizer.application_models import (
 )
 from seo_optimizer.contracts import WebsiteType
 from seo_optimizer.github import verify_signature
-from seo_optimizer.growth import Workspace, plan
+from seo_optimizer.growth import CitationProbe, Workspace, plan
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store, User
 
@@ -455,6 +455,42 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                 "and nonoverlapping project observations",
             ) from None
         return coverage
+
+    @app.post("/api/v1/projects/{id}/citations")
+    def api_citation_probe(request: Request, id: str, value: CitationProbe) -> Any:
+        from seo_optimizer.citations import collect_citation
+
+        project = owned(request, id)
+        csrf(request)
+        spec = ProjectSpec.model_validate(project.spec)
+        if spec.provider.kind != "google":
+            raise HTTPException(
+                400,
+                "Search-grounded API collection needs a Google provider; "
+                "other engine observations can be imported",
+            )
+        try:
+            observation, transcript = collect_citation(
+                value.query,
+                spec.provider.model,
+                storage.secrets(project).provider_key,
+                value.experiment,
+                value.market,
+                value.arm,
+            )
+            workspace = storage.workspace(project.tenant_id, id)
+            workspace = Workspace.model_validate(
+                {
+                    **workspace.model_dump(),
+                    "citations": [*workspace.citations, observation],
+                }
+            )
+            storage.save_workspace(project.tenant_id, id, workspace)
+        except ValueError:
+            raise HTTPException(
+                400, "Citation collection failed or reached the observation limit"
+            ) from None
+        return {"observation": observation.model_dump(mode="json"), "transcript": transcript}
 
     @app.post("/api/v1/projects/{id}/strategy", status_code=202)
     def api_strategy_run(request: Request, id: str) -> Any:
