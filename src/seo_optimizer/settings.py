@@ -27,6 +27,7 @@ class Settings:
     firebase_project: str = ""
     hosted: bool = False
     frontend_url: str = "http://localhost:3000"
+    managed_provider: str = "google"
     managed_model: str = "gemini-3.8-flash"
     managed_key: str = ""
     github_app_id: str = ""
@@ -52,6 +53,11 @@ class Settings:
         backend = os.getenv("OPT_STORAGE", "sql")
         hosted = os.getenv("OPT_HOSTED", "0") == "1"
         firebase_project = os.getenv("GOOGLE_CLOUD_PROJECT", "")
+        managed_provider = os.getenv("OPT_MANAGED_PROVIDER", "google")
+        if hosted and managed_provider not in {"google", "openai", "anthropic"}:
+            raise ValueError("Hosted inference requires a supported paid provider")
+        if hosted and managed_provider != "google" and not os.getenv("OPT_MANAGED_MODEL"):
+            raise ValueError("An explicit model is required for this managed provider")
         if backend not in {"sql", "firestore"}:
             raise ValueError("OPT_STORAGE must be sql or firestore")
         if production and (
@@ -95,8 +101,21 @@ class Settings:
             firebase_project=firebase_project,
             hosted=hosted,
             frontend_url=os.getenv("OPT_FRONTEND_URL", "http://localhost:3000").rstrip("/"),
+            managed_provider=managed_provider,
             managed_model=os.getenv("OPT_MANAGED_MODEL", "gemini-3.8-flash"),
-            managed_key=os.getenv("GOOGLE_API_KEY", "") if hosted else "",
+            managed_key=(
+                os.getenv("OPT_MANAGED_API_KEY", "")
+                or os.getenv(
+                    {
+                        "google": "GOOGLE_API_KEY",
+                        "openai": "OPENAI_API_KEY",
+                        "anthropic": "ANTHROPIC_API_KEY",
+                    }.get(managed_provider, ""),
+                    "",
+                )
+            )
+            if hosted
+            else "",
             github_app_id=os.getenv("GITHUB_APP_ID", ""),
             github_app_slug=os.getenv("GITHUB_APP_SLUG", ""),
             github_client_id=os.getenv("GITHUB_CLIENT_ID", ""),
