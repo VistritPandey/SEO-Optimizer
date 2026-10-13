@@ -26,6 +26,7 @@ from seo_optimizer.application_models import (
 )
 from seo_optimizer.contracts import WebsiteType
 from seo_optimizer.github import verify_signature
+from seo_optimizer.growth import Workspace, plan
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store, User
 
@@ -352,7 +353,97 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                 "findings": storage.findings(project.tenant_id, id),
                 "configuration": json.dumps(project.spec, indent=2),
                 "webhook_url": configuration.public_url.rstrip("/") + "/webhooks/github/" + id,
+                "strategy": plan(
+                    ProjectSpec.model_validate(project.spec),
+                    storage.workspace(project.tenant_id, id),
+                ),
             },
+        )
+
+    @app.get("/projects/{id}/research")
+    def research_page(request: Request, id: str) -> Any:
+        project = owned(request, id)
+        workspace = storage.workspace(project.tenant_id, id)
+        return render(
+            request,
+            "research.html",
+            {
+                "project": project,
+                "workspace": workspace.model_dump_json(indent=2),
+                "strategy": plan(ProjectSpec.model_validate(project.spec), workspace),
+            },
+        )
+
+    @app.post("/projects/{id}/research")
+    async def research_save(request: Request, id: str) -> Any:
+        project = owned(request, id)
+        form = await request.form()
+        csrf(request, str(form.get("csrf", "")))
+        try:
+            value = Workspace.model_validate_json(str(form.get("workspace", "")))
+            storage.save_workspace(project.tenant_id, id, value)
+        except ValueError:
+            raise HTTPException(
+                400, "Research contracts or project fact references are invalid"
+            ) from None
+        return RedirectResponse(f"/projects/{id}/research", status_code=303)
+
+    @app.post("/projects/{id}/content/{opportunity_id}")
+    async def content_run(request: Request, id: str, opportunity_id: str) -> Any:
+        project = owned(request, id)
+        form = await request.form()
+        csrf(request, str(form.get("csrf", "")))
+        job = storage.enqueue(
+            project.tenant_id,
+            id,
+            "content",
+            "content:" + str(uuid4()),
+            {"opportunity_id": opportunity_id},
+        )
+        return RedirectResponse("/jobs/" + job.id, status_code=303)
+
+    @app.get("/api/v1/projects/{id}/workspace")
+    def api_workspace(request: Request, id: str) -> Any:
+        project = owned(request, id)
+        return storage.workspace(project.tenant_id, id).model_dump(mode="json")
+
+    @app.put("/api/v1/projects/{id}/workspace")
+    def api_save_workspace(request: Request, id: str, value: Workspace) -> Any:
+        project = owned(request, id)
+        csrf(request)
+        try:
+            storage.save_workspace(project.tenant_id, id, value)
+        except ValueError:
+            raise HTTPException(400, "Research contains invalid project references") from None
+        return value.model_dump(mode="json")
+
+    @app.get("/api/v1/projects/{id}/strategy")
+    def api_strategy(request: Request, id: str) -> Any:
+        project = owned(request, id)
+        return plan(
+            ProjectSpec.model_validate(project.spec), storage.workspace(project.tenant_id, id)
+        ).model_dump(mode="json")
+
+    @app.post("/api/v1/projects/{id}/strategy", status_code=202)
+    def api_strategy_run(request: Request, id: str) -> Any:
+        project = owned(request, id)
+        csrf(request)
+        return job_json(
+            storage.enqueue(project.tenant_id, id, "strategy", "strategy:" + str(uuid4()), {})
+        )
+
+    @app.post("/api/v1/projects/{id}/content/{opportunity_id}", status_code=202)
+    def api_content_run(request: Request, id: str, opportunity_id: str) -> Any:
+        project = owned(request, id)
+        csrf(request)
+        return job_json(
+            storage.enqueue(
+                project.tenant_id,
+                id,
+                "content",
+                "content:" + str(uuid4()),
+                {"opportunity_id": opportunity_id},
+            )
         )
 
     @app.post("/projects/{id}/run")
