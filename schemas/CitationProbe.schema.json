@@ -1,0 +1,40 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "query": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "experiment": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Experiment",
+      "type": "string"
+    },
+    "market": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Market",
+      "type": "string"
+    },
+    "arm": {
+      "default": "baseline",
+      "enum": [
+        "baseline",
+        "treatment",
+        "holdout"
+      ],
+      "title": "Arm",
+      "type": "string"
+    }
+  },
+  "required": [
+    "query",
+    "experiment",
+    "market"
+  ],
+  "title": "CitationProbe",
+  "type": "object"
+}
