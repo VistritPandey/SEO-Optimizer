@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from seo_optimizer.application_models import ProjectSpec
-from seo_optimizer.contracts import Evidence
+from seo_optimizer.contracts import Evidence, utc_now
 from seo_optimizer.growth import Workspace
 from seo_optimizer.knowledge import KnowledgePackage
 
@@ -46,6 +46,10 @@ def input_fingerprint(
         "revision": revision,
         "workspace": workspace.model_dump(mode="json"),
         "observations": records,
+        "fact_validity": {f.id: not f.valid_until or f.valid_until > utc_now() for f in spec.facts},
+        "material_validity": {
+            m.id: not m.valid_until or m.valid_until > utc_now() for m in workspace.materials
+        },
         "knowledge": hashlib.sha256(
             b"".join(
                 path.read_bytes() for path in sorted(knowledge.root.rglob("*")) if path.is_file()
