@@ -1,13 +1,13 @@
-# SEO Optimizer
+# Your Optimiser
 
 **An autonomous Python optimization service: evidence, strategy, source changes, and verified publication.**
 
-Connect a website and its Git repository. SEO Optimizer gathers page and source evidence,
+Connect a website and its Git repository. Your Optimiser gathers page and source evidence,
 uses rules or a model to assess it, and makes the changes your project policy permits.
 The dashboard shows what it found, what it changed, what passed verification, and what still
-needs evidence. Run everything locally, or host the dashboard while the worker runs beside Ollama.
+needs evidence. Run the Python dashboard and worker locally, or use the Next.js frontend with a hosted Python API and worker.
 
-[Start locally](#start-locally) · [How it works](#how-it-works) · [Test your own site](#test-your-own-site) · [Deployment](docs/deployment.md)
+[Start locally](#start-locally) · [How it works](#how-it-works) · [Test your own site](#test-your-own-site) · [Local setup](docs/local-setup.md) · [Hosted setup](docs/hosted-setup.md)
 
 **Explore the interactive guide:** start the dashboard and open
 [localhost:8000/guide](http://127.0.0.1:8000/guide).
@@ -107,32 +107,44 @@ uplift or production GitHub success. See [the protocol](docs/benchmark.md).
 
 ## Start locally
 
-Requires **Python 3.12**, **uv** and **Git**. Run commands from this repository's root.
+From a fresh checkout, run:
 
 ```sh
-uv sync --locked
+./run.sh
 ```
 
-Run these in separate terminals:
+Windows PowerShell:
 
-```sh
-# Terminal 1 — dashboard and API
-uv run seo-optimizer serve
+```powershell
+.\run.ps1
 ```
 
-```sh
-# Terminal 2 — background worker
-uv run seo-optimizer worker
-```
+The launcher installs **uv and Python 3.12** if needed, installs locked application dependencies,
+and walks you through the data folder, your website repository/URL, model, account and schedule.
+**Git is the only prerequisite.** A network connection is needed on the first install.
+The dashboard opens automatically; **Ctrl+C stops both the dashboard and worker**.
+Subsequent launches reuse your setup. No Node, Firebase or cloud account is needed for local use.
 
-Open [localhost:8000](http://127.0.0.1:8000), create an account, then **Connect website**.
-Provide the served URL and either a GitHub `owner/repository` or a permitted local path.
-Choose the project's actual branch; it may be `master` rather than the default `main`.
-The initial audit queues automatically.
+Choose **rules** for no model account, **Ollama** for an installed local model, or
+**Google/OpenAI/Anthropic** with your own key. Keys are entered privately and encrypted in the
+local database. Automatic edits start off; setup can enable verified metadata repairs.
+Local publication is a separate `auto_merge` policy setting. Docker is required for configured
+project build/test commands, rather than basic metadata audits.
 
-The default **rules** provider requires no model account. Local state is in ignored `.data/`:
-SQLite, encrypted credentials, the local secret key and isolated workspaces. Keep the key with
-backups; replacing it makes previously encrypted credentials unreadable.
+The foreground worker reconciles hourly by default. Choose cron during setup, or install an
+idempotent five-minute wake-up with `./run.sh --no-start --schedule cron`. Other cron entries
+are preserved. The application still controls the per-project reconciliation interval.
+
+Private data defaults to `~/.local/share/your-optimiser/<installation-id>/`.
+The ignored `.your-optimiser.json` remembers the project/data location and port; it contains no
+provider keys or passwords. Back up the database **with** its `secret.key`.
+
+[First-run guide, schedules and troubleshooting](docs/local-setup.md)
+
+**Hosted application:** `frontend/` contains the Next.js landing page, free pricing, Firebase
+sign-in, guided GitHub onboarding, evidence dashboard, research and PR activity. The Python
+API/worker use Firestore, GitHub App access, server-side model configuration and isolated build
+verification. [Cloud Run + Next deployment](docs/hosted-setup.md).
 
 <details>
 <summary><strong>Try the small built-in demo first</strong></summary>
