@@ -3,7 +3,7 @@
 import secrets
 import time
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Literal, cast
 from urllib.parse import urlencode
 
 import httpx
@@ -75,7 +75,10 @@ def managed_spec(spec: ProjectSpec, settings: Settings) -> ProjectSpec:
     return spec.model_copy(
         update={
             "provider": ProviderConfig(
-                kind="google",
+                kind=cast(
+                    Literal["rules", "ollama", "openai", "anthropic", "google"],
+                    settings.managed_provider,
+                ),
                 model=settings.managed_model,
                 capabilities=ProviderCapabilities(tool_calling=True, json_schema=True),
             ),
