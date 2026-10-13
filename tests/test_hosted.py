@@ -298,3 +298,32 @@ def test_pr_lookup_and_followup_limit_survive_recent_history_window(hosted, monk
         assert store.reserve_review(account.id, site.id, 7, str(number))
     assert not store.reserve_review(account.id, site.id, 7, "sixth")
     assert store.reserve_review(account.id, site.id, 7, "0")
+
+
+def test_existing_project_uses_current_managed_model_configuration(hosted, monkeypatch):
+    from dataclasses import replace
+
+    from seo_optimizer.worker import Worker
+
+    settings, store, account, _, _ = hosted
+    site = connected_project(store, account.id)
+    job = store.claim("worker", account.id)
+    current = replace(
+        settings,
+        managed_provider="openai",
+        managed_model="configured-model",
+        managed_key="new-managed-key",
+    )
+    store.settings = current
+    worker = Worker(store, current)
+    observed = []
+
+    def audit(project, job, spec, crawler, github):
+        observed.append(
+            (spec.provider.kind, spec.provider.model, store.secrets(project).provider_key)
+        )
+        return "complete", {}, 0
+
+    monkeypatch.setattr(worker, "audit_job", audit)
+    worker.process(site, job)
+    assert observed == [("openai", "configured-model", "new-managed-key")]
