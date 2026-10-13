@@ -77,6 +77,20 @@
       "title": "Max Output Tokens",
       "type": "integer"
     },
+    "max_total_tokens": {
+      "default": 100000,
+      "maximum": 1000000,
+      "minimum": 1024,
+      "title": "Max Total Tokens",
+      "type": "integer"
+    },
+    "max_calls_per_step": {
+      "default": 8,
+      "maximum": 16,
+      "minimum": 1,
+      "title": "Max Calls Per Step",
+      "type": "integer"
+    },
     "request_timeout_seconds": {
       "default": 180,
       "maximum": 300,
