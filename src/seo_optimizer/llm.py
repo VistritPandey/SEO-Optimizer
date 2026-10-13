@@ -388,8 +388,17 @@ class ModelClient:
                 arguments = call["arguments"]
                 if isinstance(arguments, str):
                     arguments = json.loads(arguments)
+                tool_started = time.monotonic()
                 outcome = execute(call["name"], arguments)
-                trace.append({"name": call["name"], "success": outcome.get("success", False)})
+                trace.append(
+                    {
+                        "name": call["name"],
+                        "success": outcome.get("success", False),
+                        "arguments": arguments,
+                        "result": outcome,
+                        "runtime_ms": (time.monotonic() - tool_started) * 1000,
+                    }
+                )
                 encoded = json.dumps(outcome)
                 if kind == "ollama":
                     history.append({"role": "tool", "tool_name": call["name"], "content": encoded})
