@@ -392,6 +392,15 @@ def schema_models() -> dict[str, type[BaseModel]]:
         ProviderConfig,
         Registration,
     )
+    from seo_optimizer.growth import (
+        Brief,
+        CitationObservation,
+        Material,
+        Opportunity,
+        SearchObservation,
+        StrategyReport,
+        Workspace,
+    )
 
     return {
         model.__name__: model
@@ -417,6 +426,13 @@ def schema_models() -> dict[str, type[BaseModel]]:
             ProjectSpec,
             ProviderConfig,
             Registration,
+            Brief,
+            CitationObservation,
+            Material,
+            Opportunity,
+            SearchObservation,
+            StrategyReport,
+            Workspace,
         )
     }
 
