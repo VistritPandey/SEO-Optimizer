@@ -376,6 +376,19 @@ class Worker:
         self.observe_browser(spec, crawler, evidence, root / "artifacts")
         project_context = context(project.tenant_id, project.id, spec)
         findings, report = scan(project_context, spec, evidence, self.knowledge)
+        from seo_optimizer.state import input_fingerprint
+
+        workspace = self.store.workspace(project.tenant_id, project.id)
+        fingerprint = input_fingerprint(
+            spec,
+            evidence,
+            revision,
+            workspace,
+            self.knowledge,
+            self.use_knowledge,
+        )
+        report["input_fingerprint"] = fingerprint
+        report["model_cache_hit"] = project.last_report.get("input_fingerprint") == fingerprint
         changes = (
             builtin_changes(repository, spec, findings, evidence)
             if spec.auto_fix and self.use_knowledge
@@ -408,7 +421,11 @@ class Worker:
             "hardware_cost_usd": None,
         }
         model_name = "rules"
-        if spec.provider.kind != "rules" and job.kind != "content":
+        if (
+            spec.provider.kind != "rules"
+            and job.kind != "content"
+            and not report["model_cache_hit"]
+        ):
             tool_changes: list[FileChange] = []
 
             def execute(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -778,6 +795,14 @@ class Worker:
                 project.tenant_id, project.id, spec, result["verification_urls"]
             )
             self.observe_browser(spec, crawler, after, root / "after-artifacts")
+            result["report"]["input_fingerprint"] = input_fingerprint(
+                spec,
+                after,
+                result["merged_sha"],
+                workspace,
+                self.knowledge,
+                self.use_knowledge,
+            )
             return self.verify_deployment(spec, result, after, None)
         if github:
             result["pr"] = github.create_pr(
@@ -978,6 +1003,8 @@ class Worker:
             model_runtime_ms=result.get("report", {}).get("model_runtime_ms"),
             model_summary=result.get("report", {}).get("model_summary"),
             finalized_from_tools=result.get("report", {}).get("finalized_from_tools", False),
+            input_fingerprint=result.get("report", {}).get("input_fingerprint"),
+            model_cache_hit=result.get("report", {}).get("model_cache_hit", False),
         )
         result.update(
             summary="Changes verified on the deployed website",
