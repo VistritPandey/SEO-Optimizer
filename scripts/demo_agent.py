@@ -128,7 +128,7 @@ def main():
             "/preview/": "web/preview/index.html",
         },
         website_types=["generic", "ecommerce"],
-        page_intents={"/preview/": False},
+        page_intents={"/preview/": False, "/collections/lighting/": False},
         crawler_preferences={"GPTBot": "block", "OAI-SearchBot": "allow"},
         facts=facts,
         goals=[
@@ -142,7 +142,7 @@ def main():
         auto_merge=True,
         allow_content_publication=True,
         max_pages=6,
-        max_tool_steps=10,
+        max_tool_steps=12,
         max_job_seconds=600,
         check_commands=[["python", "verify_site.py"]],
         sandbox_image="python:3.12-slim",
@@ -180,7 +180,10 @@ def main():
         def _post(self, path, payload, headers):
             report["requests"] += 1
             event(f"MODEL {args.model} request {report['requests']} — actual inference")
-            return super()._post(path, payload, headers)
+            result = super()._post(path, payload, headers)
+            usage = result.get("usageMetadata", {})
+            report.setdefault("request_usage", []).append(usage)
+            return result
 
         def complete(self, instructions, request, tools, execute, *rest):
             def observed(name, arguments):
