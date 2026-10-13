@@ -50,7 +50,7 @@ and [expandable sections](https://docs.github.com/en/get-started/writing-on-gith
 
 The dashboard capture uses a fictional local site, real Firebase emulator sign-in, Firestore,
 and an actual rules audit. It is not a deployed customer account or a claimed model repair.
-[Clean installation evidence](reports/clean-install.json) · [Fresh model repair evidence](reports/onboarding-repair.json)
+[Clean installation evidence](reports/clean-install.json) · [Fresh model repair evidence](reports/onboarding-repair.json) · [Complete delivery report](reports/your-optimiser-delivery.md)
 
 ## What it does
 
