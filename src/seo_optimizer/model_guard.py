@@ -52,10 +52,12 @@ def validate_model_body(
         for route in routes:
             page_url = urljoin(str(spec.website_url), route)
             old_url, new_url = urljoin(page_url, before[2]), urljoin(page_url, after[2])
-            broken = any(
-                str(e.url) == page_url and e.data.get("link_status", {}).get(old_url) in {404, 410}
-                for e in pages
-            )
+            broken = False
+            for page in pages:
+                statuses = page.data.get("link_status")
+                status = statuses.get(old_url) if isinstance(statuses, dict) else None
+                if str(page.url) == page_url and type(status) is int and status in {404, 410}:
+                    broken = True
             observed = any(str(e.url) == new_url for e in pages)
             public = intents.get(urlparse(new_url).path, spec.environment == "production")
             if broken and observed and public:
