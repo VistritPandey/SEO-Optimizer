@@ -489,6 +489,7 @@ class Worker:
                         return {
                             "success": True,
                             "scope": "staged_proposals" if proposals else "original_snapshot",
+                            "ready_for_publication": bool(tool_changes),
                             "staged_files": sorted(proposals),
                             "checks": checks,
                         }
@@ -656,6 +657,7 @@ class Worker:
                     max(5, spec.max_job_seconds - (time.monotonic() - started)),
                     spec.max_cost_usd,
                     images,
+                    True,
                 )
             finally:
                 client.close()
@@ -706,6 +708,7 @@ class Worker:
             report["tool_trace"] = inference.tool_trace
             report["model_runtime_ms"] = inference.runtime_ms
             report["model_summary"] = inference.decision.summary
+            report["finalized_from_tools"] = inference.finalized_from_tools
         evidence_by_id = {item.id: item for item in evidence}
         enriched = [
             {
@@ -974,6 +977,7 @@ class Worker:
             tool_trace=result.get("report", {}).get("tool_trace", []),
             model_runtime_ms=result.get("report", {}).get("model_runtime_ms"),
             model_summary=result.get("report", {}).get("model_summary"),
+            finalized_from_tools=result.get("report", {}).get("finalized_from_tools", False),
         )
         result.update(
             summary="Changes verified on the deployed website",
