@@ -238,6 +238,10 @@ class Worker:
 
     def process(self, project: Project, job: Job) -> tuple[str, dict[str, Any], float]:
         spec = ProjectSpec.model_validate(project.spec)
+        if self.settings.hosted:
+            from seo_optimizer.hosted import managed_spec
+
+            spec = managed_spec(spec, self.settings)
         if not spec.enabled:
             return "canceled", {"summary": "Project is paused"}, 0
         if job.kind == "strategy":
