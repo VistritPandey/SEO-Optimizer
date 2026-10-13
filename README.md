@@ -1,6 +1,6 @@
 # SEO Optimizer
 
-**A Python worker that finds supported website improvements, checks its changes, and verifies the result.**
+**An autonomous Python optimization service: evidence, strategy, source changes, and verified publication.**
 
 Connect a website and its Git repository. SEO Optimizer gathers page and source evidence,
 uses rules or a model to assess it, and makes the changes your project policy permits.
@@ -16,7 +16,14 @@ If your server uses another port, open `/guide` on that server.
 
 [![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
 
-**Watch the real agent demo:** the worker inspects a fictional storefront, repairs a broken shopping
+**Watch the expanded workflow demo:** the new recording adds research briefs, autonomous
+content publication, actual Docker/Git/HTTP checks, and matched local-versus-paid repair results.
+
+[![Watch the optimization workflow](docs/assets/workflow-poster.png)](docs/assets/optimizer-workflow.mp4)
+
+[Workflow evidence and limitations](docs/workflow-video.md) · [Research setup and APIs](docs/research-workspace.md)
+
+**Earlier technical repair recording:** the worker inspects a fictional storefront, repairs a broken shopping
 link and metadata/product-data defects, runs isolated checks, and verifies the served result.
 The recorded case moves from four confirmed defects to zero across two model-edited files.
 
@@ -38,18 +45,61 @@ and [expandable sections](https://docs.github.com/en/get-started/writing-on-gith
 | A repository and served website | Maps source files to routes; audits affected pages after changes | Revision, URLs, coverage and collected findings |
 | Owner policy and business facts | Preserves private pages, crawler opt-outs and existing behavior | Evidence, source references, dependencies and proposed edits |
 | Rules, Ollama or a cloud model | Uses bounded inspection tools and locally validated output | Provider, available tokens/cost and actual tool results |
+| Reviewed owner material and dated query/page data | Builds a supported brief and queues original content refreshes | Sources, facts, dependencies, priority explanation and served publication |
+| Search-account access or engine transcripts | Imports search observations and records grounded API citations | Measurement windows, engine/arm slices, unresolved URLs and attribution limits |
 | Build commands and publishing permissions | Verifies a patch, commits each file, checks and merges permitted work | Checks, PR/revisions, deployment confirmation and verified fixes |
 
 The private knowledge covers technical SEO, page experience, content strategy, AI search,
 local businesses, ecommerce, international sites and measurement. It contains eight focused
-references, 39 checks and 30 attributed sources reviewed October 12, 2026.
+references, 39 checks and 31 attributed sources reviewed October 12, 2026.
 
-[Product scope and remaining work](docs/product-scope.md) · [Model comparison protocol](docs/benchmark.md)
+[Implemented scope and qualification](docs/product-scope.md) · [Model comparison protocol](docs/benchmark.md)
 
 **Coverage is explicit.** The catalog is broader than the deterministic scanners. A check can
 be assessed, need model interpretation, need external evidence, or not apply. Unavailable
 rankings, field performance, citations and conversions remain unknown. Observed audit health
 summarizes completed checks; it is not a search ranking or a guaranteed visibility score.
+
+## From evidence to a useful next change
+
+Open a project's **Research workspace**. Import original owner material and dated query/page
+observations. Expand a brief to see its supported passage, source references and dependencies.
+Synthetic data is visibly labeled; missing demand, claims and citations stay unknown.
+
+When the project enables `auto_content_refresh`, `allow_content_publication`, and `auto_fix`
+with configured build checks, a completed audit queues strategy and one supported refresh.
+The worker uses current owner-backed text, verifies the staged source, commits within policy,
+and inspects the served page. It does not duplicate content on repeat runs.
+
+Technical model repairs preserve body claims. Changing a broken link requires observed failure
+and an observed public replacement. New body copy goes through the supported content task.
+The [research guide](docs/research-workspace.md) documents setup, contracts and account access.
+
+**Compute follows changed inputs.** Irrelevant mapped changes skip inference. Identical model
+inputs can reuse a prior assessment after collecting fresh evidence; source, policy, provider,
+knowledge, workspace and expired facts invalidate that reuse. Verified staged tool proposals
+can finish without a redundant model response; independent publication checks still run.
+
+<details>
+<summary>Run a real local-versus-paid repository benchmark</summary>
+
+```sh
+uv sync --locked --extra browser
+uv run playwright install chromium
+uv run seo-optimizer benchmark-repairs --local-model gemma4:12b \
+  --paid-model gemini-3.8-flash --output .data/repair-benchmark/run.json
+```
+
+The five arms share a frozen anonymous repository and owner facts. They compare rules alone,
+minimal/full harnesses for a local model, and minimal/full harnesses for a paid model. Native
+calls make real source changes, execute isolated checks, and verify served outcomes. A healthy
+site and a documentation-only branch merge provide controls. Failed attempts remain in the
+report; costs without configured rates and hardware measurements stay unknown.
+
+This is a development-case experiment. It does not establish broad model superiority, search
+uplift or production GitHub success. See [the protocol](docs/benchmark.md).
+
+</details>
 
 ## Start locally
 
