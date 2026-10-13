@@ -256,3 +256,45 @@ def test_hosted_monthly_quota_is_atomic_and_local_is_unlimited(hosted) -> None:
         store.enqueue(account.id, project.id, "audit", "two", {})
     store.settings = replace(store.settings, hosted=False)
     assert store.enqueue(account.id, project.id, "audit", "local", {}).status == "queued"
+
+
+def test_reconnect_restores_only_verified_installation_without_copying_service_keys(hosted):
+    _, store, account, token, client = hosted
+    site = connected_project(store, account.id)
+    spec = ProjectSpec.model_validate(site.spec)
+    spec.enabled = False
+    credentials = store.secrets(site)
+    credentials.github_installation_id = ""
+    store.update_project(account.id, site.id, spec, credentials)
+    store.save_state(
+        "github-grant:" + account.id, {"token": "grant", "expires": time.time() + 300}, 0
+    )
+    store.save_state(
+        "github-repo:" + account.id + ":example/site",
+        {"installation": 789, "until": time.time() + 300},
+        0,
+    )
+    spec.enabled = True
+    response = client.patch(
+        f"/api/v1/projects/{site.id}",
+        json=spec.model_dump(mode="json"),
+        headers={"Authorization": "Bearer " + token},
+    )
+    assert response.status_code == 200
+    updated = store.project(account.id, site.id)
+    assert store.secrets(updated).github_installation_id == "789"
+    stored = json.loads(store.settings.cipher.decrypt(updated.credentials.encode()))
+    assert not any(stored[key] for key in ("provider_key", "github_private_key", "github_token"))
+
+
+def test_pr_lookup_and_followup_limit_survive_recent_history_window(hosted, monkeypatch):
+    _, store, account, _, _ = hosted
+    site = connected_project(store, account.id)
+    job = store.claim("worker", account.id)
+    store.finish(account.id, job.id, "worker", "complete", {"pr": {"number": 7}})
+    monkeypatch.setattr(store, "jobs", lambda *args, **kwargs: [])
+    assert store.pr_job(account.id, site.id, 7).id == job.id
+    for number in range(5):
+        assert store.reserve_review(account.id, site.id, 7, str(number))
+    assert not store.reserve_review(account.id, site.id, 7, "sixth")
+    assert store.reserve_review(account.id, site.id, 7, "0")
