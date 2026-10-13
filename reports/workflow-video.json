@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "video": "docs/assets/optimizer-workflow.mp4",
+  "sha256": "b53b2bc533f6a67d044e417ed3bf25699631bc254291a755efa8be916fffbbe7",
+  "seconds": 90,
+  "frames": 2700,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "codec": "H.264",
+  "source": "Actual terminal/browser captures with evidence-driven explanatory scenes",
+  "comparison_source": "reports/model-repair-comparison.json",
+  "content_source": "videos/public/growth-run.json",
+  "visual_checks": [
+    "before/after passage readable",
+    "real dashboard and Docker output visible",
+    "final five-arm results match saved observations",
+    "explicit synthetic-input labels",
+    "provider-neutral presentation"
+  ],
+  "unverified": [
+    "Search visibility/traffic uplift",
+    "Production GitHub writes"
+  ],
+  "audio": "none"
+}
