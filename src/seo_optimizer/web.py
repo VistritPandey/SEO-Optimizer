@@ -625,7 +625,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             raise HTTPException(403, "Worker requires a scoped API token")
         if storage.project(account.id, value["project_id"]) is None:
             raise HTTPException(404, "Project not found")
-        if value.get("kind") not in {"audit", "push"}:
+        if value.get("kind") not in {"audit", "push", "strategy", "content"}:
             raise HTTPException(400, "Invalid job kind")
         return job_json(
             storage.enqueue(
