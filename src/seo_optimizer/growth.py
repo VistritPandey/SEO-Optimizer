@@ -70,6 +70,7 @@ class CitationObservation(Contract):
     market: str = Field(min_length=1, max_length=100)
     answer: str = Field(max_length=20000)
     cited_urls: list[HttpUrl] = Field(default_factory=list, max_length=100)
+    unresolved_citation_urls: list[HttpUrl] = Field(default_factory=list, max_length=100)
     source: str = Field(min_length=1, max_length=1000)
     retrieval_enabled: bool
     citation_accuracy: Literal["supported", "unsupported", "unreviewed"] = "unreviewed"
@@ -79,7 +80,7 @@ class CitationObservation(Contract):
     def valid_observation(self) -> Self:
         if self.observed_at > utc_now():
             raise ValueError("Citation observation cannot be in the future")
-        if self.cited_urls and not self.retrieval_enabled:
+        if (self.cited_urls or self.unresolved_citation_urls) and not self.retrieval_enabled:
             raise ValueError("Retrieval-disabled observations cannot establish search citations")
         return self
 
@@ -187,7 +188,8 @@ def brief_for(spec: ProjectSpec, workspace: Workspace, query: str, url: str) -> 
         dependencies.append("Configure a business goal and conversion path")
     if not paragraphs:
         dependencies.append("Supply reviewed original owner material for this target page")
-    if spec.page_intents.get(path, spec.environment == "production") is False:
+    intents = {urlparse(route).path or "/": value for route, value in spec.page_intents.items()}
+    if intents.get(path, spec.environment == "production") is False:
         dependencies.append("Target is intentionally non-indexable; preserve it")
     if (urlparse(url).scheme, urlparse(url).netloc) != (
         urlparse(str(spec.website_url)).scheme,
@@ -267,6 +269,7 @@ def plan(spec: ProjectSpec, workspace: Workspace) -> StrategyReport:
         cited = [
             c for c in eligible if any(urlparse(str(u)).netloc == origin for u in c.cited_urls)
         ]
+        unknown = [c for c in eligible if c.unresolved_citation_urls and c not in cited]
         citation_groups.append(
             {
                 "experiment": experiment,
@@ -279,7 +282,12 @@ def plan(spec: ProjectSpec, workspace: Workspace) -> StrategyReport:
                 "samples": len(observations),
                 "retrieval_samples": len(eligible),
                 "project_citations": len(cited),
-                "citation_rate": len(cited) / len(eligible) if eligible else None,
+                "unresolved_samples": len(unknown),
+                "citation_rate": len(cited) / len(eligible) if eligible and not unknown else None,
+                "citation_rate_lower_bound": len(cited) / len(eligible) if eligible else None,
+                "citation_rate_upper_bound": (len(cited) + len(unknown)) / len(eligible)
+                if eligible
+                else None,
                 "accuracy_reviewed": sum(c.citation_accuracy != "unreviewed" for c in cited),
             }
         )
