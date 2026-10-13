@@ -72,8 +72,9 @@ by these quality trials. Invalid decisions block publishing. Rules remain the ap
 default provider; stronger/configured models need their own benchmark results.
 
 API cost was zero for local inference; electricity and hardware costs remain unknown. Total
-cost per verified model fix is unverified. Actual repository remediation by an LLM, live vision
-reasoning quality and paid-provider quality/cost were not measured.
+cost per verified model fix is unverified. Those decision-only trials did not measure repository remediation, live vision reasoning or
+paid-provider quality/cost. The later repository measurements below cover a developed synthetic
+case and do not make the earlier local-model trials a matched comparison.
 
 ## Skipped and unverified external outcomes
 
@@ -128,3 +129,24 @@ repair, local commit/merge/HTTP verification and repeated-audit checks. Its real
 returned valid output without proposing changes or calling tools. The absent description remains
 a finding. This is separate from earlier model-quality fixtures and does not erase their failures.
 Personal-site integration reports remain in ignored local storage.
+
+
+## Current product and model-comparison scope
+
+The latest offline suite passes 160 tests. The real synthetic repair extension uses the current
+Google Python SDK and records two complete model-generated repairs. The recorded repair makes
+13 tool calls across six inference requests, changes two files, passes staged and independent
+checks and reduces four confirmed defects to zero. A repeated model audit creates no new commit;
+a merged documentation-only branch triggers zero inference. One commerce assessment remains
+unresolved and pricing/cost remains unconfigured. Failed development runs are retained.
+
+These results verify a particular local execution loop. Full autonomous company/competitor
+research, quantitative strategy, content calendars and broad content production, external
+search-account ingestion and measured citation/traffic feedback are not delivered as complete
+operational loops. Knowledge coverage must not be presented as implemented execution coverage.
+See [product scope](../docs/product-scope.md) and [the comparison protocol](../docs/benchmark.md).
+
+The recorded paid-provider repair and earlier local-model assessments use different tasks and
+budgets. They do not establish which provider is better, whether the skill/tool stack improves
+quality, or whether a small model can replace a paid provider on the same work. Those hypotheses
+need frozen, repeated repository tasks, minimal/full-stack arms and independent verification.
