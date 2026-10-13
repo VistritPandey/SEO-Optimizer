@@ -505,6 +505,14 @@ class Worker:
                         }
                     if name == "apply_patch":
                         change = FileChange.model_validate(arguments)
+                        from seo_optimizer.patch_grounding import ground_patch
+
+                        try:
+                            change = ground_patch(
+                                change, evidence, repository, spec, project.tenant_id, project.id
+                            )
+                        except ValueError as error:
+                            return {"success": False, "error": str(error)}
                         from seo_optimizer.model_guard import validate_model_body
 
                         validate_model_body(repository, spec, change, evidence)
@@ -734,7 +742,12 @@ class Worker:
                 for item in inference.decision.findings
                 if item.model_dump() not in [existing.model_dump() for existing in findings]
             )
-            candidates = inference.decision.changes + tool_changes
+            from seo_optimizer.patch_grounding import ground_patch
+
+            candidates = [
+                ground_patch(change, evidence, repository, spec, project.tenant_id, project.id)
+                for change in inference.decision.changes
+            ] + tool_changes
             for change in candidates:
                 from seo_optimizer.model_guard import validate_model_body
 
