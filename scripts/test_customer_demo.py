@@ -114,7 +114,9 @@ def main():
         passed.append("Scenario buttons work by keyboard and reset state")
         page.get_by_text("Prefer to watch? See the customer walkthrough").click()
         video = page.locator("video")
-        video.evaluate("node => { node.load(); document.querySelector('track').track.mode = 'hidden'; }")
+        video.evaluate(
+            "node => { node.load(); document.querySelector('track').track.mode = 'hidden'; }"
+        )
         page.wait_for_function("document.querySelector('video').readyState >= 1")
         assert video.evaluate("node => node.videoWidth") == 1920
         assert video.evaluate("node => node.videoHeight") == 1080
@@ -138,10 +140,21 @@ def main():
         mobile.close()
         browser.close()
     for filename in ("docs/assets/your-optimiser.mp4", "frontend/public/demo.mp4"):
-        streams = json.loads(subprocess.check_output([
-            "ffprobe", "-v", "error", "-show_entries", "stream=codec_type",
-            "-of", "json", str(ROOT / filename),
-        ], text=True))["streams"]
+        streams = json.loads(
+            subprocess.check_output(
+                [
+                    "ffprobe",
+                    "-v",
+                    "error",
+                    "-show_entries",
+                    "stream=codec_type",
+                    "-of",
+                    "json",
+                    str(ROOT / filename),
+                ],
+                text=True,
+            )
+        )["streams"]
         assert streams and all(stream["codec_type"] == "video" for stream in streams)
     passed.append("Both published demo copies contain no audio stream")
     proof = json.loads((ROOT / "videos/public/your-proof.json").read_text())
