@@ -31,6 +31,8 @@ const proof = {
     unnecessary: a.unnecessary_changes,
     seconds: Math.round(a.runtime_seconds),
     status: a.repair.status,
+    completion: a.repair_passed ? 'verified publication' : a.repair.status === 'queued' ? 'request timed out' : 'no repair published',
+    healthyStatus: a.healthy_control?.status ?? 'pending',
     failure: a.repair.result.error_type ?? '',
     cost: a.repair.result.report?.usage?.api_cost_usd ?? null,
   })),
