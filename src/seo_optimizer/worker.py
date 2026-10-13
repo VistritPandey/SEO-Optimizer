@@ -44,6 +44,10 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
     mapping = dict(spec.route_map)
     for base in spec.allowed_paths:
         directory = root / base
+        if directory.is_file() and not directory.is_symlink() and directory.suffix == ".html":
+            static_route = "/" + str(directory.relative_to(root)).replace("index.html", "")
+            mapping.setdefault(static_route, str(directory.relative_to(root)))
+            continue
         if not directory.is_dir():
             continue
         for path in sorted(directory.rglob("*")):
@@ -238,12 +242,12 @@ class Worker:
 
     def process(self, project: Project, job: Job) -> tuple[str, dict[str, Any], float]:
         spec = ProjectSpec.model_validate(project.spec)
+        if not spec.enabled:
+            return "canceled", {"summary": "Project is paused"}, 0
         if self.settings.hosted:
             from seo_optimizer.hosted import managed_spec
 
             spec = managed_spec(spec, self.settings)
-        if not spec.enabled:
-            return "canceled", {"summary": "Project is paused"}, 0
         if job.kind == "strategy":
             from seo_optimizer.growth import plan
 
