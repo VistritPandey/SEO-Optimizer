@@ -17,7 +17,7 @@ from seo_optimizer.knowledge import DEFAULT_KNOWLEDGE, load_knowledge
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="seo-optimizer")
+    parser = argparse.ArgumentParser(prog="your-optimiser")
     parser.add_argument("--knowledge", type=Path, default=DEFAULT_KNOWLEDGE)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("validate", help="Validate skill, sources, checks and local links offline")
@@ -100,7 +100,7 @@ def main(argv: list[str] | None = None) -> int:
             uvicorn.run(create_app(), host=args.host, port=args.port, access_log=False)
         elif args.command == "worker":
             from seo_optimizer.settings import Settings
-            from seo_optimizer.store import Store
+            from seo_optimizer.store import Store, open_store
             from seo_optimizer.worker import Worker
 
             settings = Settings.from_env()
@@ -114,7 +114,7 @@ def main(argv: list[str] | None = None) -> int:
                     os.environ.get("OPT_WORKER_TOKEN", ""),
                 )
             else:
-                control = Store(settings)
+                control = open_store(settings)
             service = Worker(control, settings)
             while True:
                 worked = service.tick()
