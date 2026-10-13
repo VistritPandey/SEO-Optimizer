@@ -79,7 +79,7 @@ reasoning quality and paid-provider quality/cost were not measured.
 
 - **Hosting:** Vercel and container configuration is authored; no cloud deployment was performed
   without deployment credentials. PostgreSQL production concurrency remains unverified. A real Docker build sandbox was
-  subsequently verified against the supplied portfolio; see `portfolio-test.md`.
+  subsequently verified against the supplied portfolio; reports remain in ignored local storage.
 - **GitHub:** Signatures, native API protocols, commit/PR/check gates, merge recovery and guarded
   rollback are tested with controlled transports. Real App authentication, cloud writes, merges
   and deployment records require a connected test repository.
@@ -127,4 +127,4 @@ The supplied historical React portfolio passed real isolated builds, a rendered-
 repair, local commit/merge/HTTP verification and repeated-audit checks. Its real Ollama audit
 returned valid output without proposing changes or calling tools. The absent description remains
 a finding. This is separate from earlier model-quality fixtures and does not erase their failures.
-See `portfolio-test.md` and its JSON records for exact scope and limitations.
+Personal-site integration reports remain in ignored local storage.
