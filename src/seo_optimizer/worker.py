@@ -65,7 +65,11 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
                     parts = parts[1:]
                 else:
                     parts = list(relative.parent.parts)
-                parts = [part for part in parts if not part.startswith(("(", "@"))]
+                if any(part.startswith(("@", "(.)", "(..)", "(...)")) for part in parts):
+                    continue  # Parallel/intercepted outlets are not standalone public routes.
+                parts = [
+                    part for part in parts if not (part.startswith("(") and part.endswith(")"))
+                ]
                 if not any("[" in part for part in parts):
                     route = "/" + "/".join(parts)
             elif path.suffix in {".tsx", ".jsx", ".js", ".astro"}:
