@@ -96,7 +96,7 @@ def test_native_tool_loop_and_usage(kind):
             [
                 {
                     "functionCall": {"name": "read_file", "args": {"path": "web/index.html"}},
-                    "thoughtSignature": "retain-this",
+                    "thoughtSignature": "cmV0YWluLXRoaXM=",
                 }
             ]
             if first
@@ -130,7 +130,7 @@ def test_native_tool_loop_and_usage(kind):
     assert result.usage.input_tokens == 20 and result.usage.output_tokens == 10
     assert len(result.tool_trace) == 1 and result.tool_trace[0]["success"]
     if kind == "google":
-        assert seen[1]["contents"][1]["parts"][0]["thoughtSignature"] == "retain-this"
+        assert seen[1]["contents"][1]["parts"][0]["thoughtSignature"] == "cmV0YWluLXRoaXM="
 
 
 def test_missing_credentials_and_budget_stop():
