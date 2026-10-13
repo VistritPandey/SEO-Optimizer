@@ -313,11 +313,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--schedule", choices=["foreground", "cron"], default="foreground")
     args = parser.parse_args(argv)
     try:
+        fresh = not args.config.exists()
         value = configure(args)
         if "--port" in (argv if argv is not None else sys.argv[1:]):
             value["port"] = args.port
         if (
-            not args.no_start
+            fresh
+            and not args.no_start
             and not args.once
             and sys.stdin.isatty()
             and "--schedule" not in (argv if argv is not None else sys.argv[1:])
@@ -325,6 +327,9 @@ def main(argv: list[str] | None = None) -> int:
             args.schedule = ask(
                 "Schedule: foreground (while open) or cron (every 5 minutes)", "foreground"
             )
+        if fresh:
+            value["schedule"] = args.schedule
+            private_json(args.config, value)
         if args.schedule == "cron":
             install_cron(args.config)
         if args.no_start:
