@@ -29,7 +29,7 @@ from seo_optimizer.contracts import WebsiteType
 from seo_optimizer.github import verify_signature
 from seo_optimizer.growth import CitationProbe, Workspace, plan
 from seo_optimizer.settings import Settings
-from seo_optimizer.store import Job, Project, Store, User
+from seo_optimizer.store import Job, Project, Store, User, open_store
 
 ASSETS = Path(__file__).parent / "ui"
 
@@ -79,16 +79,16 @@ def job_json(job: Job) -> dict[str, Any]:
 
 def create_app(settings: Settings | None = None, store: Store | None = None) -> FastAPI:
     configuration = settings or Settings.from_env()
-    storage = store or Store(configuration)
+    storage = store or open_store(configuration)
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         yield
         if store is None:
-            storage.engine.dispose()
+            storage.close()
 
     app = FastAPI(
-        title="SEO Optimizer API",
+        title="Your Optimiser API",
         version="1.0.0",
         lifespan=lifespan,
         docs_url=None if configuration.production else "/api/docs",
@@ -112,6 +112,12 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
 
     @app.middleware("http")
     async def security_headers(request: Request, call_next: Any) -> Any:
+        if (
+            configuration.hosted
+            and request.method != "GET"
+            and not request.url.path.startswith(("/api/v1/", "/webhooks/"))
+        ):
+            return JSONResponse({"detail": "Use the hosted dashboard"}, status_code=403)
         if request.method in {"POST", "PATCH", "PUT"}:
             body = await request.body()
             if len(body) > 2_000_000:
@@ -135,11 +141,17 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             if authorization.startswith("Bearer ")
             else storage.user(id=request.session.get("user_id"))
         )
+        if authenticated is None and configuration.hosted and authorization.startswith("Bearer "):
+            from seo_optimizer.hosted import firebase_user
+
+            authenticated = firebase_user(authorization[7:], configuration, storage)
         if authenticated is None and required:
             raise HTTPException(401, "Sign in to continue")
         return authenticated
 
     def require_user(request: Request) -> User:
+        if configuration.hosted and request.url.path.startswith("/api/v1/worker/"):
+            raise HTTPException(403, "Managed worker access is reserved for service identity")
         value = user(request)
         assert value is not None
         return value
@@ -183,6 +195,15 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         ):
             raise HTTPException(400, "Local repository is outside configured roots")
 
+    @app.exception_handler(ValueError)
+    async def value_error(request: Request, error: ValueError) -> JSONResponse:
+        message = str(error)
+        allowed = {"Monthly free audit/job limit reached", "Project limit reached"}
+        return JSONResponse(
+            {"detail": message if message in allowed else "Request validation failed"},
+            status_code=429 if message in allowed else 400,
+        )
+
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, error: HTTPException) -> Any:
         if request.url.path.startswith(("/api", "/webhooks")):
@@ -193,10 +214,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
 
     @app.get("/healthz")
     def health() -> dict[str, str]:
-        with storage.engine.connect() as connection:
-            from sqlalchemy import text
-
-            connection.execute(text("SELECT 1"))
+        storage.health()
         return {"status": "ready", "version": "1.0.0"}
 
     @app.get("/login")
@@ -205,7 +223,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
 
     @app.get("/register")
     def register(request: Request) -> Any:
-        if not configuration.registration_enabled:
+        if configuration.hosted or not configuration.registration_enabled:
             raise HTTPException(403, "Registration is disabled")
         return render(request, "auth.html", {"register": True})
 
@@ -213,7 +231,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     async def registration_form(request: Request) -> Any:
         form = await request.form()
         csrf(request, str(form.get("csrf", "")))
-        if not configuration.registration_enabled:
+        if configuration.hosted or not configuration.registration_enabled:
             raise HTTPException(403, "Registration is disabled")
         try:
             value = Registration(
@@ -587,6 +605,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         account = require_user(request)
         csrf(request)
         validate_host_policy(value.spec)
+        if configuration.hosted:
+            from seo_optimizer.hosted import connected_create
+
+            value = connected_create(value, account.id, storage, configuration)
         return project_json(storage.create_project(account.id, value))
 
     @app.get("/api/v1/projects/{id}")
@@ -598,6 +620,12 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         project = owned(request, id)
         csrf(request)
         validate_host_policy(spec)
+        if configuration.hosted:
+            from seo_optimizer.hosted import managed_spec
+
+            if spec.repository != project.spec.get("repository"):
+                raise HTTPException(400, "Connect a new project to change repository access")
+            spec = managed_spec(spec, configuration)
         storage.update_project(project.tenant_id, id, spec)
         return {"status": "updated"}
 
@@ -605,6 +633,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     def api_credentials(request: Request, id: str, value: ProjectSecrets) -> Any:
         project = owned(request, id)
         csrf(request)
+        if configuration.hosted:
+            raise HTTPException(403, "Hosted credentials are managed by the service")
         storage.update_project(
             project.tenant_id, id, ProjectSpec.model_validate(project.spec), value
         )
@@ -753,6 +783,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             return {"status": "queued", "job_id": job.id}
         return {"status": "ignored"}
 
+    from seo_optimizer.hosted import install_routes
+
+    install_routes(app, storage, configuration, require_user)
     return app
 
 
