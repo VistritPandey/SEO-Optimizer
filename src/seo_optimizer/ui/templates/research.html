@@ -46,7 +46,7 @@
 <p>{{ opportunity.explanation }}</p>
 <p>{{ opportunity.brief.distinctive_contribution }}</p>{% for passage in opportunity.brief.paragraphs %}<blockquote>{{ passage }}</blockquote>{% endfor %}<p>Owner sources: {{ opportunity.brief.source_ids|join(', ') or 'missing' }} · Facts: {{ opportunity.brief.fact_ids|join(', ') or 'missing' }}</p>
 <p>{{ opportunity.brief.success_metric }}</p>
-</details>{% if opportunity.brief.dependencies %}<p class="muted">Needs: {{ opportunity.brief.dependencies|join('; ') }}</p>{% endif %}{% if opportunity.brief.ready and project.spec.allow_content_publication %}<form action="/projects/{{ project.id }}/content/{{ opportunity.id }}" method="post">
+</details>{% if opportunity.brief.dependencies %}<p class="muted">Needs: {{ opportunity.brief.dependencies|join('; ') }}</p>{% endif %}{% if opportunity.brief.ready and project.spec.allow_content_publication and project.spec.auto_fix and project.spec.check_commands %}<form action="/projects/{{ project.id }}/content/{{ opportunity.id }}" method="post">
 <input type="hidden" name="csrf" value="{{ csrf }}">
 <button class="button">Publish supported refresh ↗</button>
 </form>{% endif %}</div>
@@ -74,7 +74,7 @@
 </td>
 <td>{{ group.arm }}</td>
 <td>{{ group.retrieval_samples }}</td>
-<td>{{ group.project_citations }}</td>
+<td>{{ group.project_citations }}{% if group.unresolved_samples %}<br><small>{{ group.unresolved_samples }} samples have unresolved citation URLs</small>{% endif %}</td>
 <td>{{ group.accuracy_reviewed }}</td>
 </tr>{% else %}<tr>
 <td colspan="5">No recorded citation observations. Import actual answers and their source references.</td>
