@@ -321,9 +321,15 @@ class Store:
             return session.get(Project, id)
 
     def secrets(self, project: Project) -> ProjectSecrets:
-        return ProjectSecrets.model_validate_json(
+        credentials = ProjectSecrets.model_validate_json(
             self.settings.cipher.decrypt(project.credentials.encode())
         )
+        if self.settings.hosted:
+            credentials.provider_key = self.settings.managed_key
+            credentials.github_app_id = self.settings.github_app_id
+            credentials.github_private_key = self.settings.github_private_key
+            credentials.webhook_secret = self.settings.github_webhook_secret
+        return credentials
 
     def update_project(
         self, tenant: str, id: str, spec: ProjectSpec, credentials: ProjectSecrets | None = None
@@ -536,14 +542,17 @@ class Store:
         for project in due:
             spec = ProjectSpec.model_validate(project.spec)
             if spec.enabled:
-                self.enqueue(
-                    project.tenant_id,
-                    project.id,
-                    "audit",
-                    f"reconcile:{int(project.next_audit)}",
-                    {},
-                )
-                scheduled += 1
+                try:
+                    self.enqueue(
+                        project.tenant_id,
+                        project.id,
+                        "audit",
+                        f"reconcile:{int(project.next_audit)}",
+                        {},
+                    )
+                    scheduled += 1
+                except ValueError:
+                    pass  # Exhausted hosted quota retries in the next monthly window.
             with self.sessions.begin() as session:
                 session.execute(
                     update(Project)
