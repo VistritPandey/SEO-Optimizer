@@ -305,6 +305,22 @@ class Store:
             value.count += 1
             return value.count <= 10
 
+    def encode_credentials(self, value: ProjectSecrets) -> str:
+        if self.settings.hosted:
+            value = value.model_copy(
+                update={
+                    field: ""
+                    for field in (
+                        "provider_key",
+                        "github_app_id",
+                        "github_private_key",
+                        "github_token",
+                        "webhook_secret",
+                    )
+                }
+            )
+        return self.settings.cipher.encrypt(value.model_dump_json().encode()).decode()
+
     def create_project(self, tenant: str, value: ProjectCreate) -> Project:
         limit = self.settings.free_projects if self.settings.hosted else 20
         if len(self.projects(tenant)) >= limit:
@@ -324,9 +340,7 @@ class Store:
                 id=project_id,
                 tenant_id=tenant,
                 spec=value.spec.model_dump(mode="json"),
-                credentials=self.settings.cipher.encrypt(
-                    value.credentials.model_dump_json().encode()
-                ).decode(),
+                credentials=self.encode_credentials(value.credentials),
                 updated_at=time.time(),
                 next_audit=time.time() + value.spec.reconcile_seconds,
                 last_revision="",
@@ -410,9 +424,7 @@ class Store:
                 raise KeyError("Project not found")
             project.spec, project.updated_at = spec.model_dump(mode="json"), time.time()
             if credentials is not None:
-                project.credentials = self.settings.cipher.encrypt(
-                    credentials.model_dump_json().encode()
-                ).decode()
+                project.credentials = self.encode_credentials(credentials)
 
     def enqueue(
         self, tenant: str, project_id: str, kind: str, key: str, payload: dict[str, Any]
