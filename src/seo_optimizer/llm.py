@@ -85,11 +85,52 @@ class ModelClient:
             self.client.close()
 
     def _post(self, path: str, payload: dict[str, Any], headers: dict[str, str]) -> dict[str, Any]:
+        if self.config.kind == "google":
+            return self._google_sdk(payload)
         response = self.client.post(self.url + path, json=payload, headers=headers)
         if response.status_code >= 400:
             raise ProviderError(f"Provider returned HTTP {response.status_code}")
         result: dict[str, Any] = response.json()
         return result
+
+    def _google_sdk(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Use the current official SDK, while keeping tool execution in our bounded loop."""
+        from google import genai
+        from google.genai import errors, types
+
+        timeout = self.client.timeout.read or self.config.request_timeout_seconds
+        sdk = genai.Client(
+            api_key=self.key,
+            http_options=types.HttpOptions(
+                base_url=self.url.removesuffix("/v1beta"),
+                api_version="v1beta",
+                httpx_client=self.client,
+                timeout=int(timeout * 1000),
+                retry_options=types.HttpRetryOptions(attempts=1),
+            ),
+        )
+        config = {
+            **payload["generationConfig"],
+            "system_instruction": payload["systemInstruction"],
+            "automatic_function_calling": {"disable": True},
+        }
+        if payload.get("tools"):
+            config["tools"] = payload["tools"]
+        try:
+            response = sdk.models.generate_content(
+                model=self.config.model,
+                contents=payload["contents"],
+                config=types.GenerateContentConfig.model_validate(config),
+            )
+            result: dict[str, Any] = response.model_dump(
+                mode="json", by_alias=True, exclude_none=True, exclude={"text", "parsed"}
+            )
+            return result
+        except errors.APIError as error:
+            # Provider messages can contain request data; expose only the status code.
+            raise ProviderError(f"Provider returned HTTP {error.code}") from None
+        finally:
+            sdk.close()
 
     def models(self) -> list[str]:
         if self.config.kind != "ollama":
