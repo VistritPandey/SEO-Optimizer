@@ -39,6 +39,16 @@ The README includes expandable examples and diagrams. Its JavaScript interaction
 companion app page. GitHub supports [Mermaid diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
 and [expandable sections](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-collapsed-sections).
 
+## Your workspace
+
+[![Your Optimiser landing page](docs/assets/your-optimiser-landing.png)](docs/hosted-setup.md)
+
+[![Real local emulator dashboard](docs/assets/your-optimiser-workspace.png)](reports/hosted-ui.json)
+
+The dashboard capture uses a fictional local site, real Firebase emulator sign-in, Firestore,
+and an actual rules audit. It is not a deployed customer account or a claimed model repair.
+[Clean installation evidence](reports/clean-install.json) · [Fresh model repair evidence](reports/onboarding-repair.json)
+
 ## What it does
 
 | You connect | The worker does | You can inspect |
