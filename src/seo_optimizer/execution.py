@@ -383,6 +383,10 @@ def verify_workspace(
         if any(not path.endswith(".html") and Path(path).name != "robots.txt" for path in changes):
             raise ValueError("Non-HTML changes require configured sandbox checks")
         return checks
+    if os.getenv("OPT_BUILD_BACKEND", "docker") == "cloud-build":
+        from seo_optimizer.cloud_checks import verify_cloud
+
+        return [*checks, *verify_cloud(root, spec)]
     for command in spec.check_commands:
         if not command or not all(isinstance(argument, str) for argument in command):
             raise ValueError("Verification commands must be explicit argument lists")
