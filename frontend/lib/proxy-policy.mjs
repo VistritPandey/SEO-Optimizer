@@ -6,8 +6,9 @@ export function allowedRequest(path, method) {
   if (path === 'projects') return ['GET', 'POST'].includes(method);
   if (/^projects\/[A-Za-z0-9-]+$/.test(path)) return ['GET', 'PATCH'].includes(method);
   if (/^projects\/[A-Za-z0-9-]+\/(activity|strategy)$/.test(path)) return method === 'GET';
-  if (/^projects\/[A-Za-z0-9-]+\/research$/.test(path)) return ['GET', 'PUT'].includes(method);
-  if (/^projects\/[A-Za-z0-9-]+\/(jobs|content|strategy|citations\/probe|search-console)$/.test(path)) return method === 'POST';
+  if (/^projects\/[A-Za-z0-9-]+\/workspace$/.test(path)) return ['GET', 'PUT'].includes(method);
+  if (/^projects\/[A-Za-z0-9-]+\/(jobs|strategy|citations|search-console)$/.test(path)) return method === 'POST';
+  if (/^projects\/[A-Za-z0-9-]+\/content\/[A-Za-z0-9_-]+$/.test(path)) return method === 'POST';
   if (/^jobs\/[A-Za-z0-9-]+$/.test(path)) return method === 'GET';
   return false;
 }
