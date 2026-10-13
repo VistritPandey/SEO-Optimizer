@@ -105,7 +105,9 @@ def configure(args: argparse.Namespace) -> dict[str, Any]:
         raise ValueError("Check out a branch in the website repository first")
     url = args.url or ask("Website URL (deployed or localhost)")
     provider = args.provider or (
-        ask("Model: rules, ollama, google, openai, anthropic", "ollama") if interactive else "rules"
+        ask("Model: rules (no setup), ollama, google, openai, anthropic", "rules")
+        if interactive
+        else "rules"
     )
     model = args.model or ""
     base_url: str | None = None
@@ -135,13 +137,18 @@ def configure(args: argparse.Namespace) -> dict[str, Any]:
         else getpass.getpass("Dashboard password (12+ characters): ")
     )
     registration = Registration(email=email, password=password)
+    defaults = "public,web,src/app,src/pages,src/components,src/lib,app,pages,content,index.html"
+    if (repo / "src").is_dir() and not any(
+        (repo / "src" / name).is_dir() for name in ("app", "pages")
+    ):
+        defaults = "public,web,src,app,pages,content,index.html"
     paths = args.paths or (
         ask(
             "Directories to monitor (comma separated)",
-            "public,web,src/app,src/pages,src/components,app,pages,content",
+            defaults,
         )
         if interactive
-        else "public,web,src/app,src/pages,src/components,app,pages,content"
+        else defaults
     )
     auto_fix = args.auto_fix or (
         interactive and ask("Allow verified metadata edits? yes/no", "no") == "yes"
