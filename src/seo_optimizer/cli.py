@@ -62,6 +62,7 @@ def main(argv: list[str] | None = None) -> int:
     repairs.add_argument("--output", type=Path, required=True)
     repairs.add_argument("--local-model", default="gemma4:12b")
     repairs.add_argument("--paid-model", default="gemini-3.8-flash")
+    repairs.add_argument("--resume", action="store_true")
     repairs.add_argument(
         "--arms",
         nargs="+",
@@ -80,7 +81,7 @@ def main(argv: list[str] | None = None) -> int:
             from seo_optimizer.repair_benchmark import benchmark_repairs
 
             return benchmark_repairs(
-                args.fixture, args.output, args.local_model, args.paid_model, args.arms
+                args.fixture, args.output, args.local_model, args.paid_model, args.arms, args.resume
             )
         elif args.command == "serve":
             import uvicorn
