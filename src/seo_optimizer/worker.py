@@ -845,6 +845,9 @@ class Worker:
                 if item["status"] == "defect"
             ],
         }
+        from seo_optimizer.evidence_archive import archive_evidence
+
+        result["evidence"] = archive_evidence(evidence)
         if content_brief:
             result["content_verification"] = content_brief
         if not changes or not spec.auto_fix:
