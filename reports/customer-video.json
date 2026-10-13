@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "render": {
+    "width": 1920,
+    "height": 1080,
+    "frames": 2071,
+    "fps": 30,
+    "seconds": 69.03333333333333,
+    "narration": "System voice; illustrated customer workflow backed by recorded source repairs"
+  },
+  "media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "r_frame_rate": "0/0"
+      }
+    ],
+    "format": {
+      "duration": "69.056000",
+      "size": "7470496"
+    }
+  },
+  "visual_review": [
+    "poster",
+    "update",
+    "check",
+    "fix",
+    "review",
+    "after",
+    "healthy",
+    "watch"
+  ],
+  "embedded_playback": "passed in production browser",
+  "captions": "English VTT loaded in browser",
+  "live_github_pr": "unverified",
+  "production_search_uplift": "unverified"
+}
