@@ -631,6 +631,22 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             if spec.repository != project.spec.get("repository"):
                 raise HTTPException(400, "Connect a new project to change repository access")
             spec = managed_spec(spec, configuration)
+            credentials = storage.secrets(project)
+            if spec.enabled and (
+                not project.spec.get("enabled") or not credentials.github_installation_id
+            ):
+                from seo_optimizer.followups import register_project
+                from seo_optimizer.hosted import connected_create
+
+                connection = connected_create(
+                    ProjectCreate(spec=spec), project.tenant_id, storage, configuration
+                )
+                credentials.github_installation_id = connection.credentials.github_installation_id
+                storage.update_project(project.tenant_id, id, spec, credentials)
+                updated = storage.project(project.tenant_id, id)
+                assert updated is not None
+                register_project(storage, updated)
+                return {"status": "updated"}
         storage.update_project(project.tenant_id, id, spec)
         return {"status": "updated"}
 
