@@ -129,8 +129,9 @@ class Crawler:
     def collect(
         self, tenant: str, project: str, spec: ProjectSpec, seeds: list[str] | None = None
     ) -> list[Evidence]:
-        if self.deadline is None:
-            self.deadline = time.monotonic() + min(120, spec.max_job_seconds / 2)
+        # Each observation pass has its own budget; inference may outlive the first pass.
+        self.deadline = time.monotonic() + min(120, spec.max_job_seconds / 2)
+        self.requests = 0
         queue = deque(seeds or [str(spec.website_url)])
         visited: set[str] = set()
         evidence: list[Evidence] = []
