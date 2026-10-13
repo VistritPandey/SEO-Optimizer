@@ -375,7 +375,14 @@ class FirestoreStore(Store):
                 )
                 transaction.update(ref, changes)
                 transaction.set(
-                    lease_ref, {"job_id": body["id"], "worker": worker, "until": now + 900}
+                    lease_ref,
+                    {
+                        "job_id": body["id"],
+                        "worker": worker,
+                        "until": now + 900,
+                        "tenant_id": body["tenant_id"],
+                        "project_id": body["project_id"],
+                    },
                 )
                 return {**body, **changes}
 
