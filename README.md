@@ -1,46 +1,36 @@
 # Your Optimiser
 
-**An autonomous Python optimization service: evidence, strategy, source changes, and verified publication.**
+**Ongoing SEO care that keeps up with your website.**
 
-Connect a website and its Git repository. Your Optimiser gathers page and source evidence,
-uses rules or a model to assess it, and makes the changes your project policy permits.
-The dashboard shows what it found, what it changed, what passed verification, and what still
-needs evidence. Run the Python dashboard and worker locally, or use the Next.js frontend with a hosted Python API and worker.
+Your team updates the website. Your Optimiser checks what changed, fixes confirmed search
+problems and checks the served page afterward. Healthy updates stay alone. From one workspace,
+you can follow findings, review proposed improvements and see the result.
+
+**Watch the customer walkthrough:** a homepage update breaks the shopping path and loses its
+page description. The agent confirms the problems, prepares a focused fix, checks the result
+and keeps watching. The next healthy design change needs no fix.
+
+[![Watch the customer walkthrough](docs/assets/your-optimiser-poster.png)](docs/assets/your-optimiser.mp4)
+
+**Try it interactively:** the Next landing page’s **See it work** section lets visitors publish
+an example update, try the collection button, compare before and after, and approve the example
+fix. Choose **Nothing breaks** to see the healthy path. This is an illustrated customer journey
+based on a recorded repair; it does not change a visitor’s website or claim search-traffic gains.
+[Recording provenance and browser checks](docs/your-optimiser-video.md).
 
 [Start locally](#start-locally) · [How it works](#how-it-works) · [Test your own site](#test-your-own-site) · [Local setup](docs/local-setup.md) · [Hosted setup](docs/hosted-setup.md)
 
-**Explore the interactive guide:** start the dashboard and open
-[localhost:8787/guide](http://127.0.0.1:8787/guide).
-Click through a job, compare evidence/policy decisions, and switch installation setups.
-If your server uses another port, open `/guide` on that server.
+The developer setup is separate from the customer demonstration. The Python dashboard’s `/guide`
+explains jobs and policy decisions; the Next landing page explains the product to customers.
 
-[![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8787/guide)
+<details>
+<summary>Development recordings and model comparison</summary>
 
-**Watch the latest setup and repair demo:** [Your Optimiser — actual browser and model work](docs/assets/your-optimiser.mp4).
-[Current recording evidence](docs/your-optimiser-video.md).
+[Recorded source repair](docs/demo-video.md) · [Content and research workflow](docs/workflow-video.md) ·
+[Matched model comparison](reports/model-repair-comparison.md) · [Research setup](docs/research-workspace.md).
+These contain engineering evidence and limitations, rather than the customer presentation.
 
-**Watch the expanded workflow demo:** the new recording adds research briefs, autonomous
-content publication, actual Docker/Git/HTTP checks, and matched local-versus-paid repair results.
-
-[![Watch the optimization workflow](docs/assets/workflow-poster.png)](docs/assets/optimizer-workflow.mp4)
-
-[Workflow evidence and limitations](docs/workflow-video.md) · [Research setup and APIs](docs/research-workspace.md) ·
-[Actual model comparison](reports/model-repair-comparison.md)
-
-**Earlier technical repair recording:** the worker inspects a fictional storefront, repairs a broken shopping
-link and metadata/product-data defects, runs isolated checks, and verifies the served result.
-The recorded case moves from four confirmed defects to zero across two model-edited files.
-
-[![Watch the real agent repair](docs/assets/demo-poster.png)](docs/assets/optimizer-demo.mp4)
-
-[Actual model actions, limitations and reproduction](docs/demo-video.md) ·
-[Anonymous run evidence](videos/public/agent-run.json)
-
-
-
-The README includes expandable examples and diagrams. Its JavaScript interactions live in the
-companion app page. GitHub supports [Mermaid diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
-and [expandable sections](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-collapsed-sections).
+</details>
 
 ## Your workspace
 
