@@ -21,7 +21,8 @@ content publication, actual Docker/Git/HTTP checks, and matched local-versus-pai
 
 [![Watch the optimization workflow](docs/assets/workflow-poster.png)](docs/assets/optimizer-workflow.mp4)
 
-[Workflow evidence and limitations](docs/workflow-video.md) · [Research setup and APIs](docs/research-workspace.md)
+[Workflow evidence and limitations](docs/workflow-video.md) · [Research setup and APIs](docs/research-workspace.md) ·
+[Actual model comparison](reports/model-repair-comparison.md)
 
 **Earlier technical repair recording:** the worker inspects a fictional storefront, repairs a broken shopping
 link and metadata/product-data defects, runs isolated checks, and verifies the served result.
@@ -95,6 +96,9 @@ minimal/full harnesses for a local model, and minimal/full harnesses for a paid 
 calls make real source changes, execute isolated checks, and verify served outcomes. A healthy
 site and a documentation-only branch merge provide controls. Failed attempts remain in the
 report; costs without configured rates and hardware measurements stay unknown.
+
+The recorded frozen run verified 4/4 repairs with the paid full harness, 0/4 with its minimal
+runner, and local request timeouts in both local arms. See [actual observations](reports/model-repair-comparison.md).
 
 This is a development-case experiment. It does not establish broad model superiority, search
 uplift or production GitHub success. See [the protocol](docs/benchmark.md).
