@@ -148,6 +148,7 @@ def record(output, guide_url):
         page = guide.new_page()
         page.goto(guide_url)
         page.locator("#workflow").scroll_into_view_if_needed()
+        page.evaluate("window.scrollTo(0, document.querySelector('#workflow').offsetTop - 32)")
         page.wait_for_timeout(1200)
         for index in [2, 3, 4, 5, 6, 7]:
             page.locator(f'[data-step="{index}"]').click()
