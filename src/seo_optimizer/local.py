@@ -57,6 +57,7 @@ def environment(value: dict[str, Any]) -> dict[str, str]:
         "OPT_STORAGE": "sql",
         "OPT_HOSTED": "0",
         "OPT_ALLOW_PRIVATE_NETWORK": "1",
+        "OPT_BUILD_BACKEND": "docker",
         "OPT_DATA_DIR": str(value["data_dir"]),
         "OPT_DATABASE_URL": f"sqlite:///{Path(value['data_dir']) / 'control.db'}",
         "OPT_REPO_ROOTS": str(value["repo_root"]),
@@ -97,6 +98,9 @@ def configure(args: argparse.Namespace) -> dict[str, Any]:
         text=True,
         check=True,
     ).stdout.strip()
+    subprocess.run(
+        ["git", "-C", str(repo), "rev-parse", "--verify", "HEAD"], check=True, capture_output=True
+    )
     if not branch:
         raise ValueError("Check out a branch in the website repository first")
     url = args.url or ask("Website URL (deployed or localhost)")
