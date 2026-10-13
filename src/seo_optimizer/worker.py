@@ -681,6 +681,9 @@ class Worker:
             )
             candidates = inference.decision.changes + tool_changes
             for change in candidates:
+                from seo_optimizer.model_guard import validate_model_body
+
+                validate_model_body(repository, spec, change, evidence)
                 if not any(
                     item.id in change.evidence_ids
                     and item.kind == "source"
