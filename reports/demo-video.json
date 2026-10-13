@@ -1,0 +1,101 @@
+{
+  "artifact": "docs/assets/optimizer-demo.mp4",
+  "sha256": "347779d387ac0f6f1d3cedc56179ad9b8c2bc4452432c25a0552289033ee9ab0",
+  "media": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "nb_frames": "1579",
+        "side_data_list": [
+          {}
+        ]
+      }
+    ],
+    "format": {
+      "duration": "52.633333",
+      "size": "3757348"
+    }
+  },
+  "render": {
+    "composition": "OptimizerDemo",
+    "width": 1920,
+    "height": 1080,
+    "frames": 1579,
+    "fps": 30,
+    "seconds": 52.63333333333333,
+    "source": "Actual terminal and browser recordings with evidence-driven explanatory scenes"
+  },
+  "recorded_run": {
+    "generatedAt": "2026-10-13T01:27:04.042193+00:00",
+    "repository": "https://github.com/VistritPandey/Vistrit-Portfolio.git",
+    "upstreamSha": "f635b055bd303ad5a328d68c14bcb705574e591f",
+    "testBranch": "optimizer/portfolio-test-64a7d7f9",
+    "mergedSha": "3d64628a23a54c78bef00c5a37b743114136b98e",
+    "terminalSeconds": 30.92,
+    "guideSeconds": 9,
+    "captureLeadSeconds": 1.2,
+    "playbackRate": 1.5,
+    "commandTimes": [
+      0.000492667022626847,
+      19.04934837500332,
+      21.062385083001573
+    ],
+    "passedTests": 154,
+    "testWarnings": 1,
+    "suiteSeconds": 3.19,
+    "verifiedFixes": 1,
+    "observedRegressions": 0,
+    "repeatCreatedCommit": false,
+    "githubWrites": false,
+    "reactSourcePreserved": true,
+    "changedPaths": [
+      "public/index.html"
+    ],
+    "repairedTitle": "Hey I&#x27;m Vistrit Pandey!!",
+    "checks": [
+      {
+        "name": "HTML metadata",
+        "path": "public/index.html",
+        "passed": true
+      },
+      {
+        "name": "/opt/verify-portfolio.sh",
+        "passed": true
+      }
+    ],
+    "modelInvoked": false,
+    "limits": [
+      "Historical biography is not verified as current.",
+      "External browser resources are blocked during collection.",
+      "No live GitHub PR, cloud deployment or search uplift is measured."
+    ]
+  },
+  "passed": [
+    "Actual PTY commands: all three exit 0",
+    "Portfolio repair, repeat audit, JSON data event and irrelevant event checks",
+    "Full offline suite: 154 passed, 1 warning",
+    "Ruff",
+    "mypy: 22 source files",
+    "Remotion TypeScript check",
+    "Remotion full render",
+    "All 1579 encoded frames decoded without errors",
+    "Five scene samples visually inspected",
+    "One file per commit; no co-author trailers"
+  ],
+  "failed": [],
+  "skipped": [
+    "Ollama inference in this rules-only recording",
+    "Audio narration"
+  ],
+  "unverified": [
+    "Live GitHub publication",
+    "Cloud deployment",
+    "SEO ranking or traffic change",
+    "Model-assisted repair quality"
+  ]
+}
