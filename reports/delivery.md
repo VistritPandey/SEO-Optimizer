@@ -9,8 +9,8 @@ The repository includes the private research-backed skill, contracts/evaluation,
 native provider adapters, autonomous portable worker, tenant-scoped persistence, local Git and
 GitHub integration, server-rendered dashboard, versioned APIs, deployment configuration and CI.
 
-The private package contains eight focused references, 39 checks, 30 attributed sources and
-21 exported JSON Schemas. Checks declare applicability, required evidence, permitted actions,
+The private package contains eight focused references, 39 checks, 31 attributed sources and
+29 exported JSON Schemas. Checks declare applicability, required evidence, permitted actions,
 verification and no-op conditions. The application exposes findings and results; it does not
 serve the skill instructions to customers or install them as a global assistant skill.
 
@@ -133,20 +133,39 @@ Personal-site integration reports remain in ignored local storage.
 
 ## Current product and model-comparison scope
 
-The latest offline suite passes 160 tests. The real synthetic repair extension uses the current
+The earlier technical-demo suite passed 160 tests; the expanded current suite passes 199 tests. The real synthetic repair extension uses the current
 Google Python SDK and records two complete model-generated repairs. The recorded repair makes
 13 tool calls across six inference requests, changes two files, passes staged and independent
 checks and reduces four confirmed defects to zero. A repeated model audit creates no new commit;
 a merged documentation-only branch triggers zero inference. One commerce assessment remains
 unresolved and pricing/cost remains unconfigured. Failed development runs are retained.
 
-These results verify a particular local execution loop. Full autonomous company/competitor
-research, quantitative strategy, content calendars and broad content production, external
-search-account ingestion and measured citation/traffic feedback are not delivered as complete
-operational loops. Knowledge coverage must not be presented as implemented execution coverage.
-See [product scope](../docs/product-scope.md) and [the comparison protocol](../docs/benchmark.md).
+The expanded implementation now includes persistent owner/primary/competitor source records,
+dated query/page observations, supported briefs, autonomous strategy/content jobs, a finalized
+Search Console read connector, actual search-grounded API sampling, citation-arm reporting and
+an executable repository-repair comparison. The new content demonstration used a real Docker
+check, Git publication and served-page verification; its input study/search counts are synthetic.
+See [research setup](../docs/research-workspace.md) and [implemented scope](../docs/product-scope.md).
 
-The recorded paid-provider repair and earlier local-model assessments use different tasks and
-budgets. They do not establish which provider is better, whether the skill/tool stack improves
-quality, or whether a small model can replace a paid provider on the same work. Those hypotheses
-need frozen, repeated repository tasks, minimal/full-stack arms and independent verification.
+The current strengthened repair is separately recorded in [current-repair.json](current-repair.json):
+four defects resolved, two files changed, 14 native tools over six requests, application finalization
+after trusted staged checks, and zero inference on the unchanged repeat audit. A documentation
+branch merge also required zero inference. Its HTTP-only commerce comparison remains unresolved;
+the browser-enabled benchmark exercises the visible offer collector independently.
+
+The new [workflow video](../docs/assets/optimizer-workflow.mp4) shows technical repairs plus the
+research dashboard and original-content publication. Provider identity is retained in run records,
+not promoted in the presentation. [Model comparison protocol](../docs/benchmark.md) defines the
+minimal/full harness arms, safe scenario isolation and retained failure/contamination evidence.
+
+An actual grounded API answer was collected. Five opaque redirect citations remained unattributed,
+and one direct URL was observed; answer/source fidelity remains unreviewed. Search Console passed
+controlled transport tests but is not connected to a real account. These are explicit qualification
+boundaries, not invented visibility measurements.
+
+Live production GitHub writes, deployed revision confirmation, hosted operations, consumer-engine
+citation uplift, rankings, traffic and conversions remain unverified. Arbitrary article generation,
+content calendars, consolidation and every framework are not complete automatic execution loops.
+The private check catalog remains broader than executable collectors. The user's private project
+is only in ignored local data; current tracked files/media exclude personal identity and secrets.
+Earlier Git history has not been rewritten.
