@@ -1,0 +1,12 @@
+import {bundle} from '@remotion/bundler';
+import {selectComposition, renderMedia, renderStill} from '@remotion/renderer';
+import {mkdir} from 'node:fs/promises';
+import path from 'node:path';
+const root=path.resolve(import.meta.dirname,'..'), out=path.join(root,'out/your-optimiser');
+await mkdir(out,{recursive:true});
+const serveUrl=await bundle({entryPoint:path.join(root,'src/index.tsx'),publicDir:path.join(root,'public')});
+const composition=await selectComposition({serveUrl,id:'YourOptimiser'});
+for(const [name,frame] of [['poster',120],['tools',1000],['after',1500],['end',1800]]) await renderStill({serveUrl,composition,output:path.join(out,name+'.png'),frame});
+if(process.argv[2]==='stills') process.exit(0);
+let seen=-1;
+await renderMedia({serveUrl,composition,codec:'h264',pixelFormat:'yuv420p',crf:20,concurrency:3,outputLocation:path.join(out,'your-optimiser.mp4'),onProgress:({progress})=>{const step=Math.floor(progress*10);if(step!==seen){seen=step;console.log(`Render ${step*10}%`);}}});
