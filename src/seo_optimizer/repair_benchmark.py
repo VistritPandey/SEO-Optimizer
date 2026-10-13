@@ -6,10 +6,12 @@ import secrets
 import shutil
 import threading
 import time
+from collections.abc import Callable
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Literal
+from unittest.mock import patch
 
 from dotenv import dotenv_values
 from pydantic import HttpUrl
@@ -23,6 +25,7 @@ from seo_optimizer.application_models import (
 )
 from seo_optimizer.contracts import ProviderCapabilities, TrustedFact, WebsiteType, utc_now
 from seo_optimizer.execution import run_git
+from seo_optimizer.llm import Inference, ModelClient
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store
 from seo_optimizer.web import hash_password
@@ -32,6 +35,88 @@ from seo_optimizer.worker import Worker
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         pass
+
+
+def run_observed(worker: Worker, tenant: str) -> dict[str, Any]:
+    """Preserve response usage and real tool results even if inference times out later."""
+    telemetry: dict[str, Any] = {"requests": [], "tools": []}
+
+    class ObservedClient(ModelClient):
+        def _post(
+            self,
+            path: str,
+            payload: dict[str, Any],
+            headers: dict[str, str],
+        ) -> dict[str, Any]:
+            started = time.monotonic()
+            entry: dict[str, Any] = {"provider": self.config.kind, "status": "pending"}
+            telemetry["requests"].append(entry)
+            try:
+                result = super()._post(path, payload, headers)
+                entry["status"] = "responded"
+                if self.config.kind == "ollama":
+                    entry["usage"] = {
+                        key: result[key]
+                        for key in (
+                            "prompt_eval_count",
+                            "eval_count",
+                            "total_duration",
+                            "load_duration",
+                        )
+                        if key in result
+                    }
+                else:
+                    entry["usage"] = result.get("usageMetadata", {})
+                return result
+            except Exception as error:
+                entry.update(status="failed", error_type=type(error).__name__)
+                raise
+            finally:
+                entry["runtime_seconds"] = round(time.monotonic() - started, 3)
+
+        def complete(
+            self,
+            instructions: str,
+            request: dict[str, Any],
+            tools: list[dict[str, Any]],
+            execute: Callable[[str, dict[str, Any]], dict[str, Any]],
+            max_steps: int = 6,
+            max_seconds: float = 480,
+            max_cost: float = 2,
+            images: list[str] | None = None,
+            stop_after_verified_tools: bool = False,
+        ) -> Inference:
+            original = execute
+
+            def observe(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+                result: dict[str, Any] = original(name, arguments)
+                telemetry["tools"].append(
+                    {
+                        "name": name,
+                        "success": result.get("success", False),
+                        "path": arguments.get("path"),
+                        "error": result.get("error"),
+                        "scope": result.get("scope"),
+                    }
+                )
+                return result
+
+            return super().complete(
+                instructions,
+                request,
+                tools,
+                observe,
+                max_steps,
+                max_seconds,
+                max_cost,
+                images,
+                stop_after_verified_tools,
+            )
+
+    with patch("seo_optimizer.worker.ModelClient", ObservedClient):
+        worker.tick(tenant)
+    telemetry["usage_complete"] = all(r["status"] == "responded" for r in telemetry["requests"])
+    return telemetry
 
 
 def grade(repository: Path) -> dict[str, Any]:
@@ -178,6 +263,16 @@ def benchmark_repairs(
             "minimal": "Common safety/task prompt; no skill, rule hints, check retrieval "
             "or strategy",
             "local_context_tokens": 16384,
+            "runtime_sha256": hashlib.sha256(
+                b"".join(
+                    p.read_bytes()
+                    for p in sorted(Path(__file__).parent.rglob("*"))
+                    if p.is_file()
+                    and (p.suffix in {".py", ".md", ".json"})
+                    and "__pycache__" not in p.parts
+                )
+            ).hexdigest(),
+            "repository_commit": run_git(Path.cwd(), "rev-parse", "HEAD"),
             "caveats": [
                 "One development repair case and healthy/irrelevant controls; no held-out "
                 "generalization claim",
@@ -296,7 +391,7 @@ def benchmark_repairs(
                         )
                     )
             else:
-                worker.tick(user.id)
+                telemetry = run_observed(worker, user.id)
             job = store.jobs(user.id, project.id)[0]
             if job.status == "queued":
                 # Each scenario measures one bounded attempt. A deferred retry must not
@@ -313,6 +408,7 @@ def benchmark_repairs(
                 "observed": repaired,
                 "changed_paths": paths,
                 "runtime_seconds": round(time.monotonic() - started, 3),
+                "telemetry": telemetry,
                 "justified_changed_files": len(
                     set(paths) & {"web/index.html", "web/products/cedar-lamp/index.html"}
                 ),
@@ -356,7 +452,7 @@ def benchmark_repairs(
             if not merge_only:
                 store.enqueue(user.id, project.id, "audit", "healthy-control", {})
                 started = time.monotonic()
-                worker.tick(user.id)
+                healthy_telemetry = run_observed(worker, user.id)
                 healthy = store.jobs(user.id, project.id)[0]
                 if healthy.status == "queued":
                     with store.sessions.begin() as session:
@@ -370,6 +466,7 @@ def benchmark_repairs(
                     "changed": changed,
                     "result": healthy.result,
                     "runtime_seconds": round(time.monotonic() - started, 3),
+                    "telemetry": healthy_telemetry,
                     "base_sha": healthy_sha,
                     "observed_sha": run_git(repository, "rev-parse", "HEAD"),
                     "diff": run_git(repository, "diff", healthy_sha, "HEAD"),
