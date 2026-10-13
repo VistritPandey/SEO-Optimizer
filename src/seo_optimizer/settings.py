@@ -60,8 +60,10 @@ class Settings:
             raise ValueError("Production requires a stable secret and PostgreSQL or Firestore")
         if (backend == "firestore" or hosted) and not firebase_project:
             raise ValueError("GOOGLE_CLOUD_PROJECT is required for hosted identity/storage")
-        if production and os.getenv("FIREBASE_AUTH_EMULATOR_HOST"):
-            raise ValueError("Auth emulator is forbidden in production")
+        if production and any(
+            os.getenv(name) for name in ("FIREBASE_AUTH_EMULATOR_HOST", "FIRESTORE_EMULATOR_HOST")
+        ):
+            raise ValueError("Firebase emulators are forbidden in production")
         data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
         data_dir.chmod(0o700)
         if not secret:
