@@ -54,6 +54,9 @@ def environment(value: dict[str, Any]) -> dict[str, str]:
     return {
         **os.environ,
         "OPT_ENV": "development",
+        "OPT_STORAGE": "sql",
+        "OPT_HOSTED": "0",
+        "OPT_ALLOW_PRIVATE_NETWORK": "1",
         "OPT_DATA_DIR": str(value["data_dir"]),
         "OPT_DATABASE_URL": f"sqlite:///{Path(value['data_dir']) / 'control.db'}",
         "OPT_REPO_ROOTS": str(value["repo_root"]),
@@ -306,6 +309,15 @@ def main(argv: list[str] | None = None) -> int:
         value = configure(args)
         if "--port" in (argv if argv is not None else sys.argv[1:]):
             value["port"] = args.port
+        if (
+            not args.no_start
+            and not args.once
+            and sys.stdin.isatty()
+            and "--schedule" not in (argv if argv is not None else sys.argv[1:])
+        ):
+            args.schedule = ask(
+                "Schedule: foreground (while open) or cron (every 5 minutes)", "foreground"
+            )
         if args.schedule == "cron":
             install_cron(args.config)
         if args.no_start:
