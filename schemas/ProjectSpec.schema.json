@@ -333,6 +333,11 @@
       "title": "Allow Content Publication",
       "type": "boolean"
     },
+    "auto_content_refresh": {
+      "default": false,
+      "title": "Auto Content Refresh",
+      "type": "boolean"
+    },
     "max_pages": {
       "default": 25,
       "maximum": 100,
