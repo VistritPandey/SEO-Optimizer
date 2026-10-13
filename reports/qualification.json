@@ -1,0 +1,56 @@
+{
+  "status": "qualified_with_explicit_limits",
+  "passed": {
+    "python_tests": 199,
+    "ruff": "passed",
+    "mypy_source_files": 29,
+    "json_schemas": 29,
+    "knowledge_checks": 39,
+    "knowledge_sources": 31,
+    "authored_reference_replays": 41,
+    "adversarial_rejections": 10,
+    "private_site_local_cases": 5,
+    "mobile_dashboard": "passed",
+    "original_content_docker_git_http_loop": "passed",
+    "repeat_content_commit": false,
+    "current_technical_defects_before": 4,
+    "current_technical_defects_after": 0,
+    "unchanged_technical_repeat_model_requests": 0,
+    "model_benchmark_controls": 8
+  },
+  "failed": {
+    "model_repair_arms": [
+      "rules",
+      "local-minimal",
+      "local-full",
+      "paid-minimal"
+    ],
+    "local_healthy_completion": [
+      "local-minimal",
+      "local-full"
+    ],
+    "interpretation": "Rules had no target repair implementation; minimal paid run published no fix; local model requests timed out. No unsafe changes were published."
+  },
+  "skipped": {
+    "live_github": "No live project credentials/integration used",
+    "live_search_console": "OAuth account not connected",
+    "live_consumer_engine_visibility": "No comparable deployed-site measurement window"
+  },
+  "unverified": [
+    "Held-out model generalization",
+    "Search rankings, traffic, conversions and citation uplift",
+    "Paid billing without rates",
+    "Local electricity and hardware costs",
+    "Production hosted operations"
+  ],
+  "warning": "One existing FastAPI/Starlette test-client deprecation warning",
+  "artifact_links": [
+    "model-repair-comparison.md",
+    "current-repair-summary.json",
+    "browser-qualification.json",
+    "offline-evaluation-summary.json",
+    "../docs/workflow-video.md"
+  ],
+  "privacy": "Tracked/unignored current content excludes personal project identity, competitor references and environment credentials. Historical Git content is not rewritten.",
+  "commit_policy": "One file per commit, short messages, no co-author trailers"
+}
