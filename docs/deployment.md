@@ -1,5 +1,9 @@
 # Deployment and operation
 
+For first-time local installation, use [the launcher guide](local-setup.md).
+For the managed Next.js/Firebase/Firestore/Cloud Run product, use [hosted setup](hosted-setup.md).
+The SQL/server-rendered deployments below remain supported self-hosted alternatives.
+
 ## Local
 
 Run `uv sync --locked --extra browser` and `uv run playwright install chromium` for browser/vision
