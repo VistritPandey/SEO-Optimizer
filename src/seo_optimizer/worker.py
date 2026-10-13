@@ -27,6 +27,7 @@ from seo_optimizer.execution import (
     confined,
     run_git,
     snapshot_local,
+    verify_proposals,
     verify_workspace,
 )
 from seo_optimizer.github import GitHubClient
@@ -387,7 +388,21 @@ class Worker:
                         tool_changes.append(change)
                         return {"success": True, "staged_for_independent_verification": True}
                     if name == "run_checks":
-                        return {"success": True, "checks": verify_workspace(repository, spec, {})}
+                        proposals = {change.path: change for change in changes}
+                        proposals.update({change.path: change for change in tool_changes})
+                        checks = verify_proposals(
+                            repository,
+                            spec,
+                            list(proposals.values()),
+                            {item.id for item in evidence},
+                            set(self.knowledge.checks),
+                        )
+                        return {
+                            "success": True,
+                            "scope": "staged_proposals" if proposals else "original_snapshot",
+                            "staged_files": sorted(proposals),
+                            "checks": checks,
+                        }
                     raise ValueError("Unknown tool")
                 except (ValueError, OSError, KeyError):
                     trace_failed = True
@@ -422,7 +437,11 @@ class Worker:
                     {"url": {"type": "string"}},
                 ),
                 definition("get_diff", "Inspect the changed files and route mapping", {}),
-                definition("run_checks", "Run explicitly configured isolated verification", {}),
+                definition(
+                    "run_checks",
+                    "Verify staged patches in isolation; otherwise check the original snapshot",
+                    {},
+                ),
             ]
             if spec.auto_fix:
                 tools.append(
@@ -448,7 +467,13 @@ class Worker:
                 "and stay within project policy. "
                 "Use tools to read exact source before proposing replacements. "
                 "No change is better than unsupported work. "
-                "Never claim tools have merged or deployed a change."
+                "Never claim tools have merged or deployed a change. "
+                "For actionable existing defects, inspect source with read_file, stage one "
+                "combined replacement per file with apply_patch, and run_checks on the staged "
+                "proposals before the final decision. Do not duplicate tool-staged patches "
+                "in final changes. Existing deterministic findings already establish defects; "
+                "you may return findings=[] when you have no additional findings. "
+                "Final output must be JSON with findings, changes and summary keys."
             )
             observations = [
                 {
