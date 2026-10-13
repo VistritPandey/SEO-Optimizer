@@ -1,0 +1,245 @@
+{
+  "status": "passed",
+  "environment": "synthetic local Git repository and fixture website",
+  "model_inference": "actual paid-provider API, not stubbed",
+  "requests": 8,
+  "tool_calls": 14,
+  "before_defects": 4,
+  "after_defects": 0,
+  "changed_paths": [
+    "web/index.html",
+    "web/products/cedar-lamp/index.html"
+  ],
+  "verified_fixes": 2,
+  "independent_checks": [
+    {
+      "name": "HTML metadata",
+      "path": "web/index.html",
+      "passed": true
+    },
+    {
+      "name": "HTML metadata",
+      "path": "web/products/cedar-lamp/index.html",
+      "passed": true
+    },
+    {
+      "name": "python",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+      "stderr": ""
+    }
+  ],
+  "repeat": {
+    "status": "complete",
+    "created_commit": false,
+    "model_cache_hit": true,
+    "inference_requests": 0
+  },
+  "irrelevant_merge": {
+    "status": "complete",
+    "summary": "No affected website routes; model work skipped",
+    "inference_requests": 0
+  },
+  "private_preview_preserved": true,
+  "crawler_policy_preserved": true,
+  "github_writes": false,
+  "production_rankings": "unverified",
+  "cloud_execution": "unverified",
+  "initial_failure": "Build-valid patch lacked source-read reference; publication was blocked. Tool interface now attaches only observed current source evidence.",
+  "usage": {
+    "input_tokens": 82396,
+    "output_tokens": 8798,
+    "api_cost_usd": null,
+    "electricity_cost_usd": null,
+    "hardware_cost_usd": null
+  },
+  "limitations": [
+    "HTTP-only comparison leaves commerce.facts unresolved; the independent sandbox verifies the visible fixture price and JSON-LD.",
+    "Paid provider price rates were not configured; API cost is unknown.",
+    "No live GitHub, Cloud Build or ranking/traffic outcome is established."
+  ],
+  "events": [
+    {
+      "time": 5.564855582953896,
+      "text": "START: autonomous model repair on a synthetic local Git repository"
+    },
+    {
+      "time": 5.6473740409710445,
+      "text": "MODEL configured model request 1 \u2014 actual inference"
+    },
+    {
+      "time": 10.976715124968905,
+      "text": "TOOL read_file web/index.html"
+    },
+    {
+      "time": 10.977470665995497,
+      "text": "RESULT read_file: {\"success\": true, \"evidence_id\": \"dfdf03b9-bc04-4e78-a67d-23396aa802be\"}"
+    },
+    {
+      "time": 10.977496832958423,
+      "text": "TOOL read_file web/products/cedar-lamp/index.html"
+    },
+    {
+      "time": 10.977881165978033,
+      "text": "RESULT read_file: {\"success\": true, \"evidence_id\": \"38a8a0d0-a513-4cc2-b071-18e844bb4a4b\"}"
+    },
+    {
+      "time": 10.977907166001387,
+      "text": "TOOL read_file web/shop/index.html"
+    },
+    {
+      "time": 10.978229040978476,
+      "text": "RESULT read_file: {\"success\": true, \"evidence_id\": \"8fe048ed-b8d2-4b30-a481-ff214b0d35c8\"}"
+    },
+    {
+      "time": 10.978284874989185,
+      "text": "MODEL configured model request 2 \u2014 actual inference"
+    },
+    {
+      "time": 12.302614082989749,
+      "text": "TOOL read_file web/robots.txt"
+    },
+    {
+      "time": 12.304288874962367,
+      "text": "RESULT read_file: {\"success\": true, \"evidence_id\": \"61de6137-8340-4bfe-a749-717a6f719272\"}"
+    },
+    {
+      "time": 12.304319707967807,
+      "text": "TOOL read_file web/preview/index.html"
+    },
+    {
+      "time": 12.304880582960322,
+      "text": "RESULT read_file: {\"success\": true, \"evidence_id\": \"774750ab-25ad-4a36-a436-1595d58a13ec\"}"
+    },
+    {
+      "time": 12.304933249950409,
+      "text": "MODEL configured model request 3 \u2014 actual inference"
+    },
+    {
+      "time": 15.064015749958344,
+      "text": "TOOL get_check "
+    },
+    {
+      "time": 15.064213124976959,
+      "text": "RESULT get_check: {\"success\": true}"
+    },
+    {
+      "time": 15.064295707968995,
+      "text": "TOOL get_check "
+    },
+    {
+      "time": 15.064368499966804,
+      "text": "RESULT get_check: {\"success\": true}"
+    },
+    {
+      "time": 15.064423082978465,
+      "text": "TOOL get_check "
+    },
+    {
+      "time": 15.064480665954761,
+      "text": "RESULT get_check: {\"success\": true}"
+    },
+    {
+      "time": 15.064531999989413,
+      "text": "TOOL get_check "
+    },
+    {
+      "time": 15.064589999965392,
+      "text": "RESULT get_check: {\"success\": true}"
+    },
+    {
+      "time": 15.064694874978159,
+      "text": "MODEL configured model request 4 \u2014 actual inference"
+    },
+    {
+      "time": 31.2586079579778,
+      "text": "TOOL run_checks "
+    },
+    {
+      "time": 31.54227362497477,
+      "text": "RESULT run_checks: {\"success\": false, \"scope\": \"original_snapshot\", \"error\": \"Configured sandbox verification failed\", \"checks\": [{\"name\": \"python\", \"passed\": false, \"exit_code\": 1, \"stdout\": \"\", \"stderr\": \"Traceback (most recent call last):\\n  File \\\"/workspace/verify_site.py\\\", line 11, in <module>\\n    assert re.search(\\n           ^^^^^^^^^^\\nAssertionError\\n\"}]}"
+    },
+    {
+      "time": 31.542408749985043,
+      "text": "MODEL configured model request 5 \u2014 actual inference"
+    },
+    {
+      "time": 33.33074933296302,
+      "text": "TOOL read_file verify_site.py"
+    },
+    {
+      "time": 33.331685874960385,
+      "text": "RESULT read_file: {\"success\": false, \"error\": \"Tool arguments or project policy prevented the operation\"}"
+    },
+    {
+      "time": 33.3317606250057,
+      "text": "MODEL configured model request 6 \u2014 actual inference"
+    },
+    {
+      "time": 52.71510454098461,
+      "text": "TOOL apply_patch web/index.html"
+    },
+    {
+      "time": 52.71532108297106,
+      "text": "--- before/web/index.html\n+++ after/web/index.html\n@@ -1,9 +1,10 @@\n <!doctype html><html lang=\"en\"><head>\n <meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n <title>Cedar Workshop \u2014 Thoughtful lighting</title>\n+<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">\n <link rel=\"stylesheet\" href=\"/style.css\">\n </head><body>\n <header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n-<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n+<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n <footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n </body></html>"
+    },
+    {
+      "time": 52.7195877499762,
+      "text": "RESULT apply_patch: {\"success\": true, \"staged_for_independent_verification\": true, \"replaced_previous_proposal\": false}"
+    },
+    {
+      "time": 52.71965358295711,
+      "text": "MODEL configured model request 7 \u2014 actual inference"
+    },
+    {
+      "time": 65.50804479100043,
+      "text": "TOOL apply_patch web/products/cedar-lamp/index.html"
+    },
+    {
+      "time": 65.50828737497795,
+      "text": "--- before/web/products/cedar-lamp/index.html\n+++ after/web/products/cedar-lamp/index.html\n@@ -3,9 +3,8 @@\n <title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n <meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n <link rel=\"canonical\" href=\"http://127.0.0.1:55220/products/cedar-lamp/\">\n-<link rel=\"canonical\" href=\"http://127.0.0.1:55220/shop/\">\n <link rel=\"stylesheet\" href=\"/style.css\">\n-<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"129.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\",}}</script>\n+<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"89.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\"}}</script>\n </head><body>\n <header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n <main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>"
+    },
+    {
+      "time": 65.51174899999751,
+      "text": "RESULT apply_patch: {\"success\": true, \"staged_for_independent_verification\": true, \"replaced_previous_proposal\": false}"
+    },
+    {
+      "time": 65.51207195798634,
+      "text": "MODEL configured model request 8 \u2014 actual inference"
+    },
+    {
+      "time": 67.31921195797622,
+      "text": "TOOL run_checks "
+    },
+    {
+      "time": 67.60215954098385,
+      "text": "RESULT run_checks: {\"success\": true, \"scope\": \"staged_proposals\", \"ready_for_publication\": true, \"staged_files\": [\"web/index.html\", \"web/products/cedar-lamp/index.html\"], \"checks\": [{\"name\": \"HTML metadata\", \"path\": \"web/index.html\", \"passed\": true}, {\"name\": \"HTML metadata\", \"path\": \"web/products/cedar-lamp/index.html\", \"passed\": true}, {\"name\": \"python\", \"passed\": true, \"exit_code\": 0, \"stdout\": \"PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\\n\", \"stderr\": \"\"}]}"
+    },
+    {
+      "time": 68.04025824996643,
+      "text": "WORKER complete: Changes verified on the deployed website"
+    },
+    {
+      "time": 68.07232920796378,
+      "text": "PUBLISHED LOCALLY: two files, one file per commit; post-merge pages verified"
+    },
+    {
+      "time": 73.0593724999926,
+      "text": "CONTROL: repeat the real model audit on the repaired site"
+    },
+    {
+      "time": 73.16401558299549,
+      "text": "REPEAT: model audit completed; no new edit or commit"
+    },
+    {
+      "time": 73.33766833296977,
+      "text": "MERGED DOCS BRANCH: no affected routes; zero inference requests"
+    },
+    {
+      "time": 73.33768462500302,
+      "text": "DEFECTS: 4 \u2192 0; 14 real model tool calls"
+    }
+  ],
+  "runtime_seconds": 73.33767629100475
+}
