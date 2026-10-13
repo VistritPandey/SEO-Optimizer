@@ -15,7 +15,7 @@ def copy_package(knowledge: KnowledgePackage, tmp_path: Path) -> Path:
 
 def test_catalog_source_integrity(knowledge: KnowledgePackage) -> None:
     assert len(knowledge.checks) == 39
-    assert len(knowledge.sources) == 30
+    assert len(knowledge.sources) == 31
     assert all(
         source.verified_on <= knowledge.registry.as_of for source in knowledge.registry.sources
     )
