@@ -1,0 +1,78 @@
+{
+  "generated_at": "2026-10-13T07:03:30.479525+00:00",
+  "revision": "2bcc9f491461e1709f6f7bb8b17428b1c4d170e5",
+  "product": "Your Optimiser",
+  "passed": {
+    "offline_pytest": 228,
+    "firebase_emulator_tests": 5,
+    "frontend_proxy_tests": 2,
+    "python_lint_and_format": true,
+    "python_mypy_files": 36,
+    "python_wheel": true,
+    "knowledge": {
+      "checks": 39,
+      "sources": 31
+    },
+    "schemas": 29,
+    "frontend_typecheck_and_build": true,
+    "frontend_format": true,
+    "clean_install": "fresh clone, no developer dependencies, restart, space-containing paths, Ctrl+C",
+    "browser_ui": "actual Next + Firebase identity + Firestore + rules audit; 7 flow checks",
+    "actual_model_repair": {
+      "before_defects": 4,
+      "after_defects": 0,
+      "changed_files": 2,
+      "tool_calls": 14,
+      "successful_attempt_requests": 8,
+      "earlier_blocked_attempt_requests": 6,
+      "extra_inference_on_repeat": 0,
+      "extra_inference_on_docs_merge": 0
+    },
+    "reconciliation_cache": "irrelevant merge remains cached during next periodic audit; meaningful source/performance changes invalidate",
+    "policy": "source reads, tenant isolation, current PR head, owner facts, path limits, private previews and training controls",
+    "git": {
+      "commits_since_previous_delivery": 215,
+      "one_file_per_commit": true,
+      "coauthor_trailers": 0
+    },
+    "video": {
+      "path": "docs/assets/your-optimiser.mp4",
+      "seconds": 72,
+      "resolution": "1920x1080",
+      "codec": "H.264",
+      "frames": 2160
+    }
+  },
+  "failed": [],
+  "skipped": [
+    {
+      "suite": "offline pytest",
+      "count": 5,
+      "reason": "Firebase emulator tests are opt-in; all five passed in the separate emulator run"
+    }
+  ],
+  "unverified": [
+    "Native Windows/Linux/WSL launcher execution; macOS clean installation was exercised",
+    "Actual OS cron installation (idempotency/preservation tested with a fake crontab)",
+    "Production Cloud Run, Firestore indexes/IAM, real Firebase sign-in domains and live Cloud Build execution",
+    "Live GitHub App installation, PR creation, real CI/merge/deployment and collaborator review feedback",
+    "Search rankings, traffic/conversion uplift and consumer-engine citation visibility",
+    "New open-versus-paid quality comparison after this update; the earlier frozen five-arm benchmark is retained",
+    "API dollar cost without configured provider price rates; hardware/energy and cloud build cost"
+  ],
+  "next_integration_configuration": [
+    "Explicit Google Cloud project/region, Firebase web config, authorized frontend domain and Secret Manager resources",
+    "GitHub App ID/slug/OAuth client/private key/webhook secret and a selected test-repository installation",
+    "Repository default branch, monitored paths/route map, required CI checks and dependency-equipped verification image",
+    "Deployed test-site URL and the expected GitHub deployment environment",
+    "Managed provider/model configuration; local users may instead choose Ollama endpoint/model or their own paid key"
+  ],
+  "evidence": [
+    "reports/setup-tests.xml",
+    "reports/firestore-tests.xml",
+    "reports/clean-install.json",
+    "reports/hosted-ui.json",
+    "reports/onboarding-repair.json",
+    "docs/your-optimiser-video.md"
+  ]
+}
