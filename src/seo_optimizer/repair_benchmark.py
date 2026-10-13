@@ -13,6 +13,7 @@ from typing import Any, Literal
 
 from dotenv import dotenv_values
 from pydantic import HttpUrl
+from sqlalchemy import update
 
 from seo_optimizer.application_models import (
     ProjectCreate,
@@ -23,7 +24,7 @@ from seo_optimizer.application_models import (
 from seo_optimizer.contracts import ProviderCapabilities, TrustedFact, WebsiteType, utc_now
 from seo_optimizer.execution import run_git
 from seo_optimizer.settings import Settings
-from seo_optimizer.store import Store
+from seo_optimizer.store import Job, Store
 from seo_optimizer.web import hash_password
 from seo_optimizer.worker import Worker
 
@@ -255,6 +256,11 @@ def benchmark_repairs(
             started = time.monotonic()
             worker.tick(user.id)
             job = store.jobs(user.id, project.id)[0]
+            if job.status == "queued":
+                # Each scenario measures one bounded attempt. A deferred retry must not
+                # steal the following healthy or irrelevant control's worker claim.
+                with store.sessions.begin() as session:
+                    session.execute(update(Job).where(Job.id == job.id).values(status="failed"))
             repaired = grade(repository)
             paths = run_git(repository, "diff", "--name-only", base, "HEAD").splitlines()
             outcome: dict[str, Any] = {
@@ -292,6 +298,9 @@ def benchmark_repairs(
             started = time.monotonic()
             worker.tick(user.id)
             healthy = store.jobs(user.id, project.id)[0]
+            if healthy.status == "queued":
+                with store.sessions.begin() as session:
+                    session.execute(update(Job).where(Job.id == healthy.id).values(status="failed"))
             changed = run_git(repository, "rev-parse", "HEAD") != healthy_sha
             outcome["healthy_control"] = {
                 "passed": healthy.status == "complete" and not changed,
