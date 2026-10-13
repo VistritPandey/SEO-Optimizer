@@ -1,6 +1,6 @@
 {
   "artifact": "docs/assets/optimizer-demo.mp4",
-  "sha256": "6bb9f6f69d1b8de6134fa8af27d9f5a922839d1fbea70c2f5b875281fa99e8da",
+  "sha256": "08e0d4f39f38da08fefc8bdd87225c219599248aefaf5cff3483414e528f777a",
   "media": {
     "codec": "h264",
     "width": 1920,
@@ -83,5 +83,6 @@
   "unresolved": [
     "Automated commerce.facts comparison needs visible-offer crawler evidence"
   ],
-  "privacy_scope": "Current tracked content and media; ignored local personal evidence is retained. Previous Git history and repository-origin metadata are not rewritten."
+  "privacy_scope": "Current tracked content and media; ignored local personal evidence is retained. Previous Git history and repository-origin metadata are not rewritten.",
+  "presentation": "The optimization agent and outcomes lead the video; provider/version remain in reproducibility and actual captured logs."
 }
