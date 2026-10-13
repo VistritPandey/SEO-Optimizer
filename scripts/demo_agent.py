@@ -252,6 +252,7 @@ def main():
                 model=args.model,
                 capabilities=ProviderCapabilities(tool_calling=True, json_schema=True),
                 max_output_tokens=8192,
+                max_total_tokens=150_000,
                 request_timeout_seconds=180,
                 ollama_num_ctx=16384,
             )
