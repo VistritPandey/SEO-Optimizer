@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "engine": "Google Search-grounded API",
+  "model": "gemini-3.8-flash",
+  "observed_at": "2026-10-13T03:55:10.142485Z",
+  "retrieval_enabled": true,
+  "direct_citation_urls": 1,
+  "unresolved_redirect_citations": 5,
+  "citation_accuracy": "unreviewed",
+  "query_scope": "Public official-guidance question",
+  "unverified": [
+    "Consumer search placements",
+    "Project citation uplift",
+    "Citation source accuracy"
+  ],
+  "qualification": "Real API search transcript collected. Opaque attribution is kept unresolved."
+}
