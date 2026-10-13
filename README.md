@@ -16,7 +16,7 @@ If your server uses another port, open `/guide` on that server.
 
 [![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
 
-**Watch the real agent demo:** Gemini inspects a fictional storefront, repairs a broken shopping
+**Watch the real agent demo:** the worker inspects a fictional storefront, repairs a broken shopping
 link and metadata/product-data defects, runs isolated checks, and verifies the served result.
 The recorded case moves from four confirmed defects to zero across two model-edited files.
 
@@ -43,6 +43,8 @@ and [expandable sections](https://docs.github.com/en/get-started/writing-on-gith
 The private knowledge covers technical SEO, page experience, content strategy, AI search,
 local businesses, ecommerce, international sites and measurement. It contains eight focused
 references, 39 checks and 30 attributed sources reviewed October 12, 2026.
+
+[Product scope and remaining work](docs/product-scope.md) · [Model comparison protocol](docs/benchmark.md)
 
 **Coverage is explicit.** The catalog is broader than the deterministic scanners. A check can
 be assessed, need model interpretation, need external evidence, or not apply. Unavailable
