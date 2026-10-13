@@ -388,7 +388,11 @@ class Worker:
             self.use_knowledge,
         )
         report["input_fingerprint"] = fingerprint
-        report["model_cache_hit"] = project.last_report.get("input_fingerprint") == fingerprint
+        report["model_cache_hit"] = bool(
+            project.last_report.get("cacheable_model_result")
+            and project.last_report.get("input_fingerprint") == fingerprint
+        )
+        report["cacheable_model_result"] = report["model_cache_hit"]
         changes = (
             builtin_changes(repository, spec, findings, evidence)
             if spec.auto_fix and self.use_knowledge
@@ -421,6 +425,8 @@ class Worker:
             "hardware_cost_usd": None,
         }
         model_name = "rules"
+        if report["model_cache_hit"]:
+            model_name = spec.provider.model
         if (
             spec.provider.kind != "rules"
             and job.kind != "content"
@@ -726,6 +732,7 @@ class Worker:
             report["model_runtime_ms"] = inference.runtime_ms
             report["model_summary"] = inference.decision.summary
             report["finalized_from_tools"] = inference.finalized_from_tools
+            report["cacheable_model_result"] = not inference.decision.findings
         evidence_by_id = {item.id: item for item in evidence}
         enriched = [
             {
@@ -1005,6 +1012,7 @@ class Worker:
             finalized_from_tools=result.get("report", {}).get("finalized_from_tools", False),
             input_fingerprint=result.get("report", {}).get("input_fingerprint"),
             model_cache_hit=result.get("report", {}).get("model_cache_hit", False),
+            cacheable_model_result=result.get("report", {}).get("cacheable_model_result", False),
         )
         result.update(
             summary="Changes verified on the deployed website",
