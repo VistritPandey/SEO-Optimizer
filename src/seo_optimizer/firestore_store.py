@@ -314,10 +314,11 @@ class FirestoreStore(Store):
         filters = {"tenant_id": tenant}
         if project_id:
             filters["project_id"] = project_id
-        values = [
-            cast(Job, self._record(Job, snap)) for snap in self._query("optimizer_jobs", **filters)
-        ]
-        return sorted(values, key=lambda item: item.created_at, reverse=True)[:100]
+        query = self.db.collection("optimizer_jobs")
+        for name, value in filters.items():
+            query = query.where(filter=FieldFilter(name, "==", value))
+        query = query.order_by("created_at", direction=firestore.Query.DESCENDING).limit(100)
+        return [cast(Job, self._record(Job, snap)) for snap in query.stream()]
 
     def job(self, tenant: str, id: str) -> Job | None:
         value = self._get("optimizer_jobs", id, Job)
@@ -329,7 +330,13 @@ class FirestoreStore(Store):
         )
         if tenant:
             query = query.where(filter=FieldFilter("tenant_id", "==", tenant))
-        candidates = sorted(query.stream(), key=lambda snap: snap.to_dict()["created_at"])
+        query = (
+            query.where(filter=FieldFilter("available_at", "<=", time.time()))
+            .where(filter=FieldFilter("lease_until", "<=", time.time()))
+            .order_by("available_at")
+            .limit(100)
+        )
+        candidates = list(query.stream())
         for candidate in candidates:
             ref = candidate.reference
             project_id = candidate.to_dict()["project_id"]
