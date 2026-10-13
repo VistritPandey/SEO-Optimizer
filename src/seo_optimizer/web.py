@@ -487,6 +487,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                 "Search-grounded API collection needs a Google provider; "
                 "other engine observations can be imported",
             )
+        storage.reserve_job(project.tenant_id, "citation:" + str(uuid4()))
         try:
             observation, transcript = collect_citation(
                 value.query,
