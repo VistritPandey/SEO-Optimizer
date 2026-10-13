@@ -10,6 +10,7 @@
     "Embedded customer film decodes at 1080p, plays and loads English captions",
     "No browser JavaScript errors",
     "Mobile layout fits the viewport with reduced motion",
+    "Both published demo copies contain no audio stream",
     "Illustrated homepage fixes match the recorded real source patch"
   ],
   "failed": [],
