@@ -18,3 +18,12 @@ videos/out/
 
 # Remotion browser download cache
 .remotion/
+
+# Local onboarding and hosted frontend
+.your-optimiser.json
+frontend/node_modules/
+frontend/.next/
+frontend/.env*
+!frontend/.env.example
+*-debug.log
+.firebase/
