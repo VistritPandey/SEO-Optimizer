@@ -42,9 +42,21 @@ def firebase_user(token: str, settings: Settings, store: Store) -> User | None:
         value, version = store.state(key)
         if value:
             return store.user(id=value["tenant"])
-        # A verified email from the configured Firebase project is the account identity.
+        # UID is the durable identity. A new UID must not inherit a former account
+        # merely because a deleted/reassigned email address now verifies again.
         email = str(claims["email"]).lower()
+        email_key = "identity-email:" + token_hash(email)
+        binding, binding_version = store.state(email_key)
         account = store.user(email=email)
+        if binding and binding.get("uid") != uid:
+            return None
+        if account is not None and not binding:
+            return None  # Legacy accounts require an explicit operator migration.
+        if not binding:
+            if not store.save_state(email_key, {"uid": uid}, binding_version):
+                binding, _ = store.state(email_key)
+                if binding.get("uid") != uid:
+                    return None
         if account is None:
             try:
                 account, _ = store.create_user(email, "!federated-only")
@@ -61,6 +73,7 @@ def firebase_user(token: str, settings: Settings, store: Store) -> User | None:
         auth.InvalidIdTokenError,
         auth.RevokedIdTokenError,
         auth.UserDisabledError,
+        auth.UserNotFoundError,
         auth.CertificateFetchError,
     ):
         return None
