@@ -395,7 +395,7 @@ class ModelClient:
                 ) / 1_000_000
                 if cost > max_cost:
                     raise ProviderError("Model spending budget exhausted")
-            if input_tokens + output_tokens > 100_000:
+            if input_tokens + output_tokens > self.config.max_total_tokens:
                 raise ProviderError("Model token budget exhausted")
             if not calls:
                 try:
