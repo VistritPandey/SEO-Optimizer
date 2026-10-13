@@ -102,7 +102,9 @@ def benchmark_repairs(
     arms: list[str] | None = None,
     resume: bool = False,
     controls_only: bool = False,
+    merge_only: bool = False,
 ) -> int:
+    controls_only = controls_only or merge_only
     output = output.resolve()
     fixture = fixture.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -324,10 +326,14 @@ def benchmark_repairs(
             if controls_only:
                 outcome.setdefault("control_attempts", []).append(
                     {
-                        "healthy_control": outcome.get("healthy_control"),
+                        "healthy_control": outcome.get("healthy_control")
+                        if not merge_only
+                        else None,
                         "irrelevant_control": outcome.get("irrelevant_control"),
                         "valid": False,
-                        "reason": "Concurrent resume attempt reset the fixture during the controls",
+                        "reason": "Prior merge control lacked an independent established baseline"
+                        if merge_only
+                        else "Concurrent resume reset contaminated these controls",
                     }
                 )
             else:
@@ -347,24 +353,27 @@ def benchmark_repairs(
             run_git(repository, "add", "web/products/cedar-lamp/index.html")
             run_git(repository, *identity, "commit", "-m", "Add healthy product")
             healthy_sha = run_git(repository, "rev-parse", "HEAD")
-            store.enqueue(user.id, project.id, "audit", "healthy-control", {})
-            started = time.monotonic()
-            worker.tick(user.id)
-            healthy = store.jobs(user.id, project.id)[0]
-            if healthy.status == "queued":
-                with store.sessions.begin() as session:
-                    session.execute(update(Job).where(Job.id == healthy.id).values(status="failed"))
-            changed = run_git(repository, "rev-parse", "HEAD") != healthy_sha
-            outcome["healthy_control"] = {
-                "passed": healthy.status == "complete" and not changed,
-                "status": healthy.status,
-                "changed": changed,
-                "result": healthy.result,
-                "runtime_seconds": round(time.monotonic() - started, 3),
-                "base_sha": healthy_sha,
-                "observed_sha": run_git(repository, "rev-parse", "HEAD"),
-                "diff": run_git(repository, "diff", healthy_sha, "HEAD"),
-            }
+            if not merge_only:
+                store.enqueue(user.id, project.id, "audit", "healthy-control", {})
+                started = time.monotonic()
+                worker.tick(user.id)
+                healthy = store.jobs(user.id, project.id)[0]
+                if healthy.status == "queued":
+                    with store.sessions.begin() as session:
+                        session.execute(
+                            update(Job).where(Job.id == healthy.id).values(status="failed")
+                        )
+                changed = run_git(repository, "rev-parse", "HEAD") != healthy_sha
+                outcome["healthy_control"] = {
+                    "passed": healthy.status == "complete" and not changed,
+                    "status": healthy.status,
+                    "changed": changed,
+                    "result": healthy.result,
+                    "runtime_seconds": round(time.monotonic() - started, 3),
+                    "base_sha": healthy_sha,
+                    "observed_sha": run_git(repository, "rev-parse", "HEAD"),
+                    "diff": run_git(repository, "diff", healthy_sha, "HEAD"),
+                }
             # The merged-docs scenario starts from a separately established healthy
             # baseline. A failed healthy audit must not make website changes appear
             # to be part of the documentation-only merge.
