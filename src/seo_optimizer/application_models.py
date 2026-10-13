@@ -39,7 +39,16 @@ class ProjectSpec(Contract):
     environment: str = "production"
     website_types: list[WebsiteType] = Field(default_factory=lambda: [WebsiteType.GENERIC])
     allowed_paths: list[str] = Field(
-        default_factory=lambda: ["public", "web", "src", "content", "app", "pages", "templates"]
+        default_factory=lambda: [
+            "public",
+            "web",
+            "src",
+            "content",
+            "app",
+            "pages",
+            "templates",
+            "index.html",
+        ]
     )
     monitored_paths: list[str] = Field(default_factory=list)
     audit_dependencies: list[str] = Field(
