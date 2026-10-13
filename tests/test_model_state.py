@@ -105,3 +105,24 @@ def test_tool_finalization_requires_actual_staged_verification(verified):
     assert len(calls) == (1 if verified else 2)
     assert result.usage.input_tokens == (10 if verified else 20)
     client.close()
+
+
+def test_performance_values_invalidate_cache_but_collection_time_does_not():
+    spec = ProjectSpec(name="Site", website_url="https://example.test/")
+    item = Evidence(
+        id="performance",
+        tenant_id="owner",
+        project_id="site",
+        environment="production",
+        kind="tool",
+        url="https://example.test/",
+        collected_at=utc_now(),
+        observation="Performance measurement",
+        data={"lab_score": 0.9, "measured_at": "first"},
+    )
+    package = load_knowledge()
+    first = input_fingerprint(spec, [item], "revision", Workspace(), package, True)
+    item.data["measured_at"] = "second"
+    assert input_fingerprint(spec, [item], "revision", Workspace(), package, True) == first
+    item.data["lab_score"] = 0.4
+    assert input_fingerprint(spec, [item], "revision", Workspace(), package, True) != first
