@@ -1,4 +1,4 @@
-"""Record a real PTY session and guide interactions with Chromium; no invented stdout."""
+"""Record the real model-repair PTY session with Chromium; no invented stdout."""
 
 import argparse
 import json
@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCREEN = (ROOT / "videos/terminal.html").read_text()
 
 
-def record(output, guide_url):
+def record(output):
     directory = ROOT / ".data/demo-recording"
     directory.mkdir(parents=True, exist_ok=True)
     state = {"text": "", "done": False, "events": [], "commands": []}
@@ -80,34 +80,8 @@ def record(output, guide_url):
 
     def commands():
         try:
-            run(
-                [
-                    "uv",
-                    "run",
-                    "python",
-                    "scripts/test_portfolio.py",
-                    "--reuse-build",
-                    "--skip-model",
-                    "--output",
-                    ".data/demo-recording/run.json",
-                ]
-            )
-            result = json.loads((directory / "run.json").read_text())
-            fix = next(item for item in result["cases"] if item["case"] == "rendered-title-repair")
-            sha = fix["result"]["merged_sha"]
-            run(
-                [
-                    "git",
-                    "-C",
-                    ".data/portfolio-test",
-                    "show",
-                    "--format=short",
-                    sha,
-                    "--",
-                    "public/index.html",
-                ]
-            )
-            run(["uv", "run", "pytest", "-q", "--disable-warnings"])
+            run(["uv", "run", "python", "scripts/demo_agent.py"])
+
         except Exception as error:
             emit(f"Recording failure: {error}\n")
             state["error"] = type(error).__name__
@@ -129,7 +103,7 @@ def record(output, guide_url):
         started = time.monotonic()
         worker = threading.Thread(target=commands)
         worker.start()
-        deadline = time.monotonic() + 180
+        deadline = time.monotonic() + 900
         while not state["done"] and time.monotonic() < deadline:
             page.wait_for_timeout(200)
         if not state["done"]:
@@ -140,23 +114,6 @@ def record(output, guide_url):
         video = page.video
         context.close()
         video.save_as(str(directory / "terminal.webm"))
-        guide = browser.new_context(
-            viewport={"width": 1200, "height": 680},
-            record_video_dir=str(directory / "raw"),
-            record_video_size={"width": 1200, "height": 680},
-        )
-        page = guide.new_page()
-        page.goto(guide_url)
-        page.locator("#workflow").scroll_into_view_if_needed()
-        page.evaluate("window.scrollTo(0, document.querySelector('#workflow').offsetTop - 32)")
-        page.wait_for_timeout(1200)
-        for index in [2, 3, 4, 5, 6, 7]:
-            page.locator(f'[data-step="{index}"]').click()
-            page.wait_for_timeout(900)
-        page.screenshot(path=str(directory / "guide.png"))
-        video = page.video
-        guide.close()
-        video.save_as(str(directory / "guide.webm"))
         browser.close()
     server.shutdown()
     server.server_close()
@@ -169,19 +126,17 @@ def record(output, guide_url):
                 "events": state["events"],
                 "error": state.get("error"),
                 "terminal_video": "terminal.webm",
-                "guide_video": "guide.webm",
             },
             indent=2,
         )
         + "\n"
     )
     assert state.get("error") is None
-    print("Recorded real terminal execution and guide interactions", flush=True)
+    print("Recorded actual model, tool and worker execution", flush=True)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "videos/public/capture.json")
-    parser.add_argument("--guide-url", default="http://127.0.0.1:8787/guide")
     args = parser.parse_args()
-    record(args.output, args.guide_url)
+    record(args.output)
