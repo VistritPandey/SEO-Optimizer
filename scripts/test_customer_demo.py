@@ -111,6 +111,18 @@ def main():
         page.keyboard.press("Enter")
         expect(demo).to_have_attribute("data-step", "0")
         passed.append("Scenario buttons work by keyboard and reset state")
+        page.get_by_text("Prefer to watch? See the customer walkthrough").click()
+        video = page.locator("video")
+        video.evaluate("node => { node.muted = true; node.load(); }")
+        page.wait_for_function("document.querySelector('video').readyState >= 1")
+        assert video.evaluate("node => node.videoWidth") == 1920
+        assert video.evaluate("node => node.videoHeight") == 1080
+        assert 68 < video.evaluate("node => node.duration") < 70
+        page.wait_for_function("document.querySelector('track').track.cues?.length > 0")
+        video.evaluate("node => node.play()")
+        page.wait_for_function("document.querySelector('video').currentTime > 0")
+        video.evaluate("node => node.pause()")
+        passed.append("Embedded customer film decodes at 1080p, plays and loads English captions")
         assert not errors, errors
         passed.append("No browser JavaScript errors")
         context.close()
