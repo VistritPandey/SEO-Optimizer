@@ -57,3 +57,43 @@ def test_project_lease_arbitrates_stale_live_query(tmp_path: Path):
     store.finish(owner.id, first.id, "first", "complete", {})
     assert store.claim("next", owner.id) is not None
     store.close()
+
+
+def test_pr_branch_observations_do_not_replace_production_report(tmp_path):
+    store = Store(Settings(tmp_path, f"sqlite:///{tmp_path / 'queue.db'}", "test-secret"))
+    owner, _ = store.create_user("owner@example.test", "hash")
+    site = store.create_project(
+        owner.id,
+        ProjectCreate(spec=ProjectSpec(name="Site", website_url=HttpUrl("https://example.test"))),
+    )
+    initial = store.claim("worker", owner.id)
+    store.finish(
+        owner.id,
+        initial.id,
+        "worker",
+        "complete",
+        {"revision": "main-base", "report": {"score": 72}},
+    )
+    followup = store.enqueue(owner.id, site.id, "followup", "review", {})
+    store.claim("worker", owner.id)
+    store.finish(
+        owner.id,
+        followup.id,
+        "worker",
+        "complete",
+        {"revision": "pr-branch", "report": {"score": 17}},
+    )
+    current = store.project(owner.id, site.id)
+    assert current.last_revision == "main-base"
+    assert current.last_report == {"score": 72}
+    merged = store.enqueue(owner.id, site.id, "pull_request", "merged", {})
+    store.claim("worker", owner.id)
+    store.finish(
+        owner.id,
+        merged.id,
+        "worker",
+        "complete",
+        {"stage": "verified", "revision": "merged-main", "report": {"score": 96}},
+    )
+    assert store.project(owner.id, site.id).last_report == {"score": 96}
+    store.close()
