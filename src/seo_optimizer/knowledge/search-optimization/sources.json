@@ -518,6 +518,23 @@
         "perf.cwv"
       ],
       "limitations": "Remote mobile lab diagnostics and available URL/origin field observations; missing field data is unknown and lab scores do not prove rankings or real-user INP."
+    },
+    {
+      "id": "google-grounding-api",
+      "title": "Grounding with Google Search",
+      "publisher": "Google AI for Developers",
+      "url": "https://ai.google.dev/gemini-api/docs/google-search",
+      "verified_on": "2026-10-12",
+      "source_type": "official",
+      "applicability": [
+        "geo",
+        "operations"
+      ],
+      "supports": [
+        "geo.visibility",
+        "ops.metrics"
+      ],
+      "limitations": "Search-grounded API observations are not consumer search placement; citation accuracy and opaque redirect attribution need independent verification."
     }
   ]
 }
