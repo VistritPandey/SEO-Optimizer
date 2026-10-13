@@ -159,7 +159,10 @@ class Worker:
             )
             return True
         try:
-            status, result, delay = self.process(project, job)
+            from seo_optimizer.cloud_checks import verification_scope
+
+            with verification_scope(project.tenant_id, job.id):
+                status, result, delay = self.process(project, job)
         except (httpx.HTTPError, OSError) as error:
             status = "queued" if job.attempts < 3 else "failed"
             result, delay = (
