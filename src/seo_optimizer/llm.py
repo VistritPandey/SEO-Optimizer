@@ -49,6 +49,7 @@ class Inference:
     model: str
     runtime_ms: float
     tool_trace: list[dict[str, Any]] = field(default_factory=list)
+    finalized_from_tools: bool = False
 
 
 class ProviderError(RuntimeError):
@@ -149,6 +150,7 @@ class ModelClient:
         max_seconds: float = 480,
         max_cost: float = 2,
         images: list[str] | None = None,
+        stop_after_verified_tools: bool = False,
     ) -> Inference:
         kind, model = self.config.kind, self.config.model
         if kind == "rules":
@@ -428,6 +430,7 @@ class ModelClient:
             if not definitions or len(calls) > self.config.max_calls_per_step:
                 raise ProviderError("Unexpected or excessive tool calls")
             results = []
+            verified_staged = False
             for call in calls:
                 arguments = call["arguments"]
                 if isinstance(arguments, str):
@@ -436,6 +439,14 @@ class ModelClient:
                     raise ProviderError("Model time budget exhausted before tool execution")
                 tool_started = time.monotonic()
                 outcome = execute(call["name"], arguments)
+                if call["name"] == "apply_patch" and outcome.get("success"):
+                    verified_staged = False
+                if call["name"] == "run_checks":
+                    verified_staged = bool(
+                        outcome.get("success")
+                        and outcome.get("ready_for_publication")
+                        and outcome.get("scope") == "staged_proposals"
+                    )
                 trace.append(
                     {
                         "name": call["name"],
@@ -472,6 +483,22 @@ class ModelClient:
                     results.append(
                         {"functionResponse": {"name": call["name"], "response": outcome}}
                     )
+            if stop_after_verified_tools and verified_staged:
+                return Inference(
+                    decision=AgentDecision(
+                        summary="Staged proposals passed tool verification; independent "
+                        "publication and served checks remain the application's responsibility."
+                    ),
+                    usage=Usage(
+                        input_tokens=input_tokens if input_available else None,
+                        output_tokens=output_tokens if output_available else None,
+                        api_cost_usd=0 if kind == "ollama" else cost,
+                    ),
+                    model=model,
+                    runtime_ms=(time.monotonic() - started) * 1000,
+                    tool_trace=trace,
+                    finalized_from_tools=True,
+                )
             if kind == "anthropic":
                 history.append({"role": "user", "content": results})
             elif kind == "google":
