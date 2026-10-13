@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /preview/
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /preview/
