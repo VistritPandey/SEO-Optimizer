@@ -342,6 +342,7 @@ class Worker:
         root.mkdir(parents=True)
         revision = ""
         changed: list[str] | None = None
+        source_baseline = str(project.last_report.get("source_revision") or project.last_revision)
         if spec.local_path:
             if not self.settings.allow_local_repositories:
                 raise ValueError("Local repositories are disabled on this host")
@@ -349,10 +350,10 @@ class Worker:
             revision = snapshot_local(
                 Path(spec.local_path), repository, spec.branch, self.settings.allowed_repo_roots
             )
-            if project.last_revision:
+            if source_baseline:
                 try:
                     changed = run_git(
-                        repository, "diff", "--name-only", project.last_revision, revision
+                        repository, "diff", "--name-only", source_baseline, revision
                     ).splitlines()
                 except ValueError:
                     changed = None
@@ -380,8 +381,8 @@ class Worker:
                     0,
                 )
             changed = (
-                github.changed_files(spec.repository, project.last_revision, revision)
-                if project.last_revision
+                github.changed_files(spec.repository, source_baseline, revision)
+                if source_baseline
                 else None
             )
             repository = root / "repository"
@@ -435,10 +436,14 @@ class Worker:
         from seo_optimizer.state import input_fingerprint
 
         workspace = self.store.workspace(project.tenant_id, project.id)
+        source_revision = (
+            source_baseline if source_baseline and affected_urls(spec, changed) == [] else revision
+        )
+        report["source_revision"] = source_revision
         fingerprint = input_fingerprint(
             spec,
             evidence,
-            revision,
+            source_revision,
             workspace,
             self.knowledge,
             self.use_knowledge,
@@ -508,7 +513,11 @@ class Worker:
                             source_file=path,
                             collected_at=utc_now(),
                             observation="Read current repository file",
-                            data={"text": text},
+                            data={
+                                "text": text,
+                                "revision": revision,
+                                "branch": job.payload.get("branch", spec.branch),
+                            },
                         )
                         evidence.append(item)
                         return {"success": True, "evidence_id": item.id, "text": text[:20000]}
@@ -848,6 +857,11 @@ class Worker:
         from seo_optimizer.evidence_archive import archive_evidence
 
         result["evidence"] = archive_evidence(evidence)
+        if job.kind == "followup":
+            origin = self.store.job(project.tenant_id, str(job.payload.get("origin", "")))
+            if origin is not None and origin.project_id == project.id:
+                result["pr"] = {**origin.result.get("pr", {}), "head_sha": revision}
+            result["summary"] = "Review assessed; no supported source change was published"
         if content_brief:
             result["content_verification"] = content_brief
         if not changes or not spec.auto_fix:
@@ -878,6 +892,7 @@ class Worker:
                 project.tenant_id, project.id, spec, result["verification_urls"]
             )
             self.observe_browser(spec, crawler, after, root / "after-artifacts")
+            result["report"]["source_revision"] = result["merged_sha"]
             result["report"]["input_fingerprint"] = input_fingerprint(
                 spec,
                 after,
@@ -1110,7 +1125,11 @@ class Worker:
             input_fingerprint=result.get("report", {}).get("input_fingerprint"),
             model_cache_hit=result.get("report", {}).get("model_cache_hit", False),
             cacheable_model_result=result.get("report", {}).get("cacheable_model_result", False),
+            source_revision=result.get("merged_sha", result.get("revision")),
         )
+        from seo_optimizer.evidence_archive import archive_evidence
+
+        result["after_evidence"] = archive_evidence(after)
         result.update(
             summary="Changes verified on the deployed website",
             stage="verified",
