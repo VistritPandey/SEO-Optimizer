@@ -340,10 +340,8 @@ class Worker:
         model_name = "rules"
         if spec.provider.kind != "rules":
             tool_changes: list[FileChange] = []
-            trace_failed = False
 
             def execute(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
-                nonlocal trace_failed
                 try:
                     if name == "read_file":
                         path = str(arguments["path"])
@@ -377,6 +375,12 @@ class Worker:
                             },
                             "html": str(observed.data.get("html", ""))[:12000],
                         }
+                    if name == "get_check":
+                        check_id = str(arguments["check_id"])
+                        check = self.knowledge.checks.get(check_id)
+                        if check is None:
+                            raise ValueError("Unknown check")
+                        return {"success": True, "check": check.model_dump(mode="json")}
                     if name == "get_diff":
                         return {
                             "success": True,
@@ -424,7 +428,6 @@ class Worker:
                         "checks": error.checks,
                     }
                 except (ValueError, OSError, KeyError):
-                    trace_failed = name != "run_checks" or trace_failed
                     return {
                         "success": False,
                         "error": "Tool arguments or project policy prevented the operation",
@@ -456,6 +459,11 @@ class Worker:
                     {"url": {"type": "string"}},
                 ),
                 definition("get_diff", "Inspect the changed files and route mapping", {}),
+                definition(
+                    "get_check",
+                    "Read private check guidance, sources and verification criteria",
+                    {"check_id": {"type": "string"}},
+                ),
                 definition(
                     "run_checks",
                     "Verify staged patches in isolation; otherwise check the original snapshot",
@@ -496,6 +504,9 @@ class Worker:
                 "calls in one response. Avoid unrelated CSS or private-file inspection "
                 "when no finding requires it. Tools stage replacements against the original "
                 "snapshot; re-read original source to revise a proposal for the same path. "
+                "Private skill links are not repository files. Use get_check for check guidance, "
+                "not read_file on checks.json or sources.json. Failed tools supply no evidence; "
+                "record an unresolved dependency when it prevents a grounded assessment. "
                 "A failed build is diagnostic, not permission to publish: fix the proposal "
                 "and rerun checks. Final output must be JSON with findings, changes and summary."
             )
@@ -573,14 +584,22 @@ class Worker:
                 raise ValueError(
                     "Model assessment failed grounding/policy validation: " + errors[0]
                 )
-            if trace_failed and (inference.decision.changes or tool_changes):
-                raise ValueError("Failed model tools prevent automatic publication")
             findings.extend(
                 item
                 for item in inference.decision.findings
                 if item.model_dump() not in [existing.model_dump() for existing in findings]
             )
             candidates = inference.decision.changes + tool_changes
+            for change in candidates:
+                if not any(
+                    item.id in change.evidence_ids
+                    and item.kind == "source"
+                    and item.source_file == change.path
+                    for item in evidence
+                ):
+                    raise ValueError(
+                        "Model patch requires a successful read of the same source file"
+                    )
             combined = {change.path: change for change in changes}
             combined.update({change.path: change for change in candidates})
             changes = list(combined.values())
