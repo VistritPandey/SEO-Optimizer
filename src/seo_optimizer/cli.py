@@ -55,10 +55,34 @@ def main(argv: list[str] | None = None) -> int:
     live.add_argument("--limit", type=int, default=5)
     live.add_argument("--split", choices=["development", "held_out"], default="development")
     live.add_argument("--arm", choices=["model-only", "hybrid"], default="model-only")
+    repairs = commands.add_parser(
+        "benchmark-repairs", help="Compare five arms on actual frozen repository repairs"
+    )
+    repairs.add_argument("--fixture", type=Path, default=Path("tests/fixtures/agent_site"))
+    repairs.add_argument("--output", type=Path, required=True)
+    repairs.add_argument("--local-model", default="gemma4:12b")
+    repairs.add_argument("--paid-model", default="gemini-3.8-flash")
+    repairs.add_argument(
+        "--arms",
+        nargs="+",
+        choices=[
+            "rules",
+            "local-minimal",
+            "local-full",
+            "paid-minimal",
+            "paid-full",
+        ],
+    )
     args = parser.parse_args(argv)
     try:
         package = load_knowledge(args.knowledge)
-        if args.command == "serve":
+        if args.command == "benchmark-repairs":
+            from seo_optimizer.repair_benchmark import benchmark_repairs
+
+            return benchmark_repairs(
+                args.fixture, args.output, args.local_model, args.paid_model, args.arms
+            )
+        elif args.command == "serve":
             import uvicorn
 
             from seo_optimizer.web import create_app
