@@ -92,9 +92,9 @@ three times; failed prerequisites block the job. Pausing a project cancels queue
 queued age, blocked jobs, lease expiries and actual provider usage; preserve database backups and
 the encryption key together. Jobs record verification, revisions, PRs, rollback and unknown metrics.
 
-New installations create schema version 1. Existing schema changes must use explicit reviewed
-migrations before upgrading a deployed database. No live schema or secret rotation is performed by
-the application's install command.
+New installations create schema version 1. Compatible auxiliary tables are created on startup. Incompatible changes to
+existing columns require explicit reviewed migrations before upgrading a deployed database.
+Secret rotation requires coordinated re-encryption; installation does not rotate an existing key.
 
 Provider request deadlines, Ollama thinking and context size are explicit project settings. Shared
 production workers accept official provider endpoints only. Use an account-scoped local worker
