@@ -58,6 +58,9 @@ def test_managed_creation_and_tenant_isolation(hosted) -> None:
     }
     assert client.post("/api/v1/projects", json=value, headers=headers).status_code == 409
     store.save_state(
+        "github-grant:" + account.id, {"token": "test-user-grant", "expires": time.time() + 300}, 0
+    )
+    store.save_state(
         "github-repo:" + account.id + ":example/site",
         {"installation": 456, "until": time.time() + 300},
         0,
