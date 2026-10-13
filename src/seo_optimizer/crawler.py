@@ -254,6 +254,33 @@ def capture_browser(
         except BrowserTimeout:
             settled = False
         html = page.content()
+        visible_offer = page.evaluate("""() => {
+            const main = document.querySelector('main');
+            if (!main) return null;
+            const visible = el => {
+                const style = getComputedStyle(el);
+                return el.getClientRects().length > 0 && style.display !== 'none'
+                    && style.visibility !== 'hidden' && Number(style.opacity) !== 0;
+            };
+            const selector = '.price, [itemprop="price"], [data-price]';
+            const candidates = [...main.querySelectorAll(selector)]
+                .filter(visible).map(el => el.innerText.trim());
+            const offers = candidates.map(text => text.match(
+                /^(USD|EUR|GBP|CAD|AUD|JPY)\\s+([0-9]+(?:\\.[0-9]{1,2})?)$/
+            )).filter(Boolean);
+            const unique = [...new Set(offers.map(m => JSON.stringify([m[1], m[2]])))];
+            if (unique.length !== 1 || candidates.length !== offers.length) return null;
+            const stock = [...main.querySelectorAll('.stock, [data-stock]')].filter(visible)
+                .map(el => el.innerText.trim().toLowerCase().replace(/^[●•]\\s*/, ''));
+            const availability = stock.length === 1 && stock[0] === 'in stock'
+                ? 'https://schema.org/InStock'
+                : stock.length === 1 && stock[0] === 'out of stock'
+                    ? 'https://schema.org/OutOfStock' : null;
+            if (!availability) return null;
+            const [currency, price] = JSON.parse(unique[0]);
+            return {price, priceCurrency: currency, availability,
+                    method: 'visible browser text; single unambiguous main offer'};
+        }""")
         screenshot = output / "page.png"
         page.screenshot(path=str(screenshot), full_page=True)
         context.close()
@@ -268,7 +295,7 @@ def capture_browser(
             url=HttpUrl(url),
             collected_at=utc_now(),
             observation="Observed rendered browser DOM",
-            data={"html": html, "render_settled": settled},
+            data={"html": html, "render_settled": settled, "visible_offer": visible_offer},
         ),
         Evidence(
             id=str(uuid4()),
