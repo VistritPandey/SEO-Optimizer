@@ -26,6 +26,7 @@ dependencies = [
 
 [project.scripts]
 seo-optimizer = "seo_optimizer.cli:main"
+your-optimiser = "seo_optimizer.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8.3,<9", "pytest-socket>=0.7,<1", "ruff>=0.9,<1", "mypy>=1.14,<2", "types-PyYAML>=6.0", "jsonschema>=4.23,<5", "build>=1.2,<2"]
@@ -33,6 +34,7 @@ dev = ["pytest>=8.3,<9", "pytest-socket>=0.7,<1", "ruff>=0.9,<1", "mypy>=1.14,<2
 [project.optional-dependencies]
 browser = ["playwright>=1.50,<2"]
 google = []
+hosted = ["firebase-admin>=7,<8", "google-cloud-firestore>=2.21,<3"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/seo_optimizer"]
