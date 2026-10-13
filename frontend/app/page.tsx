@@ -124,7 +124,6 @@ export default function Home() {
                 src="/demo-captions.vtt"
                 srcLang="en"
                 label="English"
-                default
               />
               Your browser does not support video playback.
             </video>
