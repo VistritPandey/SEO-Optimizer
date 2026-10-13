@@ -242,6 +242,11 @@ class Worker:
         github = GitHubClient(credentials) if spec.repository else None
         crawler = Crawler(str(spec.website_url), self.settings.allow_private_network)
         try:
+            if job.kind == "pull_request" and not job.result and github:
+                origin = self.store.job(project.tenant_id, str(job.payload.get("origin", "")))
+                if origin is None or origin.project_id != project.id:
+                    raise ValueError("Tracked pull request origin is unavailable")
+                job.result = {**origin.result, "stage": "checks"}
             if job.result.get("stage") == "checks" and github:
                 return self.finish_pr(project, job, spec, github)
             if job.result.get("stage") == "deployment" and github:
@@ -323,6 +328,18 @@ class Worker:
                     changed = None
         elif github:
             revision = github.head(spec.repository, spec.branch)
+            if job.kind == "followup":
+                pull = github.request(
+                    "GET", f"/repos/{spec.repository}/pulls/{job.payload['pr_number']}"
+                )
+                if (
+                    pull.get("state") != "open"
+                    or pull["head"]["sha"] != job.payload["head_sha"]
+                    or pull["head"]["repo"]["full_name"] != spec.repository
+                    or pull["head"]["ref"] != job.payload["branch"]
+                ):
+                    return "superseded", {"summary": "Review branch changed; follow-up skipped"}, 0
+                revision = str(pull["head"]["sha"])
             if job.payload.get("after") and job.payload["after"] != revision:
                 return (
                     "superseded",
@@ -389,7 +406,8 @@ class Worker:
         )
         report["input_fingerprint"] = fingerprint
         report["model_cache_hit"] = bool(
-            project.last_report.get("cacheable_model_result")
+            job.kind != "followup"
+            and project.last_report.get("cacheable_model_result")
             and project.last_report.get("input_fingerprint") == fingerprint
         )
         report["cacheable_model_result"] = report["model_cache_hit"]
@@ -637,6 +655,9 @@ class Worker:
                 )
             ]
             request = {
+                "review_feedback_untrusted": job.payload.get("feedback", "")
+                if job.kind == "followup"
+                else "",
                 "project": project_context.model_dump(mode="json"),
                 "observations": observations,
                 "deterministic_findings": [item.model_dump(mode="json") for item in findings[:10]],
@@ -812,14 +833,35 @@ class Worker:
             )
             return self.verify_deployment(spec, result, after, None)
         if github:
-            result["pr"] = github.create_pr(
-                spec.repository,
-                spec.branch,
-                revision,
-                job.id,
-                files,
-                "Fixes: " + ", ".join(result["fixed_checks"]),
-            )
+            if job.kind == "followup":
+                origin = self.store.job(project.tenant_id, str(job.payload.get("origin", "")))
+                if origin is None or origin.project_id != project.id:
+                    raise ValueError("Follow-up origin is unavailable")
+                result["pr"] = github.update_pr(
+                    spec.repository,
+                    int(job.payload["pr_number"]),
+                    str(job.payload["branch"]),
+                    revision,
+                    files,
+                    str(origin.result["pr"]["base_sha"]),
+                )
+                result["before_defects"] = origin.result.get("before_defects", [])
+                result["fixed_targets"] = [
+                    *origin.result.get("fixed_targets", []),
+                    *result["fixed_targets"],
+                ]
+                result["verification_urls"] = list(
+                    set(origin.result.get("verification_urls", []) + result["verification_urls"])
+                )
+            else:
+                result["pr"] = github.create_pr(
+                    spec.repository,
+                    spec.branch,
+                    revision,
+                    job.id,
+                    files,
+                    "Fixes: " + ", ".join(result["fixed_checks"]),
+                )
             result["stage"] = "checks"
             result["summary"] = "Verified changes published to a pull request"
             return "waiting_checks", result, 15
