@@ -377,12 +377,12 @@ def benchmark_repairs(
                         last_revision=healthy_sha,
                     )
                 )
-            run_git(repository, "checkout", "-b", "docs-" + arm)
+            run_git(repository, "checkout", "-b", "docs-" + run_id)
             (repository / "README.md").write_text("Anonymous benchmark documentation.\n")
             run_git(repository, "add", "README.md")
             run_git(repository, *identity, "commit", "-m", "Document fixture")
             run_git(repository, "checkout", "main")
-            run_git(repository, *identity, "merge", "--no-ff", "docs-" + arm, "-m", "Merge docs")
+            run_git(repository, *identity, "merge", "--no-ff", "docs-" + run_id, "-m", "Merge docs")
             store.enqueue(
                 user.id,
                 project.id,
