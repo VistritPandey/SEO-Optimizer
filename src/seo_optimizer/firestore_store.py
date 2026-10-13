@@ -193,6 +193,9 @@ class FirestoreStore(Store):
         ref = self.db.collection("optimizer_projects").document(id)
         account_ref = self.db.collection("optimizer_project_counts").document(tenant)
         limit = self.settings.free_projects if self.settings.hosted else 20
+        if len(self.projects(tenant)) >= limit:
+            raise ValueError("Project limit reached")
+        self.reserve_job(tenant, id + ":initial:" + id)
         body = self._pack(
             dict(
                 id=id,
