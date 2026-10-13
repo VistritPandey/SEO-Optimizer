@@ -62,7 +62,8 @@ class Settings:
             raise ValueError("GOOGLE_CLOUD_PROJECT is required for hosted identity/storage")
         if production and os.getenv("FIREBASE_AUTH_EMULATOR_HOST"):
             raise ValueError("Auth emulator is forbidden in production")
-        data_dir.mkdir(parents=True, exist_ok=True)
+        data_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+        data_dir.chmod(0o700)
         if not secret:
             key_file = data_dir / "secret.key"
             try:
