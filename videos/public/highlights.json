@@ -1,0 +1,14 @@
+{
+  "source": "Actual PTY output, recorded during live model execution",
+  "clips": [
+    {
+      "start": 13.598776208003983,
+      "seconds": 3
+    },
+    {
+      "start": 121.1163425000268,
+      "seconds": 4
+    }
+  ],
+  "edits": "Waiting periods cut; source inspection and final control output retained"
+}
