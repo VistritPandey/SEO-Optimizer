@@ -286,9 +286,18 @@ def affected_urls(spec: ProjectSpec, changed: list[str] | None) -> list[str] | N
             or path in {"README.md", "LICENSE", "LICENSE.md"}
         )
     ]
+    scope = spec.monitored_paths or spec.allowed_paths
+    changed = [
+        path
+        for path in changed
+        if path in spec.audit_dependencies
+        or any(path == base or path.startswith(base.rstrip("/") + "/") for base in scope)
+    ]
     if not changed:
         return []
-    # Shared rendering/config/backend changes require broad inspection.
+    if any(path in spec.audit_dependencies for path in changed):
+        return None
+    # Shared rendering changes inside the monitored scope require broad inspection.
     if any(
         any(
             term in path.lower()
