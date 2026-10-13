@@ -17,5 +17,5 @@ if ! command -v uv >/dev/null 2>&1; then
   sh "$INSTALL_SCRIPT"
   export PATH="${XDG_BIN_HOME:-${HOME}/.local/bin}:$PATH"
 fi
-uv sync --locked --python 3.12
+uv sync --locked --no-dev --python 3.12
 exec uv run --no-sync python -m seo_optimizer.local "$@"
