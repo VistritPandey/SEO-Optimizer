@@ -2,7 +2,9 @@
 
 import os
 import re
+import shutil
 import subprocess
+import tempfile
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -419,6 +421,21 @@ def verify_workspace(
             raise ValueError("Configured sandbox verification failed")
         checks.append({"name": command[0], "passed": True})
     return checks
+
+
+def verify_proposals(
+    root: Path,
+    spec: ProjectSpec,
+    changes: list[FileChange],
+    evidence_ids: set[str],
+    check_ids: set[str],
+) -> list[dict[str, Any]]:
+    """Check staged edits in an ephemeral copy; publication still checks independently."""
+    with tempfile.TemporaryDirectory(prefix="proposal-", dir=root.parent) as directory:
+        preview = Path(directory) / "repository"
+        shutil.copytree(root, preview, symlinks=True)
+        files = apply_changes(preview, spec, changes, evidence_ids, check_ids)
+        return verify_workspace(preview, spec, files)
 
 
 def commit_local(
