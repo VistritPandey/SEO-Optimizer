@@ -1,0 +1,21 @@
+{
+  "reference_replay": {
+    "counts": {
+      "passed": 41,
+      "failed": 0,
+      "skipped": 0
+    },
+    "input_type": "Authored synthetic decisions; no live inference"
+  },
+  "adversarial_replay": {
+    "counts": {
+      "passed": 0,
+      "failed": 10,
+      "skipped": 31
+    },
+    "interpretation": "All 10 supplied adversarial decisions were rejected; 31 unrelated cases have no replay response"
+  },
+  "unverified": [
+    "Actual held-out model quality and search outcomes"
+  ]
+}
