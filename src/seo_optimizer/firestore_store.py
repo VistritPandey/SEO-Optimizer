@@ -11,6 +11,7 @@ import secrets
 import time
 from typing import Any, TypeVar, cast
 
+from google.api_core.exceptions import Aborted
 from google.cloud import firestore
 from google.cloud.firestore_v1.base_query import FieldFilter
 
@@ -125,7 +126,12 @@ class FirestoreStore(Store):
             transaction.set(ref, packed)
             return True
 
-        return bool(save(self.db.transaction()))
+        try:
+            return bool(save(self.db.transaction()))
+        except ValueError as error:
+            if isinstance(error.__cause__, Aborted):
+                return False
+            raise
 
     def create_user(self, email: str, password_hash: str) -> tuple[User, str]:
         token, id = secrets.token_urlsafe(40), identifier()
@@ -347,8 +353,8 @@ class FirestoreStore(Store):
                 transaction: Any, ref: Any = ref, lease_ref: Any = lease_ref
             ) -> dict[str, Any] | None:
                 now = time.time()
-                snapshot = ref.get(transaction=transaction)
                 lease = lease_ref.get(transaction=transaction)
+                snapshot = ref.get(transaction=transaction)
                 body = snapshot.to_dict()
                 if (
                     body["status"] not in ACTIVE
@@ -370,7 +376,12 @@ class FirestoreStore(Store):
                 )
                 return {**body, **changes}
 
-            body = claim_one(self.db.transaction())
+            try:
+                body = claim_one(self.db.transaction())
+            except ValueError as error:
+                if isinstance(error.__cause__, Aborted):
+                    continue  # Another worker won; contention is not a failed SEO job.
+                raise
             if body is not None:
                 return Job(**self._unpack(body))
         return None
