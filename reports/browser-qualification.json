@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "cases": [
+    "mobile brief disclosure",
+    "synthetic evidence label",
+    "publication action hidden without project permission",
+    "CSRF-protected workspace import",
+    "no horizontal document overflow at 390px",
+    "no browser script errors"
+  ],
+  "browser": "Playwright Chromium",
+  "target": "anonymous isolated dashboard fixture",
+  "desktop_workflow": "Recorded separately in videos/public/growth-workflow.webm",
+  "public_dashboard_routes": {
+    "/healthz": 200,
+    "/login": 200,
+    "/guide": 200
+  },
+  "private_site": {
+    "cases": 5,
+    "passed": 5,
+    "details": "Ignored local report only; no private source or URL persisted here"
+  }
+}
