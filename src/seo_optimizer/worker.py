@@ -461,6 +461,9 @@ class Worker:
                         }
                     if name == "apply_patch":
                         change = FileChange.model_validate(arguments)
+                        from seo_optimizer.model_guard import validate_model_body
+
+                        validate_model_body(repository, spec, change, evidence)
                         confined(repository, change.path, spec.allowed_paths)
                         previous = next(
                             (item for item in tool_changes if item.path == change.path), None
@@ -581,6 +584,9 @@ class Worker:
                 "record an unresolved dependency when it prevents a grounded assessment. "
                 "A failed build is diagnostic, not permission to publish: fix the proposal "
                 "and rerun checks. Final output must be JSON with findings, changes and summary."
+                " Body text publication runs through supported content jobs; this repair "
+                "loop preserves body text and only changes an observed broken link to an "
+                "observed public destination. Referenced fact IDs alone do not verify new claims."
             )
             if not self.use_knowledge:
                 instructions = (
