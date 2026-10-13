@@ -258,9 +258,13 @@ def capture_browser(
             const main = document.querySelector('main');
             if (!main) return null;
             const visible = el => {
-                const style = getComputedStyle(el);
-                return el.getClientRects().length > 0 && style.display !== 'none'
-                    && style.visibility !== 'hidden' && Number(style.opacity) !== 0;
+                if (!el.getClientRects().length) return false;
+                for (let node=el; node; node=node.parentElement) {
+                    const style = getComputedStyle(node);
+                    if (style.display === 'none' || style.visibility !== 'visible'
+                        || Number(style.opacity) === 0 || node.hidden) return false;
+                }
+                return true;
             };
             const selector = '.price, [itemprop="price"], [data-price]';
             const candidates = [...main.querySelectorAll(selector)]
