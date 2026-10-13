@@ -395,6 +395,7 @@ def schema_models() -> dict[str, type[BaseModel]]:
     from seo_optimizer.growth import (
         Brief,
         CitationObservation,
+        CitationProbe,
         Material,
         Opportunity,
         SearchObservation,
@@ -428,6 +429,7 @@ def schema_models() -> dict[str, type[BaseModel]]:
             Registration,
             Brief,
             CitationObservation,
+            CitationProbe,
             Material,
             Opportunity,
             SearchObservation,
