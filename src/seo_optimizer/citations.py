@@ -21,6 +21,7 @@ def normalize_interaction(
 ) -> CitationObservation:
     passages: list[str] = []
     urls: list[HttpUrl] = []
+    unresolved: list[HttpUrl] = []
     search_used = False
     for step in payload.get("steps", []):
         if step.get("type") in {"google_search_call", "google_search_result"}:
@@ -34,12 +35,16 @@ def normalize_interaction(
             for annotation in block.get("annotations", []):
                 if annotation.get("type") == "url_citation":
                     url = HttpUrl(annotation["url"])
+                    if url.host == "vertexaisearch.cloud.google.com":
+                        if url not in unresolved:
+                            unresolved.append(url)
+                        continue
                     if url not in urls:
                         urls.append(url)
     if not passages:
         raise ValueError("Grounded API did not return an observable answer")
     # Citations without observed retrieval cannot establish engine discovery.
-    if urls and not search_used:
+    if (urls or unresolved) and not search_used:
         raise ValueError("Citations returned without an observable search step")
     now = utc_now()
     identity = hashlib.sha256((query + now.isoformat()).encode()).hexdigest()[:24]
@@ -54,6 +59,7 @@ def normalize_interaction(
         market=market,
         answer="\n".join(passages)[:20000],
         cited_urls=urls[:100],
+        unresolved_citation_urls=unresolved[:100],
         source="Gemini Interactions API actual search transcript "
         + str(payload.get("id", identity)),
         retrieval_enabled=search_used,
