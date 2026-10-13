@@ -92,4 +92,89 @@ fixture trials. These used the installed gemma4:12b model on an Apple M4, with e
 and context limits. Development cases were used; no held-out inference was performed.
 A smoke test proves a particular capability invocation, not general autonomous reasoning quality.
 Unsuccessful fixture decisions remain failures and cannot qualify the model for production.
-The paid-provider arm is implemented but has not been measured without account credentials.
+Paid inference has since completed two controlled repository repairs with the current Google
+SDK, plus a repeated model audit and a merged-documentation control. Those records are in
+`reports/agent-demo-repair.json` and `videos/public/agent-run.json`. They used a different task,
+configuration and development history from the Ollama decision runs. They are **not** a fair
+open-versus-paid comparison or a general model-quality result.
+
+
+## Measure the contribution of the stack
+
+The comparison question is whether the private skill, evidence selection, tools, rules and
+verification improve outcomes enough to make a smaller local model useful. A comparison of
+only two models with the full stack cannot isolate that contribution.
+
+Use five arms for the repository-repair evaluation:
+
+| Arm | Reasoning and information | What it establishes |
+|---|---|---|
+| Rules alone | Supported rules, collected evidence and deterministic repair | Baseline coverage and when inference is unnecessary |
+| Open model, minimal runner | Task, facts, output contract and safe file/check primitives | Local model performance without SEO skill/rule hints |
+| Open model, full stack | Same primitive access plus versioned skill, rule findings and relevant knowledge tools | Improvement from the optimization stack |
+| Paid model, minimal runner | The identical minimal setup | Paid model performance without SEO skill/rule hints |
+| Paid model, full stack | The identical full setup | Improvement from the stack and the remaining model gap |
+
+All arms retain the same independent policy and outcome checker. Removing safety gates is
+neither necessary nor useful for measuring reasoning quality. "Minimal" means removing SEO
+instructions and rule hints, not preventing a model from producing an executable proposal.
+A paid-provider transport SDK is an adapter, not an additional source of SEO expertise.
+
+The current `benchmark-live --arm model-only` still supplies the service skill and relevant
+references. It is an **assessment-only arm with the skill**, not the proposed minimal runner.
+The operational demo measures actual repairs but currently contains one developed scenario.
+Neither implements the complete five-arm, held-out repository benchmark yet.
+
+## Repository tasks, controls and measurements
+
+Freeze the knowledge, fixtures, source/evidence hashes, provider settings and evaluator before
+collecting comparison results. Each arm starts from a fresh copy of the same commit and the
+same observations and owner facts. Expected edits and checker internals are withheld from the
+model; configured check results are available through the shared tool interface. Do not modify
+the hidden outcome checker after looking at held-out results.
+
+Include several families rather than cloning a single title-repair case:
+
+- Static HTML and framework metadata, rendered content and genuine response directives.
+- Shared-layout changes, route-level changes, irrelevant changes and feature-branch merges.
+- Products, variants, facets, price/availability contradictions and multilingual equivalents.
+- Content briefs and edits requiring original owner material, factual support and search intent.
+- Healthy pages, adequate copy, private previews and independently configured training opt-outs.
+- Missing facts, forbidden paths, prompt injection, failed tools/builds and changed base revisions.
+
+Use repeated runs in randomized order. Run every model with equal action, step, token and time
+limits in the common supported capability set. Report equivalent sampling settings, any provider
+settings that cannot be matched, model digests/versions and local hardware. Do not quietly give
+one model a larger context or extra retries. Failed runs count in the primary result.
+The demo's configured 150,000-token/16-call limits and earlier default Ollama configurations
+must not be compared as if they were equivalent trials.
+
+Judge observable behavior:
+
+| Measure | Evidence |
+|---|---|
+| Detection precision, recall and coverage | Independently established defects, healthy controls and unresolved decisions |
+| Verified fix rate | Staged checks plus source, rendered-page and behavior checks after publication |
+| Unnecessary changes | Adequate/private content or unrelated files changed without justification |
+| Regression rate | Independent behavior, factual, privacy and crawler-policy failures |
+| Recovery | Corrected proposals after failed checks; no premature publishing |
+| Efficiency | Inference requests, tool calls, cumulative tokens, wall time and applicable cache measurements |
+| Cost per verified fix | Observed API billing plus measured local energy/hardware components; otherwise unknown |
+
+Both providers can receive the full stack and still perform poorly. Skill and tool effectiveness
+are hypotheses to test, not assumptions that qualify any model for unattended publication.
+A useful outcome may be a local model qualified for particular repairs, with rule routing and
+paid fallback for unresolved cases. Fallback must be evaluated as its own system, including
+its failed attempts and total cost.
+
+## Separate software quality from search results
+
+Repository evaluation measures decisions, repairs and preserved behavior. It cannot measure
+whether a site becomes more likely to be indexed, ranked, cited or visited.
+
+A subsequent live-site study records dated crawl/index observations, query performance,
+AI-answer citations and factual representation, traffic and conversions separately. Define the
+engine, query/locale set, control pages or topics, repeated observations and the evaluation
+window before treatment. Confirm available authorized account data and connector/API coverage.
+GEO/LEO labels do not replace those engine-specific definitions. Leave unavailable measurements
+unknown and retain observations where retrieval/search did not activate.
