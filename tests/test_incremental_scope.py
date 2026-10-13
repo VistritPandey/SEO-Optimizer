@@ -24,6 +24,8 @@ def test_next_routes_handle_src_groups_and_skip_unresolved_dynamic_api_paths(tmp
         "src/app/page.tsx",
         "src/app/(store)/shop/page.tsx",
         "src/app/[slug]/page.tsx",
+        "src/app/@modal/page.tsx",
+        "src/app/(.)photo/page.tsx",
         "src/pages/contact.tsx",
         "src/pages/api/health.ts",
         "src/pages/_app.tsx",
