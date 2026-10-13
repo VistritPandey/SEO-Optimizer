@@ -213,6 +213,63 @@ class GitHubClient:
             "base_sha": base_sha,
         }
 
+    def update_pr(
+        self,
+        repo: str,
+        number: int,
+        branch: str,
+        expected_sha: str,
+        changes: dict[str, str],
+        base_sha: str,
+    ) -> dict[str, Any]:
+        current = self.request("GET", f"/repos/{repo}/pulls/{number}")
+        if (
+            current.get("state") != "open"
+            or current["head"]["sha"] != expected_sha
+            or current["head"]["ref"] != branch
+            or not branch.startswith("optimizer/")
+            or current["head"]["repo"]["full_name"] != repo
+        ):
+            raise ValueError("Pull request changed; follow-up was not published")
+        parent = expected_sha
+        tree_sha = self.request("GET", f"/repos/{repo}/git/commits/{parent}")["tree"]["sha"]
+        for path, content in changes.items():
+            blob = self.request(
+                "POST",
+                f"/repos/{repo}/git/blobs",
+                json={"content": base64.b64encode(content.encode()).decode(), "encoding": "base64"},
+            )
+            tree = self.request(
+                "POST",
+                f"/repos/{repo}/git/trees",
+                json={
+                    "base_tree": tree_sha,
+                    "tree": [{"path": path, "mode": "100644", "type": "blob", "sha": blob["sha"]}],
+                },
+            )
+            commit = self.request(
+                "POST",
+                f"/repos/{repo}/git/commits",
+                json={
+                    "message": "Refine " + Path(path).name,
+                    "tree": tree["sha"],
+                    "parents": [parent],
+                },
+            )
+            parent, tree_sha = commit["sha"], tree["sha"]
+        if self.head(repo, branch) != expected_sha:
+            raise ValueError("Review branch changed during verification")
+        # Fast-forward only: a concurrent collaborator's commit cannot be overwritten.
+        self.request(
+            "PATCH", f"/repos/{repo}/git/refs/heads/{branch}", json={"sha": parent, "force": False}
+        )
+        return {
+            "number": number,
+            "url": current["html_url"],
+            "head_sha": parent,
+            "base_sha": base_sha,
+        }
+
     def checks_ready(self, repo: str, sha: str, required: list[str]) -> str:
         statuses = self.request(
             "GET", f"/repos/{repo}/commits/{sha}/status", params={"per_page": 100}
