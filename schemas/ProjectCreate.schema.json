@@ -105,6 +105,20 @@
           "title": "Allowed Paths",
           "type": "array"
         },
+        "monitored_paths": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Monitored Paths",
+          "type": "array"
+        },
+        "audit_dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Audit Dependencies",
+          "type": "array"
+        },
         "page_intents": {
           "additionalProperties": {
             "type": "boolean"
