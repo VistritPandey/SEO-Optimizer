@@ -1,0 +1,349 @@
+{
+  "$defs": {
+    "CitationObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "experiment": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Experiment",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "engine": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Engine",
+          "type": "string"
+        },
+        "engine_version": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "arm": {
+          "enum": [
+            "baseline",
+            "treatment",
+            "holdout"
+          ],
+          "title": "Arm",
+          "type": "string"
+        },
+        "observed_at": {
+          "format": "date-time",
+          "title": "Observed At",
+          "type": "string"
+        },
+        "market": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Market",
+          "type": "string"
+        },
+        "answer": {
+          "maxLength": 20000,
+          "title": "Answer",
+          "type": "string"
+        },
+        "cited_urls": {
+          "items": {
+            "format": "uri",
+            "maxLength": 2083,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100,
+          "title": "Cited Urls",
+          "type": "array"
+        },
+        "source": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "retrieval_enabled": {
+          "title": "Retrieval Enabled",
+          "type": "boolean"
+        },
+        "citation_accuracy": {
+          "default": "unreviewed",
+          "enum": [
+            "supported",
+            "unsupported",
+            "unreviewed"
+          ],
+          "title": "Citation Accuracy",
+          "type": "string"
+        },
+        "synthetic": {
+          "default": false,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "experiment",
+        "query",
+        "engine",
+        "engine_version",
+        "arm",
+        "observed_at",
+        "market",
+        "answer",
+        "source",
+        "retrieval_enabled"
+      ],
+      "title": "CitationObservation",
+      "type": "object"
+    },
+    "Material": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 20000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "origin": {
+          "enum": [
+            "owner",
+            "primary_research",
+            "competitor"
+          ],
+          "title": "Origin",
+          "type": "string"
+        },
+        "source": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "collected_at": {
+          "format": "date-time",
+          "title": "Collected At",
+          "type": "string"
+        },
+        "reviewed": {
+          "default": false,
+          "title": "Reviewed",
+          "type": "boolean"
+        },
+        "original": {
+          "default": false,
+          "title": "Original",
+          "type": "boolean"
+        },
+        "fact_ids": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 30,
+          "title": "Fact Ids",
+          "type": "array"
+        },
+        "target_path": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Path"
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "text",
+        "origin",
+        "source",
+        "collected_at"
+      ],
+      "title": "Material",
+      "type": "object"
+    },
+    "SearchObservation": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "query": {
+          "maxLength": 500,
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "page": {
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Page",
+          "type": "string"
+        },
+        "start": {
+          "format": "date",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "format": "date",
+          "title": "End",
+          "type": "string"
+        },
+        "impressions": {
+          "minimum": 0,
+          "title": "Impressions",
+          "type": "integer"
+        },
+        "clicks": {
+          "minimum": 0,
+          "title": "Clicks",
+          "type": "integer"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "exclusiveMinimum": 0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "source": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Source",
+          "type": "string"
+        },
+        "market": {
+          "default": "unspecified",
+          "maxLength": 100,
+          "title": "Market",
+          "type": "string"
+        },
+        "device": {
+          "default": "all",
+          "maxLength": 30,
+          "title": "Device",
+          "type": "string"
+        },
+        "business_relevance": {
+          "default": "unknown",
+          "enum": [
+            "confirmed",
+            "unknown",
+            "irrelevant"
+          ],
+          "title": "Business Relevance",
+          "type": "string"
+        },
+        "synthetic": {
+          "default": false,
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "query",
+        "page",
+        "start",
+        "end",
+        "impressions",
+        "clicks",
+        "source"
+      ],
+      "title": "SearchObservation",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "const": "1",
+      "default": "1",
+      "title": "Version",
+      "type": "string"
+    },
+    "materials": {
+      "items": {
+        "$ref": "#/$defs/Material"
+      },
+      "maxItems": 100,
+      "title": "Materials",
+      "type": "array"
+    },
+    "search": {
+      "items": {
+        "$ref": "#/$defs/SearchObservation"
+      },
+      "maxItems": 1000,
+      "title": "Search",
+      "type": "array"
+    },
+    "citations": {
+      "items": {
+        "$ref": "#/$defs/CitationObservation"
+      },
+      "maxItems": 1000,
+      "title": "Citations",
+      "type": "array"
+    }
+  },
+  "title": "Workspace",
+  "type": "object"
+}
