@@ -114,8 +114,8 @@ export default function Home() {
             <span className="eyebrow">START SMALL. BUILD SOMETHING GOOD.</span>
             <h2>Free to get started.</h2>
             <p>
-              Hosted workspaces use managed AI. Run the open-source Python
-              worker locally with your own Ollama model or paid API account.
+              Hosted workspaces use managed AI. Run the portable Python worker
+              locally with your own Ollama model or paid API account.
             </p>
           </div>
           <article className="price-card">
