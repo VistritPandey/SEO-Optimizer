@@ -201,9 +201,7 @@ class FirestoreStore(Store):
                 id=id,
                 tenant_id=tenant,
                 spec=value.spec.model_dump(mode="json"),
-                credentials=self.settings.cipher.encrypt(
-                    value.credentials.model_dump_json().encode()
-                ).decode(),
+                credentials=self.encode_credentials(value.credentials),
                 updated_at=now,
                 next_audit=now + value.spec.reconcile_seconds,
                 last_revision="",
@@ -247,9 +245,7 @@ class FirestoreStore(Store):
             raise KeyError("Project not found")
         value: dict[str, Any] = {"spec": spec.model_dump(mode="json"), "updated_at": time.time()}
         if credentials is not None:
-            value["credentials"] = self.settings.cipher.encrypt(
-                credentials.model_dump_json().encode()
-            ).decode()
+            value["credentials"] = self.encode_credentials(credentials)
         self.db.collection("optimizer_projects").document(id).update(self._pack(value))
 
     def workspace(self, tenant: str, project_id: str) -> Workspace:
