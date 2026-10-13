@@ -5,15 +5,15 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   ),
   title: {
-    default: "Your Optimiser — A working partner for your website",
+    default: "Your Optimiser — SEO that keeps up with your website",
     template: "%s · Your Optimiser",
   },
   description:
-    "Find search problems, make evidence-backed improvements, and verify the result. SEO and AI discovery, connected to your repository.",
+    "Your AI agent for ongoing SEO. Check website updates, fix confirmed search problems and verify the result while you keep building your business.",
   openGraph: {
     title: "Your Optimiser",
     description:
-      "Evidence before action. A clearer path to a discoverable website.",
+      "Your website evolves. Your SEO needs to keep up. Meet your AI agent for ongoing website care.",
     type: "website",
   },
 };
