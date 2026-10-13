@@ -1,7 +1,6 @@
 import React from "react";
 import {
   AbsoluteFill,
-  Audio,
   Img,
   Sequence,
   interpolate,
@@ -899,7 +898,6 @@ const Scene: React.FC<{ index: number }> = ({ index }) => {
         padding: "38px 65px",
       }}
     >
-      <Audio src={staticFile(story[index].audio)} startFrom={0} />
       <div
         style={{
           opacity: Math.min(enter, exit),
@@ -948,6 +946,23 @@ const Scene: React.FC<{ index: number }> = ({ index }) => {
           {story[index].title}
         </h1>
         <Content />
+      </div>
+      <div
+        style={{
+          position: "absolute",
+          left: 65,
+          right: 65,
+          bottom: 85,
+          background: C.green,
+          color: C.paper,
+          borderRadius: 12,
+          padding: "14px 24px",
+          fontSize: 26,
+          lineHeight: 1.45,
+          textAlign: "center",
+        }}
+      >
+        {story[index].caption}
       </div>
       <div style={{ position: "absolute", left: 65, right: 65, bottom: 25 }}>
         <div style={{ display: "flex", gap: 7, marginBottom: 17 }}>
