@@ -26,6 +26,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 
 from seo_optimizer.application_models import ProjectCreate, ProjectSecrets, ProjectSpec
+from seo_optimizer.growth import Workspace, validate_workspace
 from seo_optimizer.settings import Settings
 
 
@@ -98,6 +99,16 @@ class LoginAttempt(Base):
     key: Mapped[str] = mapped_column(String(64), primary_key=True)
     count: Mapped[int] = mapped_column(Integer)
     until: Mapped[float] = mapped_column(Float)
+
+
+class ResearchWorkspace(Base):
+    __tablename__ = "research_workspaces"
+    __table_args__ = (UniqueConstraint("tenant_id", "project_id"),)
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    project_id: Mapped[str] = mapped_column(String(36), index=True)
+    body: Mapped[dict[str, Any]] = mapped_column(JSON)
+    updated_at: Mapped[float] = mapped_column(Float)
 
 
 def identifier() -> str:
@@ -201,6 +212,37 @@ class Store:
             session.add(project)
         self.enqueue(tenant, project.id, "audit", f"initial:{project.id}", {})
         return project
+
+    def workspace(self, tenant: str, project_id: str) -> Workspace:
+        if self.project(tenant, project_id) is None:
+            raise ValueError("Project not found")
+        with self.sessions() as session:
+            record = session.scalar(
+                select(ResearchWorkspace).where(
+                    ResearchWorkspace.tenant_id == tenant,
+                    ResearchWorkspace.project_id == project_id,
+                )
+            )
+            return Workspace.model_validate(record.body) if record else Workspace()
+
+    def save_workspace(self, tenant: str, project_id: str, value: Workspace) -> None:
+        project = self.project(tenant, project_id)
+        if project is None:
+            raise ValueError("Project not found")
+        validate_workspace(ProjectSpec.model_validate(project.spec), value)
+        with self.sessions.begin() as session:
+            record = session.scalar(
+                select(ResearchWorkspace).where(
+                    ResearchWorkspace.tenant_id == tenant,
+                    ResearchWorkspace.project_id == project_id,
+                )
+            )
+            if record is None:
+                record = ResearchWorkspace(
+                    id=identifier(), tenant_id=tenant, project_id=project_id, body={}, updated_at=0
+                )
+                session.add(record)
+            record.body, record.updated_at = value.model_dump(mode="json"), time.time()
 
     def projects(self, tenant: str) -> list[Project]:
         with self.sessions() as session:
