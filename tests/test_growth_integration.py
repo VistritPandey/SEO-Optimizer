@@ -79,7 +79,7 @@ def test_autonomous_original_refresh_served_verification_and_repeat(tmp_path, mo
     repository = tmp_path / "repository"
     (repository / "web/guide").mkdir(parents=True)
     (repository / "web/index.html").write_text(
-        '<html><head><title>Lighting</title>'
+        "<html><head><title>Lighting</title>"
         '<meta name="description" content="Lighting guide"></head>'
         '<body><main><a href="/guide/">Guide</a></main></body></html>'
     )
