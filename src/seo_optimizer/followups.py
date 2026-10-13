@@ -82,14 +82,7 @@ def handle_event(
         number = int(payload["pull_request"]["number"])
     else:
         return {"status": "ignored"}
-    tracked = next(
-        (
-            job
-            for job in store.jobs(project.tenant_id, project.id)
-            if job.result.get("pr", {}).get("number") == number
-        ),
-        None,
-    )
+    tracked = store.pr_job(project.tenant_id, project.id, number)
     if tracked is None:
         return {"status": "untracked_pull_request"}
     if event == "pull_request":
@@ -104,13 +97,6 @@ def handle_event(
     sender = payload.get("sender", {})
     if sender.get("type") != "User" or not feedback.strip():
         return {"status": "ignored"}
-    prior = [
-        job
-        for job in store.jobs(project.tenant_id, project.id)
-        if job.kind == "followup" and job.payload.get("pr_number") == number
-    ]
-    if len(prior) >= 5:
-        return {"status": "followup_limit"}
     client = GitHubClient(store.secrets(project))
     try:
         permission = client.request(
@@ -127,6 +113,10 @@ def handle_event(
             return {"status": "closed_or_foreign_pull_request"}
     finally:
         client.close()
+    if not delivery:
+        delivery = str(payload.get("comment", payload.get("review", {})).get("id", ""))
+    if not delivery or not store.reserve_review(project.tenant_id, project.id, number, delivery):
+        return {"status": "followup_limit"}
     job = store.enqueue(
         project.tenant_id,
         project.id,
