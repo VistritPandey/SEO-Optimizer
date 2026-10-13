@@ -109,10 +109,10 @@ const Patch = () => {
         <div>  &lt;meta charset=&quot;utf-8&quot;&gt;</div><div>&lt;/head&gt;</div>
         <div style={{fontSize: 19, color: C.dim, marginTop: 28}}>Exact HTML entity encoding retained</div>
       </div>
-      <div style={{flex: 1, paddingTop: 14}}>
-        <Label>Observed rendered heading</Label>
+      <div style={{flex: 1, minWidth: 0, paddingTop: 14}}>
+        <Label>Rendered heading</Label>
         <div style={{fontSize: 41, lineHeight: 1.25, marginTop: 24, fontWeight: 600}}>{line}</div>
-        <div style={{fontSize: 25, lineHeight: 1.6, marginTop: 40}}>
+        <div style={{fontSize: 23, lineHeight: 1.6, marginTop: 40}}>
           {['HTML metadata check', 'Isolated React production build', 'Post-merge page verification'].map((text, i) =>
             <Reveal key={text} delay={110 + i * 25} style={{marginBottom: 12}}>
               <span style={{background: C.lime, borderRadius: 30, padding: '1px 8px', marginRight: 14}}>✓</span>{text}
