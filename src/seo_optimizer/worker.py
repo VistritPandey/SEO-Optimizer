@@ -381,6 +381,15 @@ class Worker:
                 else None
             )
             repository = root / "repository"
+            if job.kind == "push" and affected_urls(spec, changed) == []:
+                return (
+                    "complete",
+                    {
+                        "summary": "No affected website routes; model work skipped",
+                        "revision": revision,
+                    },
+                    0,
+                )
             github.checkout(spec.repository, revision, repository)
         else:
             repository = root / "repository"
