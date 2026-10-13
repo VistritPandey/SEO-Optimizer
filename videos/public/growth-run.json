@@ -1,0 +1,704 @@
+{
+  "status": "passed",
+  "generated_at": "2026-10-13T03:05:16.115837+00:00",
+  "synthetic": true,
+  "base_sha": "bd03a55210c185b24f75b9962e37cf449e68f222",
+  "source": {
+    "version": "1",
+    "materials": [
+      {
+        "id": "desk-notes",
+        "title": "Original desk setup observations",
+        "text": "In our fictional desk setup study, we placed the Cedar Desk Lamp 45 cm from the reading surface. The linen shade softened the light on the page while the solid cedar base kept the lamp steady. These are owner-supplied demonstration observations, not a real lighting study or a promised health benefit.",
+        "origin": "owner",
+        "source": "Fictional owner notebook",
+        "collected_at": "2026-10-13T03:05:15.981167Z",
+        "reviewed": true,
+        "original": true,
+        "fact_ids": [
+          "owner-study"
+        ],
+        "target_path": "/guide/",
+        "valid_until": null
+      }
+    ],
+    "search": [
+      {
+        "id": "query-sample",
+        "query": "desk lighting setup",
+        "page": "http://127.0.0.1:50236/guide/",
+        "start": "2026-09-13",
+        "end": "2026-10-13",
+        "impressions": 500,
+        "clicks": 20,
+        "position": null,
+        "source": "Synthetic demonstration measurements, not live Search Console",
+        "market": "unspecified",
+        "device": "all",
+        "business_relevance": "confirmed",
+        "synthetic": true
+      }
+    ],
+    "citations": []
+  },
+  "github_writes": false,
+  "merged_sha": "6bf98b0c94b9b7ef44090d8ac547dd2b45e4accf",
+  "content": {
+    "summary": "Changes verified on the deployed website",
+    "report": {
+      "score": 100,
+      "score_label": "Observed audit health",
+      "coverage": [
+        {
+          "check_id": "tech.indexability",
+          "title": "Indexability matches declared intent",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.robots",
+          "title": "Crawl access and indexing are distinct",
+          "module": "technical",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "tech.title",
+          "title": "Descriptive page titles",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.metadata",
+          "title": "Snippets describe actual content",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.canonical",
+          "title": "Consistent canonical declarations",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.status",
+          "title": "Meaningful HTTP and redirect behavior",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.links",
+          "title": "Discoverable working internal links",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.sitemap",
+          "title": "Sitemap reflects preferred public pages",
+          "module": "technical",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "tech.rendering",
+          "title": "Important content is available to crawlers",
+          "module": "technical",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "tech.migration",
+          "title": "Preserve search behavior during migrations",
+          "module": "technical",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "perf.cwv",
+          "title": "Measure performance with correct evidence",
+          "module": "performance",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "perf.media",
+          "title": "Useful media and stable layout",
+          "module": "performance",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "perf.navigation",
+          "title": "Main content and navigation remain usable",
+          "module": "performance",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.strategy",
+          "title": "Prioritize work against business intent",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.competitors",
+          "title": "Research gaps without copying competitors",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.factual",
+          "title": "Ground claims and business details",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.originality",
+          "title": "Create useful content rather than scaled filler",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.refresh",
+          "title": "Refresh or consolidate with measured intent",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.crawlers",
+          "title": "Respect independent search and training access",
+          "module": "geo",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "geo.google-llms",
+          "title": "Do not prescribe llms.txt for Google ranking",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.google-faq",
+          "title": "Keep FAQ content separate from deprecated rich results",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.entities",
+          "title": "Consistent, attributable entities and answers",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.experiment",
+          "title": "Test citation hypotheses rather than promise ranking",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.visibility",
+          "title": "Observe engine-specific visibility",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.google-inclusion",
+          "title": "Preserve Google AI inclusion preferences",
+          "module": "geo",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "local.identity",
+          "title": "Use real consistent local business facts",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.hours",
+          "title": "Do not invent operating hours",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.schema",
+          "title": "Local markup describes visible real locations",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.relevance",
+          "title": "Create useful local pages without fake reach",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.facts",
+          "title": "Prices and stock match the actual offer",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.variants",
+          "title": "Represent real product variants consistently",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.navigation",
+          "title": "Manage category and faceted discovery",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.merchants",
+          "title": "Keep merchant accounts and feeds distinct from code",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "intl.hreflang",
+          "title": "Reciprocal equivalent language alternatives",
+          "module": "international",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "intl.localization",
+          "title": "Localized content and facts are genuine",
+          "module": "international",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "ops.metrics",
+          "title": "Separate measurements and unknown values",
+          "module": "operations",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "ops.incremental",
+          "title": "Audit affected pages and reconcile periodically",
+          "module": "operations",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "ops.indexnow",
+          "title": "Notify supported engines after verified changes",
+          "module": "operations",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "ops.verification",
+          "title": "Verify the specific change before shipping",
+          "module": "operations",
+          "state": "needs_model"
+        }
+      ],
+      "evaluated_checks": 6,
+      "total_checks": 39,
+      "pages": 2,
+      "findings": 0,
+      "performance": [],
+      "unknown_metrics": [
+        "Search rankings",
+        "AI citation share",
+        "Conversions",
+        "Field Web Vitals"
+      ],
+      "page_summaries": [
+        {
+          "url": "http://127.0.0.1:50236/",
+          "evidence_id": "17267c83-104d-4181-8be5-6b60f1a8eecc",
+          "title": "Cedar Workshop guide",
+          "excerpt": "Cedar Workshop guide Cedar Workshop Desk guide A useful next page A quieter desk. Plan your reading corner with original owner evidence. Read the desk guide \u2197"
+        },
+        {
+          "url": "http://127.0.0.1:50236/guide/",
+          "evidence_id": "f416bdf0-bed4-45a1-9e38-82efd7e4a3b8",
+          "title": "Desk lighting setup \u2014 Cedar Workshop",
+          "excerpt": "Desk lighting setup \u2014 Cedar Workshop Cedar Workshop Desk guide DESK LIGHTING GUIDE Make room for focus. A useful guide should contain evidence you can inspect. Our desk setup observations belong here. In our fictional desk setup study, we placed the Cedar Desk Lamp 45 cm from the reading surface. The linen shade softened the light on the page while the solid cedar base kept the lamp steady. These are owner-supplied demonstration observations, not a real lighting study or a promised health benefit. Fictional demonstration \u00b7 no measured search uplift"
+        }
+      ],
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      },
+      "model": "rules",
+      "tool_trace": [],
+      "model_runtime_ms": null,
+      "model_summary": null
+    },
+    "findings": [],
+    "revision": "6bf98b0c94b9b7ef44090d8ac547dd2b45e4accf",
+    "audited_urls": [
+      "http://127.0.0.1:50236/",
+      "http://127.0.0.1:50236/guide/"
+    ],
+    "verification_urls": [
+      "http://127.0.0.1:50236/",
+      "http://127.0.0.1:50236/guide/"
+    ],
+    "before_defects": [
+      {
+        "check_id": "content.originality",
+        "url": "http://127.0.0.1:50236/guide/"
+      }
+    ],
+    "content_verification": {
+      "id": "9a2da0ac10615605",
+      "query": "desk lighting setup",
+      "target_url": "http://127.0.0.1:50236/guide/",
+      "source_ids": [
+        "desk-notes"
+      ],
+      "fact_ids": [
+        "owner-study"
+      ],
+      "paragraphs": [
+        "In our fictional desk setup study, we placed the Cedar Desk Lamp 45 cm from the reading surface. The linen shade softened the light on the page while the solid cedar base kept the lamp steady. These are owner-supplied demonstration observations, not a real lighting study or a promised health benefit."
+      ],
+      "distinctive_contribution": "Reviewed original owner passages",
+      "dependencies": [],
+      "ready": true,
+      "success_metric": "Compare query/page clicks after a comparable observation window"
+    },
+    "proposals": [
+      {
+        "path": "web/guide/index.html",
+        "before": "</main>",
+        "after": "<section data-optimizer-topic=\"9a2da0ac10615605\">\n<p>In our fictional desk setup study, we placed the Cedar Desk Lamp 45 cm from the reading surface. The linen shade softened the light on the page while the solid cedar base kept the lamp steady. These are owner-supplied demonstration observations, not a real lighting study or a promised health benefit.</p>\n</section>\n</main>",
+        "reason": "Add reviewed original passages without generating new factual claims",
+        "check_id": "content.originality",
+        "evidence_ids": [
+          "3cc0a62e-498d-4aeb-bac0-475391c64443"
+        ],
+        "fact_ids": [
+          "owner-study"
+        ]
+      }
+    ],
+    "verification": [
+      {
+        "name": "HTML metadata",
+        "path": "web/guide/index.html",
+        "passed": true
+      },
+      {
+        "name": "python",
+        "passed": true,
+        "exit_code": 0,
+        "stdout": "PASS: original passage, single publication, existing heading preserved\n",
+        "stderr": ""
+      }
+    ],
+    "fixed_checks": [
+      "content.originality"
+    ],
+    "fixed_targets": [
+      {
+        "check_id": "content.originality",
+        "url": "http://127.0.0.1:50236/guide/"
+      }
+    ],
+    "merged_sha": "6bf98b0c94b9b7ef44090d8ac547dd2b45e4accf",
+    "content_verified": true,
+    "stage": "verified",
+    "verified_fixes": 1,
+    "after_report": {
+      "score": 100,
+      "score_label": "Observed audit health",
+      "coverage": [
+        {
+          "check_id": "tech.indexability",
+          "title": "Indexability matches declared intent",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.robots",
+          "title": "Crawl access and indexing are distinct",
+          "module": "technical",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "tech.title",
+          "title": "Descriptive page titles",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.metadata",
+          "title": "Snippets describe actual content",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.canonical",
+          "title": "Consistent canonical declarations",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.status",
+          "title": "Meaningful HTTP and redirect behavior",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.links",
+          "title": "Discoverable working internal links",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.sitemap",
+          "title": "Sitemap reflects preferred public pages",
+          "module": "technical",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "tech.rendering",
+          "title": "Important content is available to crawlers",
+          "module": "technical",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "tech.migration",
+          "title": "Preserve search behavior during migrations",
+          "module": "technical",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "perf.cwv",
+          "title": "Measure performance with correct evidence",
+          "module": "performance",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "perf.media",
+          "title": "Useful media and stable layout",
+          "module": "performance",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "perf.navigation",
+          "title": "Main content and navigation remain usable",
+          "module": "performance",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.strategy",
+          "title": "Prioritize work against business intent",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.competitors",
+          "title": "Research gaps without copying competitors",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.factual",
+          "title": "Ground claims and business details",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.originality",
+          "title": "Create useful content rather than scaled filler",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.refresh",
+          "title": "Refresh or consolidate with measured intent",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.crawlers",
+          "title": "Respect independent search and training access",
+          "module": "geo",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "geo.google-llms",
+          "title": "Do not prescribe llms.txt for Google ranking",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.google-faq",
+          "title": "Keep FAQ content separate from deprecated rich results",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.entities",
+          "title": "Consistent, attributable entities and answers",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.experiment",
+          "title": "Test citation hypotheses rather than promise ranking",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.visibility",
+          "title": "Observe engine-specific visibility",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.google-inclusion",
+          "title": "Preserve Google AI inclusion preferences",
+          "module": "geo",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "local.identity",
+          "title": "Use real consistent local business facts",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.hours",
+          "title": "Do not invent operating hours",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.schema",
+          "title": "Local markup describes visible real locations",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.relevance",
+          "title": "Create useful local pages without fake reach",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.facts",
+          "title": "Prices and stock match the actual offer",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.variants",
+          "title": "Represent real product variants consistently",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.navigation",
+          "title": "Manage category and faceted discovery",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.merchants",
+          "title": "Keep merchant accounts and feeds distinct from code",
+          "module": "ecommerce",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "intl.hreflang",
+          "title": "Reciprocal equivalent language alternatives",
+          "module": "international",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "intl.localization",
+          "title": "Localized content and facts are genuine",
+          "module": "international",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "ops.metrics",
+          "title": "Separate measurements and unknown values",
+          "module": "operations",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "ops.incremental",
+          "title": "Audit affected pages and reconcile periodically",
+          "module": "operations",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "ops.indexnow",
+          "title": "Notify supported engines after verified changes",
+          "module": "operations",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "ops.verification",
+          "title": "Verify the specific change before shipping",
+          "module": "operations",
+          "state": "needs_model"
+        }
+      ],
+      "evaluated_checks": 6,
+      "total_checks": 39,
+      "pages": 2,
+      "findings": 0,
+      "performance": [],
+      "unknown_metrics": [
+        "Search rankings",
+        "AI citation share",
+        "Conversions",
+        "Field Web Vitals"
+      ],
+      "page_summaries": [
+        {
+          "url": "http://127.0.0.1:50236/",
+          "evidence_id": "17267c83-104d-4181-8be5-6b60f1a8eecc",
+          "title": "Cedar Workshop guide",
+          "excerpt": "Cedar Workshop guide Cedar Workshop Desk guide A useful next page A quieter desk. Plan your reading corner with original owner evidence. Read the desk guide \u2197"
+        },
+        {
+          "url": "http://127.0.0.1:50236/guide/",
+          "evidence_id": "f416bdf0-bed4-45a1-9e38-82efd7e4a3b8",
+          "title": "Desk lighting setup \u2014 Cedar Workshop",
+          "excerpt": "Desk lighting setup \u2014 Cedar Workshop Cedar Workshop Desk guide DESK LIGHTING GUIDE Make room for focus. A useful guide should contain evidence you can inspect. Our desk setup observations belong here. In our fictional desk setup study, we placed the Cedar Desk Lamp 45 cm from the reading surface. The linen shade softened the light on the page while the solid cedar base kept the lamp steady. These are owner-supplied demonstration observations, not a real lighting study or a promised health benefit. Fictional demonstration \u00b7 no measured search uplift"
+        }
+      ],
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      },
+      "model": "rules",
+      "tool_trace": [],
+      "model_runtime_ms": null,
+      "model_summary": null
+    },
+    "prior_revision": "bd03a55210c185b24f75b9962e37cf449e68f222",
+    "regressions": 0
+  },
+  "jobs": [
+    {
+      "kind": "content",
+      "status": "complete",
+      "summary": "Audited 2 pages; 0 new findings"
+    },
+    {
+      "kind": "content",
+      "status": "complete",
+      "summary": "Changes verified on the deployed website"
+    },
+    {
+      "kind": "strategy",
+      "status": "complete",
+      "summary": "Prepared 1 supported opportunities"
+    },
+    {
+      "kind": "audit",
+      "status": "complete",
+      "summary": "Audited 2 pages; 0 new findings"
+    }
+  ],
+  "repeat_created_commit": false,
+  "model_requests": 0,
+  "diff": "--- before/web/guide/index.html\n+++ after/web/guide/index.html\n@@ -1 +1,4 @@\n-<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Desk lighting setup \u2014 Cedar Workshop</title><meta name=\"description\" content=\"Plan a desk lighting setup with the Cedar Desk Lamp and original owner observations.\"><link rel=\"stylesheet\" href=\"/style.css\"></head><body><header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/guide/\">Desk guide</a></nav></header><main><section class=\"hero\"><div><div class=\"eyebrow\">DESK LIGHTING GUIDE</div><h1>Make room<br>for focus.</h1><p>A useful guide should contain evidence you can inspect. Our desk setup observations belong here.</p></div></section></main><footer>Fictional demonstration \u00b7 no measured search uplift</footer></body></html>\n+<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>Desk lighting setup \u2014 Cedar Workshop</title><meta name=\"description\" content=\"Plan a desk lighting setup with the Cedar Desk Lamp and original owner observations.\"><link rel=\"stylesheet\" href=\"/style.css\"></head><body><header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/guide/\">Desk guide</a></nav></header><main><section class=\"hero\"><div><div class=\"eyebrow\">DESK LIGHTING GUIDE</div><h1>Make room<br>for focus.</h1><p>A useful guide should contain evidence you can inspect. Our desk setup observations belong here.</p></div></section><section data-optimizer-topic=\"9a2da0ac10615605\">\n+<p>In our fictional desk setup study, we placed the Cedar Desk Lamp 45 cm from the reading surface. The linen shade softened the light on the page while the solid cedar base kept the lamp steady. These are owner-supplied demonstration observations, not a real lighting study or a promised health benefit.</p>\n+</section>\n+</main><footer>Fictional demonstration \u00b7 no measured search uplift</footer></body></html>"
+}
