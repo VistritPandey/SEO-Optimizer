@@ -295,8 +295,64 @@ def main():
             assert (repository / "web/preview/index.html").read_text() == (
                 repository / "protected-preview.txt"
             ).read_text()
+            report["repair_requests"] = report["requests"]
             event("PUBLISHED LOCALLY: two files, one file per commit; post-merge pages verified")
             film(browser, "after", False)
+            event("CONTROL: repeat the real model audit on the repaired site")
+            store.enqueue(user.id, project.id, "audit", "repeat-model-audit", {})
+            worker.tick(user.id)
+            repeated = store.jobs(user.id, project.id)[0]
+            assert repeated.status == "complete", repeated.result.get("summary")
+            assert run_git(repository, "rev-parse", "HEAD") == merged
+            report["repeat"] = {
+                "status": repeated.status,
+                "result": repeated.result,
+                "created_commit": False,
+            }
+            event("REPEAT: model audit completed; no new edit or commit")
+            run_git(repository, "checkout", "-b", "feature/docs-only")
+            (repository / "README.md").write_text("Fictional storefront integration fixture.\n")
+            run_git(repository, "add", "README.md")
+            identity = [
+                "-c",
+                "user.name=Demo Fixture",
+                "-c",
+                "user.email=fixture@localhost",
+                "-c",
+                "commit.gpgsign=false",
+            ]
+            run_git(repository, *identity, "commit", "-m", "Document fixture")
+            run_git(repository, "checkout", "main")
+            run_git(
+                repository,
+                *identity,
+                "merge",
+                "--no-ff",
+                "feature/docs-only",
+                "-m",
+                "Merge documentation branch",
+            )
+            requests_before = report["requests"]
+            store.enqueue(
+                user.id,
+                project.id,
+                "push",
+                "merged-docs-event",
+                {"after": run_git(repository, "rev-parse", "HEAD")},
+            )
+            worker.tick(user.id)
+            irrelevant = store.jobs(user.id, project.id)[0]
+            assert (
+                irrelevant.status == "complete"
+                and "No affected website routes" in irrelevant.result["summary"]
+            )
+            assert report["requests"] == requests_before
+            report["merged_docs_event"] = {
+                "status": irrelevant.status,
+                "result": irrelevant.result,
+                "inference_requests": 0,
+            }
+            event("MERGED DOCS BRANCH: no affected routes; zero inference requests")
             report["before_defects"] = len(baseline.result["before_defects"])
             report["after_defects"] = sum(
                 item["status"] == "defect" for item in job.result["findings"]
