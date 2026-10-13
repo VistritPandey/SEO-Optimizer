@@ -1,0 +1,97 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "title": {
+      "maxLength": 200,
+      "minLength": 1,
+      "title": "Title",
+      "type": "string"
+    },
+    "text": {
+      "maxLength": 20000,
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    },
+    "origin": {
+      "enum": [
+        "owner",
+        "primary_research",
+        "competitor"
+      ],
+      "title": "Origin",
+      "type": "string"
+    },
+    "source": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "collected_at": {
+      "format": "date-time",
+      "title": "Collected At",
+      "type": "string"
+    },
+    "reviewed": {
+      "default": false,
+      "title": "Reviewed",
+      "type": "boolean"
+    },
+    "original": {
+      "default": false,
+      "title": "Original",
+      "type": "boolean"
+    },
+    "fact_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 30,
+      "title": "Fact Ids",
+      "type": "array"
+    },
+    "target_path": {
+      "anyOf": [
+        {
+          "maxLength": 1000,
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Path"
+    },
+    "valid_until": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Valid Until"
+    }
+  },
+  "required": [
+    "id",
+    "title",
+    "text",
+    "origin",
+    "source",
+    "collected_at"
+  ],
+  "title": "Material",
+  "type": "object"
+}
