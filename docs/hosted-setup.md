@@ -2,7 +2,8 @@
 
 The hosted product has a **Next.js frontend**, a **Python API on Cloud Run**, **Firebase Auth**,
 **Firestore storage**, and a **Cloud Run job** for the portable SEO worker. Model configuration
-is server-owned; customer flows say “managed AI”. Local installations retain their own provider
+is server-owned; customer flows say “managed AI”. `OPT_MANAGED_PROVIDER`,
+`OPT_MANAGED_MODEL` and the managed key select a supported paid adapter without UI changes. Local installations retain their own provider
 choices. The existing Python/Jinja dashboard remains the lightweight local option.
 
 ```mermaid
