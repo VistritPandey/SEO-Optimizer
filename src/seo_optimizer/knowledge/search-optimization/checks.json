@@ -1076,7 +1076,8 @@
       ],
       "source_ids": [
         "bing-ai",
-        "google-ai-report"
+        "google-ai-report",
+        "google-grounding-api"
       ],
       "reference": "references/geo.md"
     },
@@ -1583,7 +1584,8 @@
       "source_ids": [
         "google-search-analytics",
         "bing-ai",
-        "web-vitals"
+        "web-vitals",
+        "google-grounding-api"
       ],
       "reference": "references/operations.md"
     },
