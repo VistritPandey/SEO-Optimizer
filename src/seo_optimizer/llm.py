@@ -425,13 +425,15 @@ class ModelClient:
                     runtime_ms=(time.monotonic() - started) * 1000,
                     tool_trace=trace,
                 )
-            if not definitions or len(calls) > 8:
+            if not definitions or len(calls) > self.config.max_calls_per_step:
                 raise ProviderError("Unexpected or excessive tool calls")
             results = []
             for call in calls:
                 arguments = call["arguments"]
                 if isinstance(arguments, str):
                     arguments = json.loads(arguments)
+                if time.monotonic() - started > max_seconds:
+                    raise ProviderError("Model time budget exhausted before tool execution")
                 tool_started = time.monotonic()
                 outcome = execute(call["name"], arguments)
                 trace.append(
@@ -439,7 +441,14 @@ class ModelClient:
                         "name": call["name"],
                         "success": outcome.get("success", False),
                         "arguments": arguments,
-                        "result": outcome,
+                        "result": (
+                            {
+                                "success": outcome.get("success", False),
+                                "check_id": arguments.get("check_id"),
+                            }
+                            if call["name"] == "get_check"
+                            else outcome
+                        ),
                         "runtime_ms": (time.monotonic() - tool_started) * 1000,
                     }
                 )
