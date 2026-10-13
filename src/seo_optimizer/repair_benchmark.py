@@ -100,21 +100,32 @@ def benchmark_repairs(
     local_model: str,
     paid_model: str,
     arms: list[str] | None = None,
+    resume: bool = False,
 ) -> int:
     output = output.resolve()
     fixture = fixture.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
-    root = output.parent / ("repair-work-" + secrets.token_hex(6))
+    previous = json.loads(output.read_text()) if resume else None
+    root = output.parent / (
+        previous["workspace_id"] if previous else "repair-work-" + secrets.token_hex(6)
+    )
+    if root.parent != output.parent or not root.name.startswith("repair-work-"):
+        raise ValueError("Benchmark workspace must remain inside its output directory")
     repository = root / "repository"
-    shutil.copytree(fixture, repository)
+    if previous:
+        run_git(repository, "reset", "--hard", previous["base_sha"])
+    else:
+        shutil.copytree(fixture, repository)
     server = ThreadingHTTPServer(
-        ("127.0.0.1", 0), partial(QuietHandler, directory=str(repository / "web"))
+        ("127.0.0.1", previous["fixture_port"] if previous else 0),
+        partial(QuietHandler, directory=str(repository / "web")),
     )
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f"http://127.0.0.1:{server.server_port}"
     for path in (repository / "web").rglob("*.html"):
         path.write_text(path.read_text().replace("__ORIGIN__", origin))
-    run_git(repository, "init", "-b", "main")
+    if not previous:
+        run_git(repository, "init", "-b", "main")
     identity = [
         "-c",
         "user.name=Benchmark Fixture",
@@ -123,8 +134,9 @@ def benchmark_repairs(
         "-c",
         "commit.gpgsign=false",
     ]
-    run_git(repository, "add", ".")
-    run_git(repository, *identity, "commit", "-m", "Freeze repair inputs")
+    if not previous:
+        run_git(repository, "add", ".")
+        run_git(repository, *identity, "commit", "-m", "Freeze repair inputs")
     base = run_git(repository, "rev-parse", "HEAD")
     digest = hashlib.sha256(
         "".join(
@@ -133,15 +145,19 @@ def benchmark_repairs(
             if p.is_file() and ".git" not in p.parts
         ).encode()
     ).hexdigest()
+    if previous and (base != previous["base_sha"] or digest != previous["fixture_sha256"]):
+        raise ValueError("Frozen benchmark inputs changed")
     values = dotenv_values(".env")
     key = values.get("GOOGLE_API_KEY") or values.get("GEMINI_API_KEY") or ""
     chosen = arms or ["rules", "local-minimal", "local-full", "paid-minimal", "paid-full"]
-    report: dict[str, Any] = {
+    report: dict[str, Any] = previous or {
         "version": "1",
         "generated_at": utc_now().isoformat(),
         "base_sha": base,
         "fixture_sha256": digest,
         "fixture": "fictional-store-development",
+        "workspace_id": root.name,
+        "fixture_port": server.server_port,
         "protocol": {
             "shared": {
                 "max_tool_steps": 12,
@@ -181,8 +197,15 @@ def benchmark_repairs(
             verified_at=verified_at,
         )
     ]
+    if previous:
+        facts = [TrustedFact.model_validate(value) for value in previous["trusted_facts"]]
+    report["trusted_facts"] = [fact.model_dump(mode="json") for fact in facts]
     try:
         for arm in chosen:
+            if any(record["arm"] == arm for record in report["arms"]):
+                raise ValueError(
+                    "A benchmark arm already ran; retain it and use a new run for repeats"
+                )
             if arm not in {"rules", "local-minimal", "local-full", "paid-minimal", "paid-full"}:
                 raise ValueError("Unknown benchmark arm")
             print(f"RUN {arm}: frozen repository {base[:12]}", flush=True)
