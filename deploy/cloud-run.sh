@@ -30,8 +30,22 @@ fi
 if ! gcloud firestore databases describe --database='(default)' --project="$PROJECT_ID" >/dev/null 2>&1; then
   gcloud firestore databases create --database='(default)' --location="$REGION" --type=firestore-native --project="$PROJECT_ID"
 fi
+BUILD_ACCOUNT="your-optimiser-checks@${PROJECT_ID}.iam.gserviceaccount.com"
+BUILD_BUCKET="${PROJECT_ID}-your-optimiser-checks"
+if ! gcloud iam service-accounts describe "$BUILD_ACCOUNT" --project="$PROJECT_ID" >/dev/null 2>&1; then
+  gcloud iam service-accounts create your-optimiser-checks --project="$PROJECT_ID" --display-name='Isolated source verification only'
+fi
+if ! gcloud storage buckets describe "gs://$BUILD_BUCKET" --project="$PROJECT_ID" >/dev/null 2>&1; then
+  gcloud storage buckets create "gs://$BUILD_BUCKET" --project="$PROJECT_ID" --location="$REGION" --uniform-bucket-level-access --public-access-prevention
+fi
+gcloud storage buckets update "gs://$BUILD_BUCKET" --lifecycle-file="$REPOSITORY_ROOT/deploy/source-lifecycle.json" --project="$PROJECT_ID"
+gcloud storage buckets add-iam-policy-binding "gs://$BUILD_BUCKET" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/storage.objectAdmin --project="$PROJECT_ID" >/dev/null
+gcloud storage buckets add-iam-policy-binding "gs://$BUILD_BUCKET" --member="serviceAccount:$BUILD_ACCOUNT" --role=roles/storage.objectViewer --project="$PROJECT_ID" >/dev/null
+gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$BUILD_ACCOUNT" --role=roles/logging.logWriter --quiet >/dev/null
+gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/cloudbuild.builds.editor --quiet >/dev/null
+gcloud iam service-accounts add-iam-policy-binding "$BUILD_ACCOUNT" --project="$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/iam.serviceAccountUser --quiet >/dev/null
 gcloud builds submit "$REPOSITORY_ROOT" --tag="$IMAGE" --project="$PROJECT_ID"
-ENVIRONMENT="OPT_ENV=production,OPT_HOSTED=1,OPT_STORAGE=firestore,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,OPT_DATA_DIR=/tmp/your-optimiser,OPT_REGISTRATION=0,OPT_FRONTEND_URL=$FRONTEND_URL,GITHUB_APP_ID=$GITHUB_APP_ID,GITHUB_APP_SLUG=$GITHUB_APP_SLUG,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,OPT_MANAGED_MODEL=${MANAGED_MODEL:-gemini-3.8-flash}"
+ENVIRONMENT="OPT_BUILD_BACKEND=cloud-build,OPT_BUILD_BUCKET=$BUILD_BUCKET,OPT_BUILD_ACCOUNT=$BUILD_ACCOUNT,OPT_BUILD_REGION=$REGION,OPT_ENV=production,OPT_HOSTED=1,OPT_STORAGE=firestore,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,OPT_DATA_DIR=/tmp/your-optimiser,OPT_REGISTRATION=0,OPT_FRONTEND_URL=$FRONTEND_URL,GITHUB_APP_ID=$GITHUB_APP_ID,GITHUB_APP_SLUG=$GITHUB_APP_SLUG,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,OPT_MANAGED_MODEL=${MANAGED_MODEL:-gemini-3.8-flash}"
 SECRETS="OPT_SECRET_KEY=$APP_SECRET_RESOURCE:latest,GOOGLE_API_KEY=$MODEL_SECRET_RESOURCE:latest,GITHUB_PRIVATE_KEY=$GITHUB_KEY_RESOURCE:latest,GITHUB_CLIENT_SECRET=$GITHUB_OAUTH_RESOURCE:latest,GITHUB_WEBHOOK_SECRET=$GITHUB_WEBHOOK_RESOURCE:latest"
 gcloud run deploy your-optimiser-api --project="$PROJECT_ID" --region="$REGION" --image="$IMAGE" --service-account="$SERVICE_ACCOUNT" --allow-unauthenticated --port=8000 --memory=1Gi --cpu=1 --max-instances=5 --set-env-vars="$ENVIRONMENT" --set-secrets="$SECRETS"
 API_URL="$(gcloud run services describe your-optimiser-api --project="$PROJECT_ID" --region="$REGION" --format='value(status.url)')"
