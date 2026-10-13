@@ -11,7 +11,7 @@ from sqlalchemy import update
 
 from seo_optimizer.application_models import ProjectCreate
 from seo_optimizer.settings import Settings
-from seo_optimizer.store import Job, Store
+from seo_optimizer.store import Store
 from seo_optimizer.web import create_app, hash_password
 
 
@@ -127,7 +127,7 @@ def test_webhook_signature_replay_branch_and_repository(application):
     assert len(store.jobs(alice.id)) == 2
 
 
-def test_job_claim_lease_and_wrong_worker(application):
+def test_job_claim_lease_and_wrong_worker(application, monkeypatch):
     _, store, alice, _, _, _ = application
     store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
     claimed = store.claim("first", alice.id)
@@ -135,8 +135,8 @@ def test_job_claim_lease_and_wrong_worker(application):
     assert store.claim("second", alice.id) is None
     with pytest.raises(ValueError, match="lease"):
         store.finish(alice.id, claimed.id, "second", "complete", {})
-    with store.sessions.begin() as session:
-        session.execute(update(Job).where(Job.id == claimed.id).values(lease_until=time.time() - 1))
+    expired = time.time() + 901
+    monkeypatch.setattr("seo_optimizer.store.time.time", lambda: expired)
     recovered = store.claim("second", alice.id)
     assert recovered.id == claimed.id and recovered.attempts == 2
     store.finish(alice.id, recovered.id, "second", "complete", {"summary": "Recovered"})
