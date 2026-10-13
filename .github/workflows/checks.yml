@@ -8,10 +8,24 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
-      - run: uv sync --locked --extra browser
+      - run: uv sync --locked --all-extras
       - run: uv run seo-optimizer validate
       - run: uv run pytest -q
       - run: uv run ruff check src tests scripts api
       - run: uv run ruff format --check src tests scripts api
       - run: uv run mypy
       - run: uv build
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.12'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+        working-directory: frontend
+      - run: npm run typecheck && npm test && npm run build
+        working-directory: frontend
