@@ -28,7 +28,7 @@ from seo_optimizer.application_models import (
 from seo_optimizer.contracts import ProviderCapabilities
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Store
-from seo_optimizer.web import hash_password
+from seo_optimizer.web import check_password, hash_password
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / ".your-optimiser.json"
@@ -179,8 +179,8 @@ def configure(args: argparse.Namespace) -> dict[str, Any]:
         account = store.user(email=registration.email)
         if account is None:
             account, _ = store.create_user(registration.email, hash_password(password))
-        elif not args.password_env:
-            raise ValueError("Data folder already has this account; resume its original config")
+        elif not check_password(password, account.password_hash):
+            raise ValueError("Data folder already has this account; use its existing password")
         project = store.create_project(
             account.id,
             ProjectCreate(
