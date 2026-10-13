@@ -1,0 +1,8 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // All storage passes through the tenant-scoped backend. Browser clients never
+    // read encrypted credentials, worker leases, raw evidence or private grants.
+    match /{document=**} { allow read, write: if false; }
+  }
+}
