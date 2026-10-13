@@ -1,0 +1,48 @@
+{
+  "status": "passed",
+  "defects_before": 4,
+  "defects_after": 0,
+  "native_tool_calls": 14,
+  "requests": 6,
+  "repeat_requests": 0,
+  "repeat_model_cache_hit": true,
+  "merged_docs_requests": 0,
+  "changed_files": [
+    "web/index.html",
+    "web/products/cedar-lamp/index.html"
+  ],
+  "model": "gemini-3.8-flash",
+  "staged_verified": true,
+  "finalized_from_tools": true,
+  "independent_checks": [
+    {
+      "name": "HTML metadata",
+      "path": "web/index.html",
+      "passed": true
+    },
+    {
+      "name": "HTML metadata",
+      "path": "web/products/cedar-lamp/index.html",
+      "passed": true
+    },
+    {
+      "name": "python",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+      "stderr": ""
+    }
+  ],
+  "served_verified": true,
+  "usage": {
+    "input_tokens": 63098,
+    "output_tokens": 9404,
+    "api_cost_usd": null,
+    "electricity_cost_usd": null,
+    "hardware_cost_usd": null
+  },
+  "unverified": [
+    "Ranking, citations, conversions and production GitHub",
+    "Billing without declared rates"
+  ]
+}
