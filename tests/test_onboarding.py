@@ -100,3 +100,30 @@ def test_cron_quotes_spaces_metacharacters_and_percent(tmp_path: Path) -> None:
     assert "'\"'\"'" in line
     assert "--once" in line
     assert "your-optimiser:" in line
+
+
+def test_cron_install_is_idempotent_and_preserves_other_entries(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from seo_optimizer.local import install_cron
+
+    entries = "0 9 * * * /usr/bin/example # unrelated-job\n"
+    writes = []
+
+    def invoke(args, **kwargs):
+        nonlocal entries
+        if args == ["crontab", "-l"]:
+            return SimpleNamespace(returncode=0, stdout=entries)
+        assert args == ["crontab", "-"]
+        entries = kwargs["input"]
+        writes.append(entries)
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr("seo_optimizer.local.shutil.which", lambda name: "/usr/bin/crontab")
+    monkeypatch.setattr("seo_optimizer.local.subprocess.run", invoke)
+    config = tmp_path / "config with spaces.json"
+    install_cron(config)
+    install_cron(config)
+    assert writes[0] == writes[1]
+    assert "unrelated-job" in entries
+    assert entries.count("your-optimiser:") == 1
