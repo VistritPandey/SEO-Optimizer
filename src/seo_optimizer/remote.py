@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 import httpx
 
 from seo_optimizer.application_models import ProjectSecrets
+from seo_optimizer.growth import Workspace
 from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store
 
@@ -49,6 +50,13 @@ class RemoteStore(Store):
 
     def secrets(self, project: Project) -> ProjectSecrets:
         return self._credentials[project.id]
+
+    def workspace(self, tenant: str, project_id: str) -> Workspace:
+        if self.project(tenant, project_id) is None:
+            raise ValueError("Project not found")
+        response = self.client.get(f"/api/v1/projects/{project_id}/workspace")
+        response.raise_for_status()
+        return Workspace.model_validate(response.json())
 
     def finish(
         self,
