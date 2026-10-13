@@ -11,3 +11,7 @@ dist/
 .data/
 artifacts/
 *.sqlite*
+
+# Local Remotion runtime and intermediate renders
+videos/node_modules
+videos/out/
