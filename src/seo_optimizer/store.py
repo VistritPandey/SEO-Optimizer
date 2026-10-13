@@ -16,6 +16,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     create_engine,
+    delete,
     insert,
     select,
     text,
@@ -79,6 +80,19 @@ class Job(Base):
     worker_id: Mapped[str] = mapped_column(String(100), default="")
     created_at: Mapped[float] = mapped_column(Float)
     updated_at: Mapped[float] = mapped_column(Float)
+
+
+class ProjectLease(Base):
+    __tablename__ = "project_leases"
+    project_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    job_id: Mapped[str] = mapped_column(String(36))
+    worker_id: Mapped[str] = mapped_column(String(100))
+    until: Mapped[float] = mapped_column(Float)
+
+
+class LeaseConflict(Exception):
+    pass
 
 
 class FindingRecord(Base):
@@ -407,41 +421,69 @@ class Store:
 
     def claim(self, worker: str, tenant: str | None = None) -> Job | None:
         now = time.time()
-        with self.sessions.begin() as session:
-            live = set(
-                session.scalars(
-                    select(Job.project_id).where(Job.status == "running", Job.lease_until > now)
+        try:
+            with self.sessions.begin() as session:
+                live = set(
+                    session.scalars(
+                        select(Job.project_id).where(Job.status == "running", Job.lease_until > now)
+                    )
                 )
-            )
-            query = select(Job).where(
-                Job.available_at <= now,
-                Job.status.in_(["queued", "waiting_checks", "waiting_deployment", "running"]),
-                Job.lease_until <= now,
-                Job.project_id.not_in(live),
-            )
-            if tenant:
-                query = query.where(Job.tenant_id == tenant)
-            candidate = session.scalar(query.order_by(Job.created_at).limit(1))
-            if candidate is None:
-                return None
-            attempts = candidate.attempts + (candidate.status in {"queued", "running"})
-            changed = session.execute(
-                update(Job)
-                .where(
-                    Job.id == candidate.id, Job.status == candidate.status, Job.lease_until <= now
+                query = select(Job).where(
+                    Job.available_at <= now,
+                    Job.status.in_(["queued", "waiting_checks", "waiting_deployment", "running"]),
+                    Job.lease_until <= now,
+                    Job.project_id.not_in(live),
                 )
-                .values(
-                    status="running",
-                    worker_id=worker,
-                    lease_until=now + 900,
-                    attempts=attempts,
-                    updated_at=now,
+                if tenant:
+                    query = query.where(Job.tenant_id == tenant)
+                candidate = session.scalar(query.order_by(Job.created_at).limit(1))
+                if candidate is None:
+                    return None
+                lease = session.get(ProjectLease, candidate.project_id)
+                if lease is None:
+                    session.add(
+                        ProjectLease(
+                            project_id=candidate.project_id,
+                            tenant_id=candidate.tenant_id,
+                            job_id=candidate.id,
+                            worker_id=worker,
+                            until=now + 900,
+                        )
+                    )
+                    session.flush()  # Unique project key arbitrates simultaneous first claims.
+                else:
+                    leased = session.execute(
+                        update(ProjectLease)
+                        .where(
+                            ProjectLease.project_id == candidate.project_id,
+                            ProjectLease.until <= now,
+                        )
+                        .values(job_id=candidate.id, worker_id=worker, until=now + 900)
+                    )
+                    if cast(CursorResult[Any], leased).rowcount != 1:
+                        raise LeaseConflict
+                attempts = candidate.attempts + (candidate.status in {"queued", "running"})
+                changed = session.execute(
+                    update(Job)
+                    .where(
+                        Job.id == candidate.id,
+                        Job.status == candidate.status,
+                        Job.lease_until <= now,
+                    )
+                    .values(
+                        status="running",
+                        worker_id=worker,
+                        lease_until=now + 900,
+                        attempts=attempts,
+                        updated_at=now,
+                    )
                 )
-            )
-            if cast(CursorResult[Any], changed).rowcount != 1:
-                return None
-            session.refresh(candidate)
-            return candidate
+                if cast(CursorResult[Any], changed).rowcount != 1:
+                    raise LeaseConflict
+                session.refresh(candidate)
+                return candidate
+        except (IntegrityError, LeaseConflict):
+            return None
 
     def finish(
         self,
@@ -464,6 +506,14 @@ class Store:
             )
             if job is None:
                 raise ValueError("Job lease no longer owned")
+            session.execute(
+                delete(ProjectLease).where(
+                    ProjectLease.project_id == job.project_id,
+                    ProjectLease.job_id == id,
+                    ProjectLease.worker_id == worker,
+                    ProjectLease.tenant_id == tenant,
+                )
+            )
             job.status, job.result = status, result
             job.lease_until, job.available_at, job.updated_at = 0, time.time() + delay, time.time()
             job.events = [
