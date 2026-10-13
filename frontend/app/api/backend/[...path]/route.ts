@@ -16,9 +16,14 @@ async function proxy(request: NextRequest, context: {params: Promise<{path: stri
   const body = ['GET', 'HEAD'].includes(request.method) ? undefined : await request.text();
   if (body && Buffer.byteLength(body) > 2_000_000) return NextResponse.json({detail: 'Request too large'}, {status: 413});
   try {
-    const result = await fetch(new URL('/api/v1/' + route, target), {
+    const upstream = new URL('/api/v1/' + route, target);
+    for (const key of ['start', 'end']) {
+      const value = request.nextUrl.searchParams.get(key);
+      if (value && /^\d{4}-\d{2}-\d{2}$/.test(value)) upstream.searchParams.set(key, value);
+    }
+    const result = await fetch(upstream, {
       method: request.method, headers: {'Authorization': authorization, 'Content-Type': 'application/json'},
-      body, redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(30_000),
+      body, redirect: 'manual', cache: 'no-store', signal: AbortSignal.timeout(route.endsWith('/citations') ? 100_000 : 30_000),
     });
     if (result.status >= 300 && result.status < 400) return NextResponse.json({detail: 'Unexpected backend redirect'}, {status: 502});
     return new NextResponse(await result.text(), {status: result.status, headers: {'Content-Type': 'application/json', 'Cache-Control': 'no-store'}});
