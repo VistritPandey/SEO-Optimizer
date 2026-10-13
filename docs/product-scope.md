@@ -1,53 +1,43 @@
-# Product scope and remaining work
+# Product scope and qualification
 
-SEO Optimizer is intended to operate a project's website optimization loop: understand the
-business, find justified opportunities, select work, change the permitted source, verify the
-result and learn from observed search outcomes. Models are replaceable components of that
-system. Demonstrations should foreground the website problem and verified outcome; provider
-names belong in reproducibility and usage records.
+SEO Optimizer runs a project's optimization loop with replaceable models: observe the website
+and source, identify supported work, check a change, publish within policy, and verify the
+served result. The project now has a durable research/strategy/content layer in addition to its
+technical repair core. Search outcomes still require actual account data and observation time.
 
-The current implementation has a working, deliberately bounded technical-remediation core.
-It has not established full-service autonomous SEO coverage or improved search visibility.
-The existence of 39 knowledge checks does not mean 39 complete scanners and execution
-pipelines exist. A registered source or strategy reference is not an external-data integration.
-
-## Current coverage and the next concrete capabilities
-
-| Area | Current evidence | Required extension |
+| Area | Implemented and exercised | Qualification boundary |
 |---|---|---|
-| Repository repair | Real source inspection, grounded model patches, isolated checks, local merges and served-page verification | Diverse framework/route cases and live GitHub/deployment verification |
-| Change processing | Incremental route mapping, durable jobs and irrelevant-change skips | Broader layout/content dependency maps and reconciliation under real project load |
-| Business onboarding | Explicit owner facts, goals, page intent and crawler preferences | Persistent attributable product/brand/source knowledge and refresh/expiry handling |
-| Strategy | Research-backed guidance and structured findings | Authorized query/search data, competitor observations, opportunity selection and measured prioritization |
-| Content | Static HTML/Markdown edits with owner facts and checks | Original-source-backed briefs, coverage planning, editorial review, refresh/consolidation and measured publication cycles |
-| AI-answer visibility | Engine-specific guidance, crawler controls and factual/structured-data checks | Repeated citation/retrieval observations, faithful-answer assessment and controlled experiments |
-| Measurement | Technical before/after, usage and explicit coverage | Search-account ingestion, available field measurements, conversions and attribution-aware feedback |
-| Model qualification | Real provider protocols, offline decision evaluation and developed repair cases | A frozen, repeated repository benchmark with skills/tools contribution measured separately |
+| Repository repairs | Actual source reads, native tools, isolated checks, local per-file commits and served verification | Diverse frameworks and production GitHub/deployments need broader live qualification |
+| Incremental work | Route mapping, scoped jobs, irrelevant-change skips, finding memory and unchanged-input model reuse | Shared dependency maps remain conservative; uncertain changes broaden the audit |
+| Business evidence | Project-owned source records, original/reviewed state, fact references and expiry dependencies | Owner attestation is a trust input; storage cannot prove a business assertion is true |
+| Strategy | Dated query/page slices, confirmed relevance, explained queue ordering, supported briefs | Demand, competitors and difficulty are not invented; new data must be collected/imported |
+| Original content | Autonomous audit → strategy → supported HTML refresh → build → commit → served passage check | Copies verified original passages; free-form article generation, consolidation and arbitrary frameworks are not automatic |
+| Product facts | Browser-visible offer evidence and structured-data comparison | Hidden/ambiguous offers remain unresolved; currency/availability extraction is conservative |
+| Search measurement | Finalized Search Console read connector and scoped import API | Controlled transport tested; OAuth account and refresh flow are not connected here |
+| AI citations | Actual search-grounded API collection plus engine/transcript imports and separate experimental arms | API samples are not consumer-engine rankings; opaque redirects and fidelity need review |
+| Model evaluation | Offline decisions plus actual five-arm repository repair machinery and retained failures | Current live dataset is one development repair case with controls, not held-out generalization |
+| Publishing policy | Path, facts, private-page, crawler, behavior and build guards outside prompts | Production GitHub authentication, write permissions, deployments and hosted operations remain separately unverified |
 
-The live synthetic repair proves that an external model can use the runtime to repair the
-supplied defects and pass independent checks. It does not prove robust planning on arbitrary
-repositories or effective content strategy. Earlier unsuccessful development runs remain in
-the evidence. The personal-site test stays local and does not become public demonstration data.
+The private package has 39 checks and 31 primary/research sources. Catalog breadth is not
+executable scanner coverage: the dashboard reports completed checks and missing evidence.
+Technical health is an observation of those checks, not a ranking or universal GEO score.
 
-## Prioritize knowledge and feedback, then scale execution
+The anonymous technical fixture tests missing metadata, broken navigation, conflicting
+canonicals and malformed/inconsistent product offers. The content fixture separately tests
+an original owner passage, strategy selection, autonomous job chaining, actual Docker checks,
+served publication and repeat idempotence. Private project testing stays in ignored local data.
 
-1. Expand attributable business/source context and implement the missing evidence collectors
-   for observable technical and product checks. Missing data must remain unresolved.
-2. Connect authorized search/query observations and build an opportunity backlog scoped to
-   business goals, existing pages, real demand and useful original material.
-3. Implement a content task loop with supported claims, clear editorial criteria and versioned
-   verification. Avoid automatic generation simply to fill keyword or page-count targets.
-4. Implement engine-specific visibility experiments and independent search-outcome records.
-5. Qualify local and paid models against the same frozen tasks and mandatory safety gates;
-   route inexpensive supported work according to measured results.
+A matched experiment compares rules alone, minimal/full harnesses for a declared local model,
+and minimal/full harnesses for a paid model. Identical source/fact inputs and outcome guards are
+required. Failures, unknown costs and invalidated experimental controls are retained. Do not
+interpret failed timing on one machine as universal model quality or claim parity from a single
+successful repair. See [the benchmark protocol](benchmark.md).
 
-Google's official AI-search guidance continues to prioritize established SEO foundations and
-original, useful content. Meeting eligibility and technical requirements does not guarantee
-indexing or visibility. Other engines need their own discovery and citation observations.
-See [Google's AI-search guide](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)
-and the private package's engine-specific source registry.
+The application can operate autonomously with configured evidence and project permissions.
+Proving more search visibility requires comparable real measurements, attribution controls and
+time. Meeting technical and content requirements does not guarantee indexing or inclusion.
+[Google's AI-search guidance](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide).
 
-The success criterion is more verified useful work per project and per unit cost, with reliable
-preservation of facts and behavior. Technical pass counts, provider names and a single health
-score cannot substitute for search outcomes. Follow the [benchmark protocol](benchmark.md) for
-the software evaluation and the separate longitudinal study.
+Setup, APIs and explicit input dependencies are described in
+[the research workspace guide](research-workspace.md). Live qualification results belong in
+reports, not promotional claims about a model or an invented ranking score.
