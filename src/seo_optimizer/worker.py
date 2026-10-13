@@ -185,6 +185,21 @@ class Worker:
                 result.get("findings", []),
                 result.get("audited_urls", []),
             )
+        spec = ProjectSpec.model_validate(project.spec)
+        if (
+            status == "complete"
+            and job.kind in {"audit", "push"}
+            and spec.auto_content_refresh
+            and spec.allow_content_publication
+        ):
+            import hashlib
+
+            workspace = self.store.workspace(job.tenant_id, job.project_id)
+            if workspace.search:
+                digest = hashlib.sha256(workspace.model_dump_json().encode()).hexdigest()
+                self.store.enqueue(
+                    job.tenant_id, job.project_id, "strategy", "strategy-auto:" + digest, {}
+                )
         self.store.finish(job.tenant_id, job.id, self.id, status, result, delay)
         snapshot = self.settings.data_dir / "workspaces" / job.id / "repository"
         if snapshot.is_dir():
@@ -199,6 +214,22 @@ class Worker:
             from seo_optimizer.growth import plan
 
             strategy = plan(spec, self.store.workspace(project.tenant_id, project.id))
+            if spec.auto_content_refresh and spec.allow_content_publication and spec.auto_fix:
+                import hashlib
+
+                for opportunity in strategy.opportunities:
+                    if opportunity.action == "refresh" and opportunity.brief.ready:
+                        digest = hashlib.sha256(
+                            opportunity.brief.model_dump_json().encode()
+                        ).hexdigest()
+                        self.store.enqueue(
+                            project.tenant_id,
+                            project.id,
+                            "content",
+                            "content-auto:" + digest,
+                            {"opportunity_id": opportunity.id},
+                        )
+                        break  # One supported refresh per strategy reconciliation.
             return (
                 "complete",
                 {
