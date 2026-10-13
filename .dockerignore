@@ -1,11 +1,14 @@
 .git
 .venv
-.data
 .env
 .env.*
-tests
+.data
+.your-optimiser.json
+frontend/node_modules
+frontend/.next
+videos
 reports
-dist
+artifacts
 __pycache__
 .pytest_cache
 .mypy_cache
