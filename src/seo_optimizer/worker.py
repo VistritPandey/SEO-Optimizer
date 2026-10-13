@@ -606,6 +606,7 @@ class Worker:
             usage, model_name = inference.usage.model_dump(mode="json"), inference.model
             report["tool_trace"] = inference.tool_trace
             report["model_runtime_ms"] = inference.runtime_ms
+            report["model_summary"] = inference.decision.summary
         evidence_by_id = {item.id: item for item in evidence}
         enriched = [
             {
@@ -818,6 +819,9 @@ class Worker:
         report.update(
             usage=result.get("report", {}).get("usage"),
             model=result.get("report", {}).get("model", "rules"),
+            tool_trace=result.get("report", {}).get("tool_trace", []),
+            model_runtime_ms=result.get("report", {}).get("model_runtime_ms"),
+            model_summary=result.get("report", {}).get("model_summary"),
         )
         result.update(
             summary="Changes verified on the deployed website",
