@@ -84,6 +84,13 @@ class CitationObservation(Contract):
         return self
 
 
+class CitationProbe(Contract):
+    query: str = Field(min_length=1, max_length=500)
+    experiment: str = Field(min_length=1, max_length=100)
+    market: str = Field(min_length=1, max_length=100)
+    arm: Literal["baseline", "treatment", "holdout"] = "baseline"
+
+
 class Workspace(Contract):
     version: Literal["1"] = "1"
     materials: list[Material] = Field(default_factory=list, max_length=100)
