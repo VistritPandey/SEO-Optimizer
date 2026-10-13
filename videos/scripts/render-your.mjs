@@ -47,14 +47,7 @@ function timestamp(seconds) {
 let caption = "WEBVTT\n\n",
   seconds = 0;
 for (const scene of story) {
-  const phrases = scene.narration.match(/[^.!?]+[.!?]+/g) || [scene.narration];
-  let spoken = 0;
-  for (const phrase of phrases) {
-    const length =
-      (phrase.length / scene.narration.length) * scene.audio_seconds;
-    caption += `${timestamp(seconds + spoken)} --> ${timestamp(seconds + spoken + length)}\n${phrase.trim()}\n\n`;
-    spoken += length;
-  }
+  caption += `${timestamp(seconds)} --> ${timestamp(seconds + scene.frames / 30)}\n${scene.caption}\n\n`;
   seconds += scene.frames / 30;
 }
 await writeFile(path.join(out, "demo-captions.vtt"), caption);
@@ -64,7 +57,7 @@ await renderMedia({
   serveUrl,
   composition,
   codec: "h264",
-  audioCodec: "aac",
+  muted: true,
   pixelFormat: "yuv420p",
   crf: 20,
   concurrency: 3,
@@ -86,8 +79,8 @@ await writeFile(
       frames: composition.durationInFrames,
       fps: composition.fps,
       seconds: composition.durationInFrames / composition.fps,
-      narration:
-        "System voice; illustrated customer workflow backed by recorded source repairs",
+      audio: "none",
+      captions: "Always-visible on-screen text plus optional English VTT",
     },
     null,
     2,
