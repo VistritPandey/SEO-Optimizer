@@ -1,0 +1,111 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Id",
+      "type": "string"
+    },
+    "experiment": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Experiment",
+      "type": "string"
+    },
+    "query": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "engine": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Engine",
+      "type": "string"
+    },
+    "engine_version": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Engine Version",
+      "type": "string"
+    },
+    "arm": {
+      "enum": [
+        "baseline",
+        "treatment",
+        "holdout"
+      ],
+      "title": "Arm",
+      "type": "string"
+    },
+    "observed_at": {
+      "format": "date-time",
+      "title": "Observed At",
+      "type": "string"
+    },
+    "market": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Market",
+      "type": "string"
+    },
+    "answer": {
+      "maxLength": 20000,
+      "title": "Answer",
+      "type": "string"
+    },
+    "cited_urls": {
+      "items": {
+        "format": "uri",
+        "maxLength": 2083,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Cited Urls",
+      "type": "array"
+    },
+    "source": {
+      "maxLength": 1000,
+      "minLength": 1,
+      "title": "Source",
+      "type": "string"
+    },
+    "retrieval_enabled": {
+      "title": "Retrieval Enabled",
+      "type": "boolean"
+    },
+    "citation_accuracy": {
+      "default": "unreviewed",
+      "enum": [
+        "supported",
+        "unsupported",
+        "unreviewed"
+      ],
+      "title": "Citation Accuracy",
+      "type": "string"
+    },
+    "synthetic": {
+      "default": false,
+      "title": "Synthetic",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "experiment",
+    "query",
+    "engine",
+    "engine_version",
+    "arm",
+    "observed_at",
+    "market",
+    "answer",
+    "source",
+    "retrieval_enabled"
+  ],
+  "title": "CitationObservation",
+  "type": "object"
+}
