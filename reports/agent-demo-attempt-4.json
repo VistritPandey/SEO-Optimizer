@@ -1,0 +1,485 @@
+{
+  "generated_at": "2026-10-13T01:56:48.886915+00:00",
+  "fictional_site": "Cedar Workshop",
+  "provider": "google",
+  "model": "gemini-3.8-flash",
+  "sdk_version": "2.30.0",
+  "base_sha": "417c22aeccb75766dfa5d80bfd35dcbe3969aae8",
+  "baseline": {
+    "summary": "Audited 4 pages; 4 new findings",
+    "report": {
+      "score": 56,
+      "score_label": "Observed audit health",
+      "coverage": [
+        {
+          "check_id": "tech.indexability",
+          "title": "Indexability matches declared intent",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.robots",
+          "title": "Crawl access and indexing are distinct",
+          "module": "technical",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "tech.title",
+          "title": "Descriptive page titles",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.metadata",
+          "title": "Snippets describe actual content",
+          "module": "technical",
+          "state": "defect"
+        },
+        {
+          "check_id": "tech.canonical",
+          "title": "Consistent canonical declarations",
+          "module": "technical",
+          "state": "defect"
+        },
+        {
+          "check_id": "tech.status",
+          "title": "Meaningful HTTP and redirect behavior",
+          "module": "technical",
+          "state": "healthy"
+        },
+        {
+          "check_id": "tech.links",
+          "title": "Discoverable working internal links",
+          "module": "technical",
+          "state": "defect"
+        },
+        {
+          "check_id": "tech.sitemap",
+          "title": "Sitemap reflects preferred public pages",
+          "module": "technical",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "tech.rendering",
+          "title": "Important content is available to crawlers",
+          "module": "technical",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "tech.migration",
+          "title": "Preserve search behavior during migrations",
+          "module": "technical",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "perf.cwv",
+          "title": "Measure performance with correct evidence",
+          "module": "performance",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "perf.media",
+          "title": "Useful media and stable layout",
+          "module": "performance",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "perf.navigation",
+          "title": "Main content and navigation remain usable",
+          "module": "performance",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.strategy",
+          "title": "Prioritize work against business intent",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.competitors",
+          "title": "Research gaps without copying competitors",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.factual",
+          "title": "Ground claims and business details",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.originality",
+          "title": "Create useful content rather than scaled filler",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "content.refresh",
+          "title": "Refresh or consolidate with measured intent",
+          "module": "content",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.crawlers",
+          "title": "Respect independent search and training access",
+          "module": "geo",
+          "state": "healthy"
+        },
+        {
+          "check_id": "geo.google-llms",
+          "title": "Do not prescribe llms.txt for Google ranking",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.google-faq",
+          "title": "Keep FAQ content separate from deprecated rich results",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.entities",
+          "title": "Consistent, attributable entities and answers",
+          "module": "geo",
+          "state": "defect"
+        },
+        {
+          "check_id": "geo.experiment",
+          "title": "Test citation hypotheses rather than promise ranking",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.visibility",
+          "title": "Observe engine-specific visibility",
+          "module": "geo",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "geo.google-inclusion",
+          "title": "Preserve Google AI inclusion preferences",
+          "module": "geo",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "local.identity",
+          "title": "Use real consistent local business facts",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.hours",
+          "title": "Do not invent operating hours",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.schema",
+          "title": "Local markup describes visible real locations",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "local.relevance",
+          "title": "Create useful local pages without fake reach",
+          "module": "local",
+          "state": "not_applicable"
+        },
+        {
+          "check_id": "commerce.facts",
+          "title": "Prices and stock match the actual offer",
+          "module": "ecommerce",
+          "state": "healthy"
+        },
+        {
+          "check_id": "commerce.variants",
+          "title": "Represent real product variants consistently",
+          "module": "ecommerce",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "commerce.navigation",
+          "title": "Manage category and faceted discovery",
+          "module": "ecommerce",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "commerce.merchants",
+          "title": "Keep merchant accounts and feeds distinct from code",
+          "module": "ecommerce",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "intl.hreflang",
+          "title": "Reciprocal equivalent language alternatives",
+          "module": "international",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "intl.localization",
+          "title": "Localized content and facts are genuine",
+          "module": "international",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "ops.metrics",
+          "title": "Separate measurements and unknown values",
+          "module": "operations",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "ops.incremental",
+          "title": "Audit affected pages and reconcile periodically",
+          "module": "operations",
+          "state": "needs_model"
+        },
+        {
+          "check_id": "ops.indexnow",
+          "title": "Notify supported engines after verified changes",
+          "module": "operations",
+          "state": "needs_data"
+        },
+        {
+          "check_id": "ops.verification",
+          "title": "Verify the specific change before shipping",
+          "module": "operations",
+          "state": "needs_model"
+        }
+      ],
+      "evaluated_checks": 9,
+      "total_checks": 39,
+      "pages": 4,
+      "findings": 4,
+      "performance": [],
+      "unknown_metrics": [
+        "Search rankings",
+        "AI citation share",
+        "Conversions",
+        "Field Web Vitals"
+      ],
+      "page_summaries": [
+        {
+          "url": "http://127.0.0.1:62878/",
+          "evidence_id": "38be5e68-0db1-4850-bb6d-afa8ffb1a6e7",
+          "title": "Cedar Workshop \u2014 Thoughtful lighting",
+          "excerpt": "Cedar Workshop \u2014 Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+        },
+        {
+          "url": "http://127.0.0.1:62878/shop/",
+          "evidence_id": "0de92376-d12b-4125-be39-34f2471ff8f6",
+          "title": "Lighting collection \u2014 Cedar Workshop",
+          "excerpt": "Lighting collection \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+        },
+        {
+          "url": "http://127.0.0.1:62878/products/cedar-lamp/",
+          "evidence_id": "9e3c70aa-d143-400c-8258-ce1e447be58d",
+          "title": "Cedar Desk Lamp \u2014 Cedar Workshop",
+          "excerpt": "Cedar Desk Lamp \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
+        },
+        {
+          "url": "http://127.0.0.1:62878/collections/lighting/",
+          "evidence_id": "b49c0466-25f3-49dc-97d6-e44637ed8f69",
+          "title": "Error response",
+          "excerpt": "Error response Error response Error code: 404 Message: File not found. Error code explanation: 404 - Nothing matches the given URI."
+        }
+      ],
+      "usage": {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "api_cost_usd": 0,
+        "electricity_cost_usd": null,
+        "hardware_cost_usd": null
+      },
+      "model": "rules"
+    },
+    "findings": [
+      {
+        "check_id": "tech.links",
+        "summary": "An internal link has an observed missing destination.",
+        "status": "defect",
+        "severity": "medium",
+        "evidence_strength": "confirmed",
+        "evidence_ids": [
+          "38be5e68-0db1-4850-bb6d-afa8ffb1a6e7"
+        ],
+        "source_ids": [
+          "google-starter",
+          "google-js"
+        ],
+        "action": {
+          "kind": "investigate",
+          "rationale": "Repair confirmed broken internal links or inaccessible navigation",
+          "automatic": false,
+          "target_paths": [],
+          "fact_ids": [],
+          "crawler_changes": {},
+          "indexability_changes": {}
+        },
+        "verification_criteria": [
+          "Recheck source anchor and destination; preserve navigation behavior"
+        ],
+        "dependencies": [],
+        "url": "http://127.0.0.1:62878/"
+      },
+      {
+        "check_id": "tech.metadata",
+        "summary": "Public page has no explicit description; assess a factual snippet.",
+        "status": "defect",
+        "severity": "low",
+        "evidence_strength": "confirmed",
+        "evidence_ids": [
+          "38be5e68-0db1-4850-bb6d-afa8ffb1a6e7"
+        ],
+        "source_ids": [
+          "google-starter",
+          "google-js"
+        ],
+        "action": {
+          "kind": "investigate",
+          "rationale": "Improve misleading or unhelpful snippets with supported descriptions",
+          "automatic": false,
+          "target_paths": [],
+          "fact_ids": [],
+          "crawler_changes": {},
+          "indexability_changes": {}
+        },
+        "verification_criteria": [
+          "Compare description to page facts; observe search snippets separately"
+        ],
+        "dependencies": [],
+        "url": "http://127.0.0.1:62878/"
+      },
+      {
+        "check_id": "tech.canonical",
+        "summary": "Response declares conflicting canonical URLs.",
+        "status": "defect",
+        "severity": "medium",
+        "evidence_strength": "confirmed",
+        "evidence_ids": [
+          "9e3c70aa-d143-400c-8258-ce1e447be58d"
+        ],
+        "source_ids": [
+          "google-canonical",
+          "google-js"
+        ],
+        "action": {
+          "kind": "investigate",
+          "rationale": "Resolve contradictory canonical declarations using verified URL intent",
+          "automatic": false,
+          "target_paths": [],
+          "fact_ids": [],
+          "crawler_changes": {},
+          "indexability_changes": {}
+        },
+        "verification_criteria": [
+          "Compare all declarations, redirects and URL Inspection when available"
+        ],
+        "dependencies": [],
+        "url": "http://127.0.0.1:62878/products/cedar-lamp/"
+      },
+      {
+        "check_id": "geo.entities",
+        "summary": "Structured data is not valid JSON.",
+        "status": "defect",
+        "severity": "medium",
+        "evidence_strength": "confirmed",
+        "evidence_ids": [
+          "9e3c70aa-d143-400c-8258-ce1e447be58d"
+        ],
+        "source_ids": [
+          "google-ai",
+          "microsoft-content",
+          "google-schema"
+        ],
+        "action": {
+          "kind": "investigate",
+          "rationale": "Clarify ambiguous identity and substantiate answers in useful readable formats",
+          "automatic": false,
+          "target_paths": [],
+          "fact_ids": [],
+          "crawler_changes": {},
+          "indexability_changes": {}
+        },
+        "verification_criteria": [
+          "Compare claims across relevant pages and markup"
+        ],
+        "dependencies": [],
+        "url": "http://127.0.0.1:62878/products/cedar-lamp/"
+      }
+    ],
+    "revision": "417c22aeccb75766dfa5d80bfd35dcbe3969aae8",
+    "audited_urls": [
+      "http://127.0.0.1:62878/",
+      "http://127.0.0.1:62878/shop/",
+      "http://127.0.0.1:62878/products/cedar-lamp/",
+      "http://127.0.0.1:62878/collections/lighting/"
+    ],
+    "verification_urls": [
+      "http://127.0.0.1:62878/",
+      "http://127.0.0.1:62878/shop/",
+      "http://127.0.0.1:62878/products/cedar-lamp/"
+    ],
+    "before_defects": [
+      {
+        "check_id": "tech.links",
+        "url": "http://127.0.0.1:62878/"
+      },
+      {
+        "check_id": "tech.metadata",
+        "url": "http://127.0.0.1:62878/"
+      },
+      {
+        "check_id": "tech.canonical",
+        "url": "http://127.0.0.1:62878/products/cedar-lamp/"
+      },
+      {
+        "check_id": "geo.entities",
+        "url": "http://127.0.0.1:62878/products/cedar-lamp/"
+      }
+    ]
+  },
+  "events": [
+    {
+      "time": 5.636279708996881,
+      "text": "START: autonomous model repair on a synthetic local Git repository"
+    },
+    {
+      "time": 5.717695333994925,
+      "text": "MODEL gemini-3.8-flash request 1 \u2014 actual inference"
+    },
+    {
+      "time": 13.251552791974973,
+      "text": "WORKER blocked: Unexpected or excessive tool calls"
+    },
+    {
+      "time": 13.252479458984453,
+      "text": "DEMO FAILED: AssertionError \u2014 see preserved result"
+    }
+  ],
+  "requests": 1,
+  "github_writes": false,
+  "model_used": true,
+  "status": "failed",
+  "request_usage": [
+    {
+      "candidatesTokenCount": 191,
+      "promptTokenCount": 5333,
+      "promptTokensDetails": [
+        {
+          "modality": "TEXT",
+          "tokenCount": 5333
+        }
+      ],
+      "thoughtsTokenCount": 808,
+      "totalTokenCount": 6332
+    }
+  ],
+  "repair": {
+    "status": "blocked",
+    "result": {
+      "summary": "Unexpected or excessive tool calls",
+      "error_type": "ProviderError"
+    }
+  },
+  "failure": "AssertionError"
+}
