@@ -35,7 +35,7 @@ const Defects = () => <Shell chapter="01 / THE ACTUAL PROBLEM" title="A broken s
 </Shell>;
 const Tools = () => <Shell chapter="02 / REAL MODEL ACTIONS" title="Read source. Stage a patch. Run the checks.">
  <div style={{display:'flex',gap:38}}><div style={{width:1240,borderRadius:16,overflow:'hidden',background:'#061710'}}>
-  <OffthreadVideo src={staticFile('terminal-inspection.mp4')} muted loop style={{width:1240,height:660,objectFit:'contain'}}/>
+  <OffthreadVideo src={staticFile('terminal-highlights.mp4')} muted style={{width:1240,height:660,objectFit:'contain'}}/>
  </div><div style={{flex:1,fontSize:29,lineHeight:1.6}}><p>{proof.technicalToolCalls} recorded tool calls.</p><p>Exact source replacements.<br/>Independent path, fact,<br/>privacy and behavior guards.</p><p>Build the staged copy.<br/>Merge permitted work.<br/>Inspect the served pages.</p><div style={{background:accent,color:ink,padding:20,borderRadius:14}}>The model proposes.<br/>The application verifies.</div></div></div>
 </Shell>;
 const Repairs = () => <Shell chapter="03 / VERIFIED REPAIR" title="The changes have observable outcomes." light>
@@ -64,7 +64,7 @@ const Benchmarks = () => <Shell chapter="07 / MATCHED MODEL EXPERIMENT" title="S
 const End = () => <Shell chapter="MEASURE THE NEXT OUTCOME" title="Built for evidence. Ready for harder cases." light>
  <div style={{display:'flex',gap:65,marginTop:50}}><div style={{width:940,fontSize:38,lineHeight:1.65}}>A portable Python worker.<br/>Your configured model.<br/>Project-scoped evidence and policy.<br/>A record of every verified change.</div>
  <div style={{flex:1,background:ink,color:paper,padding:40,borderRadius:20,fontSize:29,lineHeight:1.7}}><strong style={{color:accent}}>What is proved here</strong><br/>Local repairs and supported publication.<br/>Actual tools, builds, commits and HTTP checks.<br/><br/><strong style={{color:accent}}>What still needs live data</strong><br/>Search traffic, consumer-engine citations,<br/>conversions and production GitHub outcomes.</div></div>
- <p style={{fontSize:29,marginTop:55}}>No provider promotion. No invented ranking gains.</p>
+ <p style={{fontSize:29,marginTop:55}}>Measured changes. Inspectable evidence.</p>
 </Shell>;
 export const GrowthDemo = () => <AbsoluteFill>{[
  [0,180,<Intro/>], [180,240,<Defects/>], [420,270,<Tools/>], [690,240,<Repairs/>],
