@@ -523,15 +523,23 @@ class Store:
             project = session.scalar(
                 select(Project).where(Project.id == job.project_id, Project.tenant_id == tenant)
             )
+            project_audit = (
+                job.kind not in {"followup", "pull_request"} or result.get("stage") == "verified"
+            )
             if project is not None:
-                if result.get("report"):
+                if result.get("report") and project_audit:
                     project.last_report = result["report"]
                 project.updated_at = time.time()
-                if result.get("revision") and status in {
-                    "complete",
-                    "waiting_checks",
-                    "waiting_deployment",
-                }:
+                if (
+                    project_audit
+                    and result.get("revision")
+                    and status
+                    in {
+                        "complete",
+                        "waiting_checks",
+                        "waiting_deployment",
+                    }
+                ):
                     project.last_revision = result["revision"]
 
     def remember_findings(
