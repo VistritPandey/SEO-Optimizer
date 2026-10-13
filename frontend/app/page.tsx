@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Workflow } from "@/components/Workflow";
+
 export default function Home() {
   return (
     <>
@@ -8,7 +9,7 @@ export default function Home() {
           y<span>Your Optimiser</span>
         </Link>
         <nav aria-label="Main">
-          <a href="#how">How it works</a>
+          <a href="#how">See it work</a>
           <a href="#pricing">Pricing</a>
           <Link href="/login">Sign in ↗</Link>
         </nav>
@@ -16,145 +17,205 @@ export default function Home() {
       <main>
         <section className="hero">
           <div>
-            <span className="eyebrow">A LITTLE LESS GUESSWORK</span>
+            <span className="eyebrow">YOUR AI AGENT FOR ONGOING SEO</span>
             <h1>
-              A better website.
+              Your website evolves.
               <br />
-              <em>A clearer way there.</em>
+              <em>Your SEO needs to keep up.</em>
             </h1>
             <p>
-              Your website deserves more than a list of things to fix. Give it a
-              working partner that finds search problems, makes supported
-              changes, and checks what actually improved.
+              A new page. A fresh design. A product update. Your Optimiser
+              checks what changed, fixes confirmed search problems and checks
+              the result—so you can keep moving.
             </p>
             <div className="actions">
-              <Link className="button" href="/login?mode=register">
-                Start your free workspace ↗
-              </Link>
-              <a className="text-link" href="#how">
-                See the process ↓
+              <a className="button" href="#how">
+                Try the interactive demo ↓
               </a>
+              <Link className="text-link" href="/login?mode=register">
+                Get started free ↗
+              </Link>
             </div>
             <small>
-              SEO foundations. AI discovery. Your repository, your decisions.
+              For the people building a business, not just the people writing
+              its code.
             </small>
           </div>
-          <div className="hero-sheet">
-            <span className="eyebrow">
-              WHAT AN IMPROVEMENT LOOKS LIKE · EXAMPLE
-            </span>
-            <div className="sheet-row">
-              <span>Product page</span>
-              <span className="pill">Evidence collected</span>
-            </div>
-            <h3>A product worth finding.</h3>
-            <div className="example-code">
-              <span className="removed">Canonical → preview.example.test</span>
-              <span className="added">
-                Canonical → www.example.test/product
+          <div className="hero-outcome">
+            <div className="hero-outcome-heading">
+              <span className="eyebrow">A WEBSITE UPDATE · EXAMPLE</span>
+              <span className="pill">
+                <span className="dot" />
+                Being looked after
               </span>
             </div>
-            <ol className="receipt">
-              <li>Confirm the public page and source</li>
-              <li>Preserve pricing, availability and private previews</li>
-              <li>Open a PR with the verified change</li>
-              <li>Check the deployed page after merge</li>
-            </ol>
-            <div className="sheet-foot">
-              <span className="dot" />A record of the change and its evidence
+            <h3>
+              You changed the homepage.
+              <br />
+              We checked the next step.
+            </h3>
+            <p>
+              The page looked great. Its main shopping button led nowhere. Your
+              Optimiser caught the problem and prepared the fix.
+            </p>
+            <div className="hero-activity">
+              <span>↗</span>
+              <div>
+                <strong>Collection link repaired</strong>
+                <small>Visitors can reach the products again.</small>
+              </div>
             </div>
+            <div className="hero-activity">
+              <span>≡</span>
+              <div>
+                <strong>Page description restored</strong>
+                <small>Based on the page’s existing content.</small>
+              </div>
+            </div>
+            <div className="hero-activity">
+              <span>✓</span>
+              <div>
+                <strong>Website checked after the fix</strong>
+                <small>Then back to watching for the next update.</small>
+              </div>
+            </div>
+            <a className="text-link" href="#how">
+              Walk through the whole story →
+            </a>
           </div>
         </section>
-        <section className="promise">
-          <span>SEARCH FOUNDATIONS</span>
-          <span>USEFUL, SUPPORTED CONTENT</span>
-          <span>AI ANSWER VISIBILITY</span>
-          <span>VERIFIED CHANGES</span>
+        <section className="promise" aria-label="The ongoing process">
+          <span>NOTICE THE CHANGE</span>
+          <span>CHECK WHAT MATTERS</span>
+          <span>FIX WHAT’S CONFIRMED</span>
+          <span>KEEP WATCHING</span>
         </section>
         <section className="section marketing-section" id="how">
-          <span className="eyebrow">ONE CONTINUOUS PROCESS</span>
-          <h2>
-            From a finding
-            <br />
-            <em>to a verified improvement.</em>
-          </h2>
+          <div className="customer-intro">
+            <div>
+              <span className="eyebrow">
+                TRY IT. YOU’RE IN THE DRIVER’S SEAT.
+              </span>
+              <h2>
+                A website update.
+                <br />
+                <em>See what happens next.</em>
+              </h2>
+            </div>
+            <p>
+              Publish an example update, explore the problem, review the fix and
+              try the button afterward. Or choose a healthy update and see why
+              the agent leaves it alone.
+            </p>
+          </div>
           <Workflow />
+          <details className="customer-video">
+            <summary>▷ Prefer to watch? See the customer walkthrough</summary>
+            <video
+              controls
+              playsInline
+              preload="none"
+              poster="/demo-poster.png"
+              aria-label="Your Optimiser customer walkthrough"
+            >
+              <source src="/demo.mp4" type="video/mp4" />
+              <track
+                kind="captions"
+                src="/demo-captions.vtt"
+                srcLang="en"
+                label="English"
+                default
+              />
+              Your browser does not support video playback.
+            </video>
+            <p>
+              <small>
+                An illustrated customer journey based on a recorded website
+                repair. It shows the workflow, not a promise of higher rankings.
+              </small>
+            </p>
+          </details>
         </section>
-        <section className="feature-grid marketing-section">
+        <section
+          className="feature-grid marketing-section"
+          aria-label="What Your Optimiser looks after"
+        >
           <article>
-            <span className="number">01</span>
-            <h3>Fix what gets in the way.</h3>
+            <span className="number">01 / GET FOUND</span>
+            <h3>Keep the path to your business clear.</h3>
             <p>
-              Crawling, indexing, canonicals, structured data, internal links
-              and page experience. Evidence determines whether a change is
-              needed.
+              Catch broken links, missing page information and conflicting
+              signals that make a website harder to understand. Confirm the
+              problem, then make a focused fix.
             </p>
           </article>
           <article>
-            <span className="number">02</span>
-            <h3>Make the content worth finding.</h3>
+            <span className="number">02 / BE UNDERSTOOD</span>
+            <h3>Help search and AI understand your offer.</h3>
             <p>
-              Turn your verified business facts and original material into
-              useful refreshes. Missing information stays a dependency until you
-              supply it.
+              Keep your pages, product details and business information clear
+              and consistent. Build useful content from facts and original
+              material you can stand behind.
             </p>
           </article>
           <article>
-            <span className="number">03</span>
-            <h3>Learn without pretending.</h3>
+            <span className="number">03 / STAY IN CONTROL</span>
+            <h3>A working agent. A clear record.</h3>
             <p>
-              Measure citations separately from rankings and traffic. Run
-              repeatable experiments; distinguish observations from proven
-              outcomes.
+              See what needs attention, what changed and what was checked
+              afterward. Choose which changes need review. Healthy pages stay
+              alone; missing facts come back to you.
             </p>
           </article>
         </section>
         <section className="section marketing-section pricing" id="pricing">
           <div>
-            <span className="eyebrow">START SMALL. BUILD SOMETHING GOOD.</span>
+            <span className="eyebrow">GIVE YOUR WEBSITE A LITTLE BACKUP</span>
             <h2>Free to get started.</h2>
             <p>
-              Hosted workspaces use managed AI. Run the portable Python worker
-              locally with your own Ollama model or paid API account.
+              Connect your website once. Follow its checks and improvements from
+              one workspace. Start with the free plan; paid plans will come
+              later.
             </p>
           </div>
           <article className="price-card">
-            <span className="pill">AVAILABLE AT LAUNCH</span>
-            <h3>Free workspace</h3>
+            <span className="pill">FREE PLAN</span>
+            <h3>Your first workspace</h3>
             <strong>
               $0 <small>/ month</small>
             </strong>
             <ul>
-              <li>Up to 3 connected projects</li>
-              <li>100 runs per month, including follow-ups and probes</li>
-              <li>Evidence, findings and PR activity</li>
-              <li>Repository-scoped GitHub App access</li>
+              <li>Up to 3 connected websites</li>
+              <li>100 checks and follow-up tasks per month</li>
+              <li>Findings, proposed fixes and activity history</li>
+              <li>Choose the websites the agent can access</li>
             </ul>
             <Link className="button" href="/login?mode=register">
-              Create workspace ↗
+              Get started free ↗
             </Link>
-            <p>Paid plans will come later. No payment required today.</p>
+            <p>No payment required.</p>
           </article>
         </section>
         <section className="closing marketing-section">
+          <span className="eyebrow">THE WORK CONTINUES AFTER THE AUDIT</span>
           <h2>
-            Your code.
+            Keep building your business.
             <br />
-            <em>A working partner.</em>
+            <em>Keep your website looked after.</em>
           </h2>
           <p>
-            Incremental audits focus on affected website routes. Unchanged
-            inputs can reuse model results, while periodic audits catch changes
-            outside the repository.
+            Updates trigger checks of the affected pages. Regular checks catch
+            problems in between. The agent follows through from a confirmed
+            finding to a tested change—and keeps watching afterward.
           </p>
           <Link className="button" href="/login?mode=register">
-            Let’s get your website ready ↗
+            Give your website a working partner ↗
           </Link>
         </section>
       </main>
       <footer className="marketing-footer">
         <span>Your Optimiser</span>
-        <span>Measured improvements. Evidence before action.</span>
+        <span>Ongoing SEO care. Clear changes. Checked results.</span>
         <Link href="/login">Your workspace ↗</Link>
       </footer>
     </>
