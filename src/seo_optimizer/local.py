@@ -16,7 +16,7 @@ from pathlib import Path
 from typing import Any, Literal, cast
 
 import httpx
-from pydantic import ValidationError
+from pydantic import HttpUrl, ValidationError
 
 from seo_optimizer.application_models import (
     ProjectCreate,
@@ -140,7 +140,7 @@ def configure(args: argparse.Namespace) -> dict[str, Any]:
         name=args.name or repo.name,
         local_path=str(repo),
         branch=branch,
-        website_url=url,
+        website_url=HttpUrl(url),
         allowed_paths=[item.strip() for item in paths.split(",") if item.strip()],
         provider=ProviderConfig(
             kind=cast(Literal["rules", "ollama", "openai", "anthropic", "google"], provider),
@@ -205,7 +205,8 @@ def cron_line(config: Path, root: Path = ROOT) -> str:
     # Cron treats percent specially even inside shell quotes.
     invocation = shlex.join(command).replace("%", "\\%")
     marker = hashlib.sha256(str(config.resolve()).encode()).hexdigest()[:12]
-    return f"*/5 * * * * cd {shlex.quote(str(root)).replace('%', chr(92) + '%')} && {invocation} # your-optimiser:{marker}"
+    directory = shlex.quote(str(root)).replace("%", "\\%")
+    return f"*/5 * * * * cd {directory} && {invocation} # your-optimiser:{marker}"
 
 
 def install_cron(config: Path) -> None:
@@ -249,7 +250,8 @@ def run(value: dict[str, Any], *, once: bool, browser: bool) -> int:
             )
         url = f"http://127.0.0.1:{port}"
         print(
-            f"\nYour Optimiser: {url}\nBackground audits are on while this launcher runs. Ctrl+C stops both processes."
+            f"\nYour Optimiser: {url}\nBackground audits run while this launcher is open. "
+            "Ctrl+C stops both processes."
         )
         if browser:
             with httpx.Client(timeout=2) as client:
@@ -311,7 +313,8 @@ def main(argv: list[str] | None = None) -> int:
         return run(value, once=args.once, browser=not args.no_browser)
     except (ValueError, OSError, subprocess.SubprocessError, httpx.HTTPError, ValidationError):
         print(
-            "Setup could not complete. Check the repository, URL, model availability and password (12+ characters).",
+            "Setup could not complete. Check the repository, URL, model availability "
+            "and password (12+ characters).",
             file=sys.stderr,
         )
         return 1
