@@ -86,7 +86,10 @@ PR review comments/requests only queue work for a tracked agent PR, from a repos
 with write/maintain/admin permission. Feedback is untrusted task data, not new policy. A follow-up
 inspects the existing PR revision, applies the same source/evidence/path/content guards, runs checks
 and appends one file per commit without a force push. Closed, foreign or changed PR heads are
-rejected. At most five follow-up jobs are allowed per PR. Identical deliveries deduplicate.
+rejected. At most five follow-up jobs are allowed per PR. The PR index and delivery reservations are
+durable, so older PRs remain addressable after the recent-activity window rolls over.
+Identical deliveries deduplicate. Reconnecting and selecting a repository restores verified
+installation access when a paused project resumes.
 
 Hosted PRs require owner review/merge. A signed merged-PR event resumes deployment verification.
 The worker waits for the configured environment's successful GitHub deployment record and then
