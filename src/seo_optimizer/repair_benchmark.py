@@ -100,6 +100,8 @@ def benchmark_repairs(
     paid_model: str,
     arms: list[str] | None = None,
 ) -> int:
+    output = output.resolve()
+    fixture = fixture.resolve()
     output.parent.mkdir(parents=True, exist_ok=True)
     root = output.parent / ("repair-work-" + secrets.token_hex(6))
     repository = root / "repository"
