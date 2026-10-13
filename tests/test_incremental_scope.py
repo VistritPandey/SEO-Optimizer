@@ -42,3 +42,10 @@ def test_next_routes_handle_src_groups_and_skip_unresolved_dynamic_api_paths(tmp
         "/shop": "src/app/(store)/shop/page.tsx",
         "/contact": "src/pages/contact.tsx",
     }
+
+
+def test_static_root_entrypoint_is_inferred_without_allowing_repository_root(tmp_path):
+    (tmp_path / "index.html").write_text("<title>Example</title>")
+    spec = ProjectSpec(name="Site", website_url=HttpUrl("https://example.test"))
+    assert infer_route_map(tmp_path, spec)["/"] == "index.html"
+    assert "." not in spec.allowed_paths
