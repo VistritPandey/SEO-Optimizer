@@ -42,6 +42,12 @@ export type Project = {
     [key: string]: unknown;
   };
 };
+export type RecordedEvidence = {
+  id: string;
+  observation: string;
+  data: unknown;
+  [key: string]: unknown;
+};
 export type Job = {
   id: string;
   status: string;
@@ -53,6 +59,8 @@ export type Job = {
     pr?: { url: string; number: number };
     verification?: unknown[];
     report?: unknown;
+    evidence?: RecordedEvidence[];
+    after_evidence?: RecordedEvidence[];
   };
 };
 export type Activity = {
