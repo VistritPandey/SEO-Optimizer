@@ -609,7 +609,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             from seo_optimizer.hosted import connected_create
 
             value = connected_create(value, account.id, storage, configuration)
-        return project_json(storage.create_project(account.id, value))
+        project = storage.create_project(account.id, value)
+        from seo_optimizer.followups import register_project
+
+        register_project(storage, project)
+        return project_json(project)
 
     @app.get("/api/v1/projects/{id}")
     def api_project(request: Request, id: str) -> Any:
@@ -757,35 +761,24 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             payload = json.loads(raw)
         except json.JSONDecodeError:
             raise HTTPException(400, "Webhook body is invalid") from None
-        spec = ProjectSpec.model_validate(project.spec)
-        if payload.get("repository", {}).get("full_name") != spec.repository:
-            raise HTTPException(403, "Repository does not match this connection")
-        event = request.headers.get("x-github-event", "")
-        if (
-            event == "push"
-            and payload.get("ref") == "refs/heads/" + spec.branch
-            and not payload.get("deleted")
-        ):
-            sha = str(payload.get("after", ""))
-            if not re_sha(sha):
-                raise HTTPException(400, "Invalid commit revision")
-            if any(
-                job.result.get("merged_sha") == sha for job in storage.jobs(project.tenant_id, id)
-            ):
-                return {"status": "own_change_suppressed"}
-            job = storage.enqueue(
-                project.tenant_id,
-                id,
-                "push",
-                "push:" + sha,
-                {"before": payload.get("before"), "after": sha},
-            )
-            return {"status": "queued", "job_id": job.id}
-        return {"status": "ignored"}
+        if not isinstance(payload, dict):
+            raise HTTPException(400, "Invalid webhook payload")
+        from seo_optimizer.followups import handle_event
+
+        return handle_event(
+            storage,
+            project,
+            request.headers.get("x-github-event", ""),
+            payload,
+            request.headers.get("x-github-delivery", ""),
+        )
 
     from seo_optimizer.hosted import install_routes
 
     install_routes(app, storage, configuration, require_user)
+    from seo_optimizer.followups import install_webhook
+
+    install_webhook(app, storage, configuration)
     return app
 
 
