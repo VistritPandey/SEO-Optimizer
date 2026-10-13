@@ -1,0 +1,1741 @@
+{
+  "status": "development_history_retained",
+  "source": "Earlier exploratory repository runs",
+  "reason": "Controls originally affected by a concurrent resume attempt were invalidated and retested. A subsequent frozen final run is authoritative.",
+  "runs": [
+    {
+      "fixture_sha256": "2e710515e9a2dd9c59ca76c4e250d7a2f7513344914c0d3f991e5525af7cdd19",
+      "base_sha": "04d8f3499bde95216279c77bf0fafd740a17c32c",
+      "arms": [
+        {
+          "arm": "rules",
+          "repair_passed": false,
+          "repair_worker_status": "complete",
+          "healthy_control_passed": true,
+          "irrelevant_control_passed": true,
+          "invalidated_control_attempts": []
+        },
+        {
+          "arm": "paid-minimal",
+          "repair_passed": false,
+          "repair_worker_status": "complete",
+          "healthy_control_passed": true,
+          "irrelevant_control_passed": true,
+          "invalidated_control_attempts": []
+        },
+        {
+          "arm": "paid-full",
+          "repair_passed": true,
+          "repair_worker_status": "complete",
+          "healthy_control_passed": true,
+          "irrelevant_control_passed": true,
+          "invalidated_control_attempts": [
+            {
+              "healthy_control": {
+                "passed": false,
+                "status": "complete",
+                "changed": true,
+                "result": {
+                  "summary": "Audited 3 pages; 0 new findings",
+                  "report": {
+                    "score": 100,
+                    "score_label": "Observed audit health",
+                    "coverage": [
+                      {
+                        "check_id": "tech.indexability",
+                        "title": "Indexability matches declared intent",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.robots",
+                        "title": "Crawl access and indexing are distinct",
+                        "module": "technical",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "tech.title",
+                        "title": "Descriptive page titles",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.metadata",
+                        "title": "Snippets describe actual content",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.canonical",
+                        "title": "Consistent canonical declarations",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.status",
+                        "title": "Meaningful HTTP and redirect behavior",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.links",
+                        "title": "Discoverable working internal links",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.sitemap",
+                        "title": "Sitemap reflects preferred public pages",
+                        "module": "technical",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "tech.rendering",
+                        "title": "Important content is available to crawlers",
+                        "module": "technical",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "tech.migration",
+                        "title": "Preserve search behavior during migrations",
+                        "module": "technical",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "perf.cwv",
+                        "title": "Measure performance with correct evidence",
+                        "module": "performance",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "perf.media",
+                        "title": "Useful media and stable layout",
+                        "module": "performance",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "perf.navigation",
+                        "title": "Main content and navigation remain usable",
+                        "module": "performance",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.strategy",
+                        "title": "Prioritize work against business intent",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.competitors",
+                        "title": "Research gaps without copying competitors",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.factual",
+                        "title": "Ground claims and business details",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.originality",
+                        "title": "Create useful content rather than scaled filler",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.refresh",
+                        "title": "Refresh or consolidate with measured intent",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.crawlers",
+                        "title": "Respect independent search and training access",
+                        "module": "geo",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "geo.google-llms",
+                        "title": "Do not prescribe llms.txt for Google ranking",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.google-faq",
+                        "title": "Keep FAQ content separate from deprecated rich results",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.entities",
+                        "title": "Consistent, attributable entities and answers",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.experiment",
+                        "title": "Test citation hypotheses rather than promise ranking",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.visibility",
+                        "title": "Observe engine-specific visibility",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.google-inclusion",
+                        "title": "Preserve Google AI inclusion preferences",
+                        "module": "geo",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "local.identity",
+                        "title": "Use real consistent local business facts",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.hours",
+                        "title": "Do not invent operating hours",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.schema",
+                        "title": "Local markup describes visible real locations",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.relevance",
+                        "title": "Create useful local pages without fake reach",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "commerce.facts",
+                        "title": "Prices and stock match the actual offer",
+                        "module": "ecommerce",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "commerce.variants",
+                        "title": "Represent real product variants consistently",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "commerce.navigation",
+                        "title": "Manage category and faceted discovery",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "commerce.merchants",
+                        "title": "Keep merchant accounts and feeds distinct from code",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "intl.hreflang",
+                        "title": "Reciprocal equivalent language alternatives",
+                        "module": "international",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "intl.localization",
+                        "title": "Localized content and facts are genuine",
+                        "module": "international",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "ops.metrics",
+                        "title": "Separate measurements and unknown values",
+                        "module": "operations",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "ops.incremental",
+                        "title": "Audit affected pages and reconcile periodically",
+                        "module": "operations",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "ops.indexnow",
+                        "title": "Notify supported engines after verified changes",
+                        "module": "operations",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "ops.verification",
+                        "title": "Verify the specific change before shipping",
+                        "module": "operations",
+                        "state": "needs_model"
+                      }
+                    ],
+                    "evaluated_checks": 8,
+                    "total_checks": 39,
+                    "pages": 3,
+                    "findings": 0,
+                    "performance": [],
+                    "unknown_metrics": [
+                      "Search rankings",
+                      "AI citation share",
+                      "Conversions",
+                      "Field Web Vitals"
+                    ],
+                    "page_summaries": [
+                      {
+                        "url": "http://127.0.0.1:50238/",
+                        "evidence_id": "a2fa89a6-be5b-46fd-8c6b-d1cbb33ba345",
+                        "title": "Cedar Workshop \u2014 Thoughtful lighting",
+                        "excerpt": "Cedar Workshop \u2014 Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      },
+                      {
+                        "url": "http://127.0.0.1:50238/shop/",
+                        "evidence_id": "76f3ed36-5998-48a6-bfab-ddf5df325ad0",
+                        "title": "Lighting collection \u2014 Cedar Workshop",
+                        "excerpt": "Lighting collection \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      },
+                      {
+                        "url": "http://127.0.0.1:50238/products/cedar-lamp/",
+                        "evidence_id": "f4b3025c-2b7b-4aa6-838a-0f0d06c211f2",
+                        "title": "Cedar Desk Lamp \u2014 Cedar Workshop",
+                        "excerpt": "Cedar Desk Lamp \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      }
+                    ],
+                    "tool_trace": [
+                      {
+                        "name": "run_checks",
+                        "success": true,
+                        "arguments": {},
+                        "result": {
+                          "success": true,
+                          "scope": "original_snapshot",
+                          "staged_files": [],
+                          "checks": [
+                            {
+                              "name": "python",
+                              "passed": true,
+                              "exit_code": 0,
+                              "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+                              "stderr": ""
+                            }
+                          ]
+                        },
+                        "runtime_ms": 412.47433301759884
+                      },
+                      {
+                        "name": "get_diff",
+                        "success": true,
+                        "arguments": {},
+                        "result": {
+                          "success": true,
+                          "changed_files": [
+                            "web/index.html"
+                          ],
+                          "route_map": {
+                            "/": "web/index.html",
+                            "/shop/": "web/shop/index.html",
+                            "/products/cedar-lamp/": "web/products/cedar-lamp/index.html",
+                            "/preview/": "web/preview/index.html"
+                          },
+                          "staged_files": [],
+                          "scope": "Original revision changes plus pending model proposals"
+                        },
+                        "runtime_ms": 0.050291011575609446
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "ff6159ce-6662-48fb-9ce0-a759a3d08969",
+                          "text": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n<meta name=\"description\" content=\"Cedar Workshop lighting: a solid cedar desk lamp with a linen shade and warm 2700K light.\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 2.0627499907277524
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/shop/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "95491330-005c-4cea-bf6f-d713e53d4a3b",
+                          "text": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Lighting collection \u2014 Cedar Workshop</title><meta name=\"description\" content=\"Explore the Cedar Desk Lamp with solid cedar base, linen shade and warm 2700K light, priced at USD 89.00.\"><link rel=\"stylesheet\" href=\"/style.css\"></head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"eyebrow\">The collection</div><h1>A warmer corner.</h1><div class=\"grid\"><a class=\"card\" href=\"/products/cedar-lamp/\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp\"></div><h2>Cedar Desk Lamp</h2><p>Solid cedar. Linen shade. Warm 2700K light.</p><div class=\"price\">USD 89.00</div><span class=\"tag\">VIEW THE LAMP \u2197</span></a></div></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer></body></html>\n"
+                        },
+                        "runtime_ms": 0.7022499921731651
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/products/cedar-lamp/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "030cb26d-3ae6-4b3d-9183-edb4958c6923",
+                          "text": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"89.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\"}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 0.5940840346738696
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/preview/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "e447b3a0-a351-4207-89e7-ea161a21894c",
+                          "text": "<!doctype html><html lang=\"en\"><head><title>Internal preview</title><meta name=\"robots\" content=\"noindex,nofollow\"></head><body><h1>Private preview</h1><p>This intentional internal page must remain unchanged.</p></body></html>\n"
+                        },
+                        "runtime_ms": 0.594666984397918
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/robots.txt"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "7e33d96a-262b-4570-96c8-c53dc4b0315a",
+                          "text": "User-agent: *\nAllow: /\nDisallow: /preview/\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\nDisallow: /preview/\n"
+                        },
+                        "runtime_ms": 2.0337500027380884
+                      },
+                      {
+                        "name": "inspect_route",
+                        "success": true,
+                        "arguments": {
+                          "url": "http://127.0.0.1:50238/"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "a2fa89a6-be5b-46fd-8c6b-d1cbb33ba345",
+                          "data": {
+                            "status_code": 200,
+                            "headers": {
+                              "content-type": "text/html"
+                            },
+                            "link_status": {
+                              "http://127.0.0.1:50238/": 200,
+                              "http://127.0.0.1:50238/shop/": 200,
+                              "http://127.0.0.1:50238/products/cedar-lamp/": 200
+                            },
+                            "robots_txt": "User-agent: *\nAllow: /\nDisallow: /preview/\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\nDisallow: /preview/\n",
+                            "sitemap_xml": "",
+                            "final_url": "http://127.0.0.1:50238/"
+                          },
+                          "html": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n<meta name=\"description\" content=\"Cedar Workshop lighting: a solid cedar desk lamp with a linen shade and warm 2700K light.\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 0.07033400470390916
+                      },
+                      {
+                        "name": "inspect_route",
+                        "success": true,
+                        "arguments": {
+                          "url": "http://127.0.0.1:50238/shop/"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "76f3ed36-5998-48a6-bfab-ddf5df325ad0",
+                          "data": {
+                            "status_code": 200,
+                            "headers": {
+                              "content-type": "text/html"
+                            },
+                            "link_status": {
+                              "http://127.0.0.1:50238/": 200,
+                              "http://127.0.0.1:50238/shop/": 200,
+                              "http://127.0.0.1:50238/products/cedar-lamp/": 200
+                            },
+                            "robots_txt": "User-agent: *\nAllow: /\nDisallow: /preview/\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\nDisallow: /preview/\n",
+                            "sitemap_xml": "",
+                            "final_url": "http://127.0.0.1:50238/shop/"
+                          },
+                          "html": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Lighting collection \u2014 Cedar Workshop</title><meta name=\"description\" content=\"Explore the Cedar Desk Lamp with solid cedar base, linen shade and warm 2700K light, priced at USD 89.00.\"><link rel=\"stylesheet\" href=\"/style.css\"></head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"eyebrow\">The collection</div><h1>A warmer corner.</h1><div class=\"grid\"><a class=\"card\" href=\"/products/cedar-lamp/\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp\"></div><h2>Cedar Desk Lamp</h2><p>Solid cedar. Linen shade. Warm 2700K light.</p><div class=\"price\">USD 89.00</div><span class=\"tag\">VIEW THE LAMP \u2197</span></a></div></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer></body></html>\n"
+                        },
+                        "runtime_ms": 0.008417002391070127
+                      },
+                      {
+                        "name": "inspect_route",
+                        "success": true,
+                        "arguments": {
+                          "url": "http://127.0.0.1:50238/products/cedar-lamp/"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "f4b3025c-2b7b-4aa6-838a-0f0d06c211f2",
+                          "data": {
+                            "status_code": 200,
+                            "headers": {
+                              "content-type": "text/html"
+                            },
+                            "link_status": {
+                              "http://127.0.0.1:50238/": 200,
+                              "http://127.0.0.1:50238/shop/": 200,
+                              "http://127.0.0.1:50238/products/cedar-lamp/": 200
+                            },
+                            "robots_txt": "User-agent: *\nAllow: /\nDisallow: /preview/\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\nDisallow: /preview/\n",
+                            "sitemap_xml": "",
+                            "final_url": "http://127.0.0.1:50238/products/cedar-lamp/",
+                            "visible_offer": {
+                              "price": "89.00",
+                              "priceCurrency": "USD",
+                              "availability": "https://schema.org/InStock",
+                              "method": "visible browser text; single unambiguous main offer"
+                            },
+                            "visible_offer_evidence_id": "c4b18c04-ed1a-4e54-a966-dbde352b0c09"
+                          },
+                          "html": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"89.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\"}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 0.009584007784724236
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.metadata"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.metadata"
+                        },
+                        "runtime_ms": 0.9197919862344861
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.canonical"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.canonical"
+                        },
+                        "runtime_ms": 0.054875039495527744
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "commerce.facts"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "commerce.facts"
+                        },
+                        "runtime_ms": 0.03837497206404805
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.links"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.links"
+                        },
+                        "runtime_ms": 0.017000013031065464
+                      }
+                    ],
+                    "model_runtime_ms": 46928.12125000637,
+                    "model_summary": "Verified site metadata, canonical declarations, JSON-LD product offer schema, internal navigation links, robots.txt crawler directives, and private preview controls against trusted facts and observed routes. All runtime verification checks passed with no defects identified; no further action or changes required.",
+                    "usage": {
+                      "input_tokens": 42630,
+                      "output_tokens": 5960,
+                      "api_cost_usd": null,
+                      "electricity_cost_usd": null,
+                      "hardware_cost_usd": null
+                    },
+                    "model": "gemini-3.8-flash"
+                  },
+                  "findings": [],
+                  "revision": "7b04f6072a8b76c07750c3c678208cc902b85b97",
+                  "audited_urls": [
+                    "http://127.0.0.1:50238/",
+                    "http://127.0.0.1:50238/shop/",
+                    "http://127.0.0.1:50238/products/cedar-lamp/"
+                  ],
+                  "verification_urls": [
+                    "http://127.0.0.1:50238/",
+                    "http://127.0.0.1:50238/shop/",
+                    "http://127.0.0.1:50238/products/cedar-lamp/"
+                  ],
+                  "before_defects": []
+                },
+                "runtime_seconds": 49.913
+              },
+              "irrelevant_control": {
+                "passed": false,
+                "result": {
+                  "summary": "Changes verified on the deployed website",
+                  "report": {
+                    "score": 100,
+                    "score_label": "Observed audit health",
+                    "coverage": [
+                      {
+                        "check_id": "tech.indexability",
+                        "title": "Indexability matches declared intent",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.robots",
+                        "title": "Crawl access and indexing are distinct",
+                        "module": "technical",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "tech.title",
+                        "title": "Descriptive page titles",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.metadata",
+                        "title": "Snippets describe actual content",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.canonical",
+                        "title": "Consistent canonical declarations",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.status",
+                        "title": "Meaningful HTTP and redirect behavior",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.links",
+                        "title": "Discoverable working internal links",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.sitemap",
+                        "title": "Sitemap reflects preferred public pages",
+                        "module": "technical",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "tech.rendering",
+                        "title": "Important content is available to crawlers",
+                        "module": "technical",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "tech.migration",
+                        "title": "Preserve search behavior during migrations",
+                        "module": "technical",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "perf.cwv",
+                        "title": "Measure performance with correct evidence",
+                        "module": "performance",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "perf.media",
+                        "title": "Useful media and stable layout",
+                        "module": "performance",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "perf.navigation",
+                        "title": "Main content and navigation remain usable",
+                        "module": "performance",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.strategy",
+                        "title": "Prioritize work against business intent",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.competitors",
+                        "title": "Research gaps without copying competitors",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.factual",
+                        "title": "Ground claims and business details",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.originality",
+                        "title": "Create useful content rather than scaled filler",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.refresh",
+                        "title": "Refresh or consolidate with measured intent",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.crawlers",
+                        "title": "Respect independent search and training access",
+                        "module": "geo",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "geo.google-llms",
+                        "title": "Do not prescribe llms.txt for Google ranking",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.google-faq",
+                        "title": "Keep FAQ content separate from deprecated rich results",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.entities",
+                        "title": "Consistent, attributable entities and answers",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.experiment",
+                        "title": "Test citation hypotheses rather than promise ranking",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.visibility",
+                        "title": "Observe engine-specific visibility",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.google-inclusion",
+                        "title": "Preserve Google AI inclusion preferences",
+                        "module": "geo",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "local.identity",
+                        "title": "Use real consistent local business facts",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.hours",
+                        "title": "Do not invent operating hours",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.schema",
+                        "title": "Local markup describes visible real locations",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.relevance",
+                        "title": "Create useful local pages without fake reach",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "commerce.facts",
+                        "title": "Prices and stock match the actual offer",
+                        "module": "ecommerce",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "commerce.variants",
+                        "title": "Represent real product variants consistently",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "commerce.navigation",
+                        "title": "Manage category and faceted discovery",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "commerce.merchants",
+                        "title": "Keep merchant accounts and feeds distinct from code",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "intl.hreflang",
+                        "title": "Reciprocal equivalent language alternatives",
+                        "module": "international",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "intl.localization",
+                        "title": "Localized content and facts are genuine",
+                        "module": "international",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "ops.metrics",
+                        "title": "Separate measurements and unknown values",
+                        "module": "operations",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "ops.incremental",
+                        "title": "Audit affected pages and reconcile periodically",
+                        "module": "operations",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "ops.indexnow",
+                        "title": "Notify supported engines after verified changes",
+                        "module": "operations",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "ops.verification",
+                        "title": "Verify the specific change before shipping",
+                        "module": "operations",
+                        "state": "needs_model"
+                      }
+                    ],
+                    "evaluated_checks": 8,
+                    "total_checks": 39,
+                    "pages": 3,
+                    "findings": 0,
+                    "performance": [],
+                    "unknown_metrics": [
+                      "Search rankings",
+                      "AI citation share",
+                      "Conversions",
+                      "Field Web Vitals"
+                    ],
+                    "page_summaries": [
+                      {
+                        "url": "http://127.0.0.1:50238/",
+                        "evidence_id": "2ad5f81b-526c-49bc-9f2d-8dce4eee2d11",
+                        "title": "Cedar Workshop \u2014 Thoughtful lighting",
+                        "excerpt": "Cedar Workshop \u2014 Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      },
+                      {
+                        "url": "http://127.0.0.1:50238/products/cedar-lamp/",
+                        "evidence_id": "eb8052d0-e707-4c09-b72e-3a24c6401c8e",
+                        "title": "Cedar Desk Lamp \u2014 Cedar Workshop",
+                        "excerpt": "Cedar Desk Lamp \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      },
+                      {
+                        "url": "http://127.0.0.1:50238/shop/",
+                        "evidence_id": "04cddc1a-2d25-478a-aff9-dbb3eb0aa310",
+                        "title": "Lighting collection \u2014 Cedar Workshop",
+                        "excerpt": "Lighting collection \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      }
+                    ],
+                    "usage": {
+                      "input_tokens": 104450,
+                      "output_tokens": 9165,
+                      "api_cost_usd": null,
+                      "electricity_cost_usd": null,
+                      "hardware_cost_usd": null
+                    },
+                    "model": "gemini-3.8-flash",
+                    "tool_trace": [
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "5f7d6f73-ce78-49d7-83e8-07c938c1fb7e",
+                          "text": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 1.03087502066046
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/products/cedar-lamp/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "166cfdf3-a460-4f74-a55b-69e836df67e2",
+                          "text": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/shop/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"129.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\",}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 0.5075830267742276
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/shop/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "397e516e-8d05-4293-9e84-9390a57cf78f",
+                          "text": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Lighting collection \u2014 Cedar Workshop</title><meta name=\"description\" content=\"Explore the Cedar Desk Lamp with solid cedar base, linen shade and warm 2700K light, priced at USD 89.00.\"><link rel=\"stylesheet\" href=\"/style.css\"></head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"eyebrow\">The collection</div><h1>A warmer corner.</h1><div class=\"grid\"><a class=\"card\" href=\"/products/cedar-lamp/\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp\"></div><h2>Cedar Desk Lamp</h2><p>Solid cedar. Linen shade. Warm 2700K light.</p><div class=\"price\">USD 89.00</div><span class=\"tag\">VIEW THE LAMP \u2197</span></a></div></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer></body></html>\n"
+                        },
+                        "runtime_ms": 0.42524997843429446
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/preview/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "3ae73de5-6c8c-4882-8e6b-0d36c6f9a74e",
+                          "text": "<!doctype html><html lang=\"en\"><head><title>Internal preview</title><meta name=\"robots\" content=\"noindex,nofollow\"></head><body><h1>Private preview</h1><p>This intentional internal page must remain unchanged.</p></body></html>\n"
+                        },
+                        "runtime_ms": 0.8971249917522073
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/robots.txt"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "95ace18a-77ac-4969-ae23-616252806a81",
+                          "text": "User-agent: *\nAllow: /\nDisallow: /preview/\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\nDisallow: /preview/\n"
+                        },
+                        "runtime_ms": 0.9851249633356929
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.links"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.links"
+                        },
+                        "runtime_ms": 0.0902090105228126
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.metadata"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.metadata"
+                        },
+                        "runtime_ms": 0.016707985196262598
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.canonical"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.canonical"
+                        },
+                        "runtime_ms": 0.01029099803417921
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "geo.entities"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "geo.entities"
+                        },
+                        "runtime_ms": 0.010416028089821339
+                      },
+                      {
+                        "name": "apply_patch",
+                        "success": true,
+                        "arguments": {
+                          "evidence_ids": [
+                            "5f7d6f73-ce78-49d7-83e8-07c938c1fb7e",
+                            "fed7fe84-f2ad-4615-8410-834d24e7376b"
+                          ],
+                          "fact_ids": [
+                            "product"
+                          ],
+                          "before": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "check_id": "tech.links",
+                          "path": "web/index.html",
+                          "after": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "reason": "Update internal link to working collection route /shop/ and add factual meta description"
+                        },
+                        "result": {
+                          "success": true,
+                          "staged_for_independent_verification": true,
+                          "replaced_previous_proposal": false
+                        },
+                        "runtime_ms": 0.7595000206492841
+                      },
+                      {
+                        "name": "apply_patch",
+                        "success": true,
+                        "arguments": {
+                          "fact_ids": [
+                            "product"
+                          ],
+                          "evidence_ids": [
+                            "166cfdf3-a460-4f74-a55b-69e836df67e2",
+                            "c7c4d808-29d3-4277-af31-60b1a60cbf71"
+                          ],
+                          "after": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"89.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\"}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "path": "web/products/cedar-lamp/index.html",
+                          "reason": "Remove conflicting canonical to /shop/ and fix JSON-LD offer price to USD 89.00 with valid syntax",
+                          "before": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/shop/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"129.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\",}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "check_id": "tech.canonical"
+                        },
+                        "result": {
+                          "success": true,
+                          "staged_for_independent_verification": true,
+                          "replaced_previous_proposal": false
+                        },
+                        "runtime_ms": 0.8800830109976232
+                      },
+                      {
+                        "name": "get_diff",
+                        "success": true,
+                        "arguments": {},
+                        "result": {
+                          "success": true,
+                          "changed_files": [
+                            "README.md",
+                            "web/index.html",
+                            "web/products/cedar-lamp/index.html"
+                          ],
+                          "route_map": {
+                            "/": "web/index.html",
+                            "/shop/": "web/shop/index.html",
+                            "/products/cedar-lamp/": "web/products/cedar-lamp/index.html",
+                            "/preview/": "web/preview/index.html"
+                          },
+                          "staged_files": [
+                            "web/index.html",
+                            "web/products/cedar-lamp/index.html"
+                          ],
+                          "scope": "Original revision changes plus pending model proposals"
+                        },
+                        "runtime_ms": 0.012042000889778137
+                      },
+                      {
+                        "name": "run_checks",
+                        "success": true,
+                        "arguments": {},
+                        "result": {
+                          "success": true,
+                          "scope": "staged_proposals",
+                          "staged_files": [
+                            "web/index.html",
+                            "web/products/cedar-lamp/index.html"
+                          ],
+                          "checks": [
+                            {
+                              "name": "HTML metadata",
+                              "path": "web/index.html",
+                              "passed": true
+                            },
+                            {
+                              "name": "HTML metadata",
+                              "path": "web/products/cedar-lamp/index.html",
+                              "passed": true
+                            },
+                            {
+                              "name": "python",
+                              "passed": true,
+                              "exit_code": 0,
+                              "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+                              "stderr": ""
+                            }
+                          ]
+                        },
+                        "runtime_ms": 881.9187079789117
+                      }
+                    ],
+                    "model_runtime_ms": 70248.45516699133,
+                    "model_summary": "Investigated and resolved confirmed technical and structured data defects across the site while preserving private preview pages and crawler policy. Staged and verified patches via tools: updated the broken collection link on web/index.html to /shop/ and added a factual meta description matching page content; removed the conflicting canonical tag pointing to /shop/ from web/products/cedar-lamp/index.html and corrected the Product JSON-LD markup to valid JSON with the verified price of USD 89.00 in stock. Independent verification via run_checks succeeded across all test suites."
+                  },
+                  "findings": [],
+                  "revision": "c78f8a82de3c0a43eb1459706fb4430a8e2b04ce",
+                  "audited_urls": [
+                    "http://127.0.0.1:50238/",
+                    "http://127.0.0.1:50238/products/cedar-lamp/",
+                    "http://127.0.0.1:50238/shop/",
+                    "http://127.0.0.1:50238/collections/lighting/"
+                  ],
+                  "verification_urls": [
+                    "http://127.0.0.1:50238/",
+                    "http://127.0.0.1:50238/products/cedar-lamp/",
+                    "http://127.0.0.1:50238/shop/"
+                  ],
+                  "before_defects": [
+                    {
+                      "check_id": "tech.links",
+                      "url": "http://127.0.0.1:50238/"
+                    },
+                    {
+                      "check_id": "tech.metadata",
+                      "url": "http://127.0.0.1:50238/"
+                    },
+                    {
+                      "check_id": "tech.canonical",
+                      "url": "http://127.0.0.1:50238/products/cedar-lamp/"
+                    },
+                    {
+                      "check_id": "geo.entities",
+                      "url": "http://127.0.0.1:50238/products/cedar-lamp/"
+                    }
+                  ],
+                  "proposals": [
+                    {
+                      "path": "web/index.html",
+                      "before": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                      "after": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                      "reason": "Update internal link to working collection route /shop/ and add factual meta description",
+                      "check_id": "tech.links",
+                      "evidence_ids": [
+                        "5f7d6f73-ce78-49d7-83e8-07c938c1fb7e",
+                        "fed7fe84-f2ad-4615-8410-834d24e7376b"
+                      ],
+                      "fact_ids": [
+                        "product"
+                      ]
+                    },
+                    {
+                      "path": "web/products/cedar-lamp/index.html",
+                      "before": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/shop/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"129.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\",}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                      "after": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"89.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\"}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                      "reason": "Remove conflicting canonical to /shop/ and fix JSON-LD offer price to USD 89.00 with valid syntax",
+                      "check_id": "tech.canonical",
+                      "evidence_ids": [
+                        "166cfdf3-a460-4f74-a55b-69e836df67e2",
+                        "c7c4d808-29d3-4277-af31-60b1a60cbf71"
+                      ],
+                      "fact_ids": [
+                        "product"
+                      ]
+                    }
+                  ],
+                  "verification": [
+                    {
+                      "name": "HTML metadata",
+                      "path": "web/index.html",
+                      "passed": true
+                    },
+                    {
+                      "name": "HTML metadata",
+                      "path": "web/products/cedar-lamp/index.html",
+                      "passed": true
+                    },
+                    {
+                      "name": "python",
+                      "passed": true,
+                      "exit_code": 0,
+                      "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+                      "stderr": ""
+                    }
+                  ],
+                  "fixed_checks": [
+                    "tech.canonical",
+                    "tech.links"
+                  ],
+                  "fixed_targets": [
+                    {
+                      "check_id": "tech.links",
+                      "url": "http://127.0.0.1:50238/"
+                    },
+                    {
+                      "check_id": "tech.canonical",
+                      "url": "http://127.0.0.1:50238/products/cedar-lamp/"
+                    }
+                  ],
+                  "merged_sha": "c78f8a82de3c0a43eb1459706fb4430a8e2b04ce",
+                  "stage": "verified",
+                  "verified_fixes": 2,
+                  "after_report": {
+                    "score": 100,
+                    "score_label": "Observed audit health",
+                    "coverage": [
+                      {
+                        "check_id": "tech.indexability",
+                        "title": "Indexability matches declared intent",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.robots",
+                        "title": "Crawl access and indexing are distinct",
+                        "module": "technical",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "tech.title",
+                        "title": "Descriptive page titles",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.metadata",
+                        "title": "Snippets describe actual content",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.canonical",
+                        "title": "Consistent canonical declarations",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.status",
+                        "title": "Meaningful HTTP and redirect behavior",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.links",
+                        "title": "Discoverable working internal links",
+                        "module": "technical",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "tech.sitemap",
+                        "title": "Sitemap reflects preferred public pages",
+                        "module": "technical",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "tech.rendering",
+                        "title": "Important content is available to crawlers",
+                        "module": "technical",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "tech.migration",
+                        "title": "Preserve search behavior during migrations",
+                        "module": "technical",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "perf.cwv",
+                        "title": "Measure performance with correct evidence",
+                        "module": "performance",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "perf.media",
+                        "title": "Useful media and stable layout",
+                        "module": "performance",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "perf.navigation",
+                        "title": "Main content and navigation remain usable",
+                        "module": "performance",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.strategy",
+                        "title": "Prioritize work against business intent",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.competitors",
+                        "title": "Research gaps without copying competitors",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.factual",
+                        "title": "Ground claims and business details",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.originality",
+                        "title": "Create useful content rather than scaled filler",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "content.refresh",
+                        "title": "Refresh or consolidate with measured intent",
+                        "module": "content",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.crawlers",
+                        "title": "Respect independent search and training access",
+                        "module": "geo",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "geo.google-llms",
+                        "title": "Do not prescribe llms.txt for Google ranking",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.google-faq",
+                        "title": "Keep FAQ content separate from deprecated rich results",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.entities",
+                        "title": "Consistent, attributable entities and answers",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.experiment",
+                        "title": "Test citation hypotheses rather than promise ranking",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.visibility",
+                        "title": "Observe engine-specific visibility",
+                        "module": "geo",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "geo.google-inclusion",
+                        "title": "Preserve Google AI inclusion preferences",
+                        "module": "geo",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "local.identity",
+                        "title": "Use real consistent local business facts",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.hours",
+                        "title": "Do not invent operating hours",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.schema",
+                        "title": "Local markup describes visible real locations",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "local.relevance",
+                        "title": "Create useful local pages without fake reach",
+                        "module": "local",
+                        "state": "not_applicable"
+                      },
+                      {
+                        "check_id": "commerce.facts",
+                        "title": "Prices and stock match the actual offer",
+                        "module": "ecommerce",
+                        "state": "healthy"
+                      },
+                      {
+                        "check_id": "commerce.variants",
+                        "title": "Represent real product variants consistently",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "commerce.navigation",
+                        "title": "Manage category and faceted discovery",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "commerce.merchants",
+                        "title": "Keep merchant accounts and feeds distinct from code",
+                        "module": "ecommerce",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "intl.hreflang",
+                        "title": "Reciprocal equivalent language alternatives",
+                        "module": "international",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "intl.localization",
+                        "title": "Localized content and facts are genuine",
+                        "module": "international",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "ops.metrics",
+                        "title": "Separate measurements and unknown values",
+                        "module": "operations",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "ops.incremental",
+                        "title": "Audit affected pages and reconcile periodically",
+                        "module": "operations",
+                        "state": "needs_model"
+                      },
+                      {
+                        "check_id": "ops.indexnow",
+                        "title": "Notify supported engines after verified changes",
+                        "module": "operations",
+                        "state": "needs_data"
+                      },
+                      {
+                        "check_id": "ops.verification",
+                        "title": "Verify the specific change before shipping",
+                        "module": "operations",
+                        "state": "needs_model"
+                      }
+                    ],
+                    "evaluated_checks": 8,
+                    "total_checks": 39,
+                    "pages": 3,
+                    "findings": 0,
+                    "performance": [],
+                    "unknown_metrics": [
+                      "Search rankings",
+                      "AI citation share",
+                      "Conversions",
+                      "Field Web Vitals"
+                    ],
+                    "page_summaries": [
+                      {
+                        "url": "http://127.0.0.1:50238/",
+                        "evidence_id": "2ad5f81b-526c-49bc-9f2d-8dce4eee2d11",
+                        "title": "Cedar Workshop \u2014 Thoughtful lighting",
+                        "excerpt": "Cedar Workshop \u2014 Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      },
+                      {
+                        "url": "http://127.0.0.1:50238/products/cedar-lamp/",
+                        "evidence_id": "eb8052d0-e707-4c09-b72e-3a24c6401c8e",
+                        "title": "Cedar Desk Lamp \u2014 Cedar Workshop",
+                        "excerpt": "Cedar Desk Lamp \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      },
+                      {
+                        "url": "http://127.0.0.1:50238/shop/",
+                        "evidence_id": "04cddc1a-2d25-478a-aff9-dbb3eb0aa310",
+                        "title": "Lighting collection \u2014 Cedar Workshop",
+                        "excerpt": "Lighting collection \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+                      }
+                    ],
+                    "usage": {
+                      "input_tokens": 104450,
+                      "output_tokens": 9165,
+                      "api_cost_usd": null,
+                      "electricity_cost_usd": null,
+                      "hardware_cost_usd": null
+                    },
+                    "model": "gemini-3.8-flash",
+                    "tool_trace": [
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "5f7d6f73-ce78-49d7-83e8-07c938c1fb7e",
+                          "text": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 1.03087502066046
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/products/cedar-lamp/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "166cfdf3-a460-4f74-a55b-69e836df67e2",
+                          "text": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/shop/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"129.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\",}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n"
+                        },
+                        "runtime_ms": 0.5075830267742276
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/shop/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "397e516e-8d05-4293-9e84-9390a57cf78f",
+                          "text": "<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Lighting collection \u2014 Cedar Workshop</title><meta name=\"description\" content=\"Explore the Cedar Desk Lamp with solid cedar base, linen shade and warm 2700K light, priced at USD 89.00.\"><link rel=\"stylesheet\" href=\"/style.css\"></head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"eyebrow\">The collection</div><h1>A warmer corner.</h1><div class=\"grid\"><a class=\"card\" href=\"/products/cedar-lamp/\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp\"></div><h2>Cedar Desk Lamp</h2><p>Solid cedar. Linen shade. Warm 2700K light.</p><div class=\"price\">USD 89.00</div><span class=\"tag\">VIEW THE LAMP \u2197</span></a></div></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer></body></html>\n"
+                        },
+                        "runtime_ms": 0.42524997843429446
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/preview/index.html"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "3ae73de5-6c8c-4882-8e6b-0d36c6f9a74e",
+                          "text": "<!doctype html><html lang=\"en\"><head><title>Internal preview</title><meta name=\"robots\" content=\"noindex,nofollow\"></head><body><h1>Private preview</h1><p>This intentional internal page must remain unchanged.</p></body></html>\n"
+                        },
+                        "runtime_ms": 0.8971249917522073
+                      },
+                      {
+                        "name": "read_file",
+                        "success": true,
+                        "arguments": {
+                          "path": "web/robots.txt"
+                        },
+                        "result": {
+                          "success": true,
+                          "evidence_id": "95ace18a-77ac-4969-ae23-616252806a81",
+                          "text": "User-agent: *\nAllow: /\nDisallow: /preview/\n\nUser-agent: GPTBot\nDisallow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\nDisallow: /preview/\n"
+                        },
+                        "runtime_ms": 0.9851249633356929
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.links"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.links"
+                        },
+                        "runtime_ms": 0.0902090105228126
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.metadata"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.metadata"
+                        },
+                        "runtime_ms": 0.016707985196262598
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "tech.canonical"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "tech.canonical"
+                        },
+                        "runtime_ms": 0.01029099803417921
+                      },
+                      {
+                        "name": "get_check",
+                        "success": true,
+                        "arguments": {
+                          "check_id": "geo.entities"
+                        },
+                        "result": {
+                          "success": true,
+                          "check_id": "geo.entities"
+                        },
+                        "runtime_ms": 0.010416028089821339
+                      },
+                      {
+                        "name": "apply_patch",
+                        "success": true,
+                        "arguments": {
+                          "evidence_ids": [
+                            "5f7d6f73-ce78-49d7-83e8-07c938c1fb7e",
+                            "fed7fe84-f2ad-4615-8410-834d24e7376b"
+                          ],
+                          "fact_ids": [
+                            "product"
+                          ],
+                          "before": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "check_id": "tech.links",
+                          "path": "web/index.html",
+                          "after": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Workshop \u2014 Thoughtful lighting</title>\n<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "reason": "Update internal link to working collection route /shop/ and add factual meta description"
+                        },
+                        "result": {
+                          "success": true,
+                          "staged_for_independent_verification": true,
+                          "replaced_previous_proposal": false
+                        },
+                        "runtime_ms": 0.7595000206492841
+                      },
+                      {
+                        "name": "apply_patch",
+                        "success": true,
+                        "arguments": {
+                          "fact_ids": [
+                            "product"
+                          ],
+                          "evidence_ids": [
+                            "166cfdf3-a460-4f74-a55b-69e836df67e2",
+                            "c7c4d808-29d3-4277-af31-60b1a60cbf71"
+                          ],
+                          "after": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"89.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\"}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "path": "web/products/cedar-lamp/index.html",
+                          "reason": "Remove conflicting canonical to /shop/ and fix JSON-LD offer price to USD 89.00 with valid syntax",
+                          "before": "<!doctype html><html lang=\"en\"><head>\n<meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Cedar Desk Lamp \u2014 Cedar Workshop</title>\n<meta name=\"description\" content=\"Cedar Desk Lamp: solid cedar base, linen shade, warm 2700K light. In stock at USD 89.00.\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/products/cedar-lamp/\">\n<link rel=\"canonical\" href=\"http://127.0.0.1:50238/shop/\">\n<link rel=\"stylesheet\" href=\"/style.css\">\n<script type=\"application/ld+json\">{\"@context\":\"https://schema.org\",\"@type\":\"Product\",\"name\":\"Cedar Desk Lamp\",\"offers\":{\"@type\":\"Offer\",\"price\":\"129.00\",\"priceCurrency\":\"USD\",\"availability\":\"https://schema.org/InStock\",}}</script>\n</head><body>\n<header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n<main><div class=\"breadcrumb\"><a href=\"/shop/\">Collection</a> / Cedar Desk Lamp</div><section class=\"hero\"><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div><div><div class=\"eyebrow\">A small pool of warmth</div><h1>Cedar<br>Desk Lamp.</h1><p>A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings.</p><div class=\"price\" data-price=\"89.00\">USD 89.00</div><div class=\"stock\">\u25cf In stock</div><a class=\"button\" href=\"/shop/\">Back to the collection \u2197</a><div class=\"note\">Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light.<br>No checkout, delivery or review claims are supplied.</div></div></section></main>\n<footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n</body></html>\n",
+                          "check_id": "tech.canonical"
+                        },
+                        "result": {
+                          "success": true,
+                          "staged_for_independent_verification": true,
+                          "replaced_previous_proposal": false
+                        },
+                        "runtime_ms": 0.8800830109976232
+                      },
+                      {
+                        "name": "get_diff",
+                        "success": true,
+                        "arguments": {},
+                        "result": {
+                          "success": true,
+                          "changed_files": [
+                            "README.md",
+                            "web/index.html",
+                            "web/products/cedar-lamp/index.html"
+                          ],
+                          "route_map": {
+                            "/": "web/index.html",
+                            "/shop/": "web/shop/index.html",
+                            "/products/cedar-lamp/": "web/products/cedar-lamp/index.html",
+                            "/preview/": "web/preview/index.html"
+                          },
+                          "staged_files": [
+                            "web/index.html",
+                            "web/products/cedar-lamp/index.html"
+                          ],
+                          "scope": "Original revision changes plus pending model proposals"
+                        },
+                        "runtime_ms": 0.012042000889778137
+                      },
+                      {
+                        "name": "run_checks",
+                        "success": true,
+                        "arguments": {},
+                        "result": {
+                          "success": true,
+                          "scope": "staged_proposals",
+                          "staged_files": [
+                            "web/index.html",
+                            "web/products/cedar-lamp/index.html"
+                          ],
+                          "checks": [
+                            {
+                              "name": "HTML metadata",
+                              "path": "web/index.html",
+                              "passed": true
+                            },
+                            {
+                              "name": "HTML metadata",
+                              "path": "web/products/cedar-lamp/index.html",
+                              "passed": true
+                            },
+                            {
+                              "name": "python",
+                              "passed": true,
+                              "exit_code": 0,
+                              "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+                              "stderr": ""
+                            }
+                          ]
+                        },
+                        "runtime_ms": 881.9187079789117
+                      }
+                    ],
+                    "model_runtime_ms": 70248.45516699133,
+                    "model_summary": "Investigated and resolved confirmed technical and structured data defects across the site while preserving private preview pages and crawler policy. Staged and verified patches via tools: updated the broken collection link on web/index.html to /shop/ and added a factual meta description matching page content; removed the conflicting canonical tag pointing to /shop/ from web/products/cedar-lamp/index.html and corrected the Product JSON-LD markup to valid JSON with the verified price of USD 89.00 in stock. Independent verification via run_checks succeeded across all test suites."
+                  },
+                  "prior_revision": "7e443fdd38b7a9e1909ec477633a2679a56db8b6",
+                  "regressions": 0
+                }
+              },
+              "valid": false,
+              "reason": "Concurrent resume reset contaminated these controls"
+            }
+          ]
+        },
+        {
+          "arm": "local-minimal",
+          "repair_passed": false,
+          "repair_worker_status": "queued",
+          "healthy_control_passed": false,
+          "irrelevant_control_passed": true,
+          "invalidated_control_attempts": [
+            {
+              "healthy_control": null,
+              "irrelevant_control": {
+                "passed": false,
+                "result": {
+                  "summary": "Transient integration failure: ReadTimeout"
+                }
+              },
+              "valid": false,
+              "reason": "Prior merge control lacked an independent established baseline"
+            }
+          ]
+        },
+        {
+          "arm": "local-full",
+          "repair_passed": false,
+          "repair_worker_status": "queued",
+          "healthy_control_passed": false,
+          "irrelevant_control_passed": true,
+          "invalidated_control_attempts": [
+            {
+              "healthy_control": null,
+              "irrelevant_control": {
+                "passed": false,
+                "result": {
+                  "summary": "Transient integration failure: ReadTimeout"
+                }
+              },
+              "valid": false,
+              "reason": "Prior merge control lacked an independent established baseline"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "unverified": [
+    "Costs, ranking, traffic and conversions",
+    "Generalization beyond the development fixture"
+  ]
+}
