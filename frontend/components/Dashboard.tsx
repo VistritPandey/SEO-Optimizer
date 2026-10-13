@@ -487,7 +487,23 @@ export function Dashboard() {
                         </span>
                       </summary>
                       <p>{item.details.url}</p>
-                      <pre>{JSON.stringify(item.details, null, 2)}</pre>
+                      <pre>
+                        {JSON.stringify(
+                          {
+                            finding: item.details,
+                            evidence: activity.jobs
+                              .flatMap((job) => [
+                                ...(job.result.evidence || []),
+                                ...(job.result.after_evidence || []),
+                              ])
+                              .filter((record) =>
+                                item.details.evidence_ids?.includes(record.id),
+                              ),
+                          },
+                          null,
+                          2,
+                        )}
+                      </pre>
                     </details>
                   ))
                 )}
