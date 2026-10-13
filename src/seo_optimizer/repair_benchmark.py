@@ -24,7 +24,7 @@ from seo_optimizer.application_models import (
 from seo_optimizer.contracts import ProviderCapabilities, TrustedFact, WebsiteType, utc_now
 from seo_optimizer.execution import run_git
 from seo_optimizer.settings import Settings
-from seo_optimizer.store import Job, Store
+from seo_optimizer.store import Job, Project, Store
 from seo_optimizer.web import hash_password
 from seo_optimizer.worker import Worker
 
@@ -332,6 +332,18 @@ def benchmark_repairs(
                 "result": healthy.result,
                 "runtime_seconds": round(time.monotonic() - started, 3),
             }
+            # The merged-docs scenario starts from a separately established healthy
+            # baseline. A failed healthy audit must not make website changes appear
+            # to be part of the documentation-only merge.
+            run_git(repository, "reset", "--hard", healthy_sha)
+            with store.sessions.begin() as session:
+                session.execute(
+                    update(Project)
+                    .where(Project.id == project.id)
+                    .values(
+                        last_revision=healthy_sha,
+                    )
+                )
             run_git(repository, "checkout", "-b", "docs-" + arm)
             (repository / "README.md").write_text("Anonymous benchmark documentation.\n")
             run_git(repository, "add", "README.md")
