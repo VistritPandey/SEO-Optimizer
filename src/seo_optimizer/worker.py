@@ -170,7 +170,7 @@ class Worker:
         self.use_knowledge = use_knowledge
 
     def tick(self, tenant: str | None = None) -> bool:
-        self.store.reconcile()
+        self.store.reconcile(tenant)
         job = self.store.claim(self.id, tenant)
         if job is None:
             return False
