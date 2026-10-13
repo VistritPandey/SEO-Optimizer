@@ -101,6 +101,7 @@ def benchmark_repairs(
     paid_model: str,
     arms: list[str] | None = None,
     resume: bool = False,
+    controls_only: bool = False,
 ) -> int:
     output = output.resolve()
     fixture = fixture.resolve()
@@ -112,14 +113,16 @@ def benchmark_repairs(
     if root.parent != output.parent or not root.name.startswith("repair-work-"):
         raise ValueError("Benchmark workspace must remain inside its output directory")
     repository = root / "repository"
-    if previous:
-        run_git(repository, "reset", "--hard", previous["base_sha"])
-    else:
+    if not previous:
         shutil.copytree(fixture, repository)
     server = ThreadingHTTPServer(
         ("127.0.0.1", previous["fixture_port"] if previous else 0),
         partial(QuietHandler, directory=str(repository / "web")),
     )
+    # Reserve the original fixture port before mutating a resumed repository.
+    # An active run owns both the server and the repository.
+    if previous:
+        run_git(repository, "reset", "--hard", previous["base_sha"])
     threading.Thread(target=server.serve_forever, daemon=True).start()
     origin = f"http://127.0.0.1:{server.server_port}"
     for path in (repository / "web").rglob("*.html"):
@@ -202,19 +205,23 @@ def benchmark_repairs(
     report["trusted_facts"] = [fact.model_dump(mode="json") for fact in facts]
     try:
         for arm in chosen:
-            if any(record["arm"] == arm for record in report["arms"]):
+            prior = next((record for record in report["arms"] if record["arm"] == arm), None)
+            if prior and not controls_only:
                 raise ValueError(
                     "A benchmark arm already ran; retain it and use a new run for repeats"
                 )
+            if controls_only and not prior:
+                raise ValueError("Controls-only requires a recorded repair attempt")
             if arm not in {"rules", "local-minimal", "local-full", "paid-minimal", "paid-full"}:
                 raise ValueError("Unknown benchmark arm")
             print(f"RUN {arm}: frozen repository {base[:12]}", flush=True)
             run_git(repository, "reset", "--hard", base)
             # The directory is generated solely for this benchmark; never clean a user's repo.
             run_git(repository, "clean", "-fd")
+            run_id = arm + ("-controls-" + secrets.token_hex(4) if controls_only else "")
             settings = Settings(
-                data_dir=root / arm,
-                database_url=f"sqlite:///{root}/{arm}.sqlite",
+                data_dir=root / run_id,
+                database_url=f"sqlite:///{root}/{run_id}.sqlite",
                 secret_key=secrets.token_urlsafe(48),
                 allowed_repo_roots=(root,),
             )
@@ -277,7 +284,17 @@ def benchmark_repairs(
             )
             worker = Worker(store, settings, use_knowledge=not arm.endswith("minimal"))
             started = time.monotonic()
-            worker.tick(user.id)
+            if controls_only:
+                with store.sessions.begin() as session:
+                    session.execute(
+                        update(Job)
+                        .where(Job.project_id == project.id)
+                        .values(
+                            status="canceled",
+                        )
+                    )
+            else:
+                worker.tick(user.id)
             job = store.jobs(user.id, project.id)[0]
             if job.status == "queued":
                 # Each scenario measures one bounded attempt. A deferred retry must not
@@ -286,7 +303,7 @@ def benchmark_repairs(
                     session.execute(update(Job).where(Job.id == job.id).values(status="failed"))
             repaired = grade(repository)
             paths = run_git(repository, "diff", "--name-only", base, "HEAD").splitlines()
-            outcome: dict[str, Any] = {
+            outcome: dict[str, Any] = prior or {
                 "arm": arm,
                 "provider": kind,
                 "model": spec.provider.model or "rules",
@@ -304,8 +321,21 @@ def benchmark_repairs(
                 and repaired["verified_fixes"] == 4
                 and repaired["protected_files_unchanged"],
             }
-            print(f"RESULT {arm}: {repaired['verified_fixes']}/4 repairs; {job.status}", flush=True)
-            report["arms"].append(outcome)
+            if controls_only:
+                outcome.setdefault("control_attempts", []).append(
+                    {
+                        "healthy_control": outcome.get("healthy_control"),
+                        "irrelevant_control": outcome.get("irrelevant_control"),
+                        "valid": False,
+                        "reason": "Concurrent resume attempt reset the fixture during the controls",
+                    }
+                )
+            else:
+                print(
+                    f"RESULT {arm}: {repaired['verified_fixes']}/4 repairs; {job.status}",
+                    flush=True,
+                )
+                report["arms"].append(outcome)
             output.write_text(json.dumps(report, indent=2) + "\n")
             # Independently authored healthy fixture, even when the repair attempt failed.
             run_git(repository, "reset", "--hard", base)
@@ -331,6 +361,9 @@ def benchmark_repairs(
                 "changed": changed,
                 "result": healthy.result,
                 "runtime_seconds": round(time.monotonic() - started, 3),
+                "base_sha": healthy_sha,
+                "observed_sha": run_git(repository, "rev-parse", "HEAD"),
+                "diff": run_git(repository, "diff", healthy_sha, "HEAD"),
             }
             # The merged-docs scenario starts from a separately established healthy
             # baseline. A failed healthy audit must not make website changes appear
