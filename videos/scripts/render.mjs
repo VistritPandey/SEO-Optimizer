@@ -1,22 +1,19 @@
 import {bundle} from '@remotion/bundler';
 import {selectComposition, renderMedia, renderStill} from '@remotion/renderer';
-import {mkdir, readFile, writeFile} from 'node:fs/promises';
+import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
 
 const root = path.resolve(import.meta.dirname, '..');
 const out = path.join(root, 'out');
 await mkdir(out, {recursive: true});
-const proof = JSON.parse(await readFile(path.join(root, 'public/demo.json'), 'utf8'));
 const serveUrl = await bundle({
   entryPoint: path.join(root, 'src/index.tsx'), publicDir: path.join(root, 'public'),
 });
 const composition = await selectComposition({serveUrl, id: 'OptimizerDemo'});
-const terminal = Math.ceil(proof.terminalSeconds / proof.playbackRate * composition.fps);
-const guide = Math.floor(proof.guideSeconds * composition.fps);
 const stills = [
-  ['poster', 110], ['terminal', 180 + terminal - 40],
-  ['patch', 180 + terminal + 220], ['guide', 180 + terminal + 300 + 120],
-  ['results', 180 + terminal + 300 + guide + 130],
+  ['poster', 110], ['before', 300], ['evidence', 480], ['agent', 760],
+  ['home-patch', 960], ['product-patch', 1170], ['verify', 1380],
+  ['after', 1650], ['results', 1950],
 ];
 for (const [name, frame] of stills) {
   await renderStill({serveUrl, composition, output: path.join(out, `${name}.png`), frame});
