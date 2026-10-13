@@ -29,3 +29,5 @@ frontend/.env*
 .firebase/
 
 frontend/*.tsbuildinfo
+
+frontend/next-env.d.ts
