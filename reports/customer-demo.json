@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "passed": [
+    "Customer copy contains no installation, infrastructure or provider promotion",
+    "Broken update shows two findings and an explicit before/after review before approval",
+    "Approval shows the restored description, working collection and ongoing monitoring",
+    "Healthy update produces no proposal or unnecessary edit",
+    "Automatic walkthrough stops at review and cannot auto-approve",
+    "Scenario buttons work by keyboard and reset state",
+    "Embedded customer film decodes at 1080p, plays and loads English captions",
+    "No browser JavaScript errors",
+    "Mobile layout fits the viewport with reduced motion",
+    "Illustrated homepage fixes match the recorded real source patch"
+  ],
+  "failed": [],
+  "skipped": [],
+  "unverified": [
+    "Live GitHub PR publication",
+    "Production deployment",
+    "Ranking, traffic and AI citation changes"
+  ],
+  "scope": "Real browser interactions in an illustrated customer walkthrough; previously recorded model repair supports the fix narrative",
+  "model_requests_this_test": 0
+}
