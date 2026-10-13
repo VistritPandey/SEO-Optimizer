@@ -199,10 +199,14 @@ def main():
             page.screenshot(path=str(assets / "growth-strategy.png"))
             page.wait_for_timeout(2800)
             worker = Worker(store, settings)
-            for step in ["Audit", "Strategy", "Original content publication"]:
+            for kind, step in [
+                ("audit", "Audit"),
+                ("strategy", "Strategy"),
+                ("content", "Original content publication"),
+            ]:
                 print(f"RUN {step}", flush=True)
                 assert worker.tick(account.id)
-                latest = store.jobs(account.id, project.id)[0]
+                latest = next(j for j in store.jobs(account.id, project.id) if j.kind == kind)
                 print(f"WORKER {latest.status}: {latest.result.get('summary', '')}", flush=True)
                 assert latest.status == "complete", latest.result
             content = next(j for j in store.jobs(account.id, project.id) if j.kind == "content")
