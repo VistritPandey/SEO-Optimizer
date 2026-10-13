@@ -100,12 +100,17 @@ def main():
         project = existing[0]
         store.update_project(owner.id, project.id, spec)
         project = store.project(owner.id, project.id)
-        store.enqueue(owner.id, project.id, "audit", "capture:" + origin, {})
+        requested = store.enqueue(owner.id, project.id, "audit", "capture:" + origin, {})
     else:
         project = store.create_project(owner.id, ProjectCreate(spec=spec))
+        requested = store.jobs(owner.id, project.id)[0]
     settings = Settings(**{**settings.__dict__, "allowed_repo_roots": (fixture,)})
-    assert Worker(store, settings).tick(owner.id)
-    job = store.jobs(owner.id, project.id)[0]
+    worker = Worker(store, settings)
+    for _ in range(20):
+        worker.tick(owner.id)
+        job = store.job(owner.id, requested.id)
+        if job.status == "complete":
+            break
     assert job.status == "complete", job.result
     output = ROOT / ".data/hosted-ui/capture"
     output.mkdir(parents=True, exist_ok=True)
