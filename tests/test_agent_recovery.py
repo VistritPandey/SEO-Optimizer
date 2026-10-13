@@ -8,6 +8,7 @@ import pytest
 
 from seo_optimizer.application_models import (
     AgentDecision,
+    FileChange,
     ProjectCreate,
     ProjectSpec,
     ProviderConfig,
@@ -120,7 +121,18 @@ def test_failed_check_recovery_requires_successful_source_read(tmp_path, monkeyp
                 "evidence_ids": [evidence_id],
                 "fact_ids": [],
             }
-            assert call("apply_patch", patch)["success"]
+            staged = call("apply_patch", patch)
+            if not has_source:
+                assert not staged["success"]
+                assert "Read the same" in staged["error"]
+                return Inference(
+                    decision=AgentDecision(changes=[FileChange.model_validate(patch)]),
+                    usage=Usage(),
+                    model="fixture",
+                    runtime_ms=1,
+                    tool_trace=trace,
+                )
+            assert staged["success"]
             assert not call("run_checks", {})["success"]
             assert run_git(repository, "rev-parse", "HEAD") == before
             patch = {
@@ -148,7 +160,7 @@ def test_failed_check_recovery_requires_successful_source_read(tmp_path, monkeyp
             assert 'content="Cedar lamps for thoughtful everyday lighting."' in page.read_text()
         else:
             assert result.status == "blocked"
-            assert "successful read" in result.result["summary"]
+            assert "Read the same" in result.result["summary"]
             assert page.read_text() == original
             assert run_git(repository, "rev-parse", "HEAD") == before
     finally:
