@@ -210,6 +210,51 @@ class Store:
                 return
         raise ValueError("Usage reservation contention; retry later")
 
+    def index_pr(
+        self, tenant: str, project_id: str, job_id: str, status: str, result: dict[str, Any]
+    ) -> None:
+        pr = result.get("pr", {})
+        if not pr.get("number") or status not in {
+            "complete",
+            "waiting_checks",
+            "waiting_deployment",
+        }:
+            return
+        key = f"pr:{tenant}:{project_id}:{pr['number']}"
+        for _ in range(20):
+            _, version = self.state(key)
+            if self.save_state(key, {"job": job_id}, version):
+                return
+        raise ValueError("Pull request index contention")
+
+    def pr_job(self, tenant: str, project_id: str, number: int) -> Job | None:
+        value, _ = self.state(f"pr:{tenant}:{project_id}:{number}")
+        indexed = self.job(tenant, value["job"]) if value.get("job") else None
+        if indexed is not None and indexed.project_id == project_id:
+            return indexed
+        return next(
+            (
+                job
+                for job in self.jobs(tenant, project_id)
+                if job.result.get("pr", {}).get("number") == number
+            ),
+            None,
+        )
+
+    def reserve_review(self, tenant: str, project_id: str, number: int, delivery: str) -> bool:
+        key = f"reviews:{tenant}:{project_id}:{number}"
+        digest = token_hash(delivery)
+        for _ in range(20):
+            value, version = self.state(key)
+            deliveries = value.get("deliveries", [])
+            if digest in deliveries:
+                return True
+            if len(deliveries) >= 5:
+                return False
+            if self.save_state(key, {"deliveries": [*deliveries, digest]}, version):
+                return True
+        return False
+
     def create_user(self, email: str, password_hash: str) -> tuple[User, str]:
         token = secrets.token_urlsafe(40)
         user = User(
@@ -541,6 +586,8 @@ class Store:
                     }
                 ):
                     project.last_revision = result["revision"]
+
+        self.index_pr(tenant, job.project_id, id, status, result)
 
     def remember_findings(
         self, tenant: str, project_id: str, findings: list[dict[str, Any]], audited_urls: list[str]
