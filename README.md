@@ -16,6 +16,16 @@ If your server uses another port, open `/guide` on that server.
 
 [![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
 
+**Watch the real agent demo:** Gemini inspects a fictional storefront, repairs a broken shopping
+link and metadata/product-data defects, runs isolated checks, and verifies the served result.
+The recorded case moves from four confirmed defects to zero across two model-edited files.
+
+[![Watch the real agent repair](docs/assets/demo-poster.png)](docs/assets/optimizer-demo.mp4)
+
+[Actual model actions, limitations and reproduction](docs/demo-video.md) ·
+[Anonymous run evidence](videos/public/agent-run.json)
+
+
 
 The README includes expandable examples and diagrams. Its JavaScript interactions live in the
 companion app page. GitHub supports [Mermaid diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
