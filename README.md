@@ -16,13 +16,6 @@ If your server uses another port, open `/guide` on that server.
 
 [![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
 
-**Watch the recorded demo:** real portfolio test commands, the title patch, verification,
-and the interactive guide. This rules-only run passed 154 tests and verified one controlled fix.
-
-[![Watch the worker demo](docs/assets/demo-poster.png)](docs/assets/optimizer-demo.mp4)
-
-[Recording evidence and reproduction instructions](docs/demo-video.md) ·
-[Editable Remotion composition](videos/src/Demo.tsx)
 
 The README includes expandable examples and diagrams. Its JavaScript interactions live in the
 companion app page. GitHub supports [Mermaid diagrams](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/creating-diagrams)
@@ -229,8 +222,8 @@ protocols, leases, repeated findings and recovery/rollback gates.
 
 ### Real portfolio experiment
 
-The opt-in test downloads [the supplied portfolio](https://github.com/VistritPandey/Vistrit-Portfolio),
-builds its React application in Docker, and tests a separate local branch. It never pushes
+The opt-in test accepts a privately supplied legacy React portfolio repository URL,
+builds its application in Docker, and tests a separate local branch. It never pushes
 upstream. The historical biography is test data, not evidence of a current role or affiliation.
 
 ```sh
@@ -238,7 +231,7 @@ uv sync --locked --extra browser
 uv run playwright install chromium
 
 # Build dependencies and compiled preview assets; requires running Docker
-uv run python scripts/test_portfolio.py --skip-model
+uv run python scripts/test_portfolio.py --repository-url "$PRIVATE_TEST_REPOSITORY" --skip-model
 ```
 
 The runner creates `.data/portfolio-test` and `.data/portfolio-built` and starts its own temporary
@@ -262,8 +255,8 @@ uv run python scripts/test_portfolio.py --reuse-build --model gemma4:12b
 
 The runner selects a fresh test branch from the downloaded upstream revision on each invocation. Reports preserve actual model
 failures and publication decisions. It refuses to proceed over uncommitted test-checkout work.
-Read [the portfolio test report](reports/portfolio-test.md) and its
-[machine-readable results](reports/portfolio-test.json).
+Reports default to ignored `.data/portfolio-runs/latest.json`. Keep repository URLs,
+identity and personal-site evidence in local configuration and ignored reports.
 
 ### Evaluate model decisions
 
