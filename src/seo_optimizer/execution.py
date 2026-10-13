@@ -19,6 +19,12 @@ SECRET_NAMES = re.compile(
 )
 
 
+class VerificationFailure(ValueError):
+    def __init__(self, checks: list[dict[str, Any]]) -> None:
+        super().__init__("Configured sandbox verification failed")
+        self.checks = checks
+
+
 class BehaviorParser(HTMLParser):
     """Fingerprint active content; copy publication is not execution authority."""
 
@@ -417,9 +423,16 @@ def verify_workspace(
             )
         except (OSError, subprocess.TimeoutExpired) as error:
             raise ValueError("Verification sandbox is unavailable or timed out") from error
+        check = {
+            "name": command[0],
+            "passed": value.returncode == 0,
+            "exit_code": value.returncode,
+            "stdout": value.stdout.decode(errors="replace")[-2000:],
+            "stderr": value.stderr.decode(errors="replace")[-2000:],
+        }
+        checks.append(check)
         if value.returncode:
-            raise ValueError("Configured sandbox verification failed")
-        checks.append({"name": command[0], "passed": True})
+            raise VerificationFailure(checks)
     return checks
 
 
