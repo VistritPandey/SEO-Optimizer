@@ -197,7 +197,9 @@ class ModelClient:
                     ),
                 )
             )
-            definitions = tools if self.config.capabilities.tool_calling else []
+            definitions = (
+                tools if self.config.capabilities.tool_calling and step < max_steps - 1 else []
+            )
             calls: list[dict[str, Any]] = []
             text = ""
             if kind == "ollama":
@@ -354,7 +356,7 @@ class ModelClient:
                             ]
                         }
                     ]
-                if self.config.capabilities.json_schema:
+                if self.config.capabilities.json_schema and not definitions:
                     payload["generationConfig"].update(
                         responseMimeType="application/json", responseJsonSchema=schema
                     )
@@ -367,6 +369,7 @@ class ModelClient:
                 google_history.append(message)
                 input_tokens += result.get("usageMetadata", {}).get("promptTokenCount", 0)
                 output_tokens += result.get("usageMetadata", {}).get("candidatesTokenCount", 0)
+                output_tokens += result.get("usageMetadata", {}).get("thoughtsTokenCount", 0)
                 for index, item in enumerate(message.get("parts", [])):
                     if "functionCall" in item:
                         function = item["functionCall"]
