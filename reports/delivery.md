@@ -169,3 +169,13 @@ content calendars, consolidation and every framework are not complete automatic 
 The private check catalog remains broader than executable collectors. The user's private project
 is only in ignored local data; current tracked files/media exclude personal identity and secrets.
 Earlier Git history has not been rewritten.
+
+The final frozen five-arm comparison is recorded in [model-repair-comparison.md](model-repair-comparison.md).
+It verifies four repairs with the paid full harness, no target repairs with rules or the paid
+minimal runner, and request timeouts for both installed-local-model arms. Eight of ten controls
+passed; the two local healthy completions timed out. All five documentation-only merge controls
+passed. The runtime hash remained unchanged throughout this experiment. These results qualify
+this case and explicitly do not establish broad local/paid parity or search uplift.
+
+[qualification.json](qualification.json) separates passed, failed, skipped and unverified work.
+[workflow-video.json](workflow-video.json) records the inspected 90-second H.264 export.
