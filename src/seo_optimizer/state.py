@@ -20,6 +20,19 @@ def input_fingerprint(
 ) -> str:
     records = []
     for item in evidence:
+        if item.kind == "tool":
+            records.append(
+                {
+                    "kind": item.kind,
+                    "url": str(item.url),
+                    "data": {
+                        key: value
+                        for key, value in item.data.items()
+                        if key not in {"measured_at", "collected_at"}
+                    },
+                }
+            )
+            continue
         if item.kind not in {"http", "dom"}:
             continue
         data = {
