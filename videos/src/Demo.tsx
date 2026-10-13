@@ -38,7 +38,7 @@ const Intro = () => <AbsoluteFill style={{background: C.paper, color: C.ink, pad
         Inspect the site.<br/>Change the code.<br/><span style={{background: C.mint}}>Verify the result.</span>
       </Reveal>
       <Reveal delay={12} style={{fontSize: 30, lineHeight: 1.65, marginTop: 38}}>
-        {proof.model}<br/>Two files repaired by the model. Real tools and isolated checks.
+        SEO Optimizer<br/>Your configured model. Our skills, tools, policy and verification.
       </Reveal>
     </div>
     <Reveal delay={8} style={{width: 690}}>
@@ -97,14 +97,14 @@ const Agent = () => {
   const count = Math.min(proof.trace.length, Math.floor(frame / 13) + 1);
   const rows = proof.trace.slice(0, count).slice(-8);
   return <AbsoluteFill style={{background: C.dark, color: C.paper, padding: '58px 90px'}}>
-    <Label>03 / Recorded Gemini tool trace · timing condensed</Label>
+    <Label>03 / Recorded agent tool trace · timing condensed</Label>
     <div style={{fontSize: 72, fontWeight: 600, letterSpacing: -2, marginTop: 28}}>
       The model inspects, proposes and checks.
     </div>
     <div style={{display: 'flex', gap: 40, marginTop: 45}}>
       <div style={{width: 1120, border: '1px solid #425747', borderRadius: 20, padding: 32,
         fontFamily: mono, height: 630, background: '#122b20'}}>
-        <div style={{color: C.mint, fontSize: 21, marginBottom: 26}}>{proof.model} / executed tool calls</div>
+        <div style={{color: C.mint, fontSize: 21, marginBottom: 26}}>SEO Optimizer / executed tool calls</div>
         {rows.map((row, i) => <div key={`${count}-${i}`} style={{display: 'flex', gap: 24,
           padding: '15px 0', borderBottom: '1px solid #2a4130', fontSize: 22}}>
           <span style={{color: row.success ? C.mint : C.red, width: 28}}>{row.success ? '✓' : '×'}</span>
