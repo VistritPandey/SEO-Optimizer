@@ -1,0 +1,87 @@
+{
+  "artifact": "docs/assets/optimizer-demo.mp4",
+  "sha256": "6bb9f6f69d1b8de6134fa8af27d9f5a922839d1fbea70c2f5b875281fa99e8da",
+  "media": {
+    "codec": "h264",
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 2100,
+    "seconds": 70
+  },
+  "sdk": "google-genai 2.30.0",
+  "model": "gemini-3.8-flash",
+  "recorded_repair": {
+    "inference_requests": 6,
+    "tool_calls": 13,
+    "changed_files": [
+      "web/index.html",
+      "web/products/cedar-lamp/index.html"
+    ],
+    "before_defects": 4,
+    "after_defects": 0,
+    "merge_sha": "7b7c5e7fe365ae4952f344501e4680c4a7893cde",
+    "usage": {
+      "input_tokens": 61398,
+      "output_tokens": 9033,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    }
+  },
+  "live_runs": {
+    "complete_repairs": 2,
+    "first_repair_tool_calls": 14,
+    "recorded_repeat_model_audit": "complete",
+    "repeat_created_commit": false,
+    "merged_docs_event_inference_requests": 0
+  },
+  "passed": [
+    "160 offline tests; one dependency deprecation warning",
+    "Ruff",
+    "mypy: 22 source files",
+    "Exported JSON Schemas match contracts",
+    "Knowledge package: 39 checks, 30 sources",
+    "Two real Gemini repairs and recorded model repeat control",
+    "Local documentation-branch merge skips inference",
+    "Personal-site local integration passed; report remains ignored",
+    "Remotion TypeScript check and full 1080p render",
+    "All 2100 encoded video frames decode",
+    "Nine composition scenes and six encoded scene samples visually inspected",
+    "Current tracked text and binary assets contain no identifying name or configured API key",
+    "README and video-documentation local links resolve"
+  ],
+  "failed_development_runs": [
+    {
+      "record": "reports/agent-demo-attempt-1.json",
+      "outcome": "blocked before publication"
+    },
+    {
+      "record": "reports/agent-demo-attempt-2.json",
+      "outcome": "blocked before publication"
+    },
+    {
+      "record": "reports/agent-demo-attempt-3.json",
+      "outcome": "blocked before publication"
+    },
+    {
+      "record": "reports/agent-demo-attempt-4.json",
+      "outcome": "blocked before publication"
+    }
+  ],
+  "skipped": [
+    "Ollama on the new synthetic model-repair case",
+    "Audio narration"
+  ],
+  "unverified": [
+    "Live GitHub/webhook publication",
+    "Cloud deployment",
+    "Rankings, traffic and conversions",
+    "Representative model precision/recall across held-out sites",
+    "API cost: pricing was not configured"
+  ],
+  "unresolved": [
+    "Automated commerce.facts comparison needs visible-offer crawler evidence"
+  ],
+  "privacy_scope": "Current tracked content and media; ignored local personal evidence is retained. Previous Git history and repository-origin metadata are not rewritten."
+}
