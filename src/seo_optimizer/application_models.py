@@ -91,6 +91,7 @@ class ProjectSpec(Contract):
 class ProjectSecrets(Contract):
     provider_key: str = ""
     pagespeed_key: str = ""
+    search_console_access_token: str = ""
     github_token: str = ""
     webhook_secret: str = ""
     github_app_id: str = ""
