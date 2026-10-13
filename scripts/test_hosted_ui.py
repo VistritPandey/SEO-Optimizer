@@ -104,7 +104,7 @@ def main():
     else:
         project = store.create_project(owner.id, ProjectCreate(spec=spec))
         requested = store.jobs(owner.id, project.id)[0]
-    settings = Settings(**{**settings.__dict__, "allowed_repo_roots": (fixture,)})
+    settings = Settings(**{**settings.__dict__, "allowed_repo_roots": (fixture,), "hosted": False})
     worker = Worker(store, settings)
     for _ in range(20):
         worker.tick(owner.id)
