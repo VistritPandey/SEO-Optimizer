@@ -412,8 +412,13 @@ class FirestoreStore(Store):
         lease_ref = self.db.collection("optimizer_leases").document(job.project_id)
         project_ref = self.db.collection("optimizer_projects").document(job.project_id)
         packed_result = self._pack({"result": result})
+        project_audit = (
+            job.kind not in {"followup", "pull_request"} or result.get("stage") == "verified"
+        )
         packed_report = (
-            self._pack({"last_report": result["report"]}) if result.get("report") else {}
+            self._pack({"last_report": result["report"]})
+            if result.get("report") and project_audit
+            else {}
         )
 
         @firestore.transactional
@@ -449,11 +454,16 @@ class FirestoreStore(Store):
             transaction.delete(lease_ref)
             if project.exists and project.to_dict()["tenant_id"] == tenant:
                 changes: dict[str, Any] = {**packed_report, "updated_at": now}
-                if result.get("revision") and status in {
-                    "complete",
-                    "waiting_checks",
-                    "waiting_deployment",
-                }:
+                if (
+                    project_audit
+                    and result.get("revision")
+                    and status
+                    in {
+                        "complete",
+                        "waiting_checks",
+                        "waiting_deployment",
+                    }
+                ):
                     changes["last_revision"] = result["revision"]
                 transaction.update(project_ref, changes)
 
