@@ -19,6 +19,8 @@ def archive_evidence(evidence: list[Evidence], budget: int = 550_000) -> list[di
             page = PageParser()
             page.feed(html)
             headers = item.data.get("headers", {})
+            if not isinstance(headers, dict):
+                headers = {}
             data.update(
                 status_code=item.data.get("status_code"),
                 canonical_urls=page.canonicals,
