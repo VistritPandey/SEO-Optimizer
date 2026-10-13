@@ -10,11 +10,14 @@ needs evidence. Run the Python dashboard and worker locally, or use the Next.js 
 [Start locally](#start-locally) · [How it works](#how-it-works) · [Test your own site](#test-your-own-site) · [Local setup](docs/local-setup.md) · [Hosted setup](docs/hosted-setup.md)
 
 **Explore the interactive guide:** start the dashboard and open
-[localhost:8000/guide](http://127.0.0.1:8000/guide).
+[localhost:8787/guide](http://127.0.0.1:8787/guide).
 Click through a job, compare evidence/policy decisions, and switch installation setups.
 If your server uses another port, open `/guide` on that server.
 
-[![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8000/guide)
+[![Interactive workflow guide](docs/assets/walkthrough.png)](http://127.0.0.1:8787/guide)
+
+**Watch the latest setup and repair demo:** [Your Optimiser — actual browser and model work](docs/assets/your-optimiser.mp4).
+[Current recording evidence](docs/your-optimiser-video.md).
 
 **Watch the expanded workflow demo:** the new recording adds research briefs, autonomous
 content publication, actual Docker/Git/HTTP checks, and matched local-versus-paid repair results.
