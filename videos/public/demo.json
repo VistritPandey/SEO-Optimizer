@@ -1,0 +1,153 @@
+{
+  "generatedAt": "2026-10-13T02:02:59.973120+00:00",
+  "model": "gemini-3.8-flash",
+  "sdk": "2.30.0",
+  "requests": 6,
+  "toolCalls": 13,
+  "runtimeSeconds": 119.02618520800024,
+  "beforeDefects": 4,
+  "afterDefects": 0,
+  "files": [
+    "web/index.html",
+    "web/products/cedar-lamp/index.html"
+  ],
+  "mergedSha": "7b7c5e7fe365ae4952f344501e4680c4a7893cde",
+  "modelSummary": "Repaired confirmed defects across indexability, metadata, canonical declarations, and structured data while preserving private routes and crawler directives. On web/index.html, updated the broken call-to-action link from /collections/lighting/ (404) to the working /shop/ route and added a descriptive, factual meta description matching visible copy and trusted facts. On web/products/cedar-lamp/index.html, removed the conflicting canonical tag pointing to /shop/ to retain the preferred self-referential canonical URL, fixed the syntax error in the Schema.org Product JSON-LD, and corrected the declared price from USD 129.00 to match the visible and verified USD 89.00 price. Preserved the private /preview/ route and robots.txt policies. All staged modifications passed automated verification.",
+  "description": "Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.",
+  "beforePrice": "129.00",
+  "afterPrice": "89.00",
+  "beforeCanonicals": [
+    "http://127.0.0.1:63159/products/cedar-lamp/",
+    "http://127.0.0.1:63159/shop/"
+  ],
+  "afterCanonicals": [
+    "http://127.0.0.1:63159/products/cedar-lamp/"
+  ],
+  "checks": [
+    {
+      "name": "HTML metadata",
+      "path": "web/index.html",
+      "passed": true
+    },
+    {
+      "name": "HTML metadata",
+      "path": "web/products/cedar-lamp/index.html",
+      "passed": true
+    },
+    {
+      "name": "python",
+      "passed": true,
+      "exit_code": 0,
+      "stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy\n",
+      "stderr": ""
+    }
+  ],
+  "trace": [
+    {
+      "name": "get_diff",
+      "path": "",
+      "success": true,
+      "scope": "Original revision changes plus pending model proposals",
+      "runtimeMs": 0.10274996748194098
+    },
+    {
+      "name": "read_file",
+      "path": "web/index.html",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.8904170244932175
+    },
+    {
+      "name": "read_file",
+      "path": "web/products/cedar-lamp/index.html",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.5533330258913338
+    },
+    {
+      "name": "get_check",
+      "path": "tech.links",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.2704579965211451
+    },
+    {
+      "name": "get_check",
+      "path": "tech.metadata",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.03637495683506131
+    },
+    {
+      "name": "get_check",
+      "path": "tech.canonical",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.027875008527189493
+    },
+    {
+      "name": "get_check",
+      "path": "geo.entities",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.02924998989328742
+    },
+    {
+      "name": "read_file",
+      "path": "web/shop/index.html",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 1.0841249604709446
+    },
+    {
+      "name": "read_file",
+      "path": "web/preview/index.html",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.825249997433275
+    },
+    {
+      "name": "read_file",
+      "path": "web/robots.txt",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.5927910096943378
+    },
+    {
+      "name": "apply_patch",
+      "path": "web/index.html",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 2.738500013947487
+    },
+    {
+      "name": "apply_patch",
+      "path": "web/products/cedar-lamp/index.html",
+      "success": true,
+      "scope": "",
+      "runtimeMs": 0.7399580208584666
+    },
+    {
+      "name": "run_checks",
+      "path": "",
+      "success": true,
+      "scope": "staged_proposals",
+      "runtimeMs": 316.6635420056991
+    }
+  ],
+  "protectedFilesUnchanged": true,
+  "repeatCommit": false,
+  "docsMergeRequests": 0,
+  "unresolved": [
+    "commerce.facts"
+  ],
+  "usage": {
+    "input_tokens": 61398,
+    "output_tokens": 9033,
+    "api_cost_usd": null,
+    "electricity_cost_usd": null,
+    "hardware_cost_usd": null
+  },
+  "beforeSeconds": 5.32,
+  "afterSeconds": 6.48
+}
