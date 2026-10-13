@@ -16,11 +16,12 @@ REPOSITORY_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 command -v gcloud >/dev/null || { echo 'Install Google Cloud CLI first.' >&2; exit 1; }
 SERVICE_ACCOUNT="your-optimiser@${PROJECT_ID}.iam.gserviceaccount.com"
 IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/your-optimiser/backend:latest"
-gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com firestore.googleapis.com secretmanager.googleapis.com cloudscheduler.googleapis.com --project="$PROJECT_ID"
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com cloudbuild.googleapis.com firestore.googleapis.com secretmanager.googleapis.com cloudscheduler.googleapis.com identitytoolkit.googleapis.com --project="$PROJECT_ID"
 if ! gcloud iam service-accounts describe "$SERVICE_ACCOUNT" --project="$PROJECT_ID" >/dev/null 2>&1; then
   gcloud iam service-accounts create your-optimiser --project="$PROJECT_ID" --display-name='Your Optimiser backend and worker'
 fi
 gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/datastore.user --quiet >/dev/null
+gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/firebaseauth.viewer --quiet >/dev/null
 for SECRET_RESOURCE in "$APP_SECRET_RESOURCE" "$MODEL_SECRET_RESOURCE" "$GITHUB_KEY_RESOURCE" "$GITHUB_OAUTH_RESOURCE" "$GITHUB_WEBHOOK_RESOURCE"; do
   gcloud secrets add-iam-policy-binding "$SECRET_RESOURCE" --project="$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/secretmanager.secretAccessor --quiet >/dev/null
 done
