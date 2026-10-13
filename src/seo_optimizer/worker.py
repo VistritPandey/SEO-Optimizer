@@ -22,6 +22,7 @@ from seo_optimizer.contracts import (
 )
 from seo_optimizer.crawler import Crawler, capture_browser, page_excerpt
 from seo_optimizer.execution import (
+    VerificationFailure,
     apply_changes,
     commit_local,
     confined,
@@ -381,12 +382,23 @@ class Worker:
                             "success": True,
                             "changed_files": changed,
                             "route_map": spec.route_map,
+                            "staged_files": sorted({change.path for change in tool_changes}),
+                            "scope": "Original revision changes plus pending model proposals",
                         }
                     if name == "apply_patch":
                         change = FileChange.model_validate(arguments)
                         confined(repository, change.path, spec.allowed_paths)
+                        previous = next(
+                            (item for item in tool_changes if item.path == change.path), None
+                        )
+                        if previous is not None:
+                            tool_changes.remove(previous)
                         tool_changes.append(change)
-                        return {"success": True, "staged_for_independent_verification": True}
+                        return {
+                            "success": True,
+                            "staged_for_independent_verification": True,
+                            "replaced_previous_proposal": previous is not None,
+                        }
                     if name == "run_checks":
                         proposals = {change.path: change for change in changes}
                         proposals.update({change.path: change for change in tool_changes})
@@ -404,8 +416,15 @@ class Worker:
                             "checks": checks,
                         }
                     raise ValueError("Unknown tool")
+                except VerificationFailure as error:
+                    return {
+                        "success": False,
+                        "scope": "staged_proposals" if tool_changes else "original_snapshot",
+                        "error": str(error),
+                        "checks": error.checks,
+                    }
                 except (ValueError, OSError, KeyError):
-                    trace_failed = True
+                    trace_failed = name != "run_checks" or trace_failed
                     return {
                         "success": False,
                         "error": "Tool arguments or project policy prevented the operation",
@@ -473,7 +492,12 @@ class Worker:
                 "proposals before the final decision. Do not duplicate tool-staged patches "
                 "in final changes. Existing deterministic findings already establish defects; "
                 "you may return findings=[] when you have no additional findings. "
-                "Final output must be JSON with findings, changes and summary keys."
+                "Prioritize files mapped to confirmed defects. Batch independent read_file "
+                "calls in one response. Avoid unrelated CSS or private-file inspection "
+                "when no finding requires it. Tools stage replacements against the original "
+                "snapshot; re-read original source to revise a proposal for the same path. "
+                "A failed build is diagnostic, not permission to publish: fix the proposal "
+                "and rerun checks. Final output must be JSON with findings, changes and summary."
             )
             observations = [
                 {
@@ -497,7 +521,9 @@ class Worker:
                 "checks": [
                     {"id": item.id, "title": item.title, "sources": item.source_ids}
                     for item in self.knowledge.catalog.checks
+                    if item.id in {finding.check_id for finding in findings}
                 ],
+                "available_check_ids": list(self.knowledge.checks),
             }
             images = (
                 [
@@ -555,8 +581,9 @@ class Worker:
                 if item.model_dump() not in [existing.model_dump() for existing in findings]
             )
             candidates = inference.decision.changes + tool_changes
-            existing_paths = {change.path for change in changes}
-            changes.extend(change for change in candidates if change.path not in existing_paths)
+            combined = {change.path: change for change in changes}
+            combined.update({change.path: change for change in candidates})
+            changes = list(combined.values())
             usage, model_name = inference.usage.model_dump(mode="json"), inference.model
             report["tool_trace"] = inference.tool_trace
             report["model_runtime_ms"] = inference.runtime_ms
@@ -588,6 +615,11 @@ class Worker:
             "findings": enriched,
             "revision": revision,
             "audited_urls": [str(item.url) for item in evidence if item.kind == "http"],
+            "verification_urls": [
+                str(item.url)
+                for item in evidence
+                if item.kind == "http" and item.data.get("status_code") == 200
+            ],
             "before_defects": [
                 {"check_id": item["check_id"], "url": item["url"]}
                 for item in enriched
@@ -618,7 +650,9 @@ class Worker:
             result["merged_sha"] = commit_local(
                 Path(spec.local_path), repository, spec.branch, revision, list(files)
             )
-            after = crawler.collect(project.tenant_id, project.id, spec, result["audited_urls"])
+            after = crawler.collect(
+                project.tenant_id, project.id, spec, result["verification_urls"]
+            )
             return self.verify_deployment(spec, result, after, None)
         if github:
             result["pr"] = github.create_pr(
