@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "checks": [
+    "isolated clone with space-containing paths",
+    "locked no-dev Python installation",
+    "fresh account and repository setup",
+    "idempotent second launch",
+    "dashboard and worker supervision",
+    "served branded login",
+    "graceful Ctrl+C"
+  ],
+  "cron_installed": false,
+  "cloud_requests": 0,
+  "platform": "macOS",
+  "other_os_execution": "unverified"
+}
