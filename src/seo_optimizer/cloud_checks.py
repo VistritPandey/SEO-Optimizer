@@ -61,7 +61,7 @@ def archive_source(root: Path) -> bytes:
                 raise ValueError("Build source exceeds fifty megabytes")
             info = archive.gettarinfo(str(path), arcname=str(relative))
             info.uid, info.gid, info.uname, info.gname = 65534, 65534, "", ""
-            info.mode = 0o644
+            info.mode = 0o755 if path.stat().st_mode & 0o111 else 0o644
             with path.open("rb") as handle:
                 archive.addfile(info, handle)
     return output.getvalue()
