@@ -1,18 +1,174 @@
 {
   "indexes": [
-    {"collectionGroup":"optimizer_jobs","queryScope":"COLLECTION","fields":[{"fieldPath":"tenant_id","order":"ASCENDING"},{"fieldPath":"project_id","order":"ASCENDING"}]},
-    {"collectionGroup":"optimizer_jobs","queryScope":"COLLECTION","fields":[{"fieldPath":"tenant_id","order":"ASCENDING"},{"fieldPath":"status","order":"ASCENDING"}]},
-    {"collectionGroup":"optimizer_projects","queryScope":"COLLECTION","fields":[{"fieldPath":"tenant_id","order":"ASCENDING"},{"fieldPath":"next_audit","order":"ASCENDING"}]},
-    {"collectionGroup":"optimizer_findings","queryScope":"COLLECTION","fields":[{"fieldPath":"tenant_id","order":"ASCENDING"},{"fieldPath":"project_id","order":"ASCENDING"}]}
+    {
+      "collectionGroup": "optimizer_jobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "project_id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_projects",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "next_audit",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_findings",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "project_id",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "project_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "available_at",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lease_until",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "available_at",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "lease_until",
+          "order": "ASCENDING"
+        }
+      ]
+    }
   ],
   "fieldOverrides": [
-    {"collectionGroup":"optimizer_blobs","fieldPath":"text","indexes":[]},
-    {"collectionGroup":"optimizer_jobs","fieldPath":"result","indexes":[]},
-    {"collectionGroup":"optimizer_jobs","fieldPath":"payload","indexes":[]},
-    {"collectionGroup":"optimizer_jobs","fieldPath":"events","indexes":[]},
-    {"collectionGroup":"optimizer_projects","fieldPath":"last_report","indexes":[]},
-    {"collectionGroup":"optimizer_projects","fieldPath":"credentials","indexes":[]},
-    {"collectionGroup":"optimizer_state","fieldPath":"body","indexes":[]},
-    {"collectionGroup":"optimizer_workspaces","fieldPath":"body","indexes":[]}
+    {
+      "collectionGroup": "optimizer_blobs",
+      "fieldPath": "text",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "fieldPath": "result",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "fieldPath": "payload",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_jobs",
+      "fieldPath": "events",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_projects",
+      "fieldPath": "last_report",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_projects",
+      "fieldPath": "credentials",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_state",
+      "fieldPath": "body",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "optimizer_workspaces",
+      "fieldPath": "body",
+      "indexes": []
+    }
   ]
 }
