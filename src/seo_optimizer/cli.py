@@ -64,6 +64,7 @@ def main(argv: list[str] | None = None) -> int:
     repairs.add_argument("--paid-model", default="gemini-3.8-flash")
     repairs.add_argument("--resume", action="store_true")
     repairs.add_argument("--controls-only", action="store_true")
+    repairs.add_argument("--merge-only", action="store_true")
     repairs.add_argument(
         "--arms",
         nargs="+",
@@ -89,6 +90,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.arms,
                 args.resume,
                 args.controls_only,
+                args.merge_only,
             )
         elif args.command == "serve":
             import uvicorn
