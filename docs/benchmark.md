@@ -178,3 +178,48 @@ engine, query/locale set, control pages or topics, repeated observations and the
 window before treatment. Confirm available authorized account data and connector/API coverage.
 GEO/LEO labels do not replace those engine-specific definitions. Leave unavailable measurements
 unknown and retain observations where retrieval/search did not activate.
+
+## Executable repository comparison
+
+The `benchmark-repairs` command now runs actual native inference and local repository repairs
+on the anonymous store fixture. It records the frozen Git commit/content hash, trusted facts,
+shared limits, individual failures, per-target verification, published file scope, healthy
+control, merged documentation branch control, observed time, and available usage/cost fields.
+Rules alone currently have no repair implementation for these four target defects. A zero
+rules repair score describes coverage, not an incorrect application of an implemented rule.
+
+```sh
+uv run seo-optimizer benchmark-repairs \
+  --output .data/repair-benchmark/run.json \
+  --local-model gemma4:12b --paid-model gemini-3.8-flash
+```
+
+Run with the browser extra and its installed Chromium plus the configured Docker verification
+image. A model API key is read from the ignored `.env`; no GitHub credentials are required.
+One frozen repair case is a development diagnostic, not a held-out model-quality estimate.
+Published file precision and verified repair recall can be observed on it, but repairs within
+one case are correlated. Repeat across independent projects and cases before generalizing.
+
+`--arms` selects a subset. `--resume` adds previously unrun arms to the same saved fixture,
+commit, origin and facts. It reserves the original server port before resetting the generated
+repository; an active run cannot be resumed safely. Deferred retry jobs are terminalized for
+scenario isolation and their failed attempt is retained. A control's own healthy baseline is
+established independently so failed earlier inference cannot turn a docs-only merge into an
+unrelated website audit. Only generated benchmark repositories are reset or cleaned.
+
+`--controls-only --resume --arms ARM` repeats controls while retaining the recorded repair and
+invalidated prior control observations. This is for documented experiment contamination; it
+must not erase valid model failures or be used to hide unfavorable trials. Control retest
+artifacts include their before/after Git revisions and actual diff.
+
+The initial live experiment exercised `gemma4:12b` through Ollama and `gemini-3.8-flash` through
+the official SDK. Local timeouts remain failures. Local API charges of zero do not include
+hardware, electricity, or opportunity cost. Paid token usage without declared rates does not
+establish a billed amount or cost per verified fix. Runtime observed during development is not
+an isolated hardware throughput comparison.
+
+The subsequent runtime improvement can finish inference after trusted staged-tool verification,
+then still run independent publication checks. An unchanged-input assessment cache avoids
+repeat inference when safe. Requalify all arms on the same runtime/knowledge revision after
+such changes; do not silently pool samples from different implementations. The current
+recorded repair and content demonstrations separately qualify these new boundaries.
