@@ -247,6 +247,11 @@ class Store:
             return value.count <= 10
 
     def create_project(self, tenant: str, value: ProjectCreate) -> Project:
+        limit = self.settings.free_projects if self.settings.hosted else 20
+        if len(self.projects(tenant)) >= limit:
+            raise ValueError("Project limit reached")
+        project_id = identifier()
+        self.reserve_job(tenant, project_id + ":initial:" + project_id)
         with self.sessions.begin() as session:
             if self.engine.dialect.name == "sqlite":
                 session.execute(text("BEGIN IMMEDIATE"))
@@ -257,7 +262,7 @@ class Store:
             ) >= (self.settings.free_projects if self.settings.hosted else 20):
                 raise ValueError("Project limit reached")
             project = Project(
-                id=identifier(),
+                id=project_id,
                 tenant_id=tenant,
                 spec=value.spec.model_dump(mode="json"),
                 credentials=self.settings.cipher.encrypt(
