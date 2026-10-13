@@ -1,0 +1,74 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "title": "Id",
+      "type": "string"
+    },
+    "query": {
+      "title": "Query",
+      "type": "string"
+    },
+    "target_url": {
+      "format": "uri",
+      "maxLength": 2083,
+      "minLength": 1,
+      "title": "Target Url",
+      "type": "string"
+    },
+    "source_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Source Ids",
+      "type": "array"
+    },
+    "fact_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Fact Ids",
+      "type": "array"
+    },
+    "paragraphs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Paragraphs",
+      "type": "array"
+    },
+    "distinctive_contribution": {
+      "title": "Distinctive Contribution",
+      "type": "string"
+    },
+    "dependencies": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Dependencies",
+      "type": "array"
+    },
+    "ready": {
+      "title": "Ready",
+      "type": "boolean"
+    },
+    "success_metric": {
+      "default": "Compare query/page clicks after a comparable observation window",
+      "title": "Success Metric",
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "query",
+    "target_url",
+    "source_ids",
+    "fact_ids",
+    "paragraphs",
+    "distinctive_contribution",
+    "dependencies",
+    "ready"
+  ],
+  "title": "Brief",
+  "type": "object"
+}
