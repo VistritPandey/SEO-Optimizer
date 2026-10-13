@@ -86,20 +86,23 @@ def main():
         "-m",
         "Add fixture",
     )
-    project = store.create_project(
-        owner.id,
-        ProjectCreate(
-            spec=ProjectSpec(
-                name="Cedar Workshop · local fixture",
-                website_url=origin,
-                local_path=str(fixture),
-                allowed_paths=["web"],
-                page_intents={"/preview/": False},
-                auto_fix=False,
-                website_types=["generic", "ecommerce"],
-            )
-        ),
+    spec = ProjectSpec(
+        name="Cedar Workshop · local fixture",
+        website_url=origin,
+        local_path=str(fixture),
+        allowed_paths=["web"],
+        page_intents={"/preview/": False},
+        auto_fix=False,
+        website_types=["generic", "ecommerce"],
     )
+    existing = store.projects(owner.id)
+    if existing:
+        project = existing[0]
+        store.update_project(owner.id, project.id, spec)
+        project = store.project(owner.id, project.id)
+        store.enqueue(owner.id, project.id, "audit", "capture:" + origin, {})
+    else:
+        project = store.create_project(owner.id, ProjectCreate(spec=spec))
     settings = Settings(**{**settings.__dict__, "allowed_repo_roots": (fixture,)})
     assert Worker(store, settings).tick(owner.id)
     job = store.jobs(owner.id, project.id)[0]
@@ -128,7 +131,9 @@ def main():
         page.get_by_label("Password", exact=True).fill(password)
         page.get_by_role("button", name="Sign in ↗", exact=True).click()
         page.get_by_role("heading", name="Your websites,").wait_for()
-        page.get_by_role("button", name="Cedar Workshop · local fixture").last.click()
+        page.get_by_role("button", name="Cedar Workshop · local fixture").filter(
+            has_text=origin
+        ).first.click()
         page.get_by_role("heading", name="Findings & evidence").wait_for()
         page.get_by_text("tech.canonical", exact=True).first.wait_for()
         page.screenshot(path=str(output / "findings.png"), full_page=True)
