@@ -4,11 +4,13 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.0
         with:
           enable-cache: true
       - run: uv sync --locked --all-extras
+      - name: Install Chromium and Linux dependencies
+        run: uv run playwright install --with-deps chromium
       - run: uv run seo-optimizer validate
       - run: uv run pytest -q
       - run: uv run ruff check src tests scripts api
@@ -19,8 +21,8 @@ jobs:
   frontend:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
         with:
           node-version: '24.12'
           cache: npm
