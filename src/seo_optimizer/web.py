@@ -796,6 +796,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     from seo_optimizer.followups import install_webhook
 
     install_webhook(app, storage, configuration)
+    from seo_optimizer.task_dispatch import install as install_tasks
+
+    install_tasks(app, storage, configuration)
     return app
 
 
