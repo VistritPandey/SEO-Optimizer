@@ -1,5 +1,9 @@
 # Host Your Optimiser
 
+For the initial beta, use [the single-service deployment](single-service-deploy.md) and root
+`./deploy.sh`: frontend, API and task execution share one Cloud Run service. The separate-service
+layout below remains available for deployments that need independent scaling.
+
 The hosted product has a **Next.js frontend**, a **Python API on Cloud Run**, **Firebase Auth**,
 **Firestore storage**, and a **Cloud Run job** for the portable SEO worker. Model configuration
 is server-owned; customer flows say “managed AI”. `OPT_MANAGED_PROVIDER`,
