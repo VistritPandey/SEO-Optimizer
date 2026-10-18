@@ -91,7 +91,8 @@ def main():
                 "from pathlib import Path; import os,signal; "
                 "pids=[int(p.name) for p in Path('/proc').iterdir() "
                 "if p.name.isdigit() and (p/'cmdline').exists() "
-                "and (p/'cmdline').read_bytes().startswith((b'node\\x00server.js\\x00',b'next-server'))]; "
+                "and (p/'cmdline').read_bytes().startswith("
+                "(b'node\\x00server.js\\x00',b'next-server'))]; "
                 "assert len(pids)==1; os.kill(pids[0],signal.SIGTERM)"
             ),
         )
