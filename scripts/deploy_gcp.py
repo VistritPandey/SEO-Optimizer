@@ -154,8 +154,20 @@ class Cloud:
         )
         if result.returncode == 0:
             return True
-        if any(
-            code in result.stderr.lower() for code in ("not_found", "not found", "does not exist")
+        message = result.stderr.lower()
+        denied = any(
+            code in message
+            for code in ("permission_denied", "permission denied", "unauthenticated")
+        )
+        if not denied and any(
+            code in message
+            for code in (
+                "not_found",
+                "not found",
+                "does not exist",
+                "cannot find",
+                "could not find",
+            )
         ):
             return False
         raise DeployError("Could not inspect resource: " + result.stderr[-1000:])
@@ -197,6 +209,9 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
         "services",
         "enable",
         "run.googleapis.com",
+        "iam.googleapis.com",
+        "iamcredentials.googleapis.com",
+        "cloudresourcemanager.googleapis.com",
         "cloudtasks.googleapis.com",
         "artifactregistry.googleapis.com",
         "cloudbuild.googleapis.com",
