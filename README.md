@@ -18,6 +18,9 @@ fix. Choose **Nothing breaks** to see the healthy path. This is an illustrated c
 based on a recorded repair; it does not change a visitor’s website or claim search-traffic gains.
 [Recording provenance and browser checks](docs/your-optimiser-video.md).
 
+**Deploy the whole app on Google Cloud:** [`./deploy.sh`](deploy.sh) builds one Cloud Run service
+for the frontend, API and queued agent execution. [Setup and required configuration](docs/single-service-deploy.md).
+
 [Start locally](#start-locally) · [How it works](#how-it-works) · [Test your own site](#test-your-own-site) · [Local setup](docs/local-setup.md) · [Hosted setup](docs/hosted-setup.md)
 
 The developer setup is separate from the customer demonstration. The Python dashboard’s `/guide`
