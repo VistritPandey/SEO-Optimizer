@@ -476,6 +476,21 @@ class Store:
         with self.sessions() as session:
             return session.scalar(select(Job).where(Job.id == id, Job.tenant_id == tenant))
 
+    def has_pending_jobs(self) -> bool:
+        with self.sessions() as session:
+            return (
+                session.scalar(
+                    select(Job.id)
+                    .where(
+                        Job.status.in_(
+                            ["queued", "running", "waiting_checks", "waiting_deployment"]
+                        )
+                    )
+                    .limit(1)
+                )
+                is not None
+            )
+
     def claim(self, worker: str, tenant: str | None = None) -> Job | None:
         now = time.time()
         try:
