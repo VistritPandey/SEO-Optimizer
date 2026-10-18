@@ -74,6 +74,8 @@ def configuration(config: Path) -> dict[str, str]:
         raise DeployError("CPU must be 1 or 2 for this beta configuration")
     if not result["MAX_INSTANCES"].isdigit() or not 1 <= int(result["MAX_INSTANCES"]) <= 3:
         raise DeployError("MAX_INSTANCES must be between 1 and 3")
+    if len(result["PROJECT_ID"] + "-" + result["SERVICE_NAME"] + "-checks") > 63:
+        raise DeployError("SERVICE_NAME is too long for the source-check bucket name")
     if result["MEMORY"] not in {"2Gi", "4Gi"}:
         raise DeployError("MEMORY must be 2Gi or 4Gi for combined browser/agent work")
     if result["MANAGED_PROVIDER"] not in {"google", "openai", "anthropic"}:
