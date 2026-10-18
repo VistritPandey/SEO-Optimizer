@@ -329,6 +329,14 @@ class FirestoreStore(Store):
         value = self._get("optimizer_jobs", id, Job)
         return value if value is not None and value.tenant_id == tenant else None
 
+    def has_pending_jobs(self) -> bool:
+        query = (
+            self.db.collection("optimizer_jobs")
+            .where(filter=FieldFilter("status", "in", list(ACTIVE)))
+            .limit(1)
+        )
+        return next(iter(query.stream()), None) is not None
+
     def claim(self, worker: str, tenant: str | None = None) -> Job | None:
         query = self.db.collection("optimizer_jobs").where(
             filter=FieldFilter("status", "in", list(ACTIVE))
