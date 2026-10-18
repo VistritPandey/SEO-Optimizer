@@ -165,3 +165,24 @@ def test_missing_initial_secret_stops_before_build_or_service_creation(config):
         for kind, args, _ in cloud.calls
         if kind == "run"
     )
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "NOT_FOUND: queue not found",
+        "Cannot find service [your-optimiser]",
+        "Could not find the requested resource",
+        "Bucket does not exist",
+    ],
+)
+def test_missing_resource_messages_support_first_deploy(monkeypatch, message):
+    monkeypatch.setattr(
+        subprocess,
+        "run",
+        lambda *a, **k: SimpleNamespace(
+            returncode=1,
+            stderr=message,
+        ),
+    )
+    assert not MODULE.Cloud("demo-optimiser").exists("run", "services", "describe", "fixture")
