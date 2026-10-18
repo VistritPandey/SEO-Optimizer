@@ -14,3 +14,11 @@ __pycache__
 .pytest_cache
 .mypy_cache
 .ruff_cache
+
+# Exclude downloaded credentials and local build/emulator outputs.
+**/*.pem
+**/*.key
+**/*.p12
+.firebase
+dist
+frontend/*.tsbuildinfo
