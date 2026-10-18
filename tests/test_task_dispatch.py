@@ -14,6 +14,7 @@ from seo_optimizer.web import create_app
 
 @pytest.fixture
 def service(tmp_path, monkeypatch):
+    pytest.importorskip("google.cloud.tasks_v2")
     settings = Settings(
         data_dir=tmp_path,
         database_url=f"sqlite:///{tmp_path}/db.sqlite",
