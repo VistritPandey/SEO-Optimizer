@@ -516,6 +516,23 @@ wheels = [
 ]
 
 [[package]]
+name = "google-cloud-tasks"
+version = "2.26.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "google-api-core", extra = ["grpc"] },
+    { name = "google-auth" },
+    { name = "grpc-google-iam-v1" },
+    { name = "grpcio" },
+    { name = "proto-plus" },
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/98/cc/3ff6a7bfd00ba892a32713dd1d28c0d8287040017e4eadb23338b95c7cda/google_cloud_tasks-2.26.0.tar.gz", hash = "sha256:df33be57411c57bd791461d0bbcd6d04b4e0e55f9c65b68682706cad247c5b06", size = 390489, upload-time = "2026-10-01T18:18:28.118Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0f/a6/8dda4fbb4f6a2312a4f1e3d3b6f049c55e446993d29e1c80d2caeb9b53f5/google_cloud_tasks-2.26.0-py3-none-any.whl", hash = "sha256:b020be5ca494907accd9ea7372d9963f747cd09e6370458511fc126d3f18525e", size = 325078, upload-time = "2026-10-01T18:12:41.099Z" },
+]
+
+[[package]]
 name = "google-crc32c"
 version = "1.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1853,6 +1870,7 @@ hosted = [
     { name = "firebase-admin" },
     { name = "google-cloud-build" },
     { name = "google-cloud-firestore" },
+    { name = "google-cloud-tasks" },
 ]
 
 [package.dev-dependencies]
@@ -1873,6 +1891,7 @@ requires-dist = [
     { name = "firebase-admin", marker = "extra == 'hosted'", specifier = ">=7,<8" },
     { name = "google-cloud-build", marker = "extra == 'hosted'", specifier = ">=3.31,<4" },
     { name = "google-cloud-firestore", marker = "extra == 'hosted'", specifier = ">=2.21,<3" },
+    { name = "google-cloud-tasks", marker = "extra == 'hosted'", specifier = ">=2.19,<3" },
     { name = "google-genai", specifier = ">=2.30,<3" },
     { name = "httpx", specifier = ">=0.28,<1" },
     { name = "itsdangerous", specifier = ">=2.2,<3" },
