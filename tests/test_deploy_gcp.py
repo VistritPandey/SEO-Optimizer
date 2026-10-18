@@ -34,7 +34,8 @@ def config(tmp_path, monkeypatch):
                 "NEXT_PUBLIC_FIREBASE_APP_ID=1:123:web:demo",
                 "GOOGLE_API_KEY=private-key-do-not-print",
                 "GITHUB_CLIENT_SECRET=private-oauth",
-                'GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\nfixture\\n-----END PRIVATE KEY-----"',
+                'GITHUB_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\n'
+                'fixture\\n-----END PRIVATE KEY-----"',
             ]
         )
         + "\n"
