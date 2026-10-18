@@ -6,6 +6,7 @@
 .your-optimiser.json
 frontend/node_modules
 frontend/.next
+frontend/.env*
 videos
 reports
 artifacts
