@@ -13,8 +13,9 @@ jobs:
         run: uv run playwright install --with-deps chromium
       - run: uv run seo-optimizer validate
       - run: uv run pytest -q
-      - run: uv run ruff check src tests scripts api
-      - run: uv run ruff format --check src tests scripts api
+      - run: bash -n deploy.sh
+      - run: uv run ruff check src tests scripts api deploy/combined-entrypoint.py
+      - run: uv run ruff format --check src tests scripts api deploy/combined-entrypoint.py
       - run: uv run mypy
       - run: uv build
 
@@ -31,3 +32,23 @@ jobs:
         working-directory: frontend
       - run: npm run format:check && npm run typecheck && npm test && npm run build
         working-directory: frontend
+
+  combined:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+      - run: uv sync --locked --all-extras
+      - name: Build single-service image with fictional public config
+        run: >-
+          docker build -f deploy/combined.Dockerfile
+          --build-arg NEXT_PUBLIC_FIREBASE_API_KEY=demo-public-key
+          --build-arg NEXT_PUBLIC_FIREBASE_PROJECT_ID=demo-your-optimiser
+          --build-arg NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=demo-your-optimiser.firebaseapp.com
+          --build-arg NEXT_PUBLIC_FIREBASE_APP_ID=1:123:web:demo
+          --build-arg NEXT_PUBLIC_SITE_URL=https://example.test
+          -t your-optimiser:deploy-test .
+      - name: Exercise pages, API, Chromium and process recovery
+        run: uv run python scripts/test_combined_container.py
