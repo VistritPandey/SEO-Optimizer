@@ -1,0 +1,20 @@
+{
+  "status": "passed",
+  "passed": [
+    "One ingress serves Next pages, public video assets and Python health",
+    "Customer proxy and task/webhook handlers reject unconfigured access",
+    "Production Next proxy reaches only the configured loopback API",
+    "Bundled Chromium launches under the unprivileged application user",
+    "Runtime is non-root and contains no root .env",
+    "Failed frontend process stops the entire container for platform recovery"
+  ],
+  "failed": [],
+  "model_calls": 0,
+  "environment": "local Docker container with disposable SQLite state",
+  "unverified": [
+    "Live GCP IAM and provisioning",
+    "Firebase sign-in",
+    "Real Cloud Tasks OIDC delivery",
+    "Customer GitHub PR/deployment"
+  ]
+}
