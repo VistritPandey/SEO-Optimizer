@@ -102,6 +102,7 @@ class FakeCloud:
         self.calls = []
         self.uploads = []
         self.runtime_environments = []
+        self.service_replacements = []
 
     def exists(self, *args):
         self.calls.append(("exists", args, None))
@@ -115,7 +116,30 @@ class FakeCloud:
         if args[:2] == ("projects", "describe"):
             return "123456789"
         if args[:3] == ("run", "services", "describe"):
+            if "--format=export" in args:
+                return yaml.safe_dump(
+                    {
+                        "apiVersion": "serving.knative.dev/v1",
+                        "kind": "Service",
+                        "metadata": {"name": "your-optimiser"},
+                        "spec": {
+                            "template": {
+                                "metadata": {"name": "your-optimiser-old"},
+                                "spec": {
+                                    "containers": [
+                                        {
+                                            "image": "fixture-image",
+                                            "env": [{"name": "OPT_STORAGE", "value": "firestore"}],
+                                        }
+                                    ]
+                                },
+                            }
+                        },
+                    }
+                )
             return "https://your-optimiser-123456789.us-central1.run.app"
+        if args[:3] == ("run", "services", "replace"):
+            self.service_replacements.append(yaml.safe_load(Path(args[3]).read_text()))
         if args[:2] == ("builds", "submit"):
             path = next(arg.split("=", 1)[1] for arg in args if arg.startswith("--config="))
             self.uploads.append(json.loads(Path(path).read_text()))
@@ -155,6 +179,11 @@ def test_provisioning_preserves_keys_and_creates_one_service(config, monkeypatch
     assert len(deployments) == 1
     assert cloud.runtime_environments[0]["OPT_FIRESTORE_DATABASE"] == "optimiser-test"
     assert "--min-instances=0" in deployments[0] and "--max-instances=1" in deployments[0]
+    template = cloud.service_replacements[0]["spec"]["template"]
+    assert "name" not in template["metadata"]
+    container = template["spec"]["containers"][0]
+    assert container["startupProbe"]["httpGet"] == {"path": "/api/v1/health", "port": 8080}
+    assert container["env"] == [{"name": "OPT_STORAGE", "value": "firestore"}]
     assert not any(args[:2] == ("run", "jobs") for args in commands)
     creates = [item for item in cloud.calls if item[1][:2] == ("secrets", "create")]
     assert len(creates) == (0 if existing else 5)
