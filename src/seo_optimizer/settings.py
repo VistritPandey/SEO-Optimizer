@@ -3,12 +3,23 @@
 import base64
 import hashlib
 import os
+import re
 import secrets
 from dataclasses import dataclass
 from pathlib import Path
 
 from cryptography.fernet import Fernet
 from dotenv import load_dotenv
+
+
+def validate_firestore_database(value: str) -> str:
+    """Accept an explicit database ID, never a URL or database resource path."""
+    if value != "(default)" and (
+        not re.fullmatch(r"[a-z][a-z0-9-]{2,61}[a-z0-9]", value)
+        or re.fullmatch(r"[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}", value)
+    ):
+        raise ValueError("OPT_FIRESTORE_DATABASE must be a valid Firestore database ID")
+    return value
 
 
 @dataclass(frozen=True)
@@ -25,6 +36,7 @@ class Settings:
 
     storage_backend: str = "sql"
     firebase_project: str = ""
+    firestore_database: str = "(default)"
     hosted: bool = False
     frontend_url: str = "http://localhost:3000"
     managed_provider: str = "google"
@@ -99,6 +111,9 @@ class Settings:
             allowed_repo_roots=roots,
             storage_backend=backend,
             firebase_project=firebase_project,
+            firestore_database=validate_firestore_database(
+                os.getenv("OPT_FIRESTORE_DATABASE", "(default)")
+            ),
             hosted=hosted,
             frontend_url=os.getenv("OPT_FRONTEND_URL", "http://localhost:3000").rstrip("/"),
             managed_provider=managed_provider,
