@@ -40,7 +40,11 @@ flowchart LR
 4. Export the non-secret resource names and IDs in `deploy/hosting.env.example`, then run
    `./deploy/cloud-run.sh`. It provisions distinct application/check identities, a private source
    bucket, container deployment, worker job and OAuth-authenticated five-minute scheduler.
-5. Deploy Firestore rules/indexes with `firebase deploy --only firestore --project PROJECT_ID`.
+5. Set `OPT_FIRESTORE_DATABASE` to the intended database ID. For this separate-services path,
+   configure `firebase.json` with a Firestore array containing only that database's `database`,
+   `rules` and `indexes` entries before running `firebase deploy --only firestore --project PROJECT_ID`.
+   The checked-in Firebase config is for local emulators. For automated database-specific rules
+   deployment, use the recommended [single-service deploy script](single-service-deploy.md).
    Client access is denied. The Admin SDK bypasses rules, so the backend enforces tenant scope.
 6. Set the GitHub OAuth callback to `API_URL/api/v1/github/callback` and webhook to
    `API_URL/webhooks/github`, using the matching server secret.
