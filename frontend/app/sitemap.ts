@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
+import { publicPages, site } from "@/lib/site";
 export default function sitemap(): MetadataRoute.Sitemap {
-  const site = process.env.NEXT_PUBLIC_SITE_URL;
-  return site ? [{ url: new URL("/", site).href }] : [];
+  return publicPages.map((path) => ({ url: new URL(path, site.url).href }));
 }
