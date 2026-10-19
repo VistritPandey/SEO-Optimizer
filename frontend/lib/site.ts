@@ -28,6 +28,26 @@ export function pageMetadata(
     title,
     description,
     alternates: { canonical: path },
-    openGraph: { title: `${title} · ${site.name}`, description, url: path },
+    openGraph: {
+      type: "website",
+      siteName: site.name,
+      title: `${title} · ${site.name}`,
+      description,
+      url: path,
+      images: [
+        {
+          url: `${site.url}/opengraph-image`,
+          width: 1200,
+          height: 630,
+          alt: site.name,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} · ${site.name}`,
+      description,
+      images: [`${site.url}/opengraph-image`],
+    },
   };
 }
