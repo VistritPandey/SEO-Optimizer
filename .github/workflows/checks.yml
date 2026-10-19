@@ -32,6 +32,25 @@ jobs:
         working-directory: frontend
       - run: npm run format:check && npm run typecheck && npm test && npm run build
         working-directory: frontend
+      - uses: astral-sh/setup-uv@v10.3.0
+        with:
+          enable-cache: true
+      - run: uv sync --locked --all-extras
+      - run: uv run playwright install --with-deps chromium
+      - name: Check served metadata, responsive workflow and accessibility
+        env:
+          OPT_BACKEND_URL: http://127.0.0.1:8000
+          OPT_COMBINED_DEPLOYMENT: '1'
+        run: |
+          npm run start --prefix frontend -- --hostname 127.0.0.1 --port 3002 > /tmp/optimiser-preview.log 2>&1 &
+          optimiser_preview_pid=$!
+          trap 'kill "$optimiser_preview_pid" 2>/dev/null || true' EXIT
+          for optimiser_attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3002/ > /dev/null; then break; fi
+            sleep 1
+          done
+          uv run python scripts/test_public_site.py
+          uv run python scripts/test_public_browser.py
 
   combined:
     runs-on: ubuntu-latest
