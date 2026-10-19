@@ -11,6 +11,7 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { firebaseAuth } from "@/lib/firebase";
+import { Brand } from "./Brand";
 export function Login() {
   const router = useRouter();
   const query = useSearchParams();
@@ -66,10 +67,8 @@ export function Login() {
     }
   }
   return (
-    <main className="auth-shell">
-      <Link className="brand" href="/">
-        y<span>Your Optimiser</span>
-      </Link>
+    <main id="main-content" className="auth-shell">
+      <Brand />
       <section className="auth-card">
         <span className="eyebrow">YOUR WEBSITE’S WORKSPACE</span>
         <h1>
@@ -85,6 +84,10 @@ export function Login() {
             {message}
           </p>
         )}
+        <p className="auth-legal">
+          By continuing, you agree to our <Link href="/terms">Terms</Link> and
+          acknowledge our <Link href="/privacy">Privacy notice</Link>.
+        </p>
         <button
           className="button secondary full"
           onClick={google}
