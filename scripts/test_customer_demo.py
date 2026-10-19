@@ -50,6 +50,7 @@ def main():
         passed.append(
             "Customer copy contains no installation, infrastructure or provider promotion"
         )
+        (ROOT / "reports/public-site").mkdir(parents=True, exist_ok=True)
         page.screenshot(
             path=str(ROOT / "reports/public-site/landing-recording.png"), full_page=True
         )
@@ -99,17 +100,14 @@ def main():
         passed.append("Healthy update produces no proposal or unnecessary edit")
         demo.get_by_role("button", name="Something breaks", exact=True).click()
         page.clock.install()
-        demo.get_by_role("button", name="Play walkthrough", exact=True).click()
-        for expected in range(1, 4):
-            page.clock.run_for(4_300)
+        demo.get_by_role("button", name="Play store walkthrough", exact=True).click()
+        for expected in range(1, 6):
+            page.clock.fast_forward(6_600)
             expect(demo).to_have_attribute("data-step", str(expected))
-        page.clock.run_for(13_000)
-        expect(demo).to_have_attribute("data-step", "3")
-        expect(demo.get_by_role("button", name="Play walkthrough", exact=True)).to_have_attribute(
-            "aria-pressed", "false"
-        )
-        expect(demo.locator(".demo-search-card")).to_contain_text("description missing")
-        passed.append("Automatic walkthrough stops at review and cannot auto-approve")
+        page.clock.fast_forward(6_600)
+        expect(demo).to_have_attribute("data-step", "0")
+        demo.get_by_role("button", name="Pause store walkthrough", exact=True).click()
+        passed.append("Automatic example loops through simulated approval and live verification")
         demo.get_by_role("button", name="Something breaks", exact=True).focus()
         page.keyboard.press("Enter")
         expect(demo).to_have_attribute("data-step", "0")
