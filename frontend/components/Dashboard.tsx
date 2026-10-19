@@ -132,6 +132,12 @@ export function Dashboard() {
       window.location.assign(value.url);
     });
   }
+  async function install() {
+    await action(async () => {
+      const value = await api<{ url: string }>("github/install", "POST");
+      window.location.assign(value.url);
+    });
+  }
   async function loadRepos() {
     await action(async () => {
       const value = await api<{ repositories: Repository[] }>(
@@ -299,14 +305,13 @@ export function Dashboard() {
               <h2>01 · Repository access</h2>
               <div className="actions">
                 {account.github_install_url && (
-                  <a
+                  <button
                     className="button secondary"
-                    href={account.github_install_url}
-                    target="_blank"
-                    rel="noreferrer"
+                    disabled={busy}
+                    onClick={install}
                   >
                     Install GitHub App ↗
-                  </a>
+                  </button>
                 )}
                 <button
                   className="button secondary"
