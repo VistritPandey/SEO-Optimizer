@@ -1,6 +1,10 @@
 # Your Optimiser
 
+<img src="frontend/public/brand/mark.png" alt="Your Optimiser logo" width="64" height="64" />
+
 **Ongoing SEO care that keeps up with your website.**
+
+[Website](https://youroptimiser.com) · [How it works](https://youroptimiser.com/how-it-works) · [SEO & AI search](https://youroptimiser.com/seo-and-ai-search) · [Privacy](https://youroptimiser.com/privacy) · [Terms](https://youroptimiser.com/terms)
 
 Your team updates the website. Your Optimiser checks what changed, fixes confirmed search
 problems and checks the served page afterward. Healthy updates stay alone. From one workspace,
