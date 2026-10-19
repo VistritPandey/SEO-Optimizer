@@ -26,6 +26,10 @@ jobs:
       - run: uv sync --locked --all-extras
       - name: Install Chromium and Linux dependencies
         run: uv run playwright install --with-deps chromium
+      - name: Audit locked Python dependencies
+        run: |
+          uv export --locked --all-extras --no-hashes --no-emit-project --output-file /tmp/optimiser-requirements.txt > /dev/null
+          uvx --from pip-audit==2.10.1 pip-audit --requirement /tmp/optimiser-requirements.txt --no-deps --disable-pip
       - run: uv run seo-optimizer validate
       - run: uv run pytest -q
       - run: bash -n deploy.sh
@@ -44,6 +48,8 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
+        working-directory: frontend
+      - run: npm audit --audit-level=low
         working-directory: frontend
       - run: npm run format:check && npm run typecheck && npm test && npm run build
         working-directory: frontend
