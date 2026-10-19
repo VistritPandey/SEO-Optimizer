@@ -1,11 +1,14 @@
 {
-  "environment": "https://your-optimiser-m4yk3u7p3a-uc.a.run.app",
+  "environment": "http://127.0.0.1:3002",
   "passed": [
+    "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
     "Silent captioned video mounts only on request and unloads when closed",
+    "Store auto-plays the illustrated full cycle and stops its timer off screen",
     "Broken update: missing destination, before/after review and repaired destination",
     "Healthy update: working collection and no proposed fix or approval",
     "FAQ answers expand with native accessible controls",
+    "Reduced-motion visitors start paused and can explicitly play the example",
     "Eight public pages fit a 390px mobile viewport without horizontal overflow",
     "Reduced-motion preference is active during responsive accessibility checks",
     "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks"
