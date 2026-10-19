@@ -14,7 +14,7 @@ FROM python:3.12-slim-bookworm
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends nginx git ca-certificates libstdc++6 libatomic1 tini && rm -rf /var/lib/apt/lists/*
 COPY --from=web /usr/local/bin/node /usr/local/bin/node
-COPY pyproject.toml README.md uv.lock ./
+COPY pyproject.toml README.md uv.lock LICENSE ./
 COPY --from=ghcr.io/astral-sh/uv:0.13.0 /uv /usr/local/bin/uv
 COPY src/ ./src/
 RUN uv sync --locked --no-dev --extra hosted --extra browser && uv run --no-sync playwright install --with-deps chromium && rm -rf /var/lib/apt/lists/* && chmod -R a+rX /root/.cache/ms-playwright && mv /root/.cache/ms-playwright /opt/playwright
