@@ -229,6 +229,29 @@ def build_config(c: dict[str, str], image: str, site: str, builder: str) -> dict
     }
 
 
+def configure_startup_probe(cloud: Cloud, name: str, region: str) -> None:
+    """Use service YAML so older gcloud versions need no startup-probe flag."""
+    service = yaml.safe_load(
+        cloud.run("run", "services", "describe", name, "--region=" + region, "--format=export")
+    )
+    template = service["spec"]["template"]
+    probe = {
+        "httpGet": {"path": "/api/v1/health", "port": 8080},
+        "periodSeconds": 5,
+        "timeoutSeconds": 4,
+        "failureThreshold": 40,
+    }
+    container = template["spec"]["containers"][0]
+    if container.get("startupProbe") == probe:
+        return
+    container["startupProbe"] = probe
+    template.get("metadata", {}).pop("name", None)
+    with tempfile.TemporaryDirectory(prefix="optimiser-startup-") as folder:
+        file = Path(folder) / "service.yaml"
+        file.write_text(yaml.safe_dump(service))
+        cloud.run("run", "services", "replace", str(file), "--region=" + region)
+
+
 def deploy(c: dict[str, str], cloud: Cloud) -> str:
     project, region, name = c["PROJECT_ID"], c["REGION"], c["SERVICE_NAME"]
     app, checks, builder, delivery = (
@@ -496,6 +519,7 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
         "--member=serviceAccount:" + delivery,
         "--role=roles/run.invoker",
     )
+    configure_startup_probe(cloud, name, region)
     scheduler = name + "-reconcile"
     operation = (
         "update"
@@ -517,7 +541,7 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
         "--oidc-token-audience=" + service_url,
     )
     with httpx.Client(timeout=60) as client:
-        response = client.get(service_url + "/healthz")
+        response = client.get(service_url + "/api/v1/health")
         if response.status_code != 200 or response.json().get("status") != "ready":
             raise DeployError("Deployment finished but the API health check failed")
         response = client.get(service_url + "/")
