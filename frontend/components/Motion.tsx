@@ -32,23 +32,3 @@ export function Reveal({
     </m.div>
   );
 }
-
-export function WorkspaceTransition({
-  children,
-  view,
-}: {
-  children: ReactNode;
-  view: string;
-}) {
-  return (
-    <m.div
-      key={view}
-      className="workspace-transition"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.18 }}
-    >
-      {children}
-    </m.div>
-  );
-}
