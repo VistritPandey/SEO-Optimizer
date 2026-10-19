@@ -4,6 +4,7 @@ set -euo pipefail
 REPOSITORY_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 : "${PROJECT_ID:?Set the intended Google Cloud project explicitly}"
 : "${REGION:=us-central1}"
+: "${OPT_FIRESTORE_DATABASE:?Set the intended Firestore database ID explicitly}"
 : "${FRONTEND_URL:?Set the deployed Next.js URL}"
 : "${GITHUB_APP_ID:?Set the GitHub App ID}"
 : "${GITHUB_APP_SLUG:?Set the GitHub App slug}"
@@ -28,8 +29,8 @@ done
 if ! gcloud artifacts repositories describe your-optimiser --project="$PROJECT_ID" --location="$REGION" >/dev/null 2>&1; then
   gcloud artifacts repositories create your-optimiser --project="$PROJECT_ID" --location="$REGION" --repository-format=docker
 fi
-if ! gcloud firestore databases describe --database='(default)' --project="$PROJECT_ID" >/dev/null 2>&1; then
-  gcloud firestore databases create --database='(default)' --location="$REGION" --type=firestore-native --project="$PROJECT_ID"
+if ! gcloud firestore databases describe --database="$OPT_FIRESTORE_DATABASE" --project="$PROJECT_ID" >/dev/null 2>&1; then
+  gcloud firestore databases create --database="$OPT_FIRESTORE_DATABASE" --location="$REGION" --type=firestore-native --project="$PROJECT_ID"
 fi
 BUILD_ACCOUNT="your-optimiser-checks@${PROJECT_ID}.iam.gserviceaccount.com"
 BUILD_BUCKET="${PROJECT_ID}-your-optimiser-checks"
@@ -46,7 +47,7 @@ gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$B
 gcloud projects add-iam-policy-binding "$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/cloudbuild.builds.editor --quiet >/dev/null
 gcloud iam service-accounts add-iam-policy-binding "$BUILD_ACCOUNT" --project="$PROJECT_ID" --member="serviceAccount:$SERVICE_ACCOUNT" --role=roles/iam.serviceAccountUser --quiet >/dev/null
 gcloud builds submit "$REPOSITORY_ROOT" --tag="$IMAGE" --project="$PROJECT_ID"
-ENVIRONMENT="OPT_BUILD_BACKEND=cloud-build,OPT_BUILD_BUCKET=$BUILD_BUCKET,OPT_BUILD_ACCOUNT=$BUILD_ACCOUNT,OPT_BUILD_REGION=$REGION,OPT_ENV=production,OPT_HOSTED=1,OPT_STORAGE=firestore,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,OPT_DATA_DIR=/tmp/your-optimiser,OPT_REGISTRATION=0,OPT_FRONTEND_URL=$FRONTEND_URL,GITHUB_APP_ID=$GITHUB_APP_ID,GITHUB_APP_SLUG=$GITHUB_APP_SLUG,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,OPT_MANAGED_PROVIDER=${MANAGED_PROVIDER:-google},OPT_MANAGED_MODEL=${MANAGED_MODEL:-gemini-3.8-flash}"
+ENVIRONMENT="OPT_BUILD_BACKEND=cloud-build,OPT_BUILD_BUCKET=$BUILD_BUCKET,OPT_BUILD_ACCOUNT=$BUILD_ACCOUNT,OPT_BUILD_REGION=$REGION,OPT_ENV=production,OPT_HOSTED=1,OPT_STORAGE=firestore,OPT_FIRESTORE_DATABASE=$OPT_FIRESTORE_DATABASE,GOOGLE_CLOUD_PROJECT=$PROJECT_ID,OPT_DATA_DIR=/tmp/your-optimiser,OPT_REGISTRATION=0,OPT_FRONTEND_URL=$FRONTEND_URL,GITHUB_APP_ID=$GITHUB_APP_ID,GITHUB_APP_SLUG=$GITHUB_APP_SLUG,GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID,OPT_MANAGED_PROVIDER=${MANAGED_PROVIDER:-google},OPT_MANAGED_MODEL=${MANAGED_MODEL:-gemini-3.8-flash}"
 SECRETS="OPT_SECRET_KEY=$APP_SECRET_RESOURCE:latest,OPT_MANAGED_API_KEY=$MODEL_SECRET_RESOURCE:latest,GITHUB_PRIVATE_KEY=$GITHUB_KEY_RESOURCE:latest,GITHUB_CLIENT_SECRET=$GITHUB_OAUTH_RESOURCE:latest,GITHUB_WEBHOOK_SECRET=$GITHUB_WEBHOOK_RESOURCE:latest"
 gcloud run deploy your-optimiser-api --project="$PROJECT_ID" --region="$REGION" --image="$IMAGE" --service-account="$SERVICE_ACCOUNT" --allow-unauthenticated --port=8000 --memory=1Gi --cpu=1 --max-instances=5 --set-env-vars="$ENVIRONMENT" --set-secrets="$SECRETS"
 API_URL="$(gcloud run services describe your-optimiser-api --project="$PROJECT_ID" --region="$REGION" --format='value(status.url)')"
@@ -60,5 +61,5 @@ else
   gcloud scheduler jobs create http your-optimiser-worker "${SCHEDULER_ARGS[@]}"
 fi
 printf '\nAPI: %s\nSet frontend OPT_BACKEND_URL to that URL.\nGitHub callback: %s/api/v1/github/callback\nWebhook: %s/webhooks/github\n' "$API_URL" "$API_URL" "$API_URL"
-printf 'Deploy Firestore rules/indexes with: firebase deploy --only firestore --project %s\n' "$PROJECT_ID"
+printf 'Configure firebase.json for database %s only before deploying its rules/indexes (see docs/hosted-setup.md).\n' "$OPT_FIRESTORE_DATABASE"
 printf 'Enable Firebase Auth providers and authorised frontend domains in the Firebase console.\n'
