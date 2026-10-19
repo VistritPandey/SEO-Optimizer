@@ -81,7 +81,8 @@ are checked before filesystem changes. Model declarations cannot authorize a mer
 
 ## Operations
 
-Health endpoint: /healthz. API specification: route shapes are available from
+Health endpoint: `/api/v1/health` (including Cloud Run); `/healthz` remains available locally.
+API specification: route shapes are available from
 /api/v1/openapi.json; interactive docs are disabled in production. Project/report data requires an
 account session or scoped bearer token. Cookie mutations require CSRF verification. Passwords use
 scrypt; login attempts are throttled and credentials are encrypted at rest.
