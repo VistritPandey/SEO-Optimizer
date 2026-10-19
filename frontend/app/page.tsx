@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Workflow } from "@/components/Workflow";
+import { HeroWorkflow } from "@/components/HeroWorkflow";
 import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Reveal } from "@/components/Motion";
@@ -25,8 +26,8 @@ const questions = [
     "The product helps address supported technical and content problems. Search indexing, rankings, AI citations and traffic are separate outcomes that no tool can guarantee. We keep those measurements separate from verified fixes.",
   ],
   [
-    "What is included in the free plan?",
-    "Up to three connected websites and 100 audit and follow-up jobs per month, shared across your workspace. Findings, proposed fixes and activity history are included. No payment details are required.",
+    "What is free, and what comes next?",
+    "The open-source version is free to run with your own setup. Hosted early access currently includes up to three connected websites and 100 audit and follow-up jobs per month. Paid hosted plans may follow; using the current free service does not sign you up for a charge.",
   ],
   [
     "Which website platforms can I connect?",
@@ -114,48 +115,7 @@ export default function Home() {
               Connect GitHub once. Review useful fixes. Keep your team moving.
             </small>
           </div>
-          <Reveal className="hero-outcome">
-            <div className="hero-outcome-heading">
-              <span className="eyebrow">A WEBSITE UPDATE · EXAMPLE</span>
-              <span className="pill">
-                <span className="dot" />
-                Being looked after
-              </span>
-            </div>
-            <h2>
-              You changed the homepage.
-              <br />
-              We checked the next step.
-            </h2>
-            <p>
-              The page looked great. Its main shopping button led nowhere. Your
-              Optimiser caught the problem and prepared the fix.
-            </p>
-            <div className="hero-activity">
-              <span>↗</span>
-              <div>
-                <strong>Collection link repaired</strong>
-                <small>Visitors can reach the products again.</small>
-              </div>
-            </div>
-            <div className="hero-activity">
-              <span>≡</span>
-              <div>
-                <strong>Page description restored</strong>
-                <small>Based on the page’s existing content.</small>
-              </div>
-            </div>
-            <div className="hero-activity">
-              <span>✓</span>
-              <div>
-                <strong>Website checked after the fix</strong>
-                <small>Then back to watching for the next update.</small>
-              </div>
-            </div>
-            <a className="text-link" href="#how">
-              Walk through the whole story →
-            </a>
-          </Reveal>
+          <HeroWorkflow />
         </section>
         <section className="promise" aria-label="The ongoing process">
           <span>NOTICE THE CHANGE</span>
@@ -358,7 +318,7 @@ export default function Home() {
         <section className="section marketing-section pricing" id="pricing">
           <div>
             <span className="eyebrow">GIVE YOUR WEBSITE A LITTLE BACKUP</span>
-            <h2>Free to get started.</h2>
+            <h2>Start free. Keep your options open.</h2>
             <p>
               Connect your website once. Follow its checks and improvements from
               one workspace. Start with the free plan; paid plans will come
