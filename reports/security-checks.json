@@ -1,0 +1,31 @@
+{
+  "verified_at": "2026-10-19T23:34:22.191693+00:00",
+  "status": "passed",
+  "git_history_secret_findings": 0,
+  "current_tracked_identity_matches": [],
+  "private_config_matches_in_tracked_files": 0,
+  "historical_blobs_checked_for_private_config": 889,
+  "private_config_matches_in_checked_historical_blobs": 0,
+  "tracked_secret_environment_or_private_key_files": [],
+  "python_dependencies_audited": 83,
+  "python_known_vulnerabilities": 0,
+  "frontend_known_vulnerabilities": 0,
+  "resolved_dependency_findings": {
+    "cryptography": "50.0.2",
+    "pytest": "9.1.1"
+  },
+  "build_source_bucket_public_roles": [],
+  "controls": [
+    "Credential formats are ignored and excluded from deployment source",
+    "Private configuration is not used as a frontend build argument",
+    "Hosted views omit managed model configuration",
+    "Tenant isolation, credential storage and OAuth replay regression tests pass",
+    "CI scans Git history and audits locked dependencies"
+  ],
+  "limits": [
+    "Commit authorship is retained",
+    "Historical personal repository links remain in earlier commits; history was not rewritten",
+    "Known-advisory and pattern scans do not prove the absence of every security vulnerability",
+    "No live customer authentication or repository write was performed"
+  ]
+}
