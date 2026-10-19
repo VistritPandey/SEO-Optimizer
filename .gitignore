@@ -31,5 +31,10 @@ frontend/*.tsbuildinfo
 
 frontend/next-env.d.ts
 
-# Private signing keys
+# Private signing keys and downloaded service credentials
 *.pem
+*.key
+*.p12
+*.pfx
+*-credentials.json
+service-account*.json
