@@ -189,15 +189,23 @@ def install_routes(app: FastAPI, store: Store, settings: Settings, authenticate:
             ],
         }
 
-    @app.post("/api/v1/github/connect")
-    def connect(request: Request) -> dict[str, str]:
+    def begin_connection(request: Request, installation: bool = False) -> dict[str, str]:
         user = authenticate(request)
         if not settings.github_client_id or not settings.github_client_secret:
             raise HTTPException(503, "GitHub App OAuth is not configured")
+        if installation and not settings.github_app_slug:
+            raise HTTPException(503, "GitHub App installation is not configured")
         state = secrets.token_urlsafe(32)
         store.save_state(
             "oauth:" + token_hash(state), {"tenant": user.id, "until": time.time() + 600}, 0
         )
+        if installation:
+            return {
+                "url": "https://github.com/apps/"
+                + settings.github_app_slug
+                + "/installations/new?"
+                + urlencode({"state": state})
+            }
         return {
             "url": "https://github.com/login/oauth/authorize?"
             + urlencode(
@@ -208,6 +216,14 @@ def install_routes(app: FastAPI, store: Store, settings: Settings, authenticate:
                 }
             )
         }
+
+    @app.post("/api/v1/github/connect")
+    def connect(request: Request) -> dict[str, str]:
+        return begin_connection(request)
+
+    @app.post("/api/v1/github/install")
+    def install(request: Request) -> dict[str, str]:
+        return begin_connection(request, installation=True)
 
     @app.get("/api/v1/github/callback")
     def callback(code: str = "", state: str = "") -> RedirectResponse:
