@@ -231,3 +231,65 @@ def test_missing_resource_messages_support_first_deploy(monkeypatch, message):
         ),
     )
     assert not MODULE.Cloud("demo-optimiser").exists("run", "services", "describe", "fixture")
+
+
+def test_iam_binding_retries_account_propagation_with_bounded_backoff(monkeypatch, capsys):
+    calls, sleeps = [], []
+    account = "optimiser-app@demo-optimiser.iam.gserviceaccount.com"
+
+    def run(command, **kwargs):
+        calls.append(command)
+        if len(calls) < 5:
+            return SimpleNamespace(
+                returncode=1,
+                stderr=(
+                    "Policy modification failed. For a binding with condition, lint-condition.\n"
+                    f"INVALID_ARGUMENT: Service account {account} does not exist."
+                ),
+            )
+        return SimpleNamespace(returncode=0, stdout="binding granted\n")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(MODULE.time, "sleep", sleeps.append)
+    MODULE.Cloud("demo-optimiser").grant(account, "roles/datastore.user")
+    assert len(calls) == 5 and sleeps == [1, 2, 4, 8]
+    assert all(command == calls[0] for command in calls)
+    assert "--condition=None" in calls[0]
+    assert "propagation" in capsys.readouterr().out
+
+
+def test_iam_propagation_timeout_preserves_error(monkeypatch):
+    calls, sleeps = [], []
+
+    def run(command, **kwargs):
+        calls.append(command)
+        return SimpleNamespace(returncode=1, stderr="Service account fixture does not exist.")
+
+    monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(MODULE.time, "sleep", sleeps.append)
+    with pytest.raises(MODULE.DeployError, match="Service account fixture does not exist"):
+        MODULE.Cloud("demo-optimiser").grant("fixture", "roles/datastore.user")
+    assert len(calls) == 8 and sleeps == [1, 2, 4, 8, 16, 30, 30]
+
+
+@pytest.mark.parametrize(
+    ("args", "message"),
+    [
+        (("projects", "add-iam-policy-binding"), "PERMISSION_DENIED: service account not found"),
+        (("projects", "add-iam-policy-binding"), "INVALID_ARGUMENT: invalid role"),
+        (("projects", "add-iam-policy-binding"), "Policy modification failed: invalid condition"),
+        (("secrets", "create"), "Service account fixture does not exist."),
+    ],
+)
+def test_other_failures_and_non_idempotent_commands_are_not_retried(monkeypatch, args, message):
+    calls = []
+
+    def run(command, **kwargs):
+        calls.append(command)
+        return SimpleNamespace(returncode=1, stderr=message)
+
+    monkeypatch.setattr(subprocess, "run", run)
+    monkeypatch.setattr(MODULE.time, "sleep", lambda _: pytest.fail("Unexpected retry"))
+    with pytest.raises(MODULE.DeployError, match="failed"):
+        MODULE.Cloud("demo-optimiser").run(*args)
+    assert len(calls) == 1
