@@ -1,5 +1,5 @@
 {
-  "environment": "http://127.0.0.1:3002",
+  "environment": "https://youroptimiser.com",
   "passed": [
     "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
