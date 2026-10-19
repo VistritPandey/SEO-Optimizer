@@ -31,3 +31,6 @@ frontend/.env*
 frontend/*.tsbuildinfo
 
 frontend/next-env.d.ts
+
+# Private signing keys
+*.pem
