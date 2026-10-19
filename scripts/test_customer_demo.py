@@ -156,7 +156,7 @@ def main():
             )
         )["streams"]
         assert streams and all(stream["codec_type"] == "video" for stream in streams)
-    passed.append("Both published demo copies contain no audio stream")
+    passed.append("Published customer film contains no audio stream")
     proof = json.loads((ROOT / "videos/public/your-proof.json").read_text())
     assert (
         proof["status"] == "passed" and proof["before_defects"] == 4 and proof["after_defects"] == 0
