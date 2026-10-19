@@ -2,6 +2,11 @@
 
 The root `deploy.sh` builds the Next.js frontend and Python API into one container, with one
 public URL. An internal reverse proxy routes pages, API calls, GitHub callbacks and webhooks.
+The container keeps that public port closed until both the frontend and API respond successfully.
+Cloud Run then uses an HTTP startup probe at `/api/v1/health`, which also checks database access.
+This avoids accepting traffic while an upstream is still starting, especially with request-based
+CPU allocation. The public health URL is `/api/v1/health`; `/healthz` remains a local compatibility
+route and is not used for public Cloud Run checks.
 Cloud Tasks sends authenticated requests back to this service to execute one worker step at a
 time. Work stays inside the request lifetime; no always-running worker or five-minute empty
 Cloud Run Job is needed. An hourly Scheduler request reconciles periodic audits and recovers
