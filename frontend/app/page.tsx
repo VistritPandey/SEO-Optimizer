@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Workflow } from "@/components/Workflow";
+import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Reveal } from "@/components/Motion";
 import { site } from "@/lib/site";
@@ -211,31 +212,7 @@ export default function Home() {
             </p>
           </div>
           <Workflow />
-          <details className="customer-video">
-            <summary>▷ Prefer to watch? See the customer walkthrough</summary>
-            <video
-              controls
-              playsInline
-              preload="none"
-              poster="/demo-poster.png"
-              aria-label="Your Optimiser customer walkthrough"
-            >
-              <source src="/demo.mp4" type="video/mp4" />
-              <track
-                kind="captions"
-                src="/demo-captions.vtt"
-                srcLang="en"
-                label="English"
-              />
-              Your browser does not support video playback.
-            </video>
-            <p>
-              <small>
-                An illustrated customer journey based on a recorded website
-                repair. It shows the workflow, not a promise of higher rankings.
-              </small>
-            </p>
-          </details>
+          <WalkthroughVideo />
         </section>
         <section
           className="coverage marketing-section"
