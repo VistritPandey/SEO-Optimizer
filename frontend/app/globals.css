@@ -1403,8 +1403,9 @@ html {
   gap: 8px;
 }
 .brand-mark {
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 30px;
   height: 34px;
   flex: 0 0 30px;
@@ -1415,6 +1416,7 @@ html {
   width: 48px;
   height: 48px;
   max-width: none;
+  flex: none;
   transform: translateY(-2px);
 }
 .brand-name {
