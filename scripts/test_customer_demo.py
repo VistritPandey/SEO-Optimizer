@@ -99,9 +99,9 @@ def main():
         page.clock.install()
         demo.get_by_role("button", name="Play store walkthrough", exact=True).click()
         for expected in range(1, 6):
-            page.clock.fast_forward(6_600)
+            page.clock.fast_forward(4_100)
             expect(demo).to_have_attribute("data-step", str(expected))
-        page.clock.fast_forward(6_600)
+        page.clock.fast_forward(4_100)
         expect(demo).to_have_attribute("data-step", "0")
         demo.get_by_role("button", name="Pause store walkthrough", exact=True).click()
         passed.append("Automatic example loops through simulated approval and live verification")
