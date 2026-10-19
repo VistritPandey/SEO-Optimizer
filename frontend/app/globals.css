@@ -1,7 +1,7 @@
 :root {
   --paper: #f7f7f0;
   --ink: #242d25;
-  --muted: #697269;
+  --muted: #5d685f;
   --green: #315443;
   --line: #dbe0d6;
   --white: #fff;
@@ -889,7 +889,7 @@ footer {
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: #899084;
+  color: #5d685f;
 }
 .demo-browser span:first-child {
   letter-spacing: 3px;
