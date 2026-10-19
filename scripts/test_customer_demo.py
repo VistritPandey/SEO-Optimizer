@@ -50,7 +50,9 @@ def main():
         passed.append(
             "Customer copy contains no installation, infrastructure or provider promotion"
         )
-        page.screenshot(path=str(ROOT / "docs/assets/your-optimiser-landing.png"), full_page=True)
+        page.screenshot(
+            path=str(ROOT / "reports/public-site/landing-recording.png"), full_page=True
+        )
         demo.screenshot(path=str(assets / "update.png"))
         demo.get_by_role("button", name="Explore the collection").click()
         expect(demo.get_by_role("heading", name="This collection cannot be found.")).to_be_visible()
@@ -139,7 +141,7 @@ def main():
         passed.append("Mobile layout fits the viewport with reduced motion")
         mobile.close()
         browser.close()
-    for filename in ("docs/assets/your-optimiser.mp4", "frontend/public/demo.mp4"):
+    for filename in ("frontend/public/demo.mp4",):
         streams = json.loads(
             subprocess.check_output(
                 [
