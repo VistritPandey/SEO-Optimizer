@@ -182,7 +182,7 @@ def install_routes(app: FastAPI, store: Store, settings: Settings, authenticate:
         from seo_optimizer.web import job_json
 
         return {
-            "jobs": [job_json(job) for job in store.jobs(user.id, id)],
+            "jobs": [job_json(job, hosted=settings.hosted) for job in store.jobs(user.id, id)],
             "findings": [
                 {"id": finding.id, "active": finding.active, "details": finding.details}
                 for finding in store.findings(user.id, id)
