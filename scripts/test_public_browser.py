@@ -27,9 +27,28 @@ def main():
         page.on("pageerror", lambda error: errors.append(str(error)))
         requests = []
         page.on("request", lambda request: requests.append(request.url))
+        page.clock.install()
         page.goto(args.base_url, wait_until="networkidle")
         hero = page.get_by_role("complementary", name="Interactive SEO workflow example")
         assert hero.get_by_role("heading", name="Your team ships a new homepage.").is_visible()
+        playback = hero.locator(".demo-playback")
+        expect(playback).to_have_attribute("data-running", "true")
+        initial_height = hero.bounding_box()["height"]
+        page.clock.fast_forward(5_300)
+        expect(hero).to_have_attribute("data-stage", "1")
+        hero.get_by_role("button", name="Pause hero example", exact=True).click()
+        page.clock.fast_forward(11_000)
+        expect(hero).to_have_attribute("data-stage", "1")
+        hero.get_by_role("button", name="Play hero example", exact=True).click()
+        for expected in (2, 3, 0):
+            page.clock.fast_forward(5_300)
+            expect(hero).to_have_attribute("data-stage", str(expected))
+            assert abs(hero.bounding_box()["height"] - initial_height) < 2
+        hero.get_by_role("button", name="Update", exact=True).click()
+        expect(playback).to_have_attribute("data-playing", "false")
+        passed.append(
+            "Hero auto-plays and loops with stable height; pause and manual takeover work"
+        )
         hero.get_by_role("button", name="Check this update →").click()
         hero.get_by_text("/collections/lighting/ returns 404", exact=True).wait_for(state="visible")
         hero.get_by_role("button", name="See the proposal →").click()
@@ -52,7 +71,7 @@ def main():
         github = page.get_by_role("navigation", name="Main navigation").get_by_role(
             "link", name="Your Optimiser on GitHub (opens in a new tab)"
         )
-        assert github.get_attribute("href") == "https://github.com/YourOptimiser"
+        assert github.get_attribute("href") == "https://github.com/YourOptimiser/SEO-Optimizer"
         assert page.locator("video").count() == 0
         assert not any("demo-poster" in url or url.endswith("/demo.mp4") for url in requests)
         summary = page.get_by_text("▷ Prefer to watch? See the customer walkthrough", exact=True)
@@ -65,6 +84,24 @@ def main():
         assert page.locator("video").count() == 0
         passed.append("Silent captioned video mounts only on request and unloads when closed")
         page.get_by_role("link", name="Try the interactive demo").click()
+        store = page.locator(".customer-demo")
+        store_playback = store.locator(".demo-playback")
+        expect(store_playback).to_have_attribute("data-running", "true")
+        # Keep the walkthrough in view while virtual time advances through its full story.
+        store.locator(".demo-playback").scroll_into_view_if_needed()
+        page.clock.fast_forward(6_600)
+        expect(store).to_have_attribute("data-step", "1")
+        page.evaluate("window.scrollTo({top:0,behavior:'instant'})")
+        expect(store_playback).to_have_attribute("data-running", "false")
+        page.clock.fast_forward(14_000)
+        expect(store).to_have_attribute("data-step", "1")
+        store.locator(".demo-playback").scroll_into_view_if_needed()
+        expect(store_playback).to_have_attribute("data-running", "true")
+        for expected in (2, 3, 4, 5, 0):
+            page.clock.fast_forward(6_600)
+            expect(store).to_have_attribute("data-step", str(expected))
+        store.get_by_role("button", name="Pause store walkthrough", exact=True).click()
+        passed.append("Store auto-plays the illustrated full cycle and stops its timer off screen")
         page.get_by_role("button", name="Explore the collection").click()
         assert page.get_by_role("heading", name="This collection cannot be found.").is_visible()
         page.get_by_role("button", name="Back to the homepage").click()
@@ -105,6 +142,19 @@ def main():
         )
         page = context.new_page()
         page.on("pageerror", lambda error: errors.append(str(error)))
+        page.clock.install()
+        page.goto(args.base_url, wait_until="networkidle")
+        reduced_hero = page.locator(".hero-workflow")
+        expect(reduced_hero.locator(".demo-playback")).to_have_attribute("data-playing", "false")
+        page.clock.fast_forward(12_000)
+        expect(reduced_hero).to_have_attribute("data-stage", "0")
+        reduced_hero.scroll_into_view_if_needed()
+        reduced_hero.get_by_role("button", name="Play hero example", exact=True).click()
+        expect(reduced_hero.locator(".demo-playback")).to_have_attribute("data-running", "true")
+        page.clock.run_for(100)
+        page.clock.fast_forward(5_300)
+        expect(reduced_hero).to_have_attribute("data-stage", "1")
+        passed.append("Reduced-motion visitors start paused and can explicitly play the example")
         for path in PAGES:
             page.goto(args.base_url + path, wait_until="networkidle")
             assert page.get_by_role("heading", level=1).count() == 1
