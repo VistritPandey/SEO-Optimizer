@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { m } from "motion/react";
 
 const stages = [
   "Website updated",
@@ -250,13 +251,20 @@ export function Workflow() {
               </li>
             ))}
           </ol>
-          <div className="demo-story" aria-live="polite">
+          <m.div
+            className="demo-story"
+            key={`${scenario}-${step}`}
+            aria-live="polite"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.22 }}
+          >
             <span className="eyebrow">
               {String(step + 1).padStart(2, "0")} / 06
             </span>
             <h3>{story[step][0]}</h3>
             <p>{story[step][1]}</p>
-          </div>
+          </m.div>
           {step === 2 && scenario === "broken" && (
             <div className="demo-findings">
               <span>
