@@ -5,6 +5,7 @@ import { m, useReducedMotion } from "motion/react";
 import { DemoPlayback } from "./DemoPlayback";
 import { useDemoPlayback } from "./useDemoPlayback";
 
+const stepDuration = 3000;
 const stages = ["Update", "Inspect", "Propose", "Verify"];
 const titles = [
   "Your team ships a new homepage.",
@@ -26,7 +27,7 @@ export function HeroWorkflow() {
     () => setStage((value) => (value + 1) % stages.length),
     [],
   );
-  const playback = useDemoPlayback<HTMLElement>(stage, 5200, advance);
+  const playback = useDemoPlayback<HTMLElement>(stage, stepDuration, advance);
   return (
     <aside
       ref={playback.ref}
@@ -43,7 +44,7 @@ export function HeroWorkflow() {
         name="hero example"
         step={stage}
         total={4}
-        duration={5200}
+        duration={stepDuration}
         playing={playback.playing}
         running={playback.running}
         toggle={playback.toggle}
