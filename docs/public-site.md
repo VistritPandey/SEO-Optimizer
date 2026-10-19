@@ -64,9 +64,11 @@ Callback: https://youroptimiser.com/api/v1/github/callback
 Webhook:  https://youroptimiser.com/webhooks/github
 ```
 
-The current dashboard performs a separate, state-bound OAuth connection. In GitHub App settings,
-leave "Request user authorization (OAuth) during installation" disabled when using the plain
-installation link. This setting is separate from the domain URLs.
+The dashboard begins installation through an authenticated endpoint that supplies one-use,
+tenant-bound OAuth state. It supports GitHub's "Request user authorization (OAuth) during
+installation" option. A separate account-connection action remains available. Plain public install
+links do not bind a GitHub account to a workspace; begin from the dashboard when that association
+is needed. Installation IDs in redirect query parameters are never treated as authorisation.
 
 ## Policies and support
 
