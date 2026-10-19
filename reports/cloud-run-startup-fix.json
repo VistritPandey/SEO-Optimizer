@@ -1,0 +1,68 @@
+{
+  "url": "https://your-optimiser-m4yk3u7p3a-uc.a.run.app",
+  "checks": [
+    {
+      "path": "/",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "brand_present": true
+    },
+    {
+      "path": "/login",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/api/v1/health",
+      "status": 200,
+      "expected": 200,
+      "passed": true,
+      "health": {
+        "status": "ready",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "path": "/api/v1/projects",
+      "status": 401,
+      "expected": 401,
+      "passed": true
+    },
+    {
+      "path": "/demo.mp4",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/demo-poster.png",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    },
+    {
+      "path": "/demo-captions.vtt",
+      "status": 200,
+      "expected": 200,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "unverified": [
+    "Real Firebase sign-in",
+    "GitHub installation and PR flow"
+  ],
+  "model_calls": 0,
+  "verified_on": "2026-10-19",
+  "revision": "your-optimiser-00003-q22",
+  "offline_tests": {
+    "passed": 268,
+    "skipped": 10,
+    "skip_reason": "Firebase emulators not running in full offline suite"
+  },
+  "local_container_checks_passed": 6,
+  "cloud_build": "970dc357-8ebe-4d0b-bd9b-ee9e99fc202e",
+  "infrastructure_cost": "unmeasured"
+}
