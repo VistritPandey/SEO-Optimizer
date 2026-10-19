@@ -74,7 +74,7 @@ class Document(HTMLParser):
             self._script += data
 
 
-def check_public_site(base_url, passed=None):
+def check_public_site(base_url, passed=None, verify_www=True):
     if passed is None:
         passed = []
     documents, titles = {}, set()
@@ -176,15 +176,17 @@ def check_public_site(base_url, passed=None):
         passed.append("Every internal navigation link and in-page anchor resolves")
 
         assert client.get("/this-page-does-not-exist").status_code == 404
-        redirect = client.get("/privacy", headers={"Host": "www.youroptimiser.com"})
-        assert (
-            redirect.status_code == 308 and redirect.headers["location"] == CANONICAL + "/privacy"
-        )
+        if verify_www:
+            redirect = client.get("/privacy", headers={"Host": "www.youroptimiser.com"})
+            assert (
+                redirect.status_code == 308
+                and redirect.headers["location"] == CANONICAL + "/privacy"
+            )
+            passed.append(
+                "www host normalises to the canonical apex domain with a permanent redirect"
+            )
         assert client.get("/api/backend/projects").status_code == 401
-        passed.append(
-            "Unknown pages return 404, www normalises to the apex domain, "
-            "and workspace API access stays protected"
-        )
+        passed.append("Unknown pages return 404 and workspace API access stays protected")
     return passed
 
 
@@ -192,6 +194,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:3002")
     parser.add_argument("--report", type=Path, default=Path("reports/public-site-qa.json"))
+    parser.add_argument(
+        "--skip-host-redirect",
+        action="store_true",
+        help="Skip Host-header checks behind an external proxy; record as unverified",
+    )
     args = parser.parse_args()
     report = {
         "environment": args.base_url,
@@ -206,10 +213,12 @@ def main():
         ],
     }
     try:
-        check_public_site(args.base_url, report["passed"])
+        check_public_site(args.base_url, report["passed"], verify_www=not args.skip_host_redirect)
     except (AssertionError, httpx.HTTPError, ValueError, ElementTree.ParseError) as error:
         frame = traceback.extract_tb(error.__traceback__)[-1]
         report["failed"].append(str(error) or f"{type(error).__name__} at line {frame.lineno}")
+    if args.skip_host_redirect:
+        report["unverified"].append("Public www redirect: verify after alias DNS and TLS are ready")
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, indent=2))
