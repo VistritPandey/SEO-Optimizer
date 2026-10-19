@@ -9,6 +9,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location("deploy_gcp", ROOT / "scripts/deploy_gcp.py")
@@ -20,11 +21,15 @@ SPEC.loader.exec_module(MODULE)
 def config(tmp_path, monkeypatch):
     monkeypatch.setattr(MODULE, "ROOT", tmp_path)
     monkeypatch.setattr(os, "environ", {})
+    (tmp_path / "deploy").mkdir()
+    for filename in ("firestore.rules", "firestore.indexes.json"):
+        (tmp_path / "deploy" / filename).write_bytes((ROOT / "deploy" / filename).read_bytes())
     file = tmp_path / ".env.deploy"
     file.write_text(
         "\n".join(
             [
                 "PROJECT_ID=demo-optimiser",
+                "OPT_FIRESTORE_DATABASE=optimiser-test",
                 "GITHUB_APP_ID=123",
                 "GITHUB_APP_SLUG=demo-app",
                 "GITHUB_CLIENT_ID=public-client",
@@ -49,6 +54,7 @@ def test_dry_run_has_no_cloud_calls_or_credential_disclosure(config, monkeypatch
     assert MODULE.main() == 0
     output = capsys.readouterr().out
     assert '"mutations": false' in output
+    assert '"firestore_database": "optimiser-test"' in output
     assert "private-key-do-not-print" not in output and "private-oauth" not in output
 
 
@@ -79,11 +85,23 @@ def test_no_default_cloud_project_or_overlapping_secrets(config):
         MODULE.secret_specs(c)
 
 
+@pytest.mark.parametrize("database", ["", "bad/name", "UPPERCASE", "abc"])
+def test_deployment_requires_an_explicit_valid_database(config, database):
+    config.write_text(
+        config.read_text().replace(
+            "OPT_FIRESTORE_DATABASE=optimiser-test", "OPT_FIRESTORE_DATABASE=" + database
+        )
+    )
+    with pytest.raises(MODULE.DeployError, match="OPT_FIRESTORE_DATABASE"):
+        MODULE.configuration(config)
+
+
 class FakeCloud:
     def __init__(self, existing):
         self.existing = existing
         self.calls = []
         self.uploads = []
+        self.runtime_environments = []
 
     def exists(self, *args):
         self.calls.append(("exists", args, None))
@@ -101,6 +119,9 @@ class FakeCloud:
         if args[:2] == ("builds", "submit"):
             path = next(arg.split("=", 1)[1] for arg in args if arg.startswith("--config="))
             self.uploads.append(json.loads(Path(path).read_text()))
+        if args[:2] == ("run", "deploy"):
+            path = next(arg.split("=", 1)[1] for arg in args if arg.startswith("--env-vars-file="))
+            self.runtime_environments.append(yaml.safe_load(Path(path).read_text()))
         return ""
 
 
@@ -108,7 +129,20 @@ class FakeCloud:
 def test_provisioning_preserves_keys_and_creates_one_service(config, monkeypatch, existing):
     c = MODULE.configuration(config)
     cloud = FakeCloud(existing)
-    monkeypatch.setattr(subprocess, "run", lambda *a, **k: SimpleNamespace(returncode=0))
+    firebase_deployments = []
+
+    def firebase_run(args, **kwargs):
+        assert args[:2] == ["firebase", "deploy"]
+        file = Path(args[args.index("--config") + 1])
+        firebase_config = json.loads(file.read_text())
+        for entry in firebase_config["firestore"]:
+            for key in ("rules", "indexes"):
+                path = file.parent / entry[key]
+                assert path.is_file() and path.is_relative_to(file.parent)
+        firebase_deployments.append(firebase_config)
+        return SimpleNamespace(returncode=0)
+
+    monkeypatch.setattr(subprocess, "run", firebase_run)
     client = SimpleNamespace(
         get=lambda url: SimpleNamespace(
             status_code=200, json=lambda: {"status": "ready"}, text="Your Optimiser"
@@ -119,6 +153,7 @@ def test_provisioning_preserves_keys_and_creates_one_service(config, monkeypatch
     commands = [args for kind, args, _ in cloud.calls if kind == "run"]
     deployments = [args for args in commands if args[:2] == ("run", "deploy")]
     assert len(deployments) == 1
+    assert cloud.runtime_environments[0]["OPT_FIRESTORE_DATABASE"] == "optimiser-test"
     assert "--min-instances=0" in deployments[0] and "--max-instances=1" in deployments[0]
     assert not any(args[:2] == ("run", "jobs") for args in commands)
     creates = [item for item in cloud.calls if item[1][:2] == ("secrets", "create")]
@@ -128,6 +163,16 @@ def test_provisioning_preserves_keys_and_creates_one_service(config, monkeypatch
     assert "private-key-do-not-print" not in serialized and "private-oauth" not in serialized
     assert "NEXT_PUBLIC_FIREBASE_API_KEY=public-key" in serialized
     assert any("--max-concurrent-dispatches=1" in args for args in commands)
+    database_commands = [
+        args for _, args, _ in cloud.calls if args[:2] == ("firestore", "databases")
+    ]
+    assert database_commands
+    assert all("--database=optimiser-test" in args for args in database_commands)
+    assert not any("(default)" in arg for args in database_commands for arg in args)
+    assert [entry["database"] for entry in firebase_deployments[0]["firestore"]] == [
+        "optimiser-test"
+    ]
+    assert firebase_deployments[0]["firestore"][0]["database"] != "(default)"
 
 
 class SimpleContext:
