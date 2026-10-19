@@ -34,14 +34,14 @@ def main():
         playback = hero.locator(".demo-playback")
         expect(playback).to_have_attribute("data-running", "true")
         initial_height = hero.bounding_box()["height"]
-        page.clock.fast_forward(3_100)
+        page.clock.fast_forward(1_600)
         expect(hero).to_have_attribute("data-stage", "1")
         hero.get_by_role("button", name="Pause hero example", exact=True).click()
         page.clock.fast_forward(11_000)
         expect(hero).to_have_attribute("data-stage", "1")
         hero.get_by_role("button", name="Play hero example", exact=True).click()
         for expected in (2, 3, 0):
-            page.clock.fast_forward(3_100)
+            page.clock.fast_forward(1_600)
             expect(hero).to_have_attribute("data-stage", str(expected))
             assert abs(hero.bounding_box()["height"] - initial_height) < 2
         hero.get_by_role("button", name="Update", exact=True).click()
@@ -152,7 +152,7 @@ def main():
         reduced_hero.get_by_role("button", name="Play hero example", exact=True).click()
         expect(reduced_hero.locator(".demo-playback")).to_have_attribute("data-running", "true")
         page.clock.run_for(100)
-        page.clock.fast_forward(3_100)
+        page.clock.fast_forward(1_600)
         expect(reduced_hero).to_have_attribute("data-stage", "1")
         passed.append("Reduced-motion visitors start paused and can explicitly play the example")
         for path in PAGES:
