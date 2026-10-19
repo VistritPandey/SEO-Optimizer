@@ -9,6 +9,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -147,7 +148,31 @@ class Cloud:
 
     def run(self, *args: str, stdin: str | None = None) -> str:
         command = ["gcloud", *args, "--project=" + self.project, "--quiet"]
-        result = subprocess.run(command, input=stdin, text=True, capture_output=True)
+        # A successful account creation/describe does not guarantee that IAM policy
+        # validation can resolve the principal yet. Retry only this idempotent write.
+        delays = (1, 2, 4, 8, 16, 30, 30)
+        for attempt in range(len(delays) + 1):
+            result = subprocess.run(command, input=stdin, text=True, capture_output=True)
+            if result.returncode == 0:
+                return result.stdout.strip()
+            message = result.stderr.lower()
+            propagation = (
+                "add-iam-policy-binding" in args
+                and "service account" in message
+                and ("does not exist" in message or "not found" in message)
+                and not any(
+                    code in message
+                    for code in ("permission_denied", "permission denied", "unauthenticated")
+                )
+            )
+            if not propagation or attempt == len(delays):
+                break
+            delay = delays[attempt]
+            print(
+                f"Waiting for service-account propagation; retrying IAM binding in {delay}s.",
+                flush=True,
+            )
+            time.sleep(delay)
         if result.returncode:
             # Command arguments contain only public configuration/resource names, never keys.
             raise DeployError("gcloud " + " ".join(args[:3]) + " failed: " + result.stderr[-2500:])
@@ -186,6 +211,7 @@ class Cloud:
             self.project,
             "--member=serviceAccount:" + account,
             "--role=" + role,
+            "--condition=None",
         )
 
 
