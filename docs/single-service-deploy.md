@@ -22,7 +22,7 @@ Google sign-in. Create a GitHub App with the permissions/events described in
 
 ```sh
 cp deploy/single-service.env.example .env.deploy
-# Fill PROJECT_ID, Firebase's public web config, and the GitHub App configuration.
+# Fill PROJECT_ID, OPT_FIRESTORE_DATABASE, Firebase web config, and GitHub App config.
 ./deploy.sh --dry-run
 ./deploy.sh
 ```
@@ -40,6 +40,21 @@ Artifact Registry, database if absent, Firestore rules/indexes, source-check buc
 secrets, Cloud Run service and hourly Scheduler wake-up. The first image build includes Chromium
 and its Linux libraries, so allow several minutes. Cloud Build handles the target platform;
 Docker does not need to run on your laptop.
+
+Set `OPT_FIRESTORE_DATABASE` to the exact **database ID** you created in Firestore, for example
+`your-optimiser`. This is a backend setting, not a Firebase Realtime Database URL; it does not
+belong in `frontend/.env.local`. The frontend uses Firebase for authentication and calls the
+backend for application data. Deployment requires an explicit ID, prints it in `--dry-run`,
+reuses that database if present, and creates it in `REGION` only if absent. Existing database
+locations are preserved. It never falls back to `(default)` when configuration is missing.
+
+The deployment generates a temporary Firebase configuration containing only that database,
+so application reads/writes, rules and indexes all target the same ID. The repository's
+`firebase.json` is for local emulators; the deploy script does not use it for production.
+Other databases' rules and indexes are not deployed. Named database selection follows the
+[Firestore database guide](https://firebase.google.com/docs/firestore/manage-databases) and
+[Firebase CLI configuration](https://firebase.google.com/docs/cli#configuration_for_multiple_cloud_firestore_databases).
+Changing the ID selects a different data store; existing records are not migrated automatically.
 
 The deploying account needs permission to enable services, configure IAM, create these resources,
 use the deployment/build identities and deploy Firebase rules. Authentication, billing or IAM
@@ -91,8 +106,11 @@ If needed, `CPU=2`, `MEMORY=4Gi` and `MAX_INSTANCES=2` or `3` are supported conf
 The Cloud Tasks queue still serializes worker deliveries.
 
 Deployment updates the configured service, secrets references, queue policy, Scheduler job and
-repository-owned Firestore rules/indexes. Use a dedicated application project: do not point this
-at a shared Firestore database whose existing rules must be preserved. It does not provision a
+repository-owned Firestore rules/indexes in the selected database. Use a dedicated application
+database: do not select a database whose existing rules must be preserved. The application
+identity's Datastore IAM role is project-wide; a named database selects storage and is not an
+IAM security boundary. Prefer a dedicated project when other applications require isolation.
+The script does not provision a
 load balancer, VPC connector, GPU or paid subscription system.
 
 ## Local verification
