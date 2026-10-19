@@ -2,6 +2,7 @@
   "status": "passed",
   "passed": [
     "One ingress serves Next pages, public video assets and Python health",
+    "Public content, metadata, crawl files, policies and branding pass served-page checks",
     "Customer proxy and task/webhook handlers reject unconfigured access",
     "Production Next proxy reaches only the configured loopback API",
     "Bundled Chromium launches under the unprivileged application user",
@@ -11,6 +12,16 @@
   "failed": [],
   "model_calls": 0,
   "environment": "local Docker container with disposable SQLite state",
+  "public_site_checks": [
+    "Eight public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
+    "Sign-in and workspace pages carry noindex in HTML and HTTP headers",
+    "Sitemap includes public canonical pages only; robots allows them and excludes API crawling",
+    "LLM product index is readable, links to public facts and states its limits",
+    "Structured data describes the real product and free offer without fabricated reviews or FAQ rich-result markup",
+    "Favicon, Apple touch icon and branded social image have correct PNG dimensions",
+    "Every internal navigation link and in-page anchor resolves",
+    "Unknown pages return 404, www normalises to the apex domain, and workspace API access stays protected"
+  ],
   "unverified": [
     "Live GCP IAM and provisioning",
     "Firebase sign-in",
