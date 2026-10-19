@@ -5,6 +5,7 @@ import { m } from "motion/react";
 import { DemoPlayback } from "./DemoPlayback";
 import { useDemoPlayback } from "./useDemoPlayback";
 
+const stepDuration = 4000;
 const stages = [
   "Website updated",
   "Checking the change",
@@ -82,7 +83,7 @@ export function Workflow() {
   }, []);
   const playback = useDemoPlayback<HTMLDivElement>(
     step,
-    6500,
+    stepDuration,
     advanceAutomatically,
   );
   function choose(value: "broken" | "healthy") {
@@ -132,7 +133,7 @@ export function Workflow() {
         name="store walkthrough"
         step={step}
         total={6}
-        duration={6500}
+        duration={stepDuration}
         playing={playback.playing}
         running={playback.running}
         toggle={playback.toggle}
