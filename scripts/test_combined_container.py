@@ -30,7 +30,9 @@ def main():
         with httpx.Client(base_url=base, timeout=20) as client:
             for _attempt in range(40):
                 try:
-                    if client.get("/healthz").status_code == 200:
+                    first = client.get("/")
+                    assert first.status_code == 200, "Ingress opened before the frontend was ready"
+                    if client.get("/api/v1/health").status_code == 200:
                         break
                 except httpx.TransportError:
                     pass
@@ -38,6 +40,7 @@ def main():
             else:
                 raise AssertionError("Combined container never became healthy")
             assert "Your Optimiser" in client.get("/").text
+            assert client.get("/api/v1/health").json()["status"] == "ready"
             assert client.get("/demo.mp4").status_code == 200
             assert client.get("/demo-poster.png").status_code == 200
             assert client.get("/demo-captions.vtt").text.startswith("WEBVTT")
