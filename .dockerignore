@@ -19,6 +19,9 @@ __pycache__
 **/*.pem
 **/*.key
 **/*.p12
+**/*.pfx
+**/*-credentials.json
+**/service-account*.json
 .firebase
 dist
 frontend/*.tsbuildinfo
