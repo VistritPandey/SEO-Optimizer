@@ -34,14 +34,14 @@ def main():
         playback = hero.locator(".demo-playback")
         expect(playback).to_have_attribute("data-running", "true")
         initial_height = hero.bounding_box()["height"]
-        page.clock.fast_forward(5_300)
+        page.clock.fast_forward(3_100)
         expect(hero).to_have_attribute("data-stage", "1")
         hero.get_by_role("button", name="Pause hero example", exact=True).click()
         page.clock.fast_forward(11_000)
         expect(hero).to_have_attribute("data-stage", "1")
         hero.get_by_role("button", name="Play hero example", exact=True).click()
         for expected in (2, 3, 0):
-            page.clock.fast_forward(5_300)
+            page.clock.fast_forward(3_100)
             expect(hero).to_have_attribute("data-stage", str(expected))
             assert abs(hero.bounding_box()["height"] - initial_height) < 2
         hero.get_by_role("button", name="Update", exact=True).click()
@@ -89,7 +89,7 @@ def main():
         expect(store_playback).to_have_attribute("data-running", "true")
         # Keep the walkthrough in view while virtual time advances through its full story.
         store.locator(".demo-playback").scroll_into_view_if_needed()
-        page.clock.fast_forward(6_600)
+        page.clock.fast_forward(4_100)
         expect(store).to_have_attribute("data-step", "1")
         page.evaluate("window.scrollTo({top:0,behavior:'instant'})")
         expect(store_playback).to_have_attribute("data-running", "false")
@@ -98,7 +98,7 @@ def main():
         store.locator(".demo-playback").scroll_into_view_if_needed()
         expect(store_playback).to_have_attribute("data-running", "true")
         for expected in (2, 3, 4, 5, 0):
-            page.clock.fast_forward(6_600)
+            page.clock.fast_forward(4_100)
             expect(store).to_have_attribute("data-step", str(expected))
         store.get_by_role("button", name="Pause store walkthrough", exact=True).click()
         passed.append("Store auto-plays the illustrated full cycle and stops its timer off screen")
@@ -152,7 +152,7 @@ def main():
         reduced_hero.get_by_role("button", name="Play hero example", exact=True).click()
         expect(reduced_hero.locator(".demo-playback")).to_have_attribute("data-running", "true")
         page.clock.run_for(100)
-        page.clock.fast_forward(5_300)
+        page.clock.fast_forward(3_100)
         expect(reduced_hero).to_have_attribute("data-stage", "1")
         passed.append("Reduced-motion visitors start paused and can explicitly play the example")
         for path in PAGES:
