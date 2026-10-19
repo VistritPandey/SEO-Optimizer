@@ -1,12 +1,14 @@
 {
   "environment": "https://your-optimiser-m4yk3u7p3a-uc.a.run.app",
   "passed": [
+    "Hero workflow: update, findings, review, verification, replay and keyboard controls",
     "Silent captioned video mounts only on request and unloads when closed",
     "Broken update: missing destination, before/after review and repaired destination",
     "Healthy update: working collection and no proposed fix or approval",
     "FAQ answers expand with native accessible controls",
     "Eight public pages fit a 390px mobile viewport without horizontal overflow",
-    "Reduced-motion preference is active during responsive accessibility checks"
+    "Reduced-motion preference is active during responsive accessibility checks",
+    "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks"
   ],
   "browser_errors": [],
   "accessibility_violations": [],
