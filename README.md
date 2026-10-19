@@ -4,7 +4,7 @@
 
 **SEO care that keeps up with your website.**
 
-[Website](https://youroptimiser.com) · [How it works](https://youroptimiser.com/how-it-works) · [GitHub](https://github.com/YourOptimiser)
+[Website](https://youroptimiser.com) · [How it works](https://youroptimiser.com/how-it-works) · [GitHub](https://github.com/YourOptimiser/SEO-Optimizer)
 
 Your Optimiser checks website changes, identifies supported SEO issues, prepares focused
 fixes and verifies the served result. Healthy updates do not need an edit. GitHub is the
