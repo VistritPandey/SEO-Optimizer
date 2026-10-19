@@ -3,8 +3,10 @@
 import argparse
 import json
 import re
+import traceback
 from pathlib import Path
 
+from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import sync_playwright
 from test_public_site import PAGES
 
@@ -30,9 +32,11 @@ def main():
         assert not any("demo-poster" in url or url.endswith("/demo.mp4") for url in requests)
         summary = page.get_by_text("▷ Prefer to watch? See the customer walkthrough", exact=True)
         summary.click()
+        page.locator("video").wait_for(state="visible")
         assert page.locator("video").is_visible()
         assert page.locator("video").evaluate("video => video.muted && !video.autoplay")
         summary.click()
+        page.locator("video").wait_for(state="detached")
         assert page.locator("video").count() == 0
         passed.append("Silent captioned video mounts only on request and unloads when closed")
         page.get_by_role("link", name="Try the interactive demo").click()
@@ -113,4 +117,16 @@ def main():
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except (AssertionError, PlaywrightError, OSError) as error:
+        frame = traceback.extract_tb(error.__traceback__)[-1]
+        report = {
+            "status": "failed",
+            "failed": [str(error) or f"{type(error).__name__} at line {frame.lineno}"],
+            "model_calls": 0,
+        }
+        (ROOT / "reports").mkdir(exist_ok=True)
+        (ROOT / "reports/public-browser-qa.json").write_text(json.dumps(report, indent=2) + "\n")
+        print(json.dumps(report, indent=2))
+        raise SystemExit(1) from error
