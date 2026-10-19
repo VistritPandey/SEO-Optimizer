@@ -15,7 +15,7 @@ from seo_optimizer.application_models import ProjectCreate, ProjectSecrets, Proj
 from seo_optimizer.followups import handle_event, register_project
 from seo_optimizer.github import GitHubClient
 from seo_optimizer.settings import Settings
-from seo_optimizer.store import Store
+from seo_optimizer.store import Store, token_hash
 from seo_optimizer.web import create_app
 
 
@@ -101,13 +101,18 @@ def test_managed_creation_and_tenant_isolation(hosted) -> None:
     assert store.projects(other.id) == []
 
 
-def test_oauth_callback_is_tenant_bound_single_use_and_private(hosted, monkeypatch) -> None:
+@pytest.mark.parametrize("endpoint", ["connect", "install"])
+def test_oauth_callback_is_tenant_bound_single_use_and_private(
+    hosted, monkeypatch, endpoint
+) -> None:
     _, store, account, token, client = hosted
-    result = client.post("/api/v1/github/connect", headers={"Authorization": "Bearer " + token})
+    result = client.post("/api/v1/github/" + endpoint, headers={"Authorization": "Bearer " + token})
     assert result.status_code == 200
     from urllib.parse import parse_qs, urlparse
 
     state = parse_qs(urlparse(result.json()["url"]).query)["state"][0]
+    if endpoint == "install":
+        assert urlparse(result.json()["url"]).path == "/apps/example-app/installations/new"
     original = httpx.Client
 
     def handler(request: httpx.Request) -> httpx.Response:
@@ -142,6 +147,25 @@ def test_oauth_callback_is_tenant_bound_single_use_and_private(hosted, monkeypat
         ).status_code
         == 400
     )
+
+
+def test_installation_state_requires_authentication_and_isolated_tenants(hosted):
+    _, store, account, token, client = hosted
+    from urllib.parse import parse_qs, urlparse
+
+    assert client.post("/api/v1/github/install").status_code == 401
+    other, other_token = store.create_user("other-install@example.test", "!federated-only")
+    states = []
+    for tenant, bearer in ((account, token), (other, other_token)):
+        response = client.post(
+            "/api/v1/github/install", headers={"Authorization": "Bearer " + bearer}
+        )
+        assert response.status_code == 200
+        state = parse_qs(urlparse(response.json()["url"]).query)["state"][0]
+        record, _ = store.state("oauth:" + token_hash(state))
+        assert record["tenant"] == tenant.id and record["until"] > time.time()
+        states.append(state)
+    assert states[0] != states[1]
 
 
 def connected_project(store, tenant: str):
