@@ -1,5 +1,5 @@
 {
-  "verified_at": "2026-10-19T23:34:22.191693+00:00",
+  "verified_at": "2026-10-19T23:39:02.025256+00:00",
   "status": "passed",
   "git_history_secret_findings": 0,
   "current_tracked_identity_matches": [],
@@ -27,5 +27,57 @@
     "Historical personal repository links remain in earlier commits; history was not rewritten",
     "Known-advisory and pattern scans do not prove the absence of every security vulnerability",
     "No live customer authentication or repository write was performed"
-  ]
+  ],
+  "live_domain": "https://youroptimiser.com",
+  "live_access_checks": [
+    {
+      "method": "GET",
+      "path": "/api/v1/health",
+      "status": 200
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/projects",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/github/install",
+      "status": 401
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/worker/claim",
+      "status": 403
+    },
+    {
+      "method": "POST",
+      "path": "/webhooks/github",
+      "status": 403
+    },
+    {
+      "method": "POST",
+      "path": "/api/backend/worker/claim",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/.env",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/.git/config",
+      "status": 404
+    },
+    {
+      "method": "GET",
+      "path": "/github-pvt-key.pem",
+      "status": 404
+    }
+  ],
+  "public_pages_and_script_assets_checked": 17,
+  "public_asset_private_config_matches": 0,
+  "cloud_upload_filter_private_files": [],
+  "cloud_run_revision": "your-optimiser-00005-464"
 }
