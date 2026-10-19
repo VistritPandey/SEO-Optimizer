@@ -27,6 +27,7 @@ export const metadata: Metadata = {
   applicationName: site.name,
   category: "business",
   openGraph: {
+    url: site.url,
     title: "Your Optimiser",
     description:
       "Your website evolves. Your SEO needs to keep up. Meet your AI agent for ongoing website care.",
