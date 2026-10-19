@@ -88,7 +88,11 @@ def main():
         passed.append("Healthy update: working collection and no proposed fix or approval")
         page.goto(args.base_url, wait_until="networkidle")
         page.get_by_text("What is free, and what comes next?", exact=True).click()
-        assert page.get_by_text(re.compile("The open-source version is free")).is_visible()
+        assert (
+            page.locator(".faq-section")
+            .get_by_text(re.compile("The open-source version is free"))
+            .is_visible()
+        )
         page.evaluate(
             "() => { document.activeElement?.blur(); window.scrollTo({top:0,behavior:'instant'}); }"
         )
