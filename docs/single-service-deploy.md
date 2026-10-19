@@ -62,6 +62,13 @@ failures stop with the relevant command's error. The script does not activate bi
 an unrelated cloud project. Index creation can take time; wait for indexes to become ready before
 exercising project jobs. No actual cloud deployment was performed while testing this script.
 
+New service accounts can take a minute or more to become usable by IAM policy validation, even
+after creation and lookup succeed. If an IAM binding reports that a service account does not
+exist, the script retries that binding with exponential backoff (up to 91 seconds of waiting).
+Permission errors and unrelated invalid arguments fail immediately. Project role grants explicitly
+use `--condition=None`; existing conditional bindings are preserved. A failed deployment can be
+rerun with the same configuration; existing secrets and accounts are reused.
+
 ## Secrets and the final URLs
 
 Provide the initial managed model key, GitHub OAuth secret and GitHub App PEM private key through
