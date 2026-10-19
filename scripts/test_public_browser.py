@@ -64,7 +64,9 @@ def main():
         page.goto(args.base_url, wait_until="networkidle")
         page.get_by_text("What is included in the free plan?", exact=True).click()
         assert page.get_by_text(re.compile("Up to three connected websites and 100")).is_visible()
-        page.evaluate("() => { document.activeElement?.blur(); window.scrollTo(0, 0); }")
+        page.evaluate(
+            "() => { document.activeElement?.blur(); window.scrollTo({top:0,behavior:'instant'}); }"
+        )
         page.screenshot(path=str(screenshots / "desktop.png"), full_page=True)
         passed.append("FAQ answers expand with native accessible controls")
 
