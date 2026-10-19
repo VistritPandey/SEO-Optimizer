@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { AnimatePresence, m, useReducedMotion } from "motion/react";
+import { DemoPlayback } from "./DemoPlayback";
+import { useDemoPlayback } from "./useDemoPlayback";
 
 const stages = ["Update", "Inspect", "Propose", "Verify"];
 const titles = [
@@ -20,8 +22,16 @@ const descriptions = [
 export function HeroWorkflow() {
   const [stage, setStage] = useState(0);
   const reducedMotion = useReducedMotion();
+  const advance = useCallback(
+    () => setStage((value) => (value + 1) % stages.length),
+    [],
+  );
+  const playback = useDemoPlayback<HTMLElement>(stage, 5200, advance);
   return (
     <aside
+      ref={playback.ref}
+      {...playback.interaction}
+      data-stage={stage}
       className="hero-workflow"
       aria-label="Interactive SEO workflow example"
     >
@@ -29,6 +39,15 @@ export function HeroWorkflow() {
         <span>ONE UPDATE, FOLLOWED THROUGH</span>
         <span className="workflow-example">Illustrated example</span>
       </div>
+      <DemoPlayback
+        name="hero example"
+        step={stage}
+        total={4}
+        duration={5200}
+        playing={playback.playing}
+        running={playback.running}
+        toggle={playback.toggle}
+      />
       <div
         className="workflow-steps"
         role="group"
@@ -51,7 +70,11 @@ export function HeroWorkflow() {
           </button>
         ))}
       </div>
-      <div className="workflow-scene" aria-live="polite" aria-atomic="true">
+      <div
+        className="workflow-scene"
+        aria-live={playback.playing ? "off" : "polite"}
+        aria-atomic="true"
+      >
         <h2>{titles[stage]}</h2>
         <p>{descriptions[stage]}</p>
         <AnimatePresence mode="wait" initial={false}>
