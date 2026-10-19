@@ -41,10 +41,13 @@ class FirestoreStore(Store):
 
                 client = firestore.Client(
                     project=settings.firebase_project,
+                    database=settings.firestore_database,
                     credentials=AnonymousCredentials(),  # type: ignore[no-untyped-call]
                 )
             else:
-                client = firestore.Client(project=settings.firebase_project)
+                client = firestore.Client(
+                    project=settings.firebase_project, database=settings.firestore_database
+                )
         self.db = client
 
     def health(self) -> None:
