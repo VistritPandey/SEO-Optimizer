@@ -50,10 +50,7 @@ def main():
         passed.append(
             "Customer copy contains no installation, infrastructure or provider promotion"
         )
-        (ROOT / "reports/public-site").mkdir(parents=True, exist_ok=True)
-        page.screenshot(
-            path=str(ROOT / "reports/public-site/landing-recording.png"), full_page=True
-        )
+        page.screenshot(path=str(output / "landing.png"), full_page=True)
         demo.screenshot(path=str(assets / "update.png"))
         demo.get_by_role("button", name="Explore the collection").click()
         expect(demo.get_by_role("heading", name="This collection cannot be found.")).to_be_visible()
