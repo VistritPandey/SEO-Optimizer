@@ -321,9 +321,17 @@ export default function Home() {
             <h2>Start free. Keep your options open.</h2>
             <p>
               Connect your website once. Follow its checks and improvements from
-              one workspace. Start with the free plan; paid plans will come
-              later.
+              one workspace. Hosted early access is free; paid hosted plans will
+              follow as the service grows.
             </p>
+            <a
+              className="text-link"
+              href={site.repository}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Prefer your own setup? The open-source version is free ↗
+            </a>
           </div>
           <article className="price-card">
             <span className="pill">FREE PLAN</span>
