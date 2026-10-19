@@ -22,8 +22,8 @@ pytestmark = [
 ]
 
 
-@pytest.fixture
-def store(tmp_path: Path):
+@pytest.fixture(params=["(default)", "optimiser-test"])
+def store(tmp_path: Path, request):
     from seo_optimizer.firestore_store import FirestoreStore
 
     value = FirestoreStore(
@@ -33,6 +33,7 @@ def store(tmp_path: Path):
             "emulator-test-secret-" * 3,
             storage_backend="firestore",
             firebase_project="demo-your-optimiser",
+            firestore_database=request.param,
         )
     )
     yield value
