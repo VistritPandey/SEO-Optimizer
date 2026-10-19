@@ -133,8 +133,10 @@ def main():
             page.goto(args.base_url + path, wait_until="networkidle")
             brand = page.get_by_role("link", name="Your Optimiser home").first
             mark = brand.locator(".brand-mark").bounding_box()
+            image = brand.locator(".brand-mark img").bounding_box()
             name = brand.locator(".brand-name").bounding_box()
-            assert mark and name
+            assert mark and image and name
+            assert abs(image["x"] + image["width"] / 2 - mark["x"] - mark["width"] / 2) < 1
             assert abs(mark["y"] + mark["height"] / 2 - name["y"] - name["height"] / 2) < 2
             assert mark["x"] + mark["width"] <= name["x"]
             if path.startswith("/login"):
