@@ -5,7 +5,7 @@ import { m, useReducedMotion } from "motion/react";
 import { DemoPlayback } from "./DemoPlayback";
 import { useDemoPlayback } from "./useDemoPlayback";
 
-const stepDuration = 3000;
+const stepDuration = 1500;
 const stages = ["Update", "Inspect", "Propose", "Verify"];
 const titles = [
   "Your team ships a new homepage.",
