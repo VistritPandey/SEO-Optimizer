@@ -8,6 +8,7 @@ from pathlib import Path
 from uuid import uuid4
 
 import httpx
+from test_public_site import check_public_site
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -45,6 +46,11 @@ def main():
             assert client.get("/demo-poster.png").status_code == 200
             assert client.get("/demo-captions.vtt").text.startswith("WEBVTT")
             passed.append("One ingress serves Next pages, public video assets and Python health")
+            public_site_checks = check_public_site(base)
+            passed.append(
+                "Public content, metadata, crawl files, policies and branding "
+                "pass served-page checks"
+            )
             assert client.get("/api/backend/projects").status_code == 401
             assert client.post("/api/v1/internal/work").status_code == 503
             assert client.post("/webhooks/github", json={}).status_code == 403
@@ -114,6 +120,7 @@ def main():
             "failed": [],
             "model_calls": 0,
             "environment": "local Docker container with disposable SQLite state",
+            "public_site_checks": public_site_checks,
             "unverified": [
                 "Live GCP IAM and provisioning",
                 "Firebase sign-in",
