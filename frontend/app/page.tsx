@@ -1,20 +1,93 @@
 import Link from "next/link";
 import { Workflow } from "@/components/Workflow";
+import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
+import { Reveal } from "@/components/Motion";
+import { site } from "@/lib/site";
+
+export const metadata = { alternates: { canonical: "/" } };
+
+const questions = [
+  [
+    "What happens after I connect my website?",
+    "Connect a GitHub repository and your deployed website, choose the branch and pages that matter, and add trusted business facts. The agent starts an audit and checks relevant website changes afterward.",
+  ],
+  [
+    "Does it change my website without asking?",
+    "Hosted fixes are proposed as GitHub pull requests. Your team reviews and merges them. The agent then checks the configured deployment and served page to verify the result.",
+  ],
+  [
+    "What if my update hasn’t broken anything?",
+    "The agent records what was checked and leaves healthy pages alone. A useful check does not need to create an edit.",
+  ],
+  [
+    "Will this improve rankings or get me cited by AI?",
+    "The product helps address supported technical and content problems. Search indexing, rankings, AI citations and traffic are separate outcomes that no tool can guarantee. We keep those measurements separate from verified fixes.",
+  ],
+  [
+    "What is included in the free plan?",
+    "Up to three connected websites and 100 audit and follow-up jobs per month, shared across your workspace. Findings, proposed fixes and activity history are included. No payment details are required.",
+  ],
+  [
+    "Which website platforms can I connect?",
+    "The hosted integration is GitHub. Your website’s source must be in a repository you can authorise, with a deployed URL the agent can inspect. We do not currently offer direct CMS or other source-control integrations.",
+  ],
+];
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${site.url}/#organization`,
+      name: site.name,
+      url: site.url,
+      logo: {
+        "@type": "ImageObject",
+        url: `${site.url}/brand/logo.png`,
+        width: 512,
+        height: 512,
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site.url}/#website`,
+      name: site.name,
+      url: site.url,
+      publisher: { "@id": `${site.url}/#organization` },
+      inLanguage: "en",
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": `${site.url}/#application`,
+      name: site.name,
+      url: site.url,
+      applicationCategory: "BusinessApplication",
+      operatingSystem: "Web",
+      description: site.description,
+      publisher: { "@id": `${site.url}/#organization` },
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+        url: `${site.url}/#pricing`,
+        description:
+          "Free plan: up to 3 websites and 100 audit/follow-up jobs per month.",
+      },
+    },
+  ],
+};
 
 export default function Home() {
   return (
     <>
-      <header className="marketing-nav">
-        <Link className="brand" href="/">
-          y<span>Your Optimiser</span>
-        </Link>
-        <nav aria-label="Main">
-          <a href="#how">See it work</a>
-          <a href="#pricing">Pricing</a>
-          <Link href="/login">Sign in ↗</Link>
-        </nav>
-      </header>
-      <main>
+      <SiteHeader />
+      <main id="main-content">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+          }}
+        />
         <section className="hero">
           <div>
             <span className="eyebrow">YOUR AI AGENT FOR ONGOING SEO</span>
@@ -24,9 +97,9 @@ export default function Home() {
               <em>Your SEO needs to keep up.</em>
             </h1>
             <p>
-              A new page. A fresh design. A product update. Your Optimiser
-              checks what changed, fixes confirmed search problems and checks
-              the result—so you can keep moving.
+              A new page. A fresh design. A product update. Catch the quiet SEO
+              problems that can come with them. Your Optimiser checks what
+              changed, prepares a focused fix and checks the live result.
             </p>
             <div className="actions">
               <a className="button" href="#how">
@@ -37,11 +110,10 @@ export default function Home() {
               </Link>
             </div>
             <small>
-              For the people building a business, not just the people writing
-              its code.
+              Connect GitHub once. Review useful fixes. Keep your team moving.
             </small>
           </div>
-          <div className="hero-outcome">
+          <Reveal className="hero-outcome">
             <div className="hero-outcome-heading">
               <span className="eyebrow">A WEBSITE UPDATE · EXAMPLE</span>
               <span className="pill">
@@ -49,11 +121,11 @@ export default function Home() {
                 Being looked after
               </span>
             </div>
-            <h3>
+            <h2>
               You changed the homepage.
               <br />
               We checked the next step.
-            </h3>
+            </h2>
             <p>
               The page looked great. Its main shopping button led nowhere. Your
               Optimiser caught the problem and prepared the fix.
@@ -82,13 +154,43 @@ export default function Home() {
             <a className="text-link" href="#how">
               Walk through the whole story →
             </a>
-          </div>
+          </Reveal>
         </section>
         <section className="promise" aria-label="The ongoing process">
           <span>NOTICE THE CHANGE</span>
           <span>CHECK WHAT MATTERS</span>
           <span>FIX WHAT’S CONFIRMED</span>
           <span>KEEP WATCHING</span>
+        </section>
+        <section
+          className="care-story marketing-section"
+          aria-labelledby="care-title"
+        >
+          <div>
+            <span className="eyebrow">
+              THE WORK THAT SLIPS BETWEEN THE BIG UPDATES
+            </span>
+            <h2 id="care-title">
+              The page looks right.
+              <br />
+              <em>But does everything still work?</em>
+            </h2>
+          </div>
+          <div>
+            <p>
+              A shopping link points to a page that moved. A new template drops
+              a description. A product’s search information stops matching its
+              price. Small details can drift long before the next audit.
+            </p>
+            <p>
+              Your Optimiser gives those details a follow-through: current
+              evidence, a focused change, your team’s review, then a check of
+              what went live.
+            </p>
+            <Link href="/how-it-works" className="text-link">
+              From website update to verified fix →
+            </Link>
+          </div>
         </section>
         <section className="section marketing-section" id="how">
           <div className="customer-intro">
@@ -134,6 +236,115 @@ export default function Home() {
               </small>
             </p>
           </details>
+        </section>
+        <section
+          className="coverage marketing-section"
+          aria-labelledby="coverage-title"
+        >
+          <div className="customer-intro">
+            <div>
+              <span className="eyebrow">
+                A LITTLE CARE, IN THE RIGHT PLACES
+              </span>
+              <h2 id="coverage-title">
+                Your whole offer.
+                <br />
+                <em>A clearer path to it.</em>
+              </h2>
+            </div>
+            <p>
+              Checks match your website and the evidence available. Missing
+              facts stay visible; working pages keep their place.
+            </p>
+          </div>
+          <div className="coverage-rows">
+            {[
+              [
+                "01",
+                "The way in",
+                "Crawling, indexing signals, redirects, canonical URLs and internal links.",
+                "Help the right pages stay accessible.",
+              ],
+              [
+                "02",
+                "The story you tell",
+                "Page titles, descriptions, useful headings and content grounded in your actual offer.",
+                "Keep your message clear and consistent.",
+              ],
+              [
+                "03",
+                "The facts that matter",
+                "Product details, business information, structured data and language targeting.",
+                "Make the information agree.",
+              ],
+              [
+                "04",
+                "The next answer",
+                "Discovery settings, clear entities, supported claims and separate citation observations.",
+                "Build reliable foundations for AI search.",
+              ],
+            ].map(([number, title, body, outcome]) => (
+              <Reveal key={number}>
+                <article>
+                  <span>{number}</span>
+                  <h3>{title}</h3>
+                  <p>{body}</p>
+                  <small>{outcome}</small>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+          <Link href="/seo-and-ai-search" className="text-link">
+            Explore what we look after →
+          </Link>
+        </section>
+        <section className="review-story marketing-section">
+          <div>
+            <span className="eyebrow">LESS GUESSWORK. A BETTER HANDOVER.</span>
+            <h2>
+              “What changed?”
+              <br />
+              <em>There’s a record for that.</em>
+            </h2>
+            <p>
+              See the finding, the evidence, the proposed fix and the check
+              afterward. Keep ownership of the website without chasing every
+              detail yourself.
+            </p>
+            <Link href="/security" className="text-link">
+              Your access. Your review. Your control. →
+            </Link>
+          </div>
+          <div
+            className="review-receipt"
+            aria-label="Illustrative repair record"
+          >
+            <span className="eyebrow">
+              EXAMPLE REPAIR RECORD · FICTIONAL STORE
+            </span>
+            <h3>A clear path to the collection.</h3>
+            <dl>
+              <div>
+                <dt>Observed</dt>
+                <dd>Homepage button opens a missing page</dd>
+              </div>
+              <div>
+                <dt>Proposed</dt>
+                <dd>Restore the existing collection link</dd>
+              </div>
+              <div>
+                <dt>Reviewed</dt>
+                <dd>Your team approves the pull request</dd>
+              </div>
+              <div>
+                <dt>Verified</dt>
+                <dd>The deployed button reaches the collection</dd>
+              </div>
+            </dl>
+            <div className="receipt-end">
+              <span className="dot" /> Back to watching the website
+            </div>
+          </div>
         </section>
         <section
           className="feature-grid marketing-section"
@@ -185,7 +396,7 @@ export default function Home() {
             </strong>
             <ul>
               <li>Up to 3 connected websites</li>
-              <li>100 checks and follow-up tasks per month</li>
+              <li>100 audits and follow-up tasks per month</li>
               <li>Findings, proposed fixes and activity history</li>
               <li>Choose the websites the agent can access</li>
             </ul>
@@ -194,6 +405,46 @@ export default function Home() {
             </Link>
             <p>No payment required.</p>
           </article>
+        </section>
+        <section
+          className="faq-section marketing-section"
+          aria-labelledby="faq-title"
+        >
+          <div>
+            <span className="eyebrow">BEFORE YOU HAND OVER THE BUSYWORK</span>
+            <h2 id="faq-title">
+              Good questions.
+              <br />
+              <em>Straight answers.</em>
+            </h2>
+            <Link href="/contact" className="text-link">
+              Something else on your mind? →
+            </Link>
+          </div>
+          <div className="faq-list">
+            {questions.map(([question, answer]) => (
+              <details key={question}>
+                <summary>{question}</summary>
+                <p>{answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+        <section className="guide-invitation marketing-section">
+          <span className="eyebrow">A PRACTICAL GUIDE FOR YOUR TEAM</span>
+          <h2>
+            An SEO habit
+            <br />
+            <em>that survives the next launch.</em>
+          </h2>
+          <p>
+            How to follow a website change, establish the evidence, review a fix
+            and measure what actually happened. A useful read whether you use an
+            agent or do the work yourself.
+          </p>
+          <Link href="/guides/continuous-seo" className="text-link">
+            Read the ongoing SEO guide →
+          </Link>
         </section>
         <section className="closing marketing-section">
           <span className="eyebrow">THE WORK CONTINUES AFTER THE AUDIT</span>
@@ -212,11 +463,7 @@ export default function Home() {
           </Link>
         </section>
       </main>
-      <footer className="marketing-footer">
-        <span>Your Optimiser</span>
-        <span>Ongoing SEO care. Clear changes. Checked results.</span>
-        <Link href="/login">Your workspace ↗</Link>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
