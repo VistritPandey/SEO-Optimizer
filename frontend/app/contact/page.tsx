@@ -8,7 +8,7 @@ export const metadata = pageMetadata(
   "/contact",
 );
 
-const privateRequest = `${site.repository}/issues/new?title=Private%20contact%20request&body=Please%20provide%20a%20private%20contact%20channel%20for%20an%20account%2C%20privacy%20or%20security%20request.%20No%20sensitive%20information%20is%20included%20here.`;
+const support = `mailto:${site.supportEmail}`;
 
 export default function Page() {
   return (
@@ -21,46 +21,43 @@ export default function Page() {
           <em>We’re listening.</em>
         </>
       }
-      intro="Your Optimiser is in its early public release. Support is currently handled manually by the project maintainers through GitHub."
+      intro="Your Optimiser is in its early public release. Support is handled by the project maintainers. Use our support address for product, account, privacy and security questions."
     >
       <section>
         <h2>Product questions and reproducible problems.</h2>
         <p>
-          Tell us what you expected and what happened. A public issue is useful
-          for a general question or a bug that can be described without sharing
-          customer data. Remove private repository URLs, tokens, screenshots
-          with personal details and account identifiers.
+          Tell us what you expected and what happened, along with the page or
+          feature involved. Remove tokens, passwords and unnecessary customer
+          data from screenshots or attachments.
         </p>
         <a
           className="button"
-          href={`${site.repository}/issues`}
+          href={support}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Open the support tracker ↗
+          Email support ↗
         </a>
       </section>
       <section>
         <h2>Privacy, account or security requests.</h2>
         <p>
-          Start with a request for a private contact channel. The button below
-          opens a prefilled GitHub issue containing only that request. You
-          choose whether to submit it. Wait for a private channel before sharing
-          your email address, account details, private code or the details of a
-          vulnerability.
+          Email us privately. Include enough context to describe your request,
+          but never send passwords, access tokens or private signing keys. For a
+          vulnerability, begin with a brief description and ask how to share
+          sensitive reproduction details securely.
         </p>
         <a
           className="button secondary"
-          href={privateRequest}
+          href={`${support}?subject=Private%20support%20request`}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Request a private contact channel ↗
+          Contact us privately ↗
         </a>
         <p className="contact-note">
-          This initial request is public on GitHub. Do not add sensitive
-          information. Identity verification may be needed before account data
-          can be released or removed.
+          Identity verification may be needed before account data can be
+          released or removed. Requests are handled manually.
         </p>
       </section>
       <section>
