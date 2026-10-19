@@ -7,7 +7,7 @@ import traceback
 from pathlib import Path
 
 from playwright.sync_api import Error as PlaywrightError
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 from test_public_site import PAGES
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,6 +28,31 @@ def main():
         requests = []
         page.on("request", lambda request: requests.append(request.url))
         page.goto(args.base_url, wait_until="networkidle")
+        hero = page.get_by_role("complementary", name="Interactive SEO workflow example")
+        assert hero.get_by_role("heading", name="Your team ships a new homepage.").is_visible()
+        hero.get_by_role("button", name="Check this update →").click()
+        hero.get_by_text("/collections/lighting/ returns 404", exact=True).wait_for(state="visible")
+        hero.get_by_role("button", name="See the proposal →").click()
+        hero.get_by_text("/shop/ · existing page", exact=True).wait_for(state="visible")
+        hero.get_by_role("button", name="Approve this example →").click()
+        hero.get_by_text("/shop/ returns 200 after deployment", exact=True).wait_for(
+            state="visible"
+        )
+        hero.get_by_role("button", name="Replay example ↺").click()
+        assert hero.get_by_role("heading", name="Your team ships a new homepage.").is_visible()
+        hero.get_by_role("button", name="Inspect", exact=True).focus()
+        page.keyboard.press("Enter")
+        expect(hero.get_by_role("button", name="Inspect", exact=True)).to_have_attribute(
+            "aria-pressed", "true"
+        )
+        hero.get_by_role("button", name="Update", exact=True).click()
+        passed.append(
+            "Hero workflow: update, findings, review, verification, replay and keyboard controls"
+        )
+        github = page.get_by_role("navigation", name="Main navigation").get_by_role(
+            "link", name="Your Optimiser on GitHub (opens in a new tab)"
+        )
+        assert github.get_attribute("href") == "https://github.com/YourOptimiser"
         assert page.locator("video").count() == 0
         assert not any("demo-poster" in url or url.endswith("/demo.mp4") for url in requests)
         summary = page.get_by_text("▷ Prefer to watch? See the customer walkthrough", exact=True)
@@ -62,8 +87,8 @@ def main():
         assert page.get_by_role("button", name="Approve example fix").count() == 0
         passed.append("Healthy update: working collection and no proposed fix or approval")
         page.goto(args.base_url, wait_until="networkidle")
-        page.get_by_text("What is included in the free plan?", exact=True).click()
-        assert page.get_by_text(re.compile("Up to three connected websites and 100")).is_visible()
+        page.get_by_text("What is free, and what comes next?", exact=True).click()
+        assert page.get_by_text(re.compile("The open-source version is free")).is_visible()
         page.evaluate(
             "() => { document.activeElement?.blur(); window.scrollTo({top:0,behavior:'instant'}); }"
         )
@@ -104,6 +129,28 @@ def main():
         passed.append("Eight public pages fit a 390px mobile viewport without horizontal overflow")
         assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches")
         passed.append("Reduced-motion preference is active during responsive accessibility checks")
+        for path in ("/", "/login", "/login?mode=register"):
+            page.goto(args.base_url + path, wait_until="networkidle")
+            brand = page.get_by_role("link", name="Your Optimiser home").first
+            mark = brand.locator(".brand-mark").bounding_box()
+            name = brand.locator(".brand-name").bounding_box()
+            assert mark and name
+            assert abs(mark["y"] + mark["height"] / 2 - name["y"] - name["height"] / 2) < 2
+            assert mark["x"] + mark["width"] <= name["x"]
+            if path.startswith("/login"):
+                page.add_script_tag(path=str(ROOT / "frontend/node_modules/axe-core/axe.min.js"))
+                auth_violations = page.evaluate(
+                    "async () => (await axe.run(document, "
+                    "{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}})).violations"
+                )
+                violations.extend(
+                    {"path": path, "id": item["id"], "impact": item["impact"]}
+                    for item in auth_violations
+                )
+        passed.append(
+            "Shared logo aligns on mobile home, sign-in and sign-up; "
+            "authentication pages pass automated A/AA checks"
+        )
         browser.close()
     report = {
         "environment": args.base_url,
