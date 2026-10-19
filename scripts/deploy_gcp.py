@@ -17,6 +17,8 @@ import httpx
 import yaml
 from dotenv import dotenv_values
 
+from seo_optimizer.settings import validate_firestore_database
+
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC_CONFIG = (
     "NEXT_PUBLIC_FIREBASE_API_KEY",
@@ -54,6 +56,7 @@ def configuration(config: Path) -> dict[str, str]:
         k
         for k in (
             "PROJECT_ID",
+            "OPT_FIRESTORE_DATABASE",
             "GITHUB_APP_ID",
             "GITHUB_APP_SLUG",
             "GITHUB_CLIENT_ID",
@@ -67,6 +70,10 @@ def configuration(config: Path) -> dict[str, str]:
         raise DeployError("PROJECT_ID must explicitly identify the intended Google Cloud project")
     if result["NEXT_PUBLIC_FIREBASE_PROJECT_ID"] != result["PROJECT_ID"]:
         raise DeployError("Firebase and Cloud deployment must use the same project")
+    try:
+        validate_firestore_database(result["OPT_FIRESTORE_DATABASE"])
+    except ValueError as error:
+        raise DeployError(str(error)) from error
     for key in ("SERVICE_NAME", "REGION"):
         if not re.fullmatch(r"[a-z][a-z0-9-]{0,39}", result[key]):
             raise DeployError(f"Invalid {key}")
@@ -289,12 +296,13 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
             "--location=" + region,
             "--repository-format=docker",
         )
-    if not cloud.exists("firestore", "databases", "describe", "--database=(default)"):
+    database = c["OPT_FIRESTORE_DATABASE"]
+    if not cloud.exists("firestore", "databases", "describe", "--database=" + database):
         cloud.run(
             "firestore",
             "databases",
             "create",
-            "--database=(default)",
+            "--database=" + database,
             "--location=" + region,
             "--type=firestore-native",
         )
@@ -367,6 +375,7 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
         "OPT_ENV": "production",
         "OPT_HOSTED": "1",
         "OPT_STORAGE": "firestore",
+        "OPT_FIRESTORE_DATABASE": database,
         "GOOGLE_CLOUD_PROJECT": project,
         "OPT_REGISTRATION": "0",
         "OPT_DATA_DIR": "/tmp/optimiser",
@@ -392,6 +401,22 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
         build.write_text(json.dumps(build_config(c, image, site, builder)))
         environment = Path(folder) / "runtime.yaml"
         environment.write_text(yaml.safe_dump(env))
+        firebase_config = Path(folder) / "firebase.json"
+        for filename in ("firestore.rules", "firestore.indexes.json"):
+            shutil.copyfile(ROOT / "deploy" / filename, Path(folder) / filename)
+        firebase_config.write_text(
+            json.dumps(
+                {
+                    "firestore": [
+                        {
+                            "database": database,
+                            "rules": "firestore.rules",
+                            "indexes": "firestore.indexes.json",
+                        }
+                    ]
+                }
+            )
+        )
         print("Building the combined container (first build includes Chromium).", flush=True)
         cloud.run(
             "builds",
@@ -410,7 +435,7 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
                 "--project",
                 project,
                 "--config",
-                str(ROOT / "firebase.json"),
+                str(firebase_config),
                 "--non-interactive",
             ],
             cwd=ROOT,
@@ -499,6 +524,7 @@ def main() -> int:
                         "project": config["PROJECT_ID"],
                         "region": config["REGION"],
                         "service": config["SERVICE_NAME"],
+                        "firestore_database": config["OPT_FIRESTORE_DATABASE"],
                         "min_instances": 0,
                         "max_instances": int(config["MAX_INSTANCES"]),
                         "resources": [
