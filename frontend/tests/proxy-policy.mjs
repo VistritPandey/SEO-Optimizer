@@ -7,6 +7,7 @@ test("proxy supports user-facing endpoints with explicit methods", () => {
     ["projects/abc-123", "PATCH"],
     ["projects/abc/workspace", "PUT"],
     ["github/connect", "DELETE"],
+    ["github/install", "POST"],
     ["projects/abc/activity", "GET"],
   ])
     assert.equal(allowedRequest(path, method), true);
@@ -19,6 +20,7 @@ test("proxy refuses secrets, worker capabilities and traversal", () => {
     ["projects/%2e%2e", "GET"],
     ["projects/a", "DELETE"],
     ["github/callback", "GET"],
+    ["github/install", "GET"],
     ["projects/a/activity", "POST"],
   ])
     assert.equal(allowedRequest(path, method), false);
