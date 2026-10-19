@@ -51,24 +51,42 @@ def check_password(value: str, encoded: str) -> bool:
         return False
 
 
-def project_json(project: Project) -> dict[str, Any]:
+def public_report(report: dict[str, Any], hosted: bool = False) -> dict[str, Any]:
+    if not hosted:
+        return report
+    return {
+        key: value
+        for key, value in report.items()
+        if key not in {"model", "model_summary", "model_cache_hit", "cacheable_model_result"}
+    }
+
+
+def project_json(project: Project, hosted: bool = False) -> dict[str, Any]:
+    spec = dict(project.spec)
+    if hosted:
+        spec.pop("provider", None)
     return {
         "id": project.id,
-        "spec": project.spec,
-        "last_report": project.last_report,
+        "spec": spec,
+        "last_report": public_report(project.last_report, hosted),
         "last_revision": project.last_revision,
         "updated_at": project.updated_at,
     }
 
 
-def job_json(job: Job) -> dict[str, Any]:
+def job_json(job: Job, hosted: bool = False) -> dict[str, Any]:
+    result = dict(job.result)
+    if hosted:
+        for key in ("report", "after_report"):
+            if isinstance(result.get(key), dict):
+                result[key] = public_report(result[key], hosted=True)
     return {
         "id": job.id,
         "tenant_id": job.tenant_id,
         "project_id": job.project_id,
         "kind": job.kind,
         "status": job.status,
-        "result": job.result,
+        "result": result,
         "events": job.events,
         "payload": job.payload,
         "attempts": job.attempts,
@@ -600,7 +618,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     @app.get("/api/v1/projects")
     def api_projects(request: Request) -> Any:
         account = require_user(request)
-        return [project_json(project) for project in storage.projects(account.id)]
+        return [
+            project_json(project, hosted=configuration.hosted)
+            for project in storage.projects(account.id)
+        ]
 
     @app.post("/api/v1/projects", status_code=201)
     def api_create_project(request: Request, value: ProjectCreate) -> Any:
@@ -615,11 +636,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         from seo_optimizer.followups import register_project
 
         register_project(storage, project)
-        return project_json(project)
+        return project_json(project, hosted=configuration.hosted)
 
     @app.get("/api/v1/projects/{id}")
     def api_project(request: Request, id: str) -> Any:
-        return project_json(owned(request, id))
+        return project_json(owned(request, id), hosted=configuration.hosted)
 
     @app.patch("/api/v1/projects/{id}")
     def api_update_project(request: Request, id: str, spec: ProjectSpec) -> Any:
@@ -667,7 +688,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         project = owned(request, id)
         csrf(request)
         return job_json(
-            storage.enqueue(project.tenant_id, id, "audit", "manual:" + str(uuid4()), {})
+            storage.enqueue(project.tenant_id, id, "audit", "manual:" + str(uuid4()), {}),
+            hosted=configuration.hosted,
         )
 
     @app.get("/api/v1/jobs/{id}")
@@ -676,7 +698,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         job = storage.job(account.id, id)
         if job is None:
             raise HTTPException(404, "Job not found")
-        return job_json(job)
+        return job_json(job, hosted=configuration.hosted)
 
     @app.post("/api/v1/worker/claim")
     def api_claim(request: Request, value: dict[str, str]) -> Any:
