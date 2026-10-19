@@ -10,6 +10,8 @@ import {
 } from "firebase/auth";
 import { firebaseAuth } from "@/lib/firebase";
 import { api, type Activity, type Project } from "@/lib/api";
+import { Brand } from "./Brand";
+import { m } from "motion/react";
 type Account = {
   email: string;
   tier: string;
@@ -180,9 +182,7 @@ export function Dashboard() {
   return (
     <div className="workspace-shell">
       <aside className="sidebar">
-        <Link className="brand" href="/">
-          y<span>Your Optimiser</span>
-        </Link>
+        <Brand />
         <span className="eyebrow">WORKSPACE</span>
         <button
           className={!selected && !newProject ? "nav-item active" : "nav-item"}
@@ -223,7 +223,13 @@ export function Dashboard() {
           Sign out ↗
         </button>
       </aside>
-      <main className="dashboard-main">
+      <m.main
+        id="main-content"
+        className="dashboard-main"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
         <header className="topbar">
           <span>
             WORKSPACE /{" "}
@@ -770,8 +776,14 @@ export function Dashboard() {
         )}
         <footer>
           Your Optimiser · Measured improvements, with a record of every change.
+          <nav aria-label="Workspace help and policies">
+            <Link href="/how-it-works">How it works</Link>
+            <Link href="/contact">Help</Link>
+            <Link href="/privacy">Privacy</Link>
+            <Link href="/terms">Terms</Link>
+          </nav>
         </footer>
-      </main>
+      </m.main>
     </div>
   );
 }
