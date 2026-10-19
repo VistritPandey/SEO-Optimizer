@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { m } from "motion/react";
+import { DemoPlayback } from "./DemoPlayback";
+import { useDemoPlayback } from "./useDemoPlayback";
 
 const stages = [
   "Website updated",
@@ -67,30 +69,26 @@ const healthy = [
 export function Workflow() {
   const [scenario, setScenario] = useState<"broken" | "healthy">("broken");
   const [step, setStep] = useState(0);
-  const [playing, setPlaying] = useState(false);
   const [comparison, setComparison] = useState<"before" | "after">("after");
   const [pageView, setPageView] = useState<"home" | "collection" | "missing">(
     "home",
   );
   const fixed = scenario === "healthy" || step >= 4;
   const story = scenario === "broken" ? broken : healthy;
-  useEffect(() => {
-    if (!playing) return;
-    // A review is an explicit choice, even in the demonstration.
-    if (step === 5 || (step === 3 && scenario === "broken")) {
-      setPlaying(false);
-      return;
-    }
-    const timer = setTimeout(() => {
-      setStep((value) => value + 1);
-      setPageView("home");
-    }, 4200);
-    return () => clearTimeout(timer);
-  }, [playing, step, scenario]);
+  const advanceAutomatically = useCallback(() => {
+    setStep((value) => (value + 1) % stages.length);
+    setPageView("home");
+    setComparison("after");
+  }, []);
+  const playback = useDemoPlayback<HTMLDivElement>(
+    step,
+    6500,
+    advanceAutomatically,
+  );
   function choose(value: "broken" | "healthy") {
     setScenario(value);
     setStep(0);
-    setPlaying(false);
+    playback.pause();
     setPageView("home");
     setComparison("after");
   }
@@ -99,7 +97,13 @@ export function Workflow() {
     setPageView("home");
   }
   return (
-    <div className="customer-demo" data-step={step} data-scenario={scenario}>
+    <div
+      ref={playback.ref}
+      {...playback.interaction}
+      className="customer-demo"
+      data-step={step}
+      data-scenario={scenario}
+    >
       <div className="demo-toolbar">
         <div>
           <span className="demo-live-dot" /> Interactive example{" "}
@@ -124,6 +128,15 @@ export function Workflow() {
           </button>
         </div>
       </div>
+      <DemoPlayback
+        name="store walkthrough"
+        step={step}
+        total={6}
+        duration={6500}
+        playing={playback.playing}
+        running={playback.running}
+        toggle={playback.toggle}
+      />
       <div className="demo-layout">
         <div className="demo-website">
           <div className="demo-browser">
@@ -239,7 +252,7 @@ export function Workflow() {
                   aria-current={step === index ? "step" : undefined}
                   onClick={() => {
                     setStep(index);
-                    setPlaying(false);
+                    playback.pause();
                     setPageView("home");
                   }}
                 >
@@ -254,7 +267,7 @@ export function Workflow() {
           <m.div
             className="demo-story"
             key={`${scenario}-${step}`}
-            aria-live="polite"
+            aria-live={playback.playing ? "off" : "polite"}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.22 }}
@@ -265,70 +278,89 @@ export function Workflow() {
             <h3>{story[step][0]}</h3>
             <p>{story[step][1]}</p>
           </m.div>
-          {step === 2 && scenario === "broken" && (
-            <div className="demo-findings">
-              <span>
-                ↗ Collection link <strong>Missing page</strong>
-              </span>
-              <span>
-                ≡ Search description <strong>Missing</strong>
-              </span>
-            </div>
-          )}
-          {step === 3 && scenario === "broken" && (
-            <div className="demo-change-card">
-              <div role="group" aria-label="Compare the proposed fix">
-                <button
-                  aria-pressed={comparison === "before"}
-                  onClick={() => setComparison("before")}
-                >
-                  Before
-                </button>
-                <button
-                  aria-pressed={comparison === "after"}
-                  onClick={() => setComparison("after")}
-                >
-                  Proposed fix
-                </button>
-              </div>
-              <dl>
-                <dt>Collection button</dt>
-                <dd>
-                  {comparison === "before"
-                    ? "/collections/lighting/ → missing page"
-                    : "/shop/ → existing collection"}
-                </dd>
-                <dt>Page description</dt>
-                <dd>
-                  {comparison === "before"
-                    ? "Missing"
-                    : "Restored from existing page content"}
-                </dd>
-              </dl>
-              <span className="demo-check">
-                ✓ Page checks passed · ready to review
-              </span>
-            </div>
-          )}
-          {step >= 4 && (
-            <div className="demo-result">
-              <span>✓</span>
-              <div>
+          <div className="demo-detail-slot">
+            {step < 2 && (
+              <div className="demo-observation">
+                <span className="eyebrow">
+                  {step === 0 ? "CHANGE DETECTED" : "COLLECTING EVIDENCE"}
+                </span>
                 <strong>
-                  {scenario === "healthy"
-                    ? "No fix needed"
-                    : "Collection opens. Description restored."}
+                  {step === 0
+                    ? "Homepage selected for a check"
+                    : "Following the page and its links"}
                 </strong>
                 <small>
-                  {step === 5
-                    ? "Next design update checked · no unnecessary edit"
-                    : scenario === "healthy"
-                      ? "Design kept exactly as your team intended"
-                      : "Page checked again after the update"}
+                  {step === 0
+                    ? "The check follows the website update."
+                    : "A finding needs an observed problem."}
                 </small>
               </div>
-            </div>
-          )}
+            )}
+            {step === 2 && scenario === "broken" && (
+              <div className="demo-findings">
+                <span>
+                  ↗ Collection link <strong>Missing page</strong>
+                </span>
+                <span>
+                  ≡ Search description <strong>Missing</strong>
+                </span>
+              </div>
+            )}
+            {step === 3 && scenario === "broken" && (
+              <div className="demo-change-card">
+                <div role="group" aria-label="Compare the proposed fix">
+                  <button
+                    aria-pressed={comparison === "before"}
+                    onClick={() => setComparison("before")}
+                  >
+                    Before
+                  </button>
+                  <button
+                    aria-pressed={comparison === "after"}
+                    onClick={() => setComparison("after")}
+                  >
+                    Proposed fix
+                  </button>
+                </div>
+                <dl>
+                  <dt>Collection button</dt>
+                  <dd>
+                    {comparison === "before"
+                      ? "/collections/lighting/ → missing page"
+                      : "/shop/ → existing collection"}
+                  </dd>
+                  <dt>Page description</dt>
+                  <dd>
+                    {comparison === "before"
+                      ? "Missing"
+                      : "Restored from existing page content"}
+                  </dd>
+                </dl>
+                <span className="demo-check">
+                  ✓ Page checks passed · ready to review
+                </span>
+              </div>
+            )}
+            {step >= 4 && (
+              <div className="demo-result">
+                <span>✓</span>
+                <div>
+                  <strong>
+                    {scenario === "healthy"
+                      ? "No fix needed"
+                      : "Collection opens. Description restored."}
+                  </strong>
+                  <small>
+                    {step === 5
+                      ? "Next design update checked · no unnecessary edit"
+                      : scenario === "healthy"
+                        ? "Design kept exactly as your team intended"
+                        : "Page checked again after the update"}
+                  </small>
+                </div>
+              </div>
+            )}
+          </div>
           <div className="demo-controls">
             <button
               className="button"
@@ -345,15 +377,6 @@ export function Workflow() {
                     ? "Try again ↺"
                     : "Next step →"}
             </button>
-            {step !== 5 && (
-              <button
-                className="demo-play"
-                aria-pressed={playing}
-                onClick={() => setPlaying(!playing)}
-              >
-                {playing ? "Pause" : "Play walkthrough"}
-              </button>
-            )}
           </div>
         </div>
       </div>
@@ -361,7 +384,7 @@ export function Workflow() {
         <span>Update → check → fix when needed → verify → keep watching.</span>
         <small>
           Illustrated walkthrough based on a recorded repair. No live website is
-          changed here.
+          changed here. Playback simulates your team’s review approval.
         </small>
       </div>
     </div>
