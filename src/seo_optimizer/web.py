@@ -212,6 +212,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             return RedirectResponse("/login", status_code=303)
         return render(request, "error.html", {"message": error.detail}, error.status_code)
 
+    @app.get("/api/v1/health", include_in_schema=False)
     @app.get("/healthz")
     def health() -> dict[str, str]:
         storage.health()
