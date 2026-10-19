@@ -68,12 +68,13 @@ def test_managed_creation_and_tenant_isolation(hosted) -> None:
     response = client.post("/api/v1/projects", json=value, headers=headers)
     assert response.status_code == 201
     body = response.json()
-    assert body["spec"]["provider"]["kind"] == "google"
-    assert body["spec"]["provider"]["base_url"] is None
+    assert "provider" not in body["spec"]
     assert not body["spec"]["auto_merge"]
     assert body["spec"]["max_pages"] == 25
     assert "managed-test-key" not in response.text and "injected-key" not in response.text
     project = store.project(account.id, body["id"])
+    assert project.spec["provider"]["kind"] == settings.managed_provider
+    assert project.spec["provider"]["base_url"] is None
     assert store.secrets(project).github_installation_id == "456"
     assert store.secrets(project).provider_key == settings.managed_key
     assert "managed-test-key" not in settings.cipher.decrypt(project.credentials.encode()).decode()
@@ -99,6 +100,56 @@ def test_managed_creation_and_tenant_isolation(hosted) -> None:
         == 404
     )
     assert store.projects(other.id) == []
+
+
+def test_hosted_views_keep_engine_configuration_private(hosted) -> None:
+    _, store, account, token, client = hosted
+    headers = {"Authorization": "Bearer " + token}
+    project = store.create_project(
+        account.id,
+        ProjectCreate(
+            spec=ProjectSpec(
+                name="Example store",
+                website_url="https://example.test",
+                repository="example/site",
+                provider={"kind": "rules", "model": "private-engine"},
+            )
+        ),
+    )
+    job = store.claim("test-worker", account.id)
+    assert job is not None
+    report = {
+        "score": 85,
+        "model": "private-engine",
+        "model_summary": "Internal engine detail",
+        "evidence": [{"data": {"model": "Lamp 01"}}],
+    }
+    store.finish(
+        account.id,
+        job.id,
+        "test-worker",
+        "complete",
+        {"summary": "Page checked", "report": report, "after_report": report},
+    )
+    for path in (
+        "/api/v1/projects",
+        f"/api/v1/projects/{project.id}",
+        f"/api/v1/jobs/{job.id}",
+        f"/api/v1/projects/{project.id}/activity",
+    ):
+        response = client.get(path, headers=headers)
+        assert response.status_code == 200
+        assert "private-engine" not in response.text
+        assert "Internal engine detail" not in response.text
+        assert "Lamp 01" in response.text  # Business facts are not inference configuration.
+    persisted = store.project(account.id, project.id)
+    assert persisted.spec["provider"]["model"] == "private-engine"
+    assert persisted.last_report == report
+    # Portable, self-hosted workers still receive their own chosen configuration.
+    from seo_optimizer.web import job_json, project_json
+
+    assert project_json(persisted)["spec"]["provider"]["model"] == "private-engine"
+    assert job_json(store.job(account.id, job.id))["result"]["report"] == report
 
 
 @pytest.mark.parametrize("endpoint", ["connect", "install"])
