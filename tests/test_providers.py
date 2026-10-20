@@ -273,3 +273,108 @@ def test_invalid_final_preserves_usage_and_safe_validation_locations():
         assert any(e["path"] == "unexpected" for e in error.validation_errors)
     finally:
         client.client.close()
+
+
+def test_catalog_schema_is_scoped_and_read_only():
+    seen = []
+
+    def transport(request):
+        seen.append(json.loads(request.content))
+        return httpx.Response(
+            200,
+            json={
+                "message": {
+                    "content": json.dumps(
+                        {
+                            **FINAL,
+                            "check_reviews": [
+                                {
+                                    "check_id": "tech.metadata",
+                                    "state": "needs_data",
+                                    "reason": "Need source",
+                                    "dependencies": ["Read metadata"],
+                                }
+                            ],
+                        }
+                    )
+                },
+                "prompt_eval_count": 10,
+                "eval_count": 5,
+            },
+        )
+
+    connection = httpx.Client(transport=httpx.MockTransport(transport))
+    client = ModelClient(
+        ProviderConfig(
+            kind="ollama",
+            model="fixture",
+            capabilities=ProviderCapabilities(json_schema=True),
+        ),
+        client=connection,
+    )
+    try:
+        client.complete(
+            "Review",
+            {
+                "mode": "read_only_catalog_review",
+                "requested_check_reviews": [{"id": "tech.metadata"}],
+            },
+            [],
+            lambda *a: {},
+        )
+        schema = seen[0]["format"]
+        assert schema["$defs"]["CheckReview"]["properties"]["check_id"]["enum"] == ["tech.metadata"]
+        assert schema["properties"]["check_reviews"]["minItems"] == 1
+        assert schema["properties"]["check_reviews"]["maxItems"] == 1
+        assert schema["properties"]["changes"]["maxItems"] == 0
+    finally:
+        connection.close()
+
+
+def test_request_specific_review_constraints_are_validated_locally():
+    responses = [
+        FINAL,
+        {
+            **FINAL,
+            "check_reviews": [
+                {
+                    "check_id": "tech.metadata",
+                    "state": "needs_data",
+                    "reason": "Need source",
+                    "dependencies": ["Read metadata"],
+                }
+            ],
+        },
+    ]
+    seen = []
+
+    def transport(request):
+        seen.append(json.loads(request.content))
+        return httpx.Response(
+            200,
+            json={
+                "message": {"content": json.dumps(responses[len(seen) - 1])},
+                "prompt_eval_count": 10,
+                "eval_count": 5,
+            },
+        )
+
+    connection = httpx.Client(transport=httpx.MockTransport(transport))
+    client = ModelClient(
+        ProviderConfig(
+            kind="ollama", model="fixture", capabilities=ProviderCapabilities(json_schema=True)
+        ),
+        client=connection,
+    )
+    try:
+        result = client.complete(
+            "Review",
+            {"requested_check_reviews": [{"id": "tech.metadata"}]},
+            [],
+            lambda *a: {},
+            max_steps=1,
+        )
+        assert len(seen) == 2 and len(result.decision.check_reviews) == 1
+        assert "exactly one review" in seen[1]["messages"][-1]["content"]
+    finally:
+        connection.close()
