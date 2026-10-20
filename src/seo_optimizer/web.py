@@ -55,9 +55,16 @@ def public_report(report: dict[str, Any], hosted: bool = False) -> dict[str, Any
     if not hosted:
         return report
     return {
-        key: value
-        for key, value in report.items()
-        if key not in {"model", "model_summary", "model_cache_hit", "cacheable_model_result"}
+        **{
+            key: value
+            for key, value in report.items()
+            if key not in {"model", "model_summary", "model_cache_hit", "cacheable_model_result"}
+        },
+        **(
+            {"assessment_reused": report["model_cache_hit"] is True}
+            if "model_cache_hit" in report
+            else {}
+        ),
     }
 
 
@@ -668,9 +675,11 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                 updated = storage.project(project.tenant_id, id)
                 assert updated is not None
                 register_project(storage, updated)
-                return {"status": "updated"}
+                return project_json(updated, hosted=configuration.hosted)
         storage.update_project(project.tenant_id, id, spec)
-        return {"status": "updated"}
+        updated = storage.project(project.tenant_id, id)
+        assert updated is not None
+        return project_json(updated, hosted=configuration.hosted)
 
     @app.put("/api/v1/projects/{id}/credentials")
     def api_credentials(request: Request, id: str, value: ProjectSecrets) -> Any:
