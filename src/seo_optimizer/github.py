@@ -83,6 +83,28 @@ class GitHubClient:
         response.raise_for_status()
         return response.json() if response.content else {}
 
+    def deployment_state(self, repo: str, sha: str, environment: str) -> str:
+        """Match the exact source revision to a successful configured environment."""
+        deployments = self.request(
+            "GET", f"/repos/{repo}/deployments", params={"sha": sha, "per_page": 100}
+        )
+        for deployment in deployments:
+            if (
+                deployment.get("sha") != sha
+                or str(deployment.get("environment", "")).casefold() != environment.casefold()
+            ):
+                continue
+            statuses = self.request("GET", f"/repos/{repo}/deployments/{deployment['id']}/statuses")
+            if not statuses:
+                return "pending"
+            state = statuses[0].get("state")
+            if state == "success":
+                return "ready"
+            if state in {"error", "failure"}:
+                return "failed"
+            return "pending"
+        return "pending"
+
     def head(self, repo: str, branch: str) -> str:
         return str(self.request("GET", f"/repos/{repo}/git/ref/heads/{branch}")["object"]["sha"])
 
