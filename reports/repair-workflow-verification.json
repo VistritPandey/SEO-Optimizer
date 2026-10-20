@@ -1,0 +1,112 @@
+{
+  "scope": "Real native inference on one fictional development store, with real Git, Docker and served HTTP checks; separate authorized hosted healthy-site audit",
+  "source_revision": "96b02fa02c69cbcc0aabd1b05cdacbe933a16b26",
+  "runtime_sha256": "433b7fc7f7e222f7e95ce09f93cc64accc924008942db69a2877cbe0a3a2baab",
+  "generated_at": "2026-10-20T18:28:35.623125+00:00",
+  "real_inference_repair": {
+    "passed": true,
+    "independent_grader": {
+      "description": true,
+      "navigation": true,
+      "canonical": true,
+      "product_offer": true
+    },
+    "application_verified_fixes": 4,
+    "regressions": 0,
+    "changed_paths": [
+      "web/index.html",
+      "web/products/cedar-lamp/index.html"
+    ],
+    "local_commits": 2,
+    "files_per_commit": [
+      1,
+      1
+    ],
+    "private_pages_and_training_policy_preserved": true,
+    "configured_docker_checks_passed": true,
+    "fresh_served_verification": true,
+    "tool_calls": [
+      "read_file",
+      "read_file",
+      "apply_patch",
+      "apply_patch",
+      "run_checks"
+    ],
+    "runtime_seconds": 79.65,
+    "usage": {
+      "input_tokens": 60432,
+      "output_tokens": 11363,
+      "api_cost_usd": null,
+      "electricity_cost_usd": null,
+      "hardware_cost_usd": null
+    },
+    "healthy_control_changed_source": false,
+    "healthy_control_passed": true,
+    "irrelevant_merge_control_passed": true,
+    "irrelevant_merge_summary": "No affected website routes; model work skipped",
+    "live_github_publication_in_this_fixture": false
+  },
+  "before_after": [
+    {
+      "condition": "Description",
+      "before": "Homepage description absent",
+      "after": "Factual description added from visible content"
+    },
+    {
+      "condition": "Navigation",
+      "before": "Collection link returns 404",
+      "after": "Link targets the observed successful collection page"
+    },
+    {
+      "condition": "Canonical",
+      "before": "Product declares two conflicting canonical URLs",
+      "after": "One product canonical remains"
+    },
+    {
+      "condition": "Product structured data",
+      "before": "Malformed JSON-LD and USD 129 price contradict visible USD 89 offer",
+      "after": "Valid JSON-LD with USD 89 and observed availability"
+    }
+  ],
+  "earlier_attempts_retained": [
+    {
+      "source_revision": "e70d89e52abb07bd3413fa5afefc4dcca4fec0e3",
+      "status": "blocked",
+      "verified_fixes": 0,
+      "failure": "Model token budget exhausted",
+      "protected_files_unchanged": true,
+      "healthy_control_passed": false,
+      "irrelevant_merge_control_passed": true
+    },
+    {
+      "source_revision": "a627be4796e1bf713a93ae3c39b7c25695275dc3",
+      "status": "blocked",
+      "verified_fixes": 0,
+      "failure": "Model token budget exhausted",
+      "protected_files_unchanged": true,
+      "healthy_control_passed": true,
+      "irrelevant_merge_control_passed": true
+    }
+  ],
+  "hosted_healthy_site_control": {
+    "cloud_run_revision": "your-optimiser-00027-nxb",
+    "status": "complete",
+    "pages": 7,
+    "new_findings": 0,
+    "new_pull_requests": 0,
+    "source_changes": 0,
+    "conclusive_checks": 11,
+    "checks_with_dependencies": 19,
+    "not_applicable": 9,
+    "catalog_checks_attempted": 39,
+    "public_website_checks_passed": 9,
+    "public_website_checks_failed": []
+  },
+  "unverified": [
+    "General model judgment across all 39 checks and arbitrary repositories",
+    "Search rankings, indexing, traffic, conversions and consumer AI citations",
+    "A blinded open-model versus paid-model comparison on this runtime",
+    "Competitor performance or general product superiority",
+    "Billed cost per verified fix; provider usage was observed but rates were unavailable"
+  ]
+}
