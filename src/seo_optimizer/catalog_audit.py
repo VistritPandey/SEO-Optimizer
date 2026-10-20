@@ -961,6 +961,7 @@ def model_observation(item: Evidence) -> dict[str, Any]:
             "structured_data_json": schemas[:8000],
             "structured_data_truncated": len(schemas) > 8000,
             "robots": doc.robots,
+            "link_status": item.data.get("link_status", {}),
         }
         if item.kind == "dom":
             data.update({k: v for k, v in item.data.items() if k != "html"})
