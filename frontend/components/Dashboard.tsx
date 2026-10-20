@@ -236,7 +236,7 @@ export function Dashboard() {
       <m.main
         id="main-content"
         className="dashboard-main"
-        initial={{ opacity: 0 }}
+        initial={false}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.2 }}
       >
