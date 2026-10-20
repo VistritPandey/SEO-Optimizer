@@ -87,9 +87,10 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
                 if not any("[" in part for part in parts):
                     route = "/" + "/".join(parts)
             elif path.suffix in {".tsx", ".jsx", ".js", ".astro"}:
-                parts = _router_parts(root, path, "pages")
-                if parts is None:
+                page_parts = _router_parts(root, path, "pages")
+                if page_parts is None:
                     continue
+                parts = page_parts
                 if parts and not (
                     parts[0] == "api"
                     or parts[-1].startswith("_")
