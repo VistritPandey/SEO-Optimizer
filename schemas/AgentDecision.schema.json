@@ -16,6 +16,51 @@
       "title": "ActionKind",
       "type": "string"
     },
+    "CheckReview": {
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "title": "Check Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "healthy",
+            "defect",
+            "needs_data"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "reason": {
+          "maxLength": 2000,
+          "minLength": 1,
+          "title": "Reason",
+          "type": "string"
+        },
+        "evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Evidence Ids",
+          "type": "array"
+        },
+        "dependencies": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Dependencies",
+          "type": "array"
+        }
+      },
+      "required": [
+        "check_id",
+        "state",
+        "reason"
+      ],
+      "title": "CheckReview",
+      "type": "object"
+    },
     "EvidenceStrength": {
       "enum": [
         "confirmed",
@@ -244,6 +289,13 @@
       "default": "",
       "title": "Summary",
       "type": "string"
+    },
+    "check_reviews": {
+      "items": {
+        "$ref": "#/$defs/CheckReview"
+      },
+      "title": "Check Reviews",
+      "type": "array"
     }
   },
   "title": "AgentDecision",
