@@ -93,6 +93,7 @@ def managed_spec(spec: ProjectSpec, settings: Settings) -> ProjectSpec:
                     settings.managed_provider,
                 ),
                 model=settings.managed_model,
+                max_output_tokens=8192,
                 capabilities=ProviderCapabilities(tool_calling=True, json_schema=True),
             ),
             "max_pages": min(spec.max_pages, 25),
