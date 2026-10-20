@@ -159,6 +159,15 @@ def install_routes(app: FastAPI, store: Store, settings: Settings, authenticate:
         user = authenticate(request)
         month = datetime.now(UTC).strftime("%Y-%m")
         usage, _ = store.state(f"usage:{user.id}:{month}")
+        grant, _ = store.state("github-grant:" + user.id)
+        connection = "not_connected"
+        if grant.get("token"):
+            renewable = grant.get("refresh") and grant.get("refresh_expires", 0) > time.time()
+            connection = (
+                "connected"
+                if grant.get("expires", 0) > time.time() + 60 or renewable
+                else "reconnect_required"
+            )
         return {
             "email": user.email,
             "mode": "hosted" if settings.hosted else "local",
@@ -167,6 +176,10 @@ def install_routes(app: FastAPI, store: Store, settings: Settings, authenticate:
             "jobs_used": len(usage.get("jobs", [])),
             "job_limit": settings.free_jobs_per_month if settings.hosted else None,
             "project_limit": settings.free_projects if settings.hosted else 20,
+            "github_connection": {
+                "status": connection,
+                "login": grant.get("login") if connection != "not_connected" else None,
+            },
             "github_install_url": "https://github.com/apps/"
             + settings.github_app_slug
             + "/installations/new"
