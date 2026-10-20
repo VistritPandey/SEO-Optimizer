@@ -84,6 +84,8 @@ def test_outbound_remote_worker_claim_credentials_and_lease(tmp_path):
         )
         assert remote.project("other-tenant", project.id) is None
         assert remote.remember_findings(account.id, project.id, [], []) == 0
+        remote.progress(account.id, claimed.id, "local-worker", "Collecting evidence")
+        assert store.job(account.id, claimed.id).events[-1]["message"] == "Collecting evidence"
         remote.finish(account.id, claimed.id, "local-worker", "complete", {"summary": "Observed"})
         assert store.job(account.id, claimed.id).status == "complete"
         assert remote.claim("local-worker") is None
