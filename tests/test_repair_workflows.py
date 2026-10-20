@@ -21,6 +21,7 @@ from seo_optimizer.repair_benchmark import QuietHandler, ThreadingHTTPServer
 from seo_optimizer.worker import Worker
 
 CASES = {
+    "compound": ("tech.links", "", ""),
     "description": (
         "tech.metadata",
         '<meta name="description" content="">',
@@ -67,12 +68,19 @@ def test_native_replay_repairs_commit_and_served_verification(tmp_path, monkeypa
         '<footer><a href="/about/">Company</a></footer></body></html>'
     )
     original = healthy
+    related = ["tech.metadata"] if scenario == "compound" else []
     if scenario in {"description", "failed_checks"}:
         original = healthy.replace(new, old)
     elif scenario in {"canonical", "indexability"}:
         original = healthy.replace("</head>", old + "</head>")
     elif scenario == "navigation":
         original = healthy.replace(new, old, 1)
+    elif scenario == "compound":
+        original = healthy.replace('href="/about/"', 'href="/missing"', 1).replace(
+            '<meta name="description" content="Cedar lamps with replaceable shades.">',
+            '<meta name="description" content="">',
+        )
+        old, new = original, healthy
     path = "web/robots.txt" if scenario == "crawler_policy" else "web/index.html"
     (web / "index.html").write_text(original)
     (web / "about/index.html").write_text(healthy.replace('href="/"', 'href="/about/"'))
@@ -171,12 +179,13 @@ def test_native_replay_repairs_commit_and_served_verification(tmp_path, monkeypa
                         "before": old,
                         "after": new,
                         "check_id": check_id,
+                        "related_check_ids": related,
                         "evidence_ids": [
                             source["evidence_id"],
                             *[
                                 evidence_id
                                 for target in task["repair_targets"]
-                                if target["check_id"] == check_id
+                                if target["check_id"] in {check_id, *related}
                                 for evidence_id in target["evidence_ids"]
                             ],
                         ],
