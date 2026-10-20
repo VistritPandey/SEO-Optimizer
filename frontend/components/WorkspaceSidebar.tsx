@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Project } from "@/lib/api";
+import { ThemeControl } from "./ThemeControl";
 import { Brand } from "./Brand";
 
 const sections = [
@@ -181,6 +182,7 @@ export function WorkspaceSidebar({
         )}
       </div>
       <div className={`sidebar-bottom ${menuOpen ? "is-open" : ""}`}>
+        <ThemeControl />
         <button className="sidebar-tour" onClick={() => navigate(onTour)}>
           <Icon name="tour" />
           <span>
