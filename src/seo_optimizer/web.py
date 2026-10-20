@@ -314,6 +314,10 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
         projects = storage.projects(account.id)
         jobs = storage.jobs(account.id)
         lookup = {project.id: project.spec["name"] for project in projects}
+        repairs: dict[str, int] = {}
+        for job in jobs:
+            key = job.result.get("pr", {}).get("url") or job.id
+            repairs[key] = max(repairs.get(key, 0), job.result.get("verified_fixes", 0))
         return render(
             request,
             "dashboard.html",
@@ -325,7 +329,7 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
                     job.status in {"queued", "running", "waiting_checks", "waiting_deployment"}
                     for job in jobs
                 ),
-                "verified": sum(job.result.get("verified_fixes", 0) for job in jobs),
+                "verified": sum(repairs.values()),
             },
         )
 
