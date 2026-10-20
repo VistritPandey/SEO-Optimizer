@@ -203,9 +203,11 @@ def test_field_metrics_do_not_use_lab_score_as_field_health(bad, state):
 
 
 def test_wrong_reciprocal_language_targets_are_a_defect():
-    a = page(html=HTML + '<link hreflang="fr" href="/fr">')
+    a = page(html=HTML + '<link rel="alternate" hreflang="fr" href="/fr">')
     b = page(
-        id="fr", url="https://example.test/fr", html=HTML + '<link hreflang="en" href="/wrong">'
+        id="fr",
+        url="https://example.test/fr",
+        html=HTML + '<link rel="alternate" hreflang="en" href="/wrong">',
     )
     _, _, findings, report, _ = run(evidence=[a, b])
     assert (
@@ -360,3 +362,22 @@ def test_local_hours_and_identity_receive_semantic_review_when_facts_and_dom_exi
         next(r for r in broken_report["coverage"] if r["check_id"] == "local.hours")["state"]
         == "defect"
     )
+
+
+def test_root_canonical_without_slash_and_script_language_are_not_false_defects():
+    html = HTML + (
+        '<link rel="canonical" href="https://example.test">'
+        '<link rel="alternate" hreflang="zh-Hant-TW" href="https://example.test/">'
+    )
+    _, _, findings, report, _ = run(
+        evidence=[
+            page(
+                html=html,
+                sitemap_xml="<urlset><url><loc>https://example.test/</loc></url></urlset>",
+            )
+        ]
+    )
+    assert (
+        next(r for r in report["coverage"] if r["check_id"] == "tech.sitemap")["state"] == "healthy"
+    )
+    assert not any(f.check_id == "intl.hreflang" and f.status == "defect" for f in findings)
