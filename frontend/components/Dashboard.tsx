@@ -11,7 +11,8 @@ import {
 import { firebaseAuth } from "@/lib/firebase";
 import { api, type Activity, type Project } from "@/lib/api";
 import { AuditWorkspace } from "./AuditWorkspace";
-import { Brand } from "./Brand";
+import { WorkspaceSidebar } from "./WorkspaceSidebar";
+import { WorkspaceTour } from "./WorkspaceTour";
 import { m } from "motion/react";
 type Account = {
   email: string;
@@ -36,7 +37,51 @@ export function Dashboard() {
     jobs: [],
     findings: [],
   });
+  const [newProject, setNewProject] = useState(false);
   const [tab, setTab] = useState("overview");
+  const [tourOpen, setTourOpen] = useState(false);
+  const [tourSeen, setTourSeen] = useState(true);
+  const [homeAnchor, setHomeAnchor] = useState("");
+  useEffect(() => {
+    if (!user) return;
+    try {
+      setTourSeen(
+        localStorage.getItem("optimiser-tour-v1:" + user.uid) === "seen",
+      );
+    } catch {
+      setTourSeen(false);
+    }
+  }, [user]);
+  useEffect(() => {
+    if (homeAnchor && !selected && !newProject && account)
+      document.getElementById(homeAnchor)?.scrollIntoView({ block: "start" });
+  }, [homeAnchor, selected, newProject, account]);
+  function closeTour() {
+    setTourOpen(false);
+    setTourSeen(true);
+    try {
+      if (user) localStorage.setItem("optimiser-tour-v1:" + user.uid, "seen");
+    } catch {
+      /* Storage may be disabled. The tour remains available. */
+    }
+  }
+  function home(connections = false) {
+    selectedId.current = null;
+    setSelected(null);
+    setNewProject(false);
+    setHomeAnchor(connections ? "github-connection" : "main-content");
+    setError("");
+    setNotice("");
+  }
+  async function tourNavigate(target: string) {
+    if (target === "connect" || (!selected && !projects.length)) {
+      setSelected(null);
+      setNewProject(true);
+      return;
+    }
+    if (!selected && projects[0]) await choose(projects[0]);
+    setTab(target);
+  }
   const [workspace, setWorkspace] = useState("{}");
   const [spec, setSpec] = useState("{}");
   const [strategy, setStrategy] = useState<{
@@ -49,7 +94,6 @@ export function Dashboard() {
     dependencies: string[];
   } | null>(null);
   const [repos, setRepos] = useState<Repository[]>([]);
-  const [newProject, setNewProject] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -218,76 +262,44 @@ export function Dashboard() {
       await refresh();
       await choose(value);
       setNewProject(false);
-      setNotice("Connected. Your first audit is queued.");
+      setNotice("Website connected. Follow its audit progress below.");
     });
   }
   return (
     <div className="workspace-shell workspace-v2">
-      <aside className="sidebar">
-        <Brand />
-        <span className="eyebrow">WORKSPACE</span>
-        <button
-          className={!selected && !newProject ? "nav-item active" : "nav-item"}
-          onClick={() => {
-            setSelected(null);
-            setNewProject(false);
-          }}
-        >
-          ◫ Overview
-        </button>
-        <button
-          className="nav-item"
-          onClick={() => {
-            setSelected(null);
-            setNewProject(true);
-          }}
-        >
-          ＋ Connect website
-        </button>
-        {!!projects.length && (
-          <nav className="workspace-project-nav" aria-label="Your websites">
-            <span className="eyebrow">WEBSITES</span>
-            {projects.map((project) => (
-              <button
-                key={project.id}
-                className={
-                  selected?.id === project.id ? "nav-item active" : "nav-item"
-                }
-                onClick={() => choose(project)}
-              >
-                <span
-                  className={
-                    project.spec.enabled
-                      ? "project-status-dot enabled"
-                      : "project-status-dot"
-                  }
-                />
-                <span>{project.spec.name}</span>
-              </button>
-            ))}
-          </nav>
-        )}
-        <div className="sidebar-note">
-          <span className="dot" />
-          Evidence before action
-          <p>
-            Your goals. Verified facts.
-            <br />A record of every change.
-          </p>
-        </div>
-        <small>{account?.email || user?.email}</small>
-        <button
-          className="nav-item"
-          onClick={() =>
-            action(async () => {
-              await signOut(firebaseAuth());
-              router.push("/login");
-            })
-          }
-        >
-          Sign out ↗
-        </button>
-      </aside>
+      <WorkspaceSidebar
+        projects={projects}
+        selected={selected}
+        tab={tab}
+        email={account?.email || user?.email || ""}
+        connection={account?.github_connection?.status}
+        findings={activity.findings.filter((item) => item.active).length}
+        onHome={home}
+        onConnect={() => {
+          setSelected(null);
+          setNewProject(true);
+          setError("");
+          setNotice("");
+        }}
+        onSelect={(project) => {
+          void choose(project);
+        }}
+        onTab={setTab}
+        onTour={() => setTourOpen(true)}
+        onSignOut={() => {
+          void action(async () => {
+            await signOut(firebaseAuth());
+            router.push("/login");
+          });
+        }}
+      />
+      <WorkspaceTour
+        open={tourOpen}
+        onClose={closeTour}
+        onNavigate={(target) => {
+          void tourNavigate(target);
+        }}
+      />
       <m.main
         id="main-content"
         className="dashboard-main"
@@ -331,6 +343,33 @@ export function Dashboard() {
           <p role="status" className="notice">
             {notice}
           </p>
+        )}
+        {account && !tourSeen && !newProject && (
+          <section className="workspace-welcome" aria-label="Getting started">
+            <span className="welcome-symbol" aria-hidden="true">
+              ↗
+            </span>
+            <div>
+              <h2>New here? See how the agent works.</h2>
+              <p>
+                From your first audit to a reviewed repair, take a quick tour of
+                your workspace.
+              </p>
+            </div>
+            <button
+              className="button secondary"
+              onClick={() => setTourOpen(true)}
+            >
+              Take the tour
+            </button>
+            <button
+              className="tour-close"
+              aria-label="Dismiss welcome"
+              onClick={closeTour}
+            >
+              ×
+            </button>
+          </section>
         )}
         {user && !user.emailVerified ? (
           <section className="panel">
@@ -562,18 +601,17 @@ export function Dashboard() {
                   className="text-link"
                   onClick={() =>
                     action(async () => {
-                      await api("projects/" + selected.id, "PATCH", {
-                        ...selected.spec,
-                        enabled: !selected.spec.enabled,
-                      });
-                      await refresh();
-                      setSelected({
-                        ...selected,
-                        spec: {
+                      const updated = await api<Project>(
+                        "projects/" + selected.id,
+                        "PATCH",
+                        {
                           ...selected.spec,
                           enabled: !selected.spec.enabled,
                         },
-                      });
+                      );
+                      setSelected(updated);
+                      setSpec(JSON.stringify(updated.spec, null, 2));
+                      await refresh();
                     })
                   }
                 >
@@ -819,7 +857,7 @@ export function Dashboard() {
               )}
             </section>
             <section className="panel">
-              <h2>GitHub connection</h2>
+              <h2 id="github-connection">GitHub connection</h2>
               {account.github_connection?.status === "connected" ? (
                 <>
                   <p>
