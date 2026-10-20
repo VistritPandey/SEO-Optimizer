@@ -207,6 +207,56 @@ def main():
             "Shared logo aligns on mobile home, sign-in and sign-up; "
             "authentication pages pass automated A/AA checks"
         )
+        # Exercise the public controls and actual persisted preference on every page.
+        page.goto(args.base_url, wait_until="networkidle")
+        appearance = page.get_by_role("group", name="Appearance")
+        appearance.get_by_role("button", name="Dark", exact=True).click()
+        expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+        page.reload(wait_until="networkidle")
+        expect(appearance.get_by_role("button", name="Dark", exact=True)).to_have_attribute(
+            "aria-pressed", "true"
+        )
+        assert (
+            page.get_by_role("navigation", name="Main navigation")
+            .get_by_role("link", name="Your workspace")
+            .get_attribute("href")
+            == "/dashboard"
+        )
+        for path in (*PAGES, "/login", "/login?mode=register"):
+            page.goto(args.base_url + path, wait_until="networkidle")
+            expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+            assert page.evaluate("document.documentElement.scrollWidth <= innerWidth"), path
+            page.add_script_tag(path=str(ROOT / "frontend/node_modules/axe-core/axe.min.js"))
+            audit = page.evaluate(
+                "async () => (await axe.run(document, "
+                "{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}})).violations"
+            )
+            violations.extend(
+                {
+                    "path": path,
+                    "theme": "dark",
+                    "id": item["id"],
+                    "targets": [node["target"] for node in item["nodes"]],
+                    "impact": item["impact"],
+                }
+                for item in audit
+            )
+        page.goto(args.base_url, wait_until="networkidle")
+        page.set_viewport_size({"width": 1440, "height": 1000})
+        page.screenshot(path=str(ROOT / ".data/public-dark-theme.png"), full_page=True)
+        page.set_viewport_size({"width": 390, "height": 844})
+        page.screenshot(path=str(ROOT / ".data/public-dark-mobile.png"))
+        page.emulate_media(color_scheme="dark")
+        appearance.get_by_role("button", name="Light", exact=True).click()
+        expect(page.locator("html")).to_have_attribute("data-theme", "light")
+        appearance.get_by_role("button", name="System", exact=True).click()
+        expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+        page.emulate_media(color_scheme="light")
+        expect(page.locator("html")).to_have_attribute("data-theme", "light")
+        passed.append("Public light/dark/system controls persist across routes and reloads")
+        passed.append(
+            "Dark public, policy and authentication pages pass mobile accessibility scans"
+        )
         browser.close()
     report = {
         "environment": args.base_url,
