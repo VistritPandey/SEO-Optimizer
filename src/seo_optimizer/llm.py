@@ -56,6 +56,19 @@ class ProviderError(RuntimeError):
     pass
 
 
+class ModelOutputError(ProviderError):
+    def __init__(
+        self,
+        errors: list[dict[str, Any]],
+        trace: list[dict[str, Any]],
+        usage: Usage,
+        runtime_ms: float,
+    ):
+        super().__init__("Structured model output failed local validation")
+        self.validation_errors, self.tool_trace = errors, trace
+        self.usage, self.runtime_ms = usage, runtime_ms
+
+
 class ModelClient:
     def __init__(
         self,
@@ -187,7 +200,8 @@ class ModelClient:
         input_available, output_available = True, True
         trace: list[dict[str, Any]] = []
         started = time.monotonic()
-        for step in range(max_steps):
+        # Reserve one final formatting correction; it cannot execute more tools.
+        for step in range(max_steps + 1):
             if time.monotonic() - started > max_seconds:
                 raise ProviderError("Model time budget exhausted")
             self.client.timeout = httpx.Timeout(
@@ -402,15 +416,29 @@ class ModelClient:
             if not calls:
                 try:
                     decision = AgentDecision.model_validate_json(text, strict=True)
-                except ValidationError:
-                    if not self.config.capabilities.json_schema or step + 1 >= max_steps:
-                        raise
+                except ValidationError as error:
+                    errors = [
+                        {"path": ".".join(map(str, item["loc"])), "type": item["type"]}
+                        for item in error.errors(include_input=False, include_context=False)[:20]
+                    ]
+                    if not self.config.capabilities.json_schema or step >= max_steps:
+                        raise ModelOutputError(
+                            errors,
+                            trace,
+                            Usage(
+                                input_tokens=input_tokens if input_available else None,
+                                output_tokens=output_tokens if output_available else None,
+                                api_cost_usd=0 if kind == "ollama" else cost,
+                            ),
+                            (time.monotonic() - started) * 1000,
+                        ) from error
                     # Explicit, bounded re-generation; never strip/repair raw JSON locally.
                     tools = []
                     correction = (
                         "Return the final decision again as schema-compliant JSON only. "
                         "No Markdown fences. Keep all conclusions grounded in "
-                        "the observations already collected."
+                        "the observations already collected. Fix these local validation errors: "
+                        + json.dumps(errors)
                     )
                     history.append({"role": "user", "content": correction})
                     native_input.append({"role": "user", "content": correction})
