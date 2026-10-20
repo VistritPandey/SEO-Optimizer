@@ -445,3 +445,125 @@ def test_existing_project_uses_current_managed_model_configuration(hosted, monke
     monkeypatch.setattr(worker, "audit_job", audit)
     worker.process(site, job)
     assert observed == [("openai", "configured-model", "new-managed-key")]
+
+
+@pytest.mark.parametrize(
+    "permission", ["granted", "revoked", "suspended", "read_only", "unavailable"]
+)
+def test_resume_reverifies_expired_repository_without_reselection(hosted, monkeypatch, permission):
+    settings, store, account, token, client = hosted
+    from seo_optimizer.hosted import GitHubConnectionClient
+
+    site = connected_project(store, account.id)
+    spec = ProjectSpec.model_validate(site.spec)
+    spec.enabled = False
+    store.update_project(account.id, site.id, spec)
+    store.save_state(
+        "github-grant:" + account.id,
+        {"token": "scoped-user-token", "expires": time.time() + 300},
+        0,
+    )
+    cache_key = "github-repo:" + account.id + ":example/site"
+    store.save_state(cache_key, {"installation": 111, "until": time.time() - 1}, 0)
+    calls = []
+
+    def get(self, path, field):
+        calls.append(path)
+        if permission == "unavailable":
+            raise httpx.ConnectError("Fixture outage")
+        if field == "installations":
+            return [
+                {
+                    "id": 789,
+                    "app_id": settings.github_app_id,
+                    "suspended_at": "today" if permission == "suspended" else None,
+                },
+                {"id": 888, "app_id": "another-app"},
+            ]
+        assert path == "/user/installations/789/repositories"
+        return (
+            []
+            if permission == "revoked"
+            else [
+                {
+                    "id": 9,
+                    "full_name": "example/site",
+                    "permissions": {"push": permission != "read_only"},
+                    "archived": False,
+                    "default_branch": "main",
+                    "private": True,
+                }
+            ]
+        )
+
+    monkeypatch.setattr(GitHubConnectionClient, "get", get)
+    spec.enabled = True
+    response = client.patch(
+        f"/api/v1/projects/{site.id}",
+        json=spec.model_dump(mode="json"),
+        headers={"Authorization": "Bearer " + token},
+    )
+    updated = store.project(account.id, site.id)
+    if permission == "granted":
+        assert response.status_code == 200
+        assert response.json()["id"] == site.id
+        assert response.json()["spec"]["enabled"] is True
+        assert "provider" not in response.json()["spec"]
+        assert store.secrets(updated).github_installation_id == "789"
+        assert store.state(cache_key)[0]["until"] > time.time()
+    else:
+        assert response.status_code == (502 if permission == "unavailable" else 409)
+        assert not updated.spec["enabled"]
+        assert store.secrets(updated).github_installation_id == "456"
+    assert calls[0] == "/user/installations"
+    assert "/user/installations/888/repositories" not in calls
+
+
+def test_resume_cannot_recover_a_disconnected_grant(hosted, monkeypatch):
+    _, store, account, token, client = hosted
+    from seo_optimizer.hosted import GitHubConnectionClient
+
+    site = connected_project(store, account.id)
+    spec = ProjectSpec.model_validate(site.spec)
+    spec.enabled = False
+    store.update_project(account.id, site.id, spec)
+    monkeypatch.setattr(
+        GitHubConnectionClient,
+        "get",
+        lambda *args: pytest.fail("Disconnected access must not be recovered"),
+    )
+    spec.enabled = True
+    response = client.patch(
+        f"/api/v1/projects/{site.id}",
+        json=spec.model_dump(mode="json"),
+        headers={"Authorization": "Bearer " + token},
+    )
+    assert response.status_code == 409
+    assert not store.project(account.id, site.id).spec["enabled"]
+
+
+def test_policy_update_returns_the_saved_project(hosted):
+    _, store, account, token, client = hosted
+    site = connected_project(store, account.id)
+    spec = ProjectSpec.model_validate(site.spec)
+    spec.goals = ["Help readers find the original guides"]
+    response = client.patch(
+        f"/api/v1/projects/{site.id}",
+        json=spec.model_dump(mode="json"),
+        headers={"Authorization": "Bearer " + token},
+    )
+    assert response.status_code == 200
+    assert response.json()["id"] == site.id
+    assert response.json()["spec"]["goals"] == spec.goals
+    assert "credentials" not in response.json()
+    assert "provider" not in response.json()["spec"]
+
+
+def test_public_report_explains_reuse_without_engine_details():
+    from seo_optimizer.web import public_report
+
+    report = public_report(
+        {"model_cache_hit": True, "cacheable_model_result": True, "model": "private-engine"},
+        hosted=True,
+    )
+    assert report == {"assessment_reused": True}
