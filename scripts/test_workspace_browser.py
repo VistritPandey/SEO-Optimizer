@@ -42,6 +42,10 @@ def fixtures():
                 "title": "Crawler policy",
                 "module": "geo",
                 "state": "needs_data",
+                "reason": "Search and training access require separate owner preferences.",
+                "dependencies": ["Confirm the policy for each crawler"],
+                "method": "deterministic",
+                "evidence_urls": ["https://example.test/robots.txt"],
             },
             {
                 "check_id": "perf.field",
@@ -339,6 +343,47 @@ def main():
                 expect(page.get_by_role("dialog")).not_to_be_visible()
                 results.append("Sidebar sections, replayable tour and saved monitoring responses")
                 page.screenshot(path=str(output / "overview.png"), full_page=True)
+                page.locator(".audit-coverage > details").filter(has_text="Crawler policy").locator(
+                    ":scope > summary"
+                ).click()
+                page.get_by_text("Crawler policy", exact=True).click()
+                expect(
+                    page.get_by_text(
+                        "Search and training access require separate owner preferences.", exact=True
+                    )
+                ).to_be_visible()
+                expect(
+                    page.get_by_text("Confirm the policy for each crawler", exact=True)
+                ).to_be_visible()
+                assert (
+                    page.get_by_role("link", name="https://example.test/robots.txt").get_attribute(
+                        "href"
+                    )
+                    == "https://example.test/robots.txt"
+                )
+                results.append(
+                    "Coverage exposes per-check reasons, dependencies and collected URLs"
+                )
+                theme = page.get_by_role("group", name="Appearance")
+                theme.get_by_role("button", name="Dark", exact=True).click()
+                expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+                page.screenshot(path=str(output / "overview-dark.png"), full_page=True)
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+                expect(theme.get_by_role("button", name="Dark", exact=True)).to_have_attribute(
+                    "aria-pressed", "true"
+                )
+                page.emulate_media(color_scheme="dark")
+                theme.get_by_role("button", name="System", exact=True).click()
+                expect(page.locator("html")).to_have_attribute("data-theme", "dark")
+                page.emulate_media(color_scheme="light")
+                expect(page.locator("html")).to_have_attribute("data-theme", "light")
+                theme.get_by_role("button", name="Light", exact=True).click()
+                page.emulate_media(color_scheme="dark")
+                expect(page.locator("html")).to_have_attribute("data-theme", "light")
+                results.append("Light/dark/system appearance, reload persistence and OS changes")
+
                 page.get_by_role("tab", name="Findings").click()
                 page.get_by_label("Filter findings").select_option("unresolved")
                 page.get_by_text("Confirm account page visibility", exact=True).click()
@@ -422,6 +467,24 @@ def main():
                 )
                 assert not violations, violations
                 results.append("Workspace overview accessibility checks")
+                page.get_by_role("group", name="Appearance").get_by_role(
+                    "button", name="Dark", exact=True
+                ).click()
+                dark_violations = page.evaluate(
+                    "async()=> (await axe.run(document,{runOnly:{type:'tag',"
+                    "values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,"
+                    "nodes:v.nodes.map(n=>({target:n.target,summary:n.failureSummary}))}))"
+                )
+                assert not dark_violations, dark_violations
+                page.get_by_role("button", name="How it works A quick guided tour").click()
+                dark_tour = page.evaluate(
+                    "async()=> (await axe.run(document,{runOnly:{type:'tag',"
+                    "values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>v.id)"
+                )
+                assert not dark_tour, dark_tour
+                page.keyboard.press("Escape")
+                results.append("Dark workspace and tour accessibility checks")
+
                 state["mode"] = "fail"
                 page.reload()
                 page.get_by_role("heading", name="Your workspace couldn’t be loaded").wait_for()
