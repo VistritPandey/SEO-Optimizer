@@ -200,6 +200,7 @@ class Worker:
             from seo_optimizer.cloud_checks import verification_scope
 
             with verification_scope(project.tenant_id, job.id):
+                self.store.progress(job.tenant_id, job.id, self.id, "Worker started the job")
                 status, result, delay = self.process(project, job)
         except (httpx.HTTPError, OSError) as error:
             status = "queued" if job.attempts < 3 else "failed"
@@ -415,6 +416,9 @@ class Worker:
             repository = root / "repository"
             repository.mkdir()
         spec.route_map = infer_route_map(repository, spec)
+        self.store.progress(
+            job.tenant_id, job.id, self.id, "Repository snapshot and route map ready"
+        )
         urls = affected_urls(spec, changed) if job.kind == "push" else None
         if urls == []:
             return (
@@ -423,6 +427,9 @@ class Worker:
                 0,
             )
         evidence = crawler.collect(project.tenant_id, project.id, spec, urls)
+        self.store.progress(
+            job.tenant_id, job.id, self.id, f"Collected {len(evidence)} page observations"
+        )
         if not any(item.data.get("status_code") == 200 for item in evidence):
             raise ValueError("No successful public page could be collected")
         if (
@@ -512,6 +519,18 @@ class Worker:
             tool_changes: list[FileChange] = []
 
             def execute(name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+                if name in {
+                    "read_file",
+                    "inspect_route",
+                    "crawl_page",
+                    "get_check",
+                    "get_diff",
+                    "apply_patch",
+                    "run_checks",
+                }:
+                    self.store.progress(
+                        job.tenant_id, job.id, self.id, "Agent tool requested: " + name
+                    )
                 try:
                     if name == "read_file":
                         path = str(arguments["path"])
@@ -762,6 +781,7 @@ class Worker:
                 credentials.provider_key,
                 allow_custom_endpoint=self.settings.allow_private_network,
             )
+            self.store.progress(job.tenant_id, job.id, self.id, "AI assessment started")
             try:
                 inference = client.complete(
                     instructions,
@@ -880,7 +900,14 @@ class Worker:
         if content_brief:
             result["content_verification"] = content_brief
         if not changes or not spec.auto_fix:
+            self.store.progress(
+                job.tenant_id,
+                job.id,
+                self.id,
+                "Assessment complete; no source changes will be published",
+            )
             return "complete", result, 0
+        self.store.progress(job.tenant_id, job.id, self.id, "Verifying proposed source changes")
         result["proposals"] = [change.model_dump(mode="json") for change in changes]
         files = apply_changes(
             repository,
