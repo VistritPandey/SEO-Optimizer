@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { Project } from "@/lib/api";
 import { Brand } from "./Brand";
 
@@ -70,20 +71,42 @@ export function WorkspaceSidebar({
   onTour: () => void;
   onSignOut: () => void;
 }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  function navigate(action: () => void) {
+    action();
+    setMenuOpen(false);
+  }
   return (
     <aside className="sidebar workspace-sidebar">
-      <Brand />
-      <div className="sidebar-scroll">
+      <div className="sidebar-brand-row">
+        <Brand />
+        <button
+          className="sidebar-toggle"
+          aria-label="Workspace menu"
+          aria-expanded={menuOpen}
+          aria-controls="workspace-navigation"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? "Close ×" : "Menu ☰"}
+        </button>
+      </div>
+      <div
+        id="workspace-navigation"
+        className={`sidebar-scroll ${menuOpen ? "is-open" : ""}`}
+      >
         <nav aria-label="Workspace navigation" className="sidebar-section">
           <span className="eyebrow">WORKSPACE</span>
           <button
             className={`nav-item ${!selected ? "active" : ""}`}
-            onClick={() => onHome()}
+            onClick={() => navigate(() => onHome())}
           >
             <Icon name="overview" />
             All websites
           </button>
-          <button className="nav-item" onClick={() => onHome(true)}>
+          <button
+            className="nav-item"
+            onClick={() => navigate(() => onHome(true))}
+          >
             <Icon name="connection" />
             GitHub connection
             <span
@@ -105,7 +128,7 @@ export function WorkspaceSidebar({
             </span>
             <button
               className="sidebar-add"
-              onClick={onConnect}
+              onClick={() => navigate(onConnect)}
               aria-label="Connect website"
             >
               <Icon name="plus" />
@@ -115,7 +138,7 @@ export function WorkspaceSidebar({
             <button
               key={project.id}
               className={`nav-item ${selected?.id === project.id ? "active" : ""}`}
-              onClick={() => onSelect(project)}
+              onClick={() => navigate(() => onSelect(project))}
             >
               <span
                 className={`project-status-dot ${project.spec.enabled ? "enabled" : ""}`}
@@ -128,7 +151,7 @@ export function WorkspaceSidebar({
             </button>
           ))}
           {!projects.length && (
-            <button className="nav-item" onClick={onConnect}>
+            <button className="nav-item" onClick={() => navigate(onConnect)}>
               <Icon name="plus" />
               Connect your first website
             </button>
@@ -145,7 +168,7 @@ export function WorkspaceSidebar({
                 key={id}
                 className={`nav-item ${tab === id ? "active" : ""}`}
                 aria-current={tab === id ? "page" : undefined}
-                onClick={() => onTab(id)}
+                onClick={() => navigate(() => onTab(id))}
               >
                 <Icon name={icon} />
                 <span>{label}</span>
@@ -157,8 +180,8 @@ export function WorkspaceSidebar({
           </nav>
         )}
       </div>
-      <div className="sidebar-bottom">
-        <button className="sidebar-tour" onClick={onTour}>
+      <div className={`sidebar-bottom ${menuOpen ? "is-open" : ""}`}>
+        <button className="sidebar-tour" onClick={() => navigate(onTour)}>
           <Icon name="tour" />
           <span>
             How it works<small>A quick guided tour</small>
