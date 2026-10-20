@@ -534,7 +534,11 @@ def test_repaired_link_does_not_require_orphaned_error_url_to_become_a_page(tmp_
         "revision": "before",
         "merged_sha": "after",
         "fixed_checks": ["tech.links"],
-        "fixed_targets": [{"check_id": "tech.links", "url": "https://example.test/"}],
+        "fixed_targets": [
+            {"check_id": "tech.links", "url": "https://example.test/"},
+            # Legacy proposals also referenced the already healthy destination.
+            {"check_id": "tech.links", "url": "https://example.test/about"},
+        ],
         "before_defects": [{"check_id": "tech.links", "url": "https://example.test/"}],
         "audited_urls": [
             "https://example.test/",
