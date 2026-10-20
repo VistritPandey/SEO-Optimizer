@@ -553,6 +553,19 @@ export function AuditWorkspace({
   );
 }
 
+function projectRepairExplanation(job: Job, report: AuditReport) {
+  const declined = job.events.some(
+    (event) =>
+      event.message ===
+      "Assessment complete; no source changes will be published",
+  );
+  return declined
+    ? "No source changes were selected for publication under this project’s repair policy. Open findings may still need evidence or a supported repair. A completed audit is not a guarantee of complete SEO coverage."
+    : report.findings
+      ? "Findings do not automatically become code changes. A repair needs supporting evidence, permission and successful verification before a PR can be published. Review the findings and recorded job details."
+      : "This audit did not publish a repair. Review its assessed coverage and recorded outcome; no PR does not mean every SEO check was completed.";
+}
+
 function AuditRuns({
   jobs,
   title,
@@ -615,9 +628,11 @@ function AuditRuns({
                 <span>
                   AI runtime{" "}
                   <strong>
-                    {report?.model_runtime_ms
-                      ? `${(report.model_runtime_ms / 1000).toFixed(1)}s`
-                      : "Not recorded"}
+                    {report?.assessment_reused
+                      ? "Reused assessment"
+                      : report?.model_runtime_ms
+                        ? `${(report.model_runtime_ms / 1000).toFixed(1)}s`
+                        : "Not recorded"}
                   </strong>
                 </span>
                 <span>
@@ -632,6 +647,18 @@ function AuditRuns({
                   </strong>
                 </span>
               </div>
+              {report?.assessment_reused && (
+                <p className="audit-policy-strip">
+                  Inputs were unchanged. A validated assessment was reused; no
+                  new AI call was needed for this audit.
+                </p>
+              )}
+              {job.status === "complete" && report && !job.result.pr && (
+                <div className="audit-no-pr">
+                  <strong>No pull request was opened for this audit.</strong>
+                  <p>{projectRepairExplanation(job, report)}</p>
+                </div>
+              )}
               {safeLink(job.result.pr?.url, true) && (
                 <a
                   className="button secondary"
