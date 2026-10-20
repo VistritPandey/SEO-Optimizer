@@ -141,6 +141,43 @@ def grant_token(store: Store, tenant: str, settings: Settings) -> str:
     return str(grant["token"])
 
 
+def verified_repositories(store: Store, tenant: str, settings: Settings) -> dict[str, Any]:
+    """Refresh repository grants from GitHub; never extend an old cached permission."""
+    token = grant_token(store, tenant, settings)
+    result = []
+    with GitHubConnectionClient(token) as client:
+        installations = client.get("/user/installations", "installations")
+        for installation in installations:
+            if str(installation.get("app_id")) != settings.github_app_id or installation.get(
+                "suspended_at"
+            ):
+                continue
+            for repo in client.get(
+                f"/user/installations/{installation['id']}/repositories", "repositories"
+            ):
+                if repo.get("archived") or not repo.get("permissions", {}).get("push"):
+                    continue
+                key = "github-repo:" + tenant + ":" + repo["full_name"]
+                _, version = store.state(key)
+                store.save_state(
+                    key,
+                    {
+                        "installation": installation["id"],
+                        "repo_id": repo["id"],
+                        "until": time.time() + 300,
+                    },
+                    version,
+                )
+                result.append(
+                    {
+                        "repository": repo["full_name"],
+                        "branch": repo["default_branch"],
+                        "private": repo["private"],
+                    }
+                )
+    return {"repositories": result}
+
+
 def connected_create(
     value: ProjectCreate, tenant: str, store: Store, settings: Settings
 ) -> ProjectCreate:
@@ -148,7 +185,23 @@ def connected_create(
     grant_token(store, tenant, settings)  # A cached repository cannot revive a disconnected grant.
     connection, _ = store.state("github-repo:" + tenant + ":" + spec.repository)
     if not connection or connection.get("until", 0) < time.time():
-        raise HTTPException(409, "Select a repository from your verified GitHub connection")
+        try:
+            refreshed = verified_repositories(store, tenant, settings)
+        except httpx.HTTPError:
+            raise HTTPException(
+                502, "GitHub access could not be verified. Please try again shortly."
+            ) from None
+        if not any(row["repository"] == spec.repository for row in refreshed["repositories"]):
+            raise HTTPException(
+                409,
+                "GitHub no longer grants access to this repository. "
+                "Check the app installation and repository permissions.",
+            )
+        connection, _ = store.state("github-repo:" + tenant + ":" + spec.repository)
+        if not connection or connection.get("until", 0) < time.time():
+            raise HTTPException(
+                409, "Repository access changed. Refresh repositories and try again."
+            )
     credentials = ProjectSecrets(github_installation_id=str(connection["installation"]))
     return ProjectCreate(spec=spec, credentials=credentials)
 
@@ -286,39 +339,7 @@ def install_routes(app: FastAPI, store: Store, settings: Settings, authenticate:
     @app.get("/api/v1/github/repositories")
     def repositories(request: Request) -> dict[str, Any]:
         user = authenticate(request)
-        token = grant_token(store, user.id, settings)
-        result = []
-        with GitHubConnectionClient(token) as client:
-            installations = client.get("/user/installations", "installations")
-            for installation in installations:
-                if str(installation.get("app_id")) != settings.github_app_id or installation.get(
-                    "suspended_at"
-                ):
-                    continue
-                for repo in client.get(
-                    f"/user/installations/{installation['id']}/repositories", "repositories"
-                ):
-                    if repo.get("archived") or not repo.get("permissions", {}).get("push"):
-                        continue
-                    key = "github-repo:" + user.id + ":" + repo["full_name"]
-                    _, version = store.state(key)
-                    store.save_state(
-                        key,
-                        {
-                            "installation": installation["id"],
-                            "repo_id": repo["id"],
-                            "until": time.time() + 300,
-                        },
-                        version,
-                    )
-                    result.append(
-                        {
-                            "repository": repo["full_name"],
-                            "branch": repo["default_branch"],
-                            "private": repo["private"],
-                        }
-                    )
-        return {"repositories": result}
+        return verified_repositories(store, user.id, settings)
 
     @app.delete("/api/v1/github/connect")
     def disconnect(request: Request) -> dict[str, str]:
