@@ -1,0 +1,222 @@
+{
+  "generated_at": "2026-10-20T18:14:00.932478+00:00",
+  "repository_revision": "9ffb54af301d45ccdd93bf87ee094cc1e8caf616",
+  "python_sources_sha256": "f58a5d8c9a7bd4050e8b67a76f922eb77f9d68355ae2376411fafb5eb3745b93",
+  "scope": "Software workflow validation; scripted provider replies are not model judgments",
+  "counts": {
+    "passed": 560,
+    "failed": 0,
+    "skipped": 12
+  },
+  "catalog": [
+    {
+      "check_id": "commerce.facts",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "commerce.merchants",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "commerce.navigation",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "commerce.variants",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "content.competitors",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "content.factual",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "content.originality",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "content.refresh",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "content.strategy",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.crawlers",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.entities",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.experiment",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.google-faq",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.google-inclusion",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.google-llms",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "geo.visibility",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "intl.hreflang",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "intl.localization",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "local.hours",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "local.identity",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "local.relevance",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "local.schema",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "ops.incremental",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "ops.indexnow",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "ops.metrics",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "ops.verification",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "perf.cwv",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "perf.media",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "perf.navigation",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.canonical",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.indexability",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.links",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.metadata",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.migration",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.rendering",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.robots",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.sitemap",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.status",
+      "workflow_status": "passed"
+    },
+    {
+      "check_id": "tech.title",
+      "workflow_status": "passed"
+    }
+  ],
+  "semantic_and_missing_input_contracts": {
+    "passed": 85,
+    "failed": 0,
+    "skipped": 0
+  },
+  "git_http_docker_provider_replay": [
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[description]",
+      "status": "passed"
+    },
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[canonical]",
+      "status": "passed"
+    },
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[indexability]",
+      "status": "passed"
+    },
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[navigation]",
+      "status": "passed"
+    },
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[crawler_policy]",
+      "status": "passed"
+    },
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[failed_checks]",
+      "status": "passed"
+    }
+  ],
+  "failures": [],
+  "skips": [
+    "test_firestore_scope_dedupe_chunked_evidence_and_findings[(default)]",
+    "test_firestore_scope_dedupe_chunked_evidence_and_findings[optimiser-test]",
+    "test_firestore_only_one_worker_claims_a_project[(default)]",
+    "test_firestore_only_one_worker_claims_a_project[optimiser-test]",
+    "test_firestore_hosted_quota_and_project_limit[(default)]",
+    "test_firestore_hosted_quota_and_project_limit[optimiser-test]",
+    "test_real_firebase_identity_rejects_unverified_and_invalid_tokens[(default)]",
+    "test_real_firebase_identity_rejects_unverified_and_invalid_tokens[optimiser-test]",
+    "test_recreated_firebase_uid_does_not_inherit_existing_workspace[(default)]",
+    "test_recreated_firebase_uid_does_not_inherit_existing_workspace[optimiser-test]",
+    "test_firestore_retains_nested_command_arrays[(default)]",
+    "test_firestore_retains_nested_command_arrays[optimiser-test]"
+  ],
+  "unverified": [
+    "Actual model judgment quality for all 39 catalog checks",
+    "Live GitHub/webhook/cloud deployment of these scripted fixture scenarios",
+    "Search indexing, ranking, traffic, conversions and consumer-engine citations",
+    "General superiority to another product and blinded open versus paid model quality",
+    "Production billing and cost per independently verified fix"
+  ]
+}
