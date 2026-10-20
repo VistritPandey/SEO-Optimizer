@@ -58,6 +58,18 @@ def test_unsupported_scanner_is_explicit(
     assert not result.evaluated_checks
 
 
+@pytest.mark.parametrize("status,expected", [(200, []), (404, ["tech.links"])])
+def test_fragment_links_use_the_destination_response(cases, knowledge, status, expected):
+    case = cases["redirect-link-is-valid"].model_copy(deep=True).to_request()
+    case.allowed_check_ids = ["tech.links"]
+    case.evidence[0].data["html"] = '<a href="/guide#details">Guide</a>'
+    from urllib.parse import urljoin
+
+    destination = urljoin(str(case.evidence[0].url), "/guide")
+    case.evidence[0].data["link_status"] = {destination: status}
+    assert [finding.check_id for finding in audit(case, knowledge).assessment.findings] == expected
+
+
 def test_no_response_evidence_is_unresolved(
     cases: dict[str, BenchmarkCase],
     knowledge: KnowledgePackage,
