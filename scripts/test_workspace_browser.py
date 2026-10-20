@@ -534,6 +534,51 @@ def main():
                 page.keyboard.press("Escape")
                 results.append("Dark workspace and tour accessibility checks")
 
+                page.get_by_role("button", name="Project settings", exact=True).click()
+                page.get_by_label("Project instructions (optional)").fill(
+                    "Use existing components. Keep repairs focused."
+                )
+                page.get_by_label("Branch prefix", exact=True).fill("team/repairs")
+                page.get_by_label("Branch suffix (optional)").fill("seo")
+                page.get_by_label("Commit style").select_option("conventional")
+                page.get_by_label("Commit type").select_option("fix")
+                page.get_by_label("Commit scope (optional)").fill("search")
+                expect(page.locator(".agent-convention-preview")).to_contain_text(
+                    "team/repairs/<job-id>-seo"
+                )
+                expect(page.locator(".agent-convention-preview")).to_contain_text(
+                    "fix(search): fix page.tsx"
+                )
+                page.get_by_role("button", name="Save policy", exact=False).click()
+                expect(page.get_by_text("Policy updated.", exact=True)).to_be_visible()
+                assert project["spec"]["agent_instructions"] == (
+                    "Use existing components. Keep repairs focused."
+                )
+                assert project["spec"]["git_conventions"]["branch_suffix"] == "seo"
+                assert project["spec"]["repository"] == "fictional/site"
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.get_by_role("button", name="Project settings", exact=True).click()
+                expect(page.get_by_label("Commit scope (optional)")).to_have_value("search")
+                for theme in ("Dark", "Light"):
+                    page.get_by_role("group", name="Appearance").get_by_role(
+                        "button", name=theme, exact=True
+                    ).click()
+                    page.add_script_tag(path=str(WEB / "node_modules/axe-core/axe.min.js"))
+                    policy_violations = page.evaluate(
+                        "async()=> (await axe.run(document,{runOnly:{type:'tag',"
+                        "values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>v.id)"
+                    )
+                    assert not policy_violations, policy_violations
+                page.set_viewport_size({"width": 390, "height": 844})
+                assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                page.screenshot(path=str(output / "agent-preferences-mobile.png"), full_page=True)
+                page.set_viewport_size({"width": 1440, "height": 1080})
+                results.append(
+                    "Coding instructions and Git conventions save, reload, preview "
+                    "and remain accessible in both themes"
+                )
+
                 state["mode"] = "fail"
                 page.reload()
                 page.get_by_role("heading", name="Your workspace couldn’t be loaded").wait_for()
