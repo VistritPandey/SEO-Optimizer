@@ -85,7 +85,7 @@ class Crawler:
                 raise CrawlError("Website resolves to a restricted network address")
         return sorted(addresses, key=lambda value: ipaddress.ip_address(value).version)
 
-    def fetch(self, url: str) -> httpx.Response:
+    def fetch(self, url: str, *, read_body: bool = True) -> httpx.Response:
         for _ in range(6):
             if self.deadline is not None:
                 remaining = self.deadline - time.monotonic()
@@ -106,10 +106,11 @@ class Crawler:
                 extensions={"sni_hostname": original.host},
             ) as streamed:
                 body = bytearray()
-                for chunk in streamed.iter_bytes():
-                    body.extend(chunk)
-                    if len(body) > 2_000_000:
-                        raise CrawlError("Page response exceeded the size limit")
+                if read_body:
+                    for chunk in streamed.iter_bytes():
+                        body.extend(chunk)
+                        if len(body) > 2_000_000:
+                            raise CrawlError("Page response exceeded the size limit")
                 response = httpx.Response(
                     streamed.status_code,
                     headers={
@@ -179,13 +180,14 @@ class Crawler:
                 linked = urldefrag(urljoin(str(response.url), href))[0]
                 if urlparse(linked).hostname != self.host or href.startswith("#"):
                     continue
-                if urlparse(linked).path.lower().endswith((".png", ".jpg", ".pdf", ".zip")):
-                    continue
-                if linked not in visited:
-                    queue.append(linked)
                 if linked not in links:
                     try:
-                        links[linked] = self.fetch(linked).status_code
+                        destination = self.fetch(linked, read_body=False)
+                        links[linked] = destination.status_code
+                        if linked not in visited and "html" in destination.headers.get(
+                            "content-type", "text/html"
+                        ):
+                            queue.append(linked)
                     except (httpx.HTTPError, CrawlError):
                         pass
             data: dict[str, Any] = {
