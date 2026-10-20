@@ -112,6 +112,18 @@ def scan(
             ),
             knowledge,
         )
+        for finding in baseline.assessment.findings:
+            if finding.check_id == "tech.indexability" and url not in project.page_intents:
+                finding.dependencies = ["Owner-confirmed indexing intent for this exact page."]
+                finding.status = FindingStatus.UNRESOLVED
+                finding.evidence_strength = EvidenceStrength.HYPOTHESIS
+                finding.summary = (
+                    "Exclusion directive found; this page's intended visibility is unconfirmed."
+                )
+                finding.action = ProposedAction(
+                    kind=ActionKind.COLLECT_EVIDENCE,
+                    rationale="Confirm owner intent before classifying noindex as a defect.",
+                )
         findings.extend(baseline.assessment.findings)
         for id in baseline.evaluated_checks:
             outcomes.setdefault(id, "healthy")
