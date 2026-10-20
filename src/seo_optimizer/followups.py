@@ -33,6 +33,33 @@ def handle_event(
         return {"status": "paused"}
     if payload.get("repository", {}).get("full_name") != spec.repository:
         raise HTTPException(403, "Repository does not match this connection")
+    if event == "deployment_status":
+        deployment = payload.get("deployment", {})
+        status = payload.get("deployment_status", {})
+        if (
+            status.get("state") != "success"
+            or str(deployment.get("environment", "")).casefold() != spec.environment.casefold()
+        ):
+            return {"status": "ignored"}
+        from seo_optimizer.web import re_sha
+
+        sha = str(deployment.get("sha", ""))
+        if not re_sha(sha):
+            raise HTTPException(400, "Invalid deployment revision")
+        # A push audit can precede deployment. Recollect the served site even if
+        # its source revision was already audited; worker head checks reject stale events.
+        job = store.enqueue(
+            project.tenant_id,
+            project.id,
+            "audit",
+            "deployed:" + sha + ":" + spec.environment.casefold(),
+            {
+                "after": sha,
+                "trigger": "successful_deployment",
+                "deployment_id": deployment.get("id"),
+            },
+        )
+        return {"status": "queued", "job_id": job.id}
     if (
         event == "push"
         and payload.get("ref") == "refs/heads/" + spec.branch
