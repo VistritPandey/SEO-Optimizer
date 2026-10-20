@@ -109,7 +109,12 @@ class Document(HTMLParser):
             self.canonical = data.get("href") or ""
         if tag == "meta" and (data.get("name") or "").lower() == "description":
             self.description = data.get("content") or ""
-        if tag == "link" and data.get("hreflang") and data.get("href"):
+        if (
+            tag == "link"
+            and "alternate" in (data.get("rel") or "").lower().split()
+            and data.get("hreflang")
+            and data.get("href")
+        ):
             self.alternates[str(data["hreflang"])] = str(data["href"])
         if tag in {"script", "style"}:
             self._hidden += 1
@@ -141,6 +146,11 @@ def schema_nodes(value: Any) -> list[dict[str, Any]]:
     if isinstance(value, dict):
         return [value, *schema_nodes(value.get("@graph", []))]
     return []
+
+
+def normalized_url(url: str) -> str:
+    parsed = urlparse(url)
+    return parsed._replace(path=parsed.path or "/", fragment="").geturl()
 
 
 def header_noindex(headers: Any) -> bool:
@@ -493,8 +503,10 @@ def deterministic(
                 or header_noindex(observed[url].data.get("headers"))
                 or (
                     bool(Document(str(observed[url].data.get("html", ""))).canonical)
-                    and urljoin(url, Document(str(observed[url].data.get("html", ""))).canonical)
-                    != url
+                    and normalized_url(
+                        urljoin(url, Document(str(observed[url].data.get("html", ""))).canonical)
+                    )
+                    != normalized_url(url)
                 )
             )
         ]
@@ -706,7 +718,9 @@ def deterministic(
         for url, doc in annotated.items():
             for lang, href in doc.alternates.items():
                 target = urljoin(url, href)
-                if not re.fullmatch(r"(?:[a-zA-Z]{2,3}(?:-[a-zA-Z]{2}|-\d{3})?|x-default)", lang):
+                if not re.fullmatch(
+                    r"(?:[a-zA-Z]{2,3}(?:-[a-zA-Z]{4})?(?:-[a-zA-Z]{2}|-\d{3})?|x-default)", lang
+                ):
                     result(
                         "defect",
                         "An observed hreflang language/region value is invalid.",
