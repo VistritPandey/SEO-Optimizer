@@ -114,6 +114,29 @@ def fixtures():
             },
         },
     ]
+    jobs.append(
+        {
+            "id": "reused",
+            "kind": "audit",
+            "status": "complete",
+            "events": [
+                {
+                    "time": 1792450010,
+                    "message": "Assessment complete; no source changes will be published",
+                }
+            ],
+            "result": {
+                "summary": "Unchanged website assessed",
+                "report": {
+                    **report,
+                    "assessment_reused": True,
+                    "tool_trace": [],
+                    "model_runtime_ms": None,
+                    "usage": {"input_tokens": 0, "output_tokens": 0, "api_cost_usd": 0},
+                },
+            },
+        }
+    )
     findings = [
         {
             "id": "broken",
@@ -154,7 +177,8 @@ def main():
     with tempfile.TemporaryDirectory(prefix="optimiser-workspace-qa-") as folder:
         folder = Path(folder)
         (folder / "auth.mjs").write_text(
-            'export const user={email:"tester@example.test",emailVerified:true,'
+            'export const user={uid:"fictional-user",'
+            'email:"tester@example.test",emailVerified:true,'
             'getIdToken:async()=>"fixture-token"};'
             "export const onAuthStateChanged=(_,fn)=>{queueMicrotask(()=>fn(user));return()=>{}};"
             "export const sendEmailVerification=async()=>{};export const signOut=async()=>{};"
@@ -255,6 +279,8 @@ def main():
                     elif path == "projects/site/activity":
                         data = activity
                     elif path == "projects/site":
+                        if route.request.method == "PATCH":
+                            project["spec"].update(route.request.post_data_json)
                         data = project
                     elif path.endswith("/workspace"):
                         data = {}
@@ -274,9 +300,44 @@ def main():
                 assert state["account_calls"] == 2
                 assert page.get_by_text("Retry connection", exact=True).count() == 0
                 results.append("HTML gateway read recovers; normal loading never shows retry")
+                page.get_by_role("button", name="Take the tour", exact=True).click()
+                tour = page.get_by_role("dialog")
+                expect(tour).to_be_visible()
+                expect(tour.get_by_role("heading", name="Connect the website")).to_be_visible()
+                tour.get_by_role("button", name="Next").click()
+                expect(tour.get_by_role("heading", name="Start with evidence")).to_be_visible()
+                tour.get_by_role("button", name="Next").click()
+                page.screenshot(path=str(output / "tour.png"))
+                tour.get_by_role("button", name="Back").click()
+                expect(tour.get_by_role("heading", name="Start with evidence")).to_be_visible()
+                page.keyboard.press("Escape")
+                expect(tour).not_to_be_visible()
+                expect(page.get_by_role("button", name="Take the tour", exact=True)).to_have_count(
+                    0
+                )
+                assert state["mutations"] == 0
+                results.append(
+                    "Tutorial navigation, Escape and remembered dismissal without audit writes"
+                )
                 page.get_by_role("button", name="Monitoring Cedar Workshop").click()
                 page.get_by_role("heading", name="Health over time").wait_for()
                 assert page.get_by_role("img", name="out of 100").count() == 1
+                sidebar = page.get_by_role("navigation", name="Selected website navigation")
+                sidebar.get_by_role("button", name="Pages inspected").click()
+                expect(page.get_by_role("heading", name="Workshop lighting")).to_be_visible()
+                sidebar.get_by_role("button", name="Website overview").click()
+                page.get_by_role("button", name="Pause monitoring", exact=True).click()
+                page.get_by_role("button", name="Resume monitoring", exact=True).click()
+                expect(
+                    page.get_by_role("button", name="Pause monitoring", exact=True)
+                ).to_be_visible()
+                page.get_by_role("button", name="How it works A quick guided tour").click()
+                expect(page.get_by_role("dialog")).to_be_visible()
+                for _ in range(4):
+                    page.get_by_role("dialog").get_by_role("button", name="Next").click()
+                page.get_by_role("dialog").get_by_role("button", name="Finish tour").click()
+                expect(page.get_by_role("dialog")).not_to_be_visible()
+                results.append("Sidebar sections, replayable tour and saved monitoring responses")
                 page.screenshot(path=str(output / "overview.png"), full_page=True)
                 page.get_by_role("tab", name="Findings").click()
                 page.get_by_label("Filter findings").select_option("unresolved")
@@ -305,6 +366,15 @@ def main():
                     page.get_by_role("link", name="Review pull request #1").get_attribute("href")
                     == "https://github.com/fictional/site/pull/1"
                 )
+                page.get_by_text("Unchanged website assessed", exact=True).click()
+                expect(page.get_by_text("Reused assessment", exact=True)).to_be_visible()
+                expect(page.get_by_text("Inputs were unchanged.", exact=False)).to_be_visible()
+                expect(
+                    page.get_by_text("No pull request was opened for this audit.", exact=True)
+                ).to_be_visible()
+                results.append(
+                    "Reused assessments and no-PR outcomes explain model and publication decisions"
+                )
                 page.get_by_label("Job status").select_option("blocked")
                 expect(
                     page.get_by_text("Build verification needs configuration", exact=True).first
@@ -324,6 +394,14 @@ def main():
                 page.set_viewport_size({"width": 1440, "height": 1080})
                 page.get_by_role("tab", name="Overview", exact=True).click()
                 page.add_script_tag(path=str(WEB / "node_modules/axe-core/axe.min.js"))
+                page.get_by_role("button", name="How it works A quick guided tour").click()
+                tour_violations = page.evaluate(
+                    "async()=> (await axe.run(document,{runOnly:{type:'tag',"
+                    "values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>v.id)"
+                )
+                assert not tour_violations, tour_violations
+                page.keyboard.press("Escape")
+                results.append("Tutorial dialog accessibility and focus trapping")
                 violations = page.evaluate(
                     "async()=> (await "
                     "axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.length}))"
