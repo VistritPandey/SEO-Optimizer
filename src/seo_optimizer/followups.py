@@ -11,6 +11,10 @@ from seo_optimizer.settings import Settings
 from seo_optimizer.store import Project, Store
 
 
+def merge_key(project: Project, sha: str) -> str:
+    return f"repair-merge:{project.tenant_id}:{project.id}:{sha}"
+
+
 def register_project(store: Store, project: Project) -> None:
     credentials = store.secrets(project)
     if not credentials.github_installation_id:
@@ -46,6 +50,8 @@ def handle_event(
         sha = str(deployment.get("sha", ""))
         if not re_sha(sha):
             raise HTTPException(400, "Invalid deployment revision")
+        if store.state(merge_key(project, sha))[0]:
+            return {"status": "own_change_suppressed"}
         # A push audit can precede deployment. Recollect the served site even if
         # its source revision was already audited; worker head checks reject stale events.
         job = store.enqueue(
@@ -70,7 +76,7 @@ def handle_event(
         sha = str(payload.get("after", ""))
         if not re_sha(sha):
             raise HTTPException(400, "Invalid revision")
-        if any(
+        if store.state(merge_key(project, sha))[0] or any(
             job.result.get("merged_sha") == sha for job in store.jobs(project.tenant_id, project.id)
         ):
             return {"status": "own_change_suppressed"}
@@ -113,6 +119,20 @@ def handle_event(
     if tracked is None:
         return {"status": "untracked_pull_request"}
     if event == "pull_request":
+        pull = payload["pull_request"]
+        sha = str(pull.get("merge_commit_sha", ""))
+        from seo_optimizer.web import re_sha
+
+        if (
+            re_sha(sha)
+            and pull.get("head", {}).get("sha") == tracked.result.get("pr", {}).get("head_sha")
+            and pull.get("base", {}).get("ref") == spec.branch
+        ):
+            key = merge_key(project, sha)
+            for _ in range(3):
+                value, version = store.state(key)
+                if value or store.save_state(key, {"origin": tracked.id, "pr": number}, version):
+                    break
         job = store.enqueue(
             project.tenant_id,
             project.id,
