@@ -12,6 +12,7 @@ import {
 } from "firebase/auth";
 import { firebaseAuth } from "@/lib/firebase";
 import { Brand } from "./Brand";
+import { ThemeControl } from "./ThemeControl";
 export function Login() {
   const router = useRouter();
   const query = useSearchParams();
@@ -68,7 +69,10 @@ export function Login() {
   }
   return (
     <main id="main-content" className="auth-shell">
-      <Brand />
+      <div className="auth-topbar">
+        <Brand />
+        <ThemeControl compact />
+      </div>
       <section className="auth-card">
         <span className="eyebrow">YOUR WEBSITE’S WORKSPACE</span>
         <h1>
