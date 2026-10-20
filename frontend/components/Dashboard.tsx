@@ -19,6 +19,10 @@ type Account = {
   job_limit: number | null;
   project_limit: number;
   github_install_url?: string;
+  github_connection?: {
+    status: "not_connected" | "connected" | "reconnect_required";
+    login: string | null;
+  };
 };
 type Repository = { repository: string; branch: string; private: boolean };
 export function Dashboard() {
@@ -756,26 +760,70 @@ export function Dashboard() {
               )}
             </section>
             <section className="panel">
-              <h2>Repository access</h2>
-              <p>
-                You can disconnect GitHub at any time. Connected projects pause
-                and their installation credentials are removed from the
-                workspace.
-              </p>
-              <button
-                className="text-link"
-                onClick={() =>
-                  action(async () => {
-                    await api("github/connect", "DELETE");
-                    await refresh();
-                    setNotice(
-                      "GitHub disconnected; repository projects paused.",
-                    );
-                  })
-                }
-              >
-                Disconnect GitHub
-              </button>
+              <h2>GitHub connection</h2>
+              {account.github_connection?.status === "connected" ? (
+                <>
+                  <p>
+                    Connected
+                    {account.github_connection.login
+                      ? ` as ${account.github_connection.login}`
+                      : ""}
+                    . Only repositories selected in the GitHub App installation
+                    are available.
+                  </p>
+                  <button
+                    className="text-link"
+                    onClick={() => setNewProject(true)}
+                  >
+                    Connect another website ↗
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p>
+                    {account.github_connection?.status === "reconnect_required"
+                      ? "Your GitHub authorisation has expired. Reconnect before the agent can access your repositories."
+                      : "No GitHub account is connected yet. Connect your account and choose the repositories this workspace can access."}
+                  </p>
+                  <button
+                    className="button secondary"
+                    disabled={busy}
+                    onClick={connect}
+                  >
+                    {account.github_connection?.status === "reconnect_required"
+                      ? "Reconnect GitHub ↗"
+                      : "Connect GitHub account ↗"}
+                  </button>
+                </>
+              )}
+              {account.github_connection &&
+                account.github_connection.status !== "not_connected" && (
+                  <details>
+                    <summary>Disconnect GitHub</summary>
+                    <p>
+                      This pauses connected projects and removes their active
+                      installation credentials from this workspace. Existing
+                      findings and pull requests remain. You can reconnect
+                      later.
+                    </p>
+                    <button
+                      className="text-link"
+                      disabled={busy}
+                      onClick={() =>
+                        action(async () => {
+                          await api("github/connect", "DELETE");
+                          setRepos([]);
+                          await refresh();
+                          setNotice(
+                            "GitHub disconnected; repository projects paused.",
+                          );
+                        })
+                      }
+                    >
+                      Disconnect and pause projects
+                    </button>
+                  </details>
+                )}
             </section>
           </>
         )}
