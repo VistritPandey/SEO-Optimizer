@@ -218,6 +218,37 @@ def snapshot_local(
     return sha
 
 
+def validate_html_metadata(original: str, updated: str) -> None:
+    """Compare actual changed bytes, including whole-file replacement proposals."""
+    heads = [
+        re.search(r"<head\b[^>]*>.*?</head>", text, re.S | re.I) for text in (original, updated)
+    ]
+    old, new = heads
+    if old is None or new is None:
+        raise ValueError("Automatic metadata requires an intact document head")
+    if (
+        original[: old.start()] + original[old.end() :]
+        != updated[: new.start()] + updated[new.end() :]
+    ):
+        raise ValueError("Automatic edit extends beyond permitted page metadata")
+
+    def fixed_head(value: str) -> str:
+        value = re.sub(r"\s*<title\b[^>]*>.*?</title>\s*", "", value, flags=re.S | re.I)
+        value = re.sub(r"\s*<meta\b[^>]*>\s*", "", value, flags=re.I)
+        value = re.sub(
+            r"\s*<link\b(?=[^>]*\brel\s*=\s*['\"](?:canonical|alternate)['\"])[^>]*>\s*",
+            "",
+            value,
+            flags=re.I,
+        )
+        return value.strip()
+
+    if fixed_head(old.group()) != fixed_head(new.group()):
+        raise ValueError("Edit changes executable or unrelated head content")
+    if re.search(r"<meta\b[^>]*http-equiv\s*=\s*['\"]?refresh\b", new.group(), re.I):
+        raise ValueError("Automatic metadata cannot introduce a redirect")
+
+
 def apply_changes(
     root: Path,
     spec: ProjectSpec,
@@ -238,7 +269,9 @@ def apply_changes(
         if change.path in seen:
             raise ValueError("Duplicate file edits must be combined into one change")
         seen.add(change.path)
-        if not set(change.evidence_ids).issubset(evidence_ids) or change.check_id not in check_ids:
+        if not set(change.evidence_ids).issubset(evidence_ids) or not change.check_ids.issubset(
+            check_ids
+        ):
             raise ValueError("Patch is not supported by collected findings")
         target = confined(root, change.path, spec.allowed_paths)
         intents = {
@@ -286,12 +319,32 @@ def apply_changes(
             if directives.findall(original) != directives.findall(updated):
                 routes = [route for route, path in spec.route_map.items() if path == change.path]
                 if (
-                    change.check_id != "tech.indexability"
+                    "tech.indexability" not in change.check_ids
                     or not routes
                     or not all(intents.get(route) is True for route in routes)
                 ):
                     raise ValueError("Indexing directives require explicit matching public intent")
-        if change.check_id == "tech.links" and target.suffix.lower() in {
+        if (
+            target.suffix.lower() == ".html"
+            and "tech.links" in change.check_ids
+            and len(change.check_ids) > 1
+        ):
+            if not spec.check_commands or not change.check_ids.issubset(
+                {"tech.links", "tech.title", "tech.metadata", "tech.canonical", "tech.indexability"}
+            ):
+                raise ValueError(
+                    "Combined navigation repairs require confirmed metadata checks and a build"
+                )
+            old_body = re.search(r"<body\b[^>]*>.*?</body>", original, re.S | re.I)
+            new_body = re.search(r"<body\b[^>]*>.*?</body>", updated, re.S | re.I)
+            if old_body is None or new_body is None:
+                raise ValueError("Combined navigation repairs require an inspectable body")
+            literal_link_changes(old_body.group(), new_body.group())
+            metadata_only = (
+                updated[: new_body.start()] + old_body.group() + updated[new_body.end() :]
+            )
+            validate_html_metadata(original, metadata_only)
+        elif change.check_id == "tech.links" and target.suffix.lower() in {
             ".html",
             ".tsx",
             ".jsx",
@@ -319,33 +372,7 @@ def apply_changes(
                 if without_metadata(original) != without_metadata(updated):
                     raise ValueError("Framework edit changes application behavior beyond metadata")
             elif target.suffix.lower() == ".html":
-                head = re.search(r"<head\b[^>]*>(.*?)</head>", original, flags=re.S | re.I)
-                start = original.find(change.before)
-                if not head or not (
-                    head.start() <= start and start + len(change.before) <= head.end()
-                ):
-                    raise ValueError("Automatic edit extends beyond permitted page metadata")
-                updated_head = re.search(r"<head\b[^>]*>(.*?)</head>", updated, flags=re.S | re.I)
-                if updated_head is None:
-                    raise ValueError("Edit removes the document head")
-
-                def fixed_head(value: str) -> str:
-                    value = re.sub(r"\s*<title\b[^>]*>.*?</title>\s*", "", value, flags=re.S | re.I)
-                    value = re.sub(r"\s*<meta\b[^>]*>\s*", "", value, flags=re.I)
-                    value = re.sub(
-                        r"\s*<link\b(?=[^>]*\brel\s*=\s*['\"](?:canonical|alternate)['\"])[^>]*>\s*",
-                        "",
-                        value,
-                        flags=re.I,
-                    )
-                    return value.strip()
-
-                if fixed_head(head.group(0)) != fixed_head(updated_head.group(0)):
-                    raise ValueError("Edit changes executable or unrelated head content")
-                if re.search(
-                    r"<meta\b[^>]*http-equiv\s*=\s*['\"]?refresh\b", updated_head.group(0), re.I
-                ):
-                    raise ValueError("Automatic metadata cannot introduce a redirect")
+                validate_html_metadata(original, updated)
             else:
                 raise ValueError("Application/content edits require explicit publication policy")
         else:
