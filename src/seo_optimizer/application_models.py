@@ -170,8 +170,13 @@ class FileChange(Contract):
     after: str = Field(max_length=100000)
     reason: str = Field(min_length=1)
     check_id: str
+    related_check_ids: list[str] = Field(default_factory=list, max_length=8)
     evidence_ids: list[str] = Field(min_length=1)
     fact_ids: list[str] = Field(default_factory=list)
+
+    @property
+    def check_ids(self) -> set[str]:
+        return {self.check_id, *self.related_check_ids}
 
 
 class CheckReview(Contract):
