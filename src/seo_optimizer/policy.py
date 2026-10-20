@@ -133,9 +133,19 @@ def validate_assessment(
             # Mutating an unconfigured URL is never inferred from environment defaults.
             if project.page_intents.get(url) != indexable:
                 errors.append("indexability change lacks explicit matching URL intent")
-        if check.assessment == "experimental" and (
-            finding.status != FindingStatus.EXPERIMENT
-            or finding.evidence_strength != EvidenceStrength.HYPOTHESIS
+        unresolved_experiment = (
+            finding.status == FindingStatus.UNRESOLVED
+            and finding.action.kind == ActionKind.NONE
+            and not finding.action.automatic
+            and bool(finding.dependencies)
+        )
+        if (
+            check.assessment == "experimental"
+            and not unresolved_experiment
+            and (
+                finding.status != FindingStatus.EXPERIMENT
+                or finding.evidence_strength != EvidenceStrength.HYPOTHESIS
+            )
         ):
             errors.append("research tactic presented as established repair")
         if finding.action.automatic:
