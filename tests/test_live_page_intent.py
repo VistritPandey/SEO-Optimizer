@@ -44,3 +44,29 @@ def test_live_noindex_requires_owner_confirmed_page_intent(intent, expected):
                 )
                 == "needs_data"
             )
+
+
+@pytest.mark.parametrize(
+    "tag,defect",
+    [
+        ('<meta name="description" content="">', True),
+        ('<meta name="description" content="   ">', True),
+        ('<meta name="description">', True),
+        ('<meta content="Observed lamp guide" name="DESCRIPTION">', False),
+    ],
+)
+def test_empty_description_cannot_establish_a_metadata_pass(tag, defect):
+    spec = ProjectSpec(name="Website", website_url="https://example.test/")
+    evidence = Evidence(
+        id="response",
+        tenant_id="tenant",
+        project_id="site",
+        environment="production",
+        kind="http",
+        url="https://example.test/",
+        observation="Fixture response",
+        collected_at=utc_now(),
+        data={"status_code": 200, "html": "<title>Guide</title>" + tag},
+    )
+    findings, _ = scan(context("tenant", "site", spec), spec, [evidence], load_knowledge())
+    assert any(f.check_id == "tech.metadata" and f.status == "defect" for f in findings) is defect
