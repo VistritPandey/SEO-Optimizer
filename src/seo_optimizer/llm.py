@@ -237,8 +237,9 @@ class ModelClient:
         input_available, output_available = True, True
         trace: list[dict[str, Any]] = []
         started = time.monotonic()
-        # Reserve one final formatting correction; it cannot execute more tools.
-        for step in range(max_steps + 1):
+        # Tool rounds, final decision and one bounded formatting correction have
+        # distinct slots. The final response cannot silently consume a tool round.
+        for step in range(max_steps + 2):
             if time.monotonic() - started > max_seconds:
                 raise ProviderError("Model time budget exhausted")
             self.client.timeout = httpx.Timeout(
@@ -251,7 +252,7 @@ class ModelClient:
                 )
             )
             definitions = (
-                tools if self.config.capabilities.tool_calling and step < max_steps - 1 else []
+                tools if self.config.capabilities.tool_calling and step < max_steps else []
             )
             calls: list[dict[str, Any]] = []
             text = ""
@@ -267,9 +268,7 @@ class ModelClient:
                         "num_ctx": self.config.ollama_num_ctx,
                     },
                 }
-                if self.config.capabilities.json_schema and (
-                    not definitions or step == max_steps - 1
-                ):
+                if self.config.capabilities.json_schema and not definitions:
                     payload["format"] = schema
                 if definitions:
                     payload["tools"] = [
@@ -470,7 +469,7 @@ class ModelClient:
                             "Do not invent a blocker or change code just to satisfy this contract. "
                             "Unhandled confirmed targets: " + json.dumps(pending)
                         )
-                        if step >= max_steps - 1:
+                        if step >= max_steps:
                             raise ValueError(feedback)
                         history.append({"role": "user", "content": feedback})
                         native_input.append({"role": "user", "content": feedback})
@@ -497,7 +496,7 @@ class ModelClient:
                             }
                         ]
                     )
-                    if not self.config.capabilities.json_schema or step >= max_steps:
+                    if not self.config.capabilities.json_schema or step > max_steps:
                         raise ModelOutputError(
                             errors,
                             trace,
@@ -611,4 +610,18 @@ class ModelClient:
                 history.append({"role": "user", "content": results})
             elif kind == "google":
                 google_history.append({"role": "user", "parts": results})
+            if request.get("repair_targets"):
+                staged = any(t["name"] == "apply_patch" and t.get("success") for t in trace)
+                next_action = (
+                    "A proposal is staged. Run checks on that proposal; correct any failed check."
+                    if staged
+                    else "No repair is staged. Use the source evidence to propose the smallest "
+                    "grounded patch with apply_patch. Reading and checking unchanged code does "
+                    "not resolve the confirmed defect. If evidence or policy prevents a patch, "
+                    "finish with an unresolved Finding and its specific dependency."
+                )
+                feedback = next_action + f" Tool rounds remaining: {max(0, max_steps - step - 1)}."
+                history.append({"role": "user", "content": feedback})
+                native_input.append({"role": "user", "content": feedback})
+                google_history.append({"role": "user", "parts": [{"text": feedback}]})
         raise ProviderError("Model tool-step budget exhausted")
