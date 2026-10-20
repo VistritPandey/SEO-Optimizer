@@ -58,6 +58,13 @@ class RemoteStore(Store):
         response.raise_for_status()
         return Workspace.model_validate(response.json())
 
+    def progress(self, tenant: str, id: str, worker: str, message: str) -> None:
+        response = self.client.post(
+            f"/api/v1/worker/jobs/{id}/progress",
+            json={"worker_id": worker, "message": message},
+        )
+        response.raise_for_status()
+
     def finish(
         self,
         tenant: str,
