@@ -723,7 +723,7 @@ class Worker:
                             spec,
                             list(proposals.values()),
                             {item.id for item in evidence},
-                            set(self.knowledge.checks),
+                            {f.check_id for f in findings if f.status == FindingStatus.DEFECT},
                         )
                         return {
                             "success": True,
@@ -827,7 +827,11 @@ class Worker:
                 "Never claim tools have merged or deployed a change. "
                 "For actionable existing defects, inspect source with read_file, stage one "
                 "combined replacement per file with apply_patch, and run_checks on the staged "
-                "proposals before the final decision. Do not duplicate tool-staged patches "
+                "proposals. When several confirmed defects share a file, declare the primary "
+                "check_id and all other repaired checks in related_check_ids. Include evidence "
+                "IDs for each defect and the source read. Combined static HTML metadata and "
+                "literal navigation fixes are supported; body copy must stay unchanged. "
+                "Do not duplicate tool-staged patches "
                 "in final changes. Existing deterministic findings already establish defects; "
                 "you may return findings=[] when you have no additional findings. "
                 "Prioritize files mapped to confirmed defects. Batch independent read_file "
@@ -1255,14 +1259,15 @@ class Worker:
             {item.check_id for item in findings if item.status == FindingStatus.DEFECT},
         )
         result["verification"] = verify_workspace(repository, spec, files)
-        result["fixed_checks"] = sorted({change.check_id for change in changes})
+        result["fixed_checks"] = sorted({id for change in changes for id in change.check_ids})
         confirmed_targets = {(item["check_id"], item["url"]) for item in result["before_defects"]}
         result["fixed_targets"] = [
             {"check_id": check_id, "url": url}
             for check_id, url in sorted(
                 {
-                    (change.check_id, str(evidence_by_id[id].url))
+                    (check_id, str(evidence_by_id[id].url))
                     for change in changes
+                    for check_id in change.check_ids
                     for id in change.evidence_ids
                     if evidence_by_id[id].url is not None
                 }
@@ -1579,6 +1584,7 @@ class Worker:
             "tech.status",
             "commerce.facts",
             "geo.crawlers",
+            "geo.entities",
         }
         rule_targets = {
             (item["check_id"], item["url"])
