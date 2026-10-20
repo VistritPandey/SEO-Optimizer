@@ -12,7 +12,7 @@ from typing import Any
 import httpx
 import jwt
 
-from seo_optimizer.application_models import ProjectSecrets
+from seo_optimizer.application_models import GitConventions, ProjectSecrets
 
 
 def verify_signature(secret: str, body: bytes, signature: str) -> bool:
@@ -165,8 +165,11 @@ class GitHubClient:
         job_id: str,
         changes: dict[str, str],
         summary: str,
+        conventions: GitConventions | None = None,
+        title: str = "Improve website search health",
     ) -> dict[str, Any]:
-        name = f"optimizer/{job_id}"
+        conventions = conventions or GitConventions()
+        name = conventions.branch_name(job_id)
         existing = self.request(
             "GET",
             f"/repos/{repo}/pulls",
@@ -181,6 +184,7 @@ class GitHubClient:
                 "url": prior["html_url"],
                 "head_sha": prior["head"]["sha"],
                 "base_sha": base_sha,
+                "branch": name,
             }
         if self.head(repo, branch) != base_sha:
             raise ValueError("Target revision changed before publication")
@@ -204,13 +208,12 @@ class GitHubClient:
                 "POST",
                 f"/repos/{repo}/git/commits",
                 json={
-                    "message": "Fix " + Path(path).name,
+                    "message": conventions.commit_message(path),
                     "tree": tree["sha"],
                     "parents": [parent_sha],
                 },
             )
             parent_sha, tree_sha = commit["sha"], tree["sha"]
-        name = f"optimizer/{job_id}"
         self.request(
             "POST",
             f"/repos/{repo}/git/refs",
@@ -220,7 +223,7 @@ class GitHubClient:
             "POST",
             f"/repos/{repo}/pulls",
             json={
-                "title": "Improve website search metadata",
+                "title": title,
                 "head": name,
                 "base": branch,
                 "body": summary
@@ -233,6 +236,7 @@ class GitHubClient:
             "url": value["html_url"],
             "head_sha": parent_sha,
             "base_sha": base_sha,
+            "branch": name,
         }
 
     def update_pr(
@@ -243,13 +247,15 @@ class GitHubClient:
         expected_sha: str,
         changes: dict[str, str],
         base_sha: str,
+        conventions: GitConventions | None = None,
     ) -> dict[str, Any]:
+        conventions = conventions or GitConventions()
         current = self.request("GET", f"/repos/{repo}/pulls/{number}")
         if (
             current.get("state") != "open"
             or current["head"]["sha"] != expected_sha
             or current["head"]["ref"] != branch
-            or not branch.startswith("optimizer/")
+            or current.get("base", {}).get("ref") == branch
             or current["head"]["repo"]["full_name"] != repo
         ):
             raise ValueError("Pull request changed; follow-up was not published")
@@ -273,7 +279,7 @@ class GitHubClient:
                 "POST",
                 f"/repos/{repo}/git/commits",
                 json={
-                    "message": "Refine " + Path(path).name,
+                    "message": conventions.commit_message(path, refinement=True),
                     "tree": tree["sha"],
                     "parents": [parent],
                 },
@@ -290,6 +296,7 @@ class GitHubClient:
             "url": current["html_url"],
             "head_sha": parent,
             "base_sha": base_sha,
+            "branch": branch,
         }
 
     def checks_ready(self, repo: str, sha: str, required: list[str]) -> str:
