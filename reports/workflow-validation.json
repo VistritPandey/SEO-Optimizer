@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-10-20T18:14:00.932478+00:00",
-  "repository_revision": "9ffb54af301d45ccdd93bf87ee094cc1e8caf616",
-  "python_sources_sha256": "f58a5d8c9a7bd4050e8b67a76f922eb77f9d68355ae2376411fafb5eb3745b93",
+  "generated_at": "2026-10-20T18:29:25.555822+00:00",
+  "repository_revision": "96b02fa02c69cbcc0aabd1b05cdacbe933a16b26",
+  "python_sources_sha256": "521c5916f92f5c178dede4bd0b690e4be3363f9c3f5af97dce56f5c387f78fc9",
   "scope": "Software workflow validation; scripted provider replies are not model judgments",
   "counts": {
-    "passed": 560,
+    "passed": 572,
     "failed": 0,
     "skipped": 12
   },
@@ -172,6 +172,10 @@
     "skipped": 0
   },
   "git_http_docker_provider_replay": [
+    {
+      "case": "test_native_replay_repairs_commit_and_served_verification[compound]",
+      "status": "passed"
+    },
     {
       "case": "test_native_replay_repairs_commit_and_served_verification[description]",
       "status": "passed"
