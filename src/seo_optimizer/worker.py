@@ -377,6 +377,17 @@ class Worker:
         github: GitHubClient | None,
     ) -> tuple[str, dict[str, Any], float]:
         started = time.monotonic()
+        from seo_optimizer.followups import merge_key
+
+        if (
+            job.kind == "push"
+            and self.store.state(merge_key(project, str(job.payload.get("after", ""))))[0]
+        ):
+            return (
+                "superseded",
+                {"summary": "Agent repair merge is covered by tracked deployment verification"},
+                0,
+            )
         credentials = self.store.secrets(project)
         root = self.settings.data_dir / "workspaces" / job.id
         if root.exists():
@@ -583,6 +594,12 @@ class Worker:
             "hardware_cost_usd": None,
         }
         model_name = "rules"
+        if job.kind == "push" and self.store.state(merge_key(project, revision))[0]:
+            return (
+                "superseded",
+                {"summary": "Agent repair merge is covered by tracked deployment verification"},
+                0,
+            )
         if report["model_cache_hit"]:
             model_name = spec.provider.model
             reuse_reviews(report, project.last_report, evidence)
@@ -973,34 +990,57 @@ class Worker:
                         report["semantic_review_runtime_ms"] = review.runtime_ms
                         if review.decision.changes:
                             raise ValueError("Read-only review returned source changes")
-                        review_errors = validate_assessment(
-                            Assessment(
-                                tenant_id=project.tenant_id,
-                                project_id=project.id,
-                                environment=spec.environment,
-                                findings=review.decision.findings,
-                            ),
-                            AuditRequest(
-                                project=project_context,
-                                environment=spec.environment,
-                                evidence=evidence,
-                                allowed_check_ids=list(self.knowledge.checks),
-                            ),
-                            self.knowledge,
-                            spec.provider.capabilities,
-                        )
-                        if review_errors:
-                            raise ValueError("Read-only findings failed local grounding")
-                        apply_reviews(
-                            copy.deepcopy(report),
-                            review.decision.check_reviews,
-                            evidence,
-                            [*findings, *review.decision.findings],
-                            requested_reviews,
-                        )
-
-                        inference.decision.check_reviews = review.decision.check_reviews
-                        inference.decision.findings.extend(review.decision.findings)
+                        accepted = []
+                        seen_reviews: set[str] = set()
+                        rejections = []
+                        for entry in review.decision.check_reviews:
+                            review_findings = [
+                                f for f in review.decision.findings if f.check_id == entry.check_id
+                            ]
+                            review_errors = validate_assessment(
+                                Assessment(
+                                    tenant_id=project.tenant_id,
+                                    project_id=project.id,
+                                    environment=spec.environment,
+                                    findings=review_findings,
+                                ),
+                                AuditRequest(
+                                    project=project_context,
+                                    environment=spec.environment,
+                                    evidence=evidence,
+                                    allowed_check_ids=[entry.check_id],
+                                ),
+                                self.knowledge,
+                                spec.provider.capabilities,
+                            )
+                            if entry.check_id in seen_reviews:
+                                review_errors.append("Duplicate check review")
+                            seen_reviews.add(entry.check_id)
+                            if not review_errors:
+                                try:
+                                    apply_reviews(
+                                        copy.deepcopy(report),
+                                        [entry],
+                                        evidence,
+                                        [*findings, *review_findings],
+                                        requested_reviews,
+                                    )
+                                except ValueError as error:
+                                    review_errors.append(str(error))
+                            if review_errors:
+                                rejections.append(
+                                    {"check_id": entry.check_id, "errors": review_errors}
+                                )
+                                continue
+                            accepted.append(entry)
+                            inference.decision.findings.extend(review_findings)
+                        if rejections:
+                            report["semantic_review_error"] = "ValueError"
+                            report["semantic_review_rejections"] = rejections
+                        report["semantic_review_accepted_check_ids"] = [
+                            entry.check_id for entry in accepted
+                        ]
+                        inference.decision.check_reviews = accepted
                     except (ValueError, ProviderError, httpx.HTTPError) as error:
                         report["semantic_review_error"] = type(error).__name__
                         if isinstance(error, ModelOutputError):
@@ -1152,11 +1192,18 @@ class Worker:
         )
         result["verification"] = verify_workspace(repository, spec, files)
         result["fixed_checks"] = sorted({change.check_id for change in changes})
+        confirmed_targets = {(item["check_id"], item["url"]) for item in result["before_defects"]}
         result["fixed_targets"] = [
-            {"check_id": change.check_id, "url": str(evidence_by_id[id].url)}
-            for change in changes
-            for id in change.evidence_ids
-            if evidence_by_id[id].url is not None
+            {"check_id": check_id, "url": url}
+            for check_id, url in sorted(
+                {
+                    (change.check_id, str(evidence_by_id[id].url))
+                    for change in changes
+                    for id in change.evidence_ids
+                    if evidence_by_id[id].url is not None
+                }
+                & confirmed_targets
+            )
         ]
         if time.monotonic() - started > spec.max_job_seconds:
             raise ValueError("Job budget exhausted before publication")
@@ -1416,6 +1463,15 @@ class Worker:
             model_summary=result.get("report", {}).get("model_summary"),
             semantic_review_error=result.get("report", {}).get("semantic_review_error"),
             semantic_review_runtime_ms=result.get("report", {}).get("semantic_review_runtime_ms"),
+            semantic_review_accepted_check_ids=result.get("report", {}).get(
+                "semantic_review_accepted_check_ids", []
+            ),
+            semantic_review_rejections=result.get("report", {}).get(
+                "semantic_review_rejections", []
+            ),
+            semantic_review_validation_errors=result.get("report", {}).get(
+                "semantic_review_validation_errors", []
+            ),
             finalized_from_tools=result.get("report", {}).get("finalized_from_tools", False),
             input_fingerprint=result.get("report", {}).get("input_fingerprint"),
             model_cache_hit=result.get("report", {}).get("model_cache_hit", False),
@@ -1429,7 +1485,7 @@ class Worker:
             summary="Changes verified on the deployed website",
             stage="verified",
             report=report,
-            verified_fixes=len(targets) if targets else len(fixed),
+            verified_fixes=len(targets & before),
             after_report=report,
             findings=enriched,
             prior_revision=result.get("revision"),
