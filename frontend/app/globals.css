@@ -3481,3 +3481,34 @@ html {
     font-size: 27px;
   }
 }
+
+.sidebar-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sidebar-toggle {
+  display: none;
+}
+@media (max-width: 760px) {
+  .workspace-sidebar .sidebar-brand-row .brand {
+    margin: 0;
+  }
+  .sidebar-toggle {
+    display: inline-flex;
+    padding: 9px 12px;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 11px;
+    color: var(--green);
+    cursor: pointer;
+  }
+  .workspace-sidebar .sidebar-scroll:not(.is-open),
+  .workspace-sidebar .sidebar-bottom:not(.is-open) {
+    display: none;
+  }
+  .workspace-sidebar .sidebar-scroll.is-open {
+    padding-top: 18px;
+  }
+}
