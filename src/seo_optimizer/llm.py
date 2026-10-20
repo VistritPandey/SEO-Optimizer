@@ -178,6 +178,15 @@ class ModelClient:
         if images and not self.config.capabilities.vision:
             raise ProviderError("Vision capability is not enabled for this model")
         schema = strict_schema(AgentDecision.model_json_schema())
+        review_ids = [check["id"] for check in request.get("requested_check_reviews", [])]
+        if review_ids:
+            # Constrain the current request, not only the reusable base contract.
+            schema["$defs"]["CheckReview"]["properties"]["check_id"]["enum"] = review_ids
+            schema["properties"]["check_reviews"].update(
+                minItems=len(review_ids), maxItems=len(review_ids)
+            )
+        if request.get("mode") == "read_only_catalog_review":
+            schema["properties"]["changes"]["maxItems"] = 0
         content = json.dumps(request)
         history: list[dict[str, Any]] = [{"role": "user", "content": content}]
         if images:
@@ -416,11 +425,34 @@ class ModelClient:
             if not calls:
                 try:
                     decision = AgentDecision.model_validate_json(text, strict=True)
-                except ValidationError as error:
-                    errors = [
-                        {"path": ".".join(map(str, item["loc"])), "type": item["type"]}
-                        for item in error.errors(include_input=False, include_context=False)[:20]
-                    ]
+                    if review_ids and (
+                        len(decision.check_reviews) != len(review_ids)
+                        or {review.check_id for review in decision.check_reviews} != set(review_ids)
+                    ):
+                        raise ValueError("Return exactly one review for each requested check ID")
+                    if request.get("mode") == "read_only_catalog_review" and decision.changes:
+                        raise ValueError("A read-only review cannot contain source changes")
+                except (ValidationError, ValueError) as error:
+                    errors = (
+                        [
+                            {
+                                "path": ".".join(map(str, item["loc"])),
+                                "type": item["type"],
+                                "message": item["msg"][:200],
+                            }
+                            for item in error.errors(include_input=False, include_context=False)[
+                                :20
+                            ]
+                        ]
+                        if isinstance(error, ValidationError)
+                        else [
+                            {
+                                "path": "check_reviews",
+                                "type": "request_contract",
+                                "message": str(error),
+                            }
+                        ]
+                    )
                     if not self.config.capabilities.json_schema or step >= max_steps:
                         raise ModelOutputError(
                             errors,
