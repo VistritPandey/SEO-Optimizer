@@ -740,7 +740,22 @@ class Worker:
                         "error": str(error),
                         "checks": error.checks,
                     }
-                except (ValueError, OSError, KeyError):
+                except ValidationError as error:
+                    return {
+                        "success": False,
+                        "error": "Tool arguments failed local schema validation",
+                        "fields": [
+                            ".".join(map(str, item["loc"]))
+                            for item in error.errors(include_input=False, include_context=False)[
+                                :10
+                            ]
+                        ],
+                    }
+                except ValueError as error:
+                    # These tools call application policy guards, whose messages
+                    # describe the violated prerequisite without source/credential data.
+                    return {"success": False, "error": str(error)[:300]}
+                except (OSError, KeyError):
                     return {
                         "success": False,
                         "error": "Tool arguments or project policy prevented the operation",
@@ -1137,6 +1152,26 @@ class Worker:
             report["model_runtime_ms"] = inference.runtime_ms
             report["model_summary"] = inference.decision.summary
             report["finalized_from_tools"] = inference.finalized_from_tools
+            accepted_reviews = []
+            seen_review_ids: set[str] = set()
+            for entry in inference.decision.check_reviews:
+                try:
+                    if entry.check_id in seen_review_ids:
+                        raise ValueError("Duplicate check review")
+                    seen_review_ids.add(entry.check_id)
+                    apply_reviews(
+                        copy.deepcopy(report), [entry], evidence, findings, requested_reviews
+                    )
+                    accepted_reviews.append(entry)
+                except ValueError as error:
+                    report["semantic_review_error"] = "ValueError"
+                    report.setdefault("semantic_review_rejections", []).append(
+                        {"check_id": entry.check_id, "errors": [str(error)]}
+                    )
+            inference.decision.check_reviews = accepted_reviews
+            report["semantic_review_accepted_check_ids"] = [
+                entry.check_id for entry in accepted_reviews
+            ]
             apply_reviews(
                 report,
                 inference.decision.check_reviews,
