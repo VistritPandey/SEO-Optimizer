@@ -30,12 +30,41 @@ class ProviderConfig(Contract):
     output_usd_per_million: float | None = Field(default=None, ge=0, allow_inf_nan=False)
 
 
+class GitConventions(Contract):
+    branch_prefix: str = Field(
+        default="optimizer",
+        max_length=64,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9_-]*(/[A-Za-z0-9][A-Za-z0-9_-]*)*$",
+    )
+    branch_suffix: str = Field(default="", max_length=40, pattern=r"^([A-Za-z0-9][A-Za-z0-9_-]*)?$")
+    commit_style: Literal["plain", "conventional"] = "plain"
+    commit_type: Literal["fix", "chore", "perf", "docs", "refactor"] = "fix"
+    commit_scope: str = Field(default="", max_length=32, pattern=r"^([A-Za-z0-9][A-Za-z0-9_-]*)?$")
+
+    def branch_name(self, job_id: str) -> str:
+        if not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", job_id):
+            raise ValueError("Invalid job identifier for repair branch")
+        return f"{self.branch_prefix}/{job_id}" + (
+            f"-{self.branch_suffix}" if self.branch_suffix else ""
+        )
+
+    def commit_message(self, path: str, refinement: bool = False) -> str:
+        filename = re.sub(r"[\r\n\x00-\x1f\x7f]", "", PurePosixPath(path).name)[:100]
+        action = "Refine" if refinement else "Fix"
+        if self.commit_style == "plain":
+            return f"{action} {filename}"
+        scope = f"({self.commit_scope})" if self.commit_scope else ""
+        return f"{self.commit_type}{scope}: {action.lower()} {filename}"
+
+
 class ProjectSpec(Contract):
     name: str = Field(min_length=1, max_length=100)
     website_url: HttpUrl
     repository: str = ""
     local_path: str | None = None
     branch: str = "main"
+    agent_instructions: str = Field(default="", max_length=8000)
+    git_conventions: GitConventions = Field(default_factory=GitConventions)
     environment: str = "production"
     website_types: list[WebsiteType] = Field(default_factory=lambda: [WebsiteType.GENERIC])
     allowed_paths: list[str] = Field(
