@@ -557,6 +557,26 @@ class Store:
         except (IntegrityError, LeaseConflict):
             return None
 
+    def progress(self, tenant: str, id: str, worker: str, message: str) -> None:
+        """Record a bounded worker event while retaining the active job lease."""
+        with self.sessions.begin() as session:
+            job = session.scalar(
+                select(Job)
+                .where(
+                    Job.id == id,
+                    Job.tenant_id == tenant,
+                    Job.worker_id == worker,
+                    Job.status == "running",
+                    Job.lease_until > time.time(),
+                )
+                .with_for_update()
+            )
+            if job is None:
+                raise ValueError("Job lease no longer owned")
+            now = time.time()
+            job.events = [*job.events[-99:], {"time": now, "message": message[:200]}]
+            job.updated_at = now
+
     def finish(
         self,
         tenant: str,
