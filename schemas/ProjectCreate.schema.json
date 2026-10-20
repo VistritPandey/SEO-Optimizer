@@ -261,6 +261,11 @@
           "title": "Measure Performance",
           "type": "boolean"
         },
+        "wait_for_deployment": {
+          "default": false,
+          "title": "Wait For Deployment",
+          "type": "boolean"
+        },
         "rollback_on_regression": {
           "default": true,
           "title": "Rollback On Regression",
