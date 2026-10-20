@@ -77,6 +77,11 @@ export type Job = {
   result: {
     summary?: string;
     verified_fixes?: number;
+    unverified_targets?: {
+      check_id: string;
+      url: string;
+      dependency: string;
+    }[];
     pr?: { url: string; number: number };
     verification?: unknown[];
     report?: AuditReport;
