@@ -345,6 +345,11 @@ def main():
                 page.get_by_role("dialog").get_by_role("button", name="Finish tour").click()
                 expect(page.get_by_role("dialog")).not_to_be_visible()
                 results.append("Sidebar sections, replayable tour and saved monitoring responses")
+                expect(page.locator(".audit-repair-link")).to_be_visible()
+                assert page.locator(".audit-repair-link").get_attribute("href") == (
+                    "https://github.com/fictional/site/pull/1"
+                )
+                results.append("Latest repair PR is directly visible on the website overview")
                 page.screenshot(path=str(output / "overview.png"), full_page=True)
                 page.locator(".audit-coverage > details").filter(has_text="Crawler policy").locator(
                     ":scope > summary"
@@ -393,6 +398,28 @@ def main():
                 expect(page.get_by_role("heading", name="Your search visibility,")).to_be_visible()
                 page.get_by_role("button", name="Monitoring Cedar Workshop").click()
                 results.append("Dashboard logo returns to workspace home without leaving the app")
+
+                current_job = activity["jobs"][0]
+                original_events = current_job.get("events", [])
+                current_job["status"] = "running"
+                current_job["events"] = [
+                    {"time": 1792503512, "message": "Agent tool requested: apply_patch"}
+                ]
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                expect(page.locator(".audit-live-events")).to_contain_text("Stage proposed repair")
+                expect(page.locator(".audit-next").first).to_contain_text("Stage proposed repair")
+                current_job["status"] = "blocked"
+                current_job["events"] = original_events
+                activity["jobs"][1]["result"]["verified_fixes"] = 1
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                expect(page.locator(".audit-repair-link")).to_contain_text(
+                    "View verified repair #1"
+                )
+                results.append(
+                    "Live tool progress replaces stale status and verified repairs stay visible"
+                )
 
                 page.get_by_role("tab", name="Findings").click()
                 page.get_by_label("Filter findings").select_option("unresolved")
