@@ -7,6 +7,7 @@ import shutil
 import time
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 from uuid import uuid4
 
 import httpx
@@ -643,7 +644,7 @@ class Worker:
                         return {
                             "success": True,
                             "changed_files": changed,
-                            "route_map": spec.route_map,
+                            "route_map": repair_routes if repair_mode else spec.route_map,
                             "staged_files": sorted({change.path for change in tool_changes}),
                             "scope": "Original revision changes plus pending model proposals",
                         }
@@ -827,17 +828,38 @@ class Worker:
                 "independent of repair proposals; never omit them because a patch passed checks."
             )
             repair_mode = spec.auto_fix and any(f.status == "defect" for f in findings)
+            repair_ids = {ref for f in findings if f.status == "defect" for ref in f.evidence_ids}
+            repair_urls = {str(e.url) for e in evidence if e.id in repair_ids and e.url}
+            repair_routes = {
+                path: source
+                for path, source in spec.route_map.items()
+                if any((urlparse(url).path or "/") == path for url in repair_urls)
+            }
+            if repair_mode:
+                instructions += (
+                    " This pass repairs only the supplied confirmed defects on the targeted "
+                    "routes. Relevant check guidance is already in checks; do not load unrelated "
+                    "checks or inspect healthy/private pages. Read the mapped source and any "
+                    "shared metadata inheritance it requires, then propose and verify the "
+                    "smallest supported repair. An unchanged diff does not resolve an observed "
+                    "live defect. If blocked, report a specific unresolved finding and dependency; "
+                    "do not finish with a progress-only summary."
+                )
             request = {
                 "requested_check_reviews": [] if repair_mode else requested_reviews,
                 "review_feedback_untrusted": job.payload.get("feedback", "")
                 if job.kind == "followup"
                 else "",
                 "project": project_context.model_dump(mode="json"),
-                "observations": observations,
+                "observations": [
+                    o for o in observations if o["url"] in repair_urls or o["kind"] == "tool"
+                ]
+                if repair_mode
+                else observations,
                 "deterministic_findings": [item.model_dump(mode="json") for item in findings[:10]],
-                "route_map": spec.route_map,
+                "route_map": repair_routes if repair_mode else spec.route_map,
                 "checks": [
-                    {"id": item.id, "title": item.title, "sources": item.source_ids}
+                    item.model_dump(mode="json")
                     for item in self.knowledge.catalog.checks
                     if item.id in {finding.check_id for finding in findings}
                 ],
