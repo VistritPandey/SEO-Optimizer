@@ -339,7 +339,15 @@ class Worker:
                         )
                     return "waiting_deployment", job.result, 30
                 after = crawler.collect(
-                    project.tenant_id, project.id, spec, job.result["audited_urls"]
+                    project.tenant_id,
+                    project.id,
+                    spec,
+                    sorted(
+                        set(
+                            job.result.get("verification_urls", job.result["audited_urls"])
+                            + [target["url"] for target in job.result.get("fixed_targets", [])]
+                        )
+                    ),
                 )
                 self.observe_browser(
                     spec,
@@ -1268,7 +1276,15 @@ class Worker:
         workspace: Workspace | None = None,
     ) -> tuple[str, dict[str, Any], float]:
         pages = [item for item in after if item.kind == "http"]
-        if not pages or any(item.data.get("status_code") != 200 for item in pages):
+        required = set(result.get("verification_urls", result.get("audited_urls", [])))
+        required.update(target["url"] for target in result.get("fixed_targets", []))
+        if not required:
+            required = {str(item.url) for item in pages}
+        observed_pages = {str(item.url): item for item in pages}
+        if not pages or any(
+            url not in observed_pages or observed_pages[url].data.get("status_code") != 200
+            for url in required
+        ):
             return (
                 "blocked",
                 {
