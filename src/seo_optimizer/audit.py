@@ -8,7 +8,7 @@ import json
 from decimal import Decimal, InvalidOperation
 from html.parser import HTMLParser
 from typing import cast
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urldefrag, urljoin, urlparse
 
 from pydantic import JsonValue
 
@@ -195,7 +195,7 @@ def audit(case: AuditRequest, package: KnowledgePackage) -> RuleAuditResult:
             for href in page.links:
                 if href.startswith("#") or urlparse(href).scheme not in {"", "http", "https"}:
                     continue
-                destination = urljoin(url, href)
+                destination = urldefrag(urljoin(url, href))[0]
                 observed = destinations.get(destination)
                 if urlparse(destination).netloc != urlparse(url).netloc:
                     continue
