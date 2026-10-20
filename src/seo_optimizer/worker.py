@@ -702,6 +702,13 @@ class Worker:
                     if name == "run_checks":
                         proposals = {change.path: change for change in changes}
                         proposals.update({change.path: change for change in tool_changes})
+                        if repair_mode and not proposals:
+                            return {
+                                "success": False,
+                                "error": "No repair is staged. Use apply_patch before checking "
+                                "the repair; unchanged-code checks cannot verify this defect.",
+                                "checks": [],
+                            }
                         checks = verify_proposals(
                             repository,
                             spec,
@@ -845,6 +852,7 @@ class Worker:
                 if any((urlparse(url).path or "/") == path for url in repair_urls)
             }
             if repair_mode:
+                tools = [tool for tool in tools if tool["name"] not in {"get_check", "get_diff"}]
                 instructions += (
                     " This pass repairs only the supplied confirmed defects on the targeted "
                     "routes. Relevant check guidance is already in checks; do not load unrelated "
