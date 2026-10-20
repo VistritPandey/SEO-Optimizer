@@ -152,10 +152,13 @@ def handle_event(
         if permission.get("permission") not in {"write", "maintain", "admin"}:
             return {"status": "unauthorized_reviewer"}
         pull = client.request("GET", f"/repos/{spec.repository}/pulls/{number}")
+        expected_branch = tracked.result.get("pr", {}).get("branch") or (
+            "optimizer/" + str(tracked.payload.get("origin", tracked.id))
+        )
         if (
             pull.get("state") != "open"
             or pull["head"]["repo"]["full_name"] != spec.repository
-            or not pull["head"]["ref"].startswith("optimizer/")
+            or pull["head"]["ref"] != expected_branch
         ):
             return {"status": "closed_or_foreign_pull_request"}
     finally:
