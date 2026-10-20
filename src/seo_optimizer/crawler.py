@@ -287,6 +287,30 @@ def capture_browser(
             return {price, priceCurrency: currency, availability,
                     method: 'visible browser text; single unambiguous main offer'};
         }""")
+        diagnostics = page.evaluate("""() => {
+            const visible = el => !!el.getClientRects().length
+                && getComputedStyle(el).visibility === 'visible';
+            return {
+                media_observations: [...document.images].filter(visible).slice(0, 100).map(el => ({
+                    src: el.currentSrc || el.src, alt: el.getAttribute('alt'),
+                    width: el.getAttribute('width'), height: el.getAttribute('height'),
+                    naturalWidth: el.naturalWidth, naturalHeight: el.naturalHeight,
+                    loading: el.loading, complete: el.complete,
+                    rendered: {width: el.getBoundingClientRect().width,
+                               height: el.getBoundingClientRect().height}
+                })),
+                navigation_observations: {
+                    viewport: {width: innerWidth, height: innerHeight},
+                    horizontal_overflow: document.documentElement.scrollWidth > innerWidth,
+                    links: [...document.querySelectorAll('nav a, header a, main a')]
+                        .filter(visible).slice(0, 150).map(el => ({
+                            href: el.href, text: el.innerText.trim().slice(0, 200),
+                            aria_label: el.getAttribute('aria-label'), tab_index: el.tabIndex
+                        })),
+                    limits: 'Desktop DOM sample; keyboard, touch and mobile behavior need testing.'
+                }
+            };
+        }""")
         screenshot = output / "page.png"
         page.screenshot(path=str(screenshot), full_page=True)
         context.close()
@@ -301,7 +325,12 @@ def capture_browser(
             url=HttpUrl(url),
             collected_at=utc_now(),
             observation="Observed rendered browser DOM",
-            data={"html": html, "render_settled": settled, "visible_offer": visible_offer},
+            data={
+                "html": html,
+                "render_settled": settled,
+                "visible_offer": visible_offer,
+                **diagnostics,
+            },
         ),
         Evidence(
             id=str(uuid4()),
