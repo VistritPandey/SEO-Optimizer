@@ -123,6 +123,9 @@ def test_failed_check_recovery_requires_successful_source_read(
                     runtime_ms=1,
                 )
             assert not request["requested_check_reviews"]
+            assert request["route_map"] == {"/": "web/index.html"}
+            assert {check["id"] for check in request["checks"]} == {"tech.metadata"}
+            assert request["checks"][0]["recommended_action"]
             trace = []
 
             def call(name, args):
