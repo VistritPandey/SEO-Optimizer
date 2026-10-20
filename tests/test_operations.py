@@ -635,3 +635,29 @@ def test_followup_cannot_drop_verification_of_an_earlier_repair(tmp_path):
     assert status == "blocked" and "failed verification" in observed["summary"]
     github.revert.assert_called_once()
     store.engine.dispose()
+
+
+def test_json_syntax_fix_does_not_claim_entity_semantics_were_verified(tmp_path):
+    store, settings = make_store(tmp_path)
+    target = {"check_id": "geo.entities", "url": "https://example.test/"}
+    result = {
+        "revision": "before",
+        "merged_sha": "after",
+        "fixed_checks": ["geo.entities"],
+        "fixed_targets": [target],
+        "before_defects": [target],
+        "deterministic_defects": [target],
+        "audited_urls": ["https://example.test/"],
+    }
+    status, observed, _ = Worker(store, settings).verify_deployment(
+        ProjectSpec(name="Site", website_url="https://example.test/"),
+        result,
+        [page(HEALTHY + '<script type="application/ld+json">{"@type":"Product"}</script>')],
+        None,
+    )
+    assert status == "complete" and observed["verified_fixes"] == 1
+    entity = next(
+        row for row in observed["after_report"]["coverage"] if row["check_id"] == "geo.entities"
+    )
+    assert entity["state"] == "needs_data" and entity["dependencies"]
+    store.engine.dispose()
