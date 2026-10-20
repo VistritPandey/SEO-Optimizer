@@ -82,3 +82,55 @@ def test_verification_context_does_not_leak_between_jobs() -> None:
             assert SCOPE.get().count == 0
         assert SCOPE.get() is first
     assert SCOPE.get() is None
+
+
+@pytest.mark.parametrize("poll_error", [False, True])
+def test_regional_polling_retains_source_until_build_finishes(tmp_path, monkeypatch, poll_error):
+    from unittest.mock import Mock
+
+    sdk = pytest.importorskip("google.cloud.devtools.cloudbuild_v1")
+    storage = pytest.importorskip("google.cloud.storage")
+    from google.api_core.exceptions import NotFound
+
+    from seo_optimizer.cloud_checks import verify_cloud
+
+    for name, value in {
+        "GOOGLE_CLOUD_PROJECT": "example-project",
+        "OPT_BUILD_BUCKET": "source-bucket",
+        "OPT_BUILD_ACCOUNT": "checks@example-project.iam.gserviceaccount.com",
+        "OPT_BUILD_REGION": "us-central1",
+    }.items():
+        monkeypatch.setenv(name, value)
+    source = Mock()
+    storage_client = Mock()
+    storage_client.bucket.return_value.blob.return_value = source
+    monkeypatch.setattr(storage, "Client", lambda **kwargs: storage_client)
+    build_client = Mock()
+    operation = build_client.create_build.return_value
+    if poll_error:
+        operation.result.side_effect = NotFound("Regional operation not found")
+    else:
+        operation.result.return_value = sdk.Build(status=sdk.Build.Status.SUCCESS, id="build")
+    options = []
+
+    def client(**kwargs):
+        options.append(kwargs["client_options"])
+        return build_client
+
+    monkeypatch.setattr(sdk, "CloudBuildClient", client)
+    (tmp_path / "index.html").write_text("<title>Example</title>")
+    spec = ProjectSpec(
+        name="Example", website_url="https://example.test/", check_commands=[["python", "check.py"]]
+    )
+    with verification_scope("tenant", "job"):
+        if poll_error:
+            with pytest.raises(ValueError, match="unavailable"):
+                verify_cloud(tmp_path, spec)
+            source.delete.assert_not_called()
+        else:
+            result = verify_cloud(tmp_path, spec)
+            assert result[0]["passed"]
+            source.delete.assert_called_once()
+    assert options == [{"api_endpoint": "us-central1-cloudbuild.googleapis.com"}]
+    storage_client.close.assert_called_once()
+    build_client.transport.close.assert_called_once()
