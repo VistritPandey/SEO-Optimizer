@@ -310,20 +310,26 @@ export function AuditWorkspace({
                   rel="noopener noreferrer"
                 >
                   <span className="eyebrow">
-                    {latestRepair.result.verified_fixes
-                      ? "VERIFIED ON YOUR WEBSITE"
-                      : "THE AGENT PREPARED A REPAIR"}
+                    {latestRepair.result.unverified_targets?.length
+                      ? "VERIFICATION NEEDS EVIDENCE"
+                      : latestRepair.result.verified_fixes
+                        ? "VERIFIED ON YOUR WEBSITE"
+                        : "THE AGENT PREPARED A REPAIR"}
                   </span>
                   <strong>
-                    {latestRepair.result.verified_fixes
-                      ? `View verified repair #${latestRepair.result.pr.number}`
-                      : `Review pull request #${latestRepair.result.pr.number}`}{" "}
+                    {latestRepair.result.unverified_targets?.length
+                      ? `View repair #${latestRepair.result.pr.number}`
+                      : latestRepair.result.verified_fixes
+                        ? `View verified repair #${latestRepair.result.pr.number}`
+                        : `Review pull request #${latestRepair.result.pr.number}`}{" "}
                     <span>↗</span>
                   </strong>
                   <small>
-                    {latestRepair.result.verified_fixes
-                      ? `${latestRepair.result.verified_fixes} fix verified after deployment.`
-                      : "Open the source changes and repository checks on GitHub. Your review is required before merging."}
+                    {latestRepair.result.unverified_targets?.length
+                      ? `${latestRepair.result.verified_fixes || 0} confirmed; ${latestRepair.result.unverified_targets.length} awaiting evidence. See AI audits & logs for the dependencies.`
+                      : latestRepair.result.verified_fixes
+                        ? `${latestRepair.result.verified_fixes} fix verified after deployment.`
+                        : "Open the source changes and repository checks on GitHub. Your review is required before merging."}
                   </small>
                 </a>
               )}
@@ -816,6 +822,28 @@ function AuditRuns({
                 <p role="note" className="alert">
                   {job.result.summary}
                 </p>
+              )}
+              {!!job.result.unverified_targets?.length && (
+                <div className="audit-no-pr">
+                  <strong>Verification needs more evidence</strong>
+                  <p>
+                    These changes were deployed, but their intended improvements
+                    are not yet confirmed. They do not count as verified fixes.
+                  </p>
+                  <ul>
+                    {job.result.unverified_targets.map((target, index) => (
+                      <li key={`${target.check_id}-${target.url}-${index}`}>
+                        <strong>
+                          {report?.coverage?.find(
+                            (row) => row.check_id === target.check_id,
+                          )?.title || target.check_id}
+                        </strong>
+                        <p>{target.url}</p>
+                        <p>{target.dependency}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               )}
               <h3>Execution log</h3>
               <ol className="audit-log">
