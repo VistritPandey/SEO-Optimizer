@@ -223,3 +223,27 @@ then still run independent publication checks. An unchanged-input assessment cac
 repeat inference when safe. Requalify all arms on the same runtime/knowledge revision after
 such changes; do not silently pool samples from different implementations. The current
 recorded repair and content demonstrations separately qualify these new boundaries.
+
+## Reproducible workflow coverage
+
+Run `uv run python scripts/verify_workflows.py --sandbox --output reports/workflow-validation.json`
+with Docker available. This runs the Python suite and derives the report from individual JUnit
+results. Missing catalog scenarios remain unverified; skipped tests never count as passes.
+
+All 39 catalog paths have a rich-context scenario. Semantic paths also exercise unresolved
+inputs, grounded findings, and locally validated scripted reviews. These fixture reviews test
+contracts and routing, not an actual model's ability to make the right judgment. An artificial
+site providing every input does not establish complete evidence for a connected customer site.
+
+Five repair scenarios use the native provider adapter with scripted replies and real temporary
+Git repositories, HTTP collection, Docker checks, publication and fresh served observations:
+description, conflicting canonical, accidental public-page noindex, broken navigation, and
+configured crawler policy. Healthy repeat audits must leave Git unchanged. A sixth scenario
+rejects an owner check and must publish nothing. These scenarios replay inference responses;
+they do not use live GitHub or measure provider quality. Existing production validation is
+recorded separately in `reports/agent-validation.json`.
+
+Verification retains rule-established defects separately from semantic findings. A semantic
+repair cannot become a verified fix merely because a crawl reports no new contradiction.
+Unconfirmed repairs retain evidence dependencies and do not trigger rollback without an
+observed regression. Supported original-passage publication has its own served-text check.
