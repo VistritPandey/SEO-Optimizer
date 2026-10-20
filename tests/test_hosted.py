@@ -323,7 +323,14 @@ def test_followup_requires_collaborator_and_tracked_same_repo_pr(hosted, monkeyp
         claimed.id,
         "worker",
         "complete",
-        {"pr": {"number": 7, "head_sha": "a" * 40, "base_sha": "b" * 40}},
+        {
+            "pr": {
+                "number": 7,
+                "head_sha": "a" * 40,
+                "base_sha": "b" * 40,
+                "branch": "team/repairs/example-seo",
+            }
+        },
     )
     permission = "read"
 
@@ -334,7 +341,7 @@ def test_followup_requires_collaborator_and_tracked_same_repo_pr(hosted, monkeyp
             "state": "open",
             "head": {
                 "sha": "a" * 40,
-                "ref": "optimizer/example",
+                "ref": "team/repairs/example-seo",
                 "repo": {"full_name": "example/site"},
             },
         }
