@@ -400,6 +400,10 @@ def main():
                     "values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>v.id)"
                 )
                 assert not tour_violations, tour_violations
+                page.keyboard.press("Shift+Tab")
+                assert page.get_by_role("dialog").evaluate(
+                    "element => element.contains(document.activeElement)"
+                )
                 page.keyboard.press("Escape")
                 results.append("Tutorial dialog accessibility and focus trapping")
                 violations = page.evaluate(
