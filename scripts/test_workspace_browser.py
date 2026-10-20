@@ -1,0 +1,353 @@
+"""Exercise workspace UI in a disposable browser with fictional identity and API fixtures.
+
+Bundles the actual components with test-only auth/navigation adapters in a temporary
+folder. No auth bypass or preview route is added to the production application.
+"""
+
+import json
+import subprocess
+import tempfile
+import threading
+from functools import partial
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+
+from playwright.sync_api import expect, sync_playwright
+
+ROOT = Path(__file__).resolve().parents[1]
+WEB = ROOT / "frontend"
+
+
+def fixtures():
+    report = {
+        "score": 85,
+        "pages": 4,
+        "evaluated_checks": 2,
+        "total_checks": 4,
+        "coverage": [
+            {
+                "check_id": "tech.title",
+                "title": "Descriptive titles",
+                "module": "technical",
+                "state": "healthy",
+            },
+            {
+                "check_id": "tech.links",
+                "title": "Internal links",
+                "module": "technical",
+                "state": "defect",
+            },
+            {
+                "check_id": "geo.crawlers",
+                "title": "Crawler policy",
+                "module": "geo",
+                "state": "needs_data",
+            },
+            {
+                "check_id": "perf.field",
+                "title": "Field performance",
+                "module": "performance",
+                "state": "not_checked",
+            },
+        ],
+        "page_summaries": [
+            {
+                "url": "https://example.test/shop",
+                "title": "Workshop lighting",
+                "excerpt": "Original workshop lighting guide.",
+                "evidence_id": "response",
+            }
+        ],
+        "model_runtime_ms": 12345,
+        "usage": {"input_tokens": 4000, "output_tokens": 1000, "api_cost_usd": None},
+        "tool_trace": [
+            {"name": "read_file", "success": True, "runtime_ms": 21},
+            {"name": "run_checks", "success": False, "runtime_ms": 30},
+        ],
+    }
+    project = {
+        "id": "site",
+        "spec": {
+            "name": "Cedar Workshop",
+            "website_url": "https://example.test",
+            "repository": "fictional/site",
+            "branch": "main",
+            "enabled": True,
+            "auto_fix": True,
+        },
+        "last_report": report,
+    }
+    jobs = [
+        {
+            "id": "blocked",
+            "kind": "audit",
+            "status": "blocked",
+            "created_at": 1792450000,
+            "updated_at": 1792450010,
+            "events": [{"time": 1792450010, "message": "Build verification needs configuration"}],
+            "result": {
+                "summary": "Build verification needs configuration",
+                "error_type": "ValueError",
+            },
+        },
+        {
+            "id": "done",
+            "kind": "push",
+            "status": "complete",
+            "created_at": 1792440000,
+            "updated_at": 1792440040,
+            "events": [{"time": 1792440040, "message": "Observed four pages"}],
+            "result": {
+                "summary": "Audited 4 pages; 2 new findings",
+                "report": report,
+                "verified_fixes": 0,
+                "pr": {"url": "https://github.com/fictional/site/pull/1", "number": 1},
+                "evidence": [
+                    {
+                        "id": "response",
+                        "url": "https://example.test/shop",
+                        "observation": "Collected destination response",
+                        "collected_at": "2026-10-19T12:00:00Z",
+                        "data": {"status_code": 404},
+                    }
+                ],
+            },
+        },
+    ]
+    findings = [
+        {
+            "id": "broken",
+            "active": True,
+            "details": {
+                "check_id": "tech.links",
+                "summary": "A collection link returns 404",
+                "severity": "high",
+                "status": "defect",
+                "evidence_strength": "confirmed",
+                "url": "https://example.test/shop",
+                "evidence_ids": ["response"],
+                "action": {"rationale": "Use the existing collection destination"},
+                "verification_criteria": ["Fetch the repaired link and verify status 200"],
+            },
+        },
+        {
+            "id": "intent",
+            "active": True,
+            "details": {
+                "check_id": "tech.indexability",
+                "summary": "Confirm account page visibility",
+                "severity": "info",
+                "status": "unresolved",
+                "evidence_strength": "hypothesis",
+                "dependencies": ["Owner-confirmed page intent"],
+            },
+        },
+    ]
+    return project, {"jobs": jobs, "findings": findings}
+
+
+def main():
+    project, activity = fixtures()
+    results = []
+    output = ROOT / ".data/workspace-qa"
+    output.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix="optimiser-workspace-qa-") as folder:
+        folder = Path(folder)
+        (folder / "auth.mjs").write_text(
+            'export const user={email:"tester@example.test",emailVerified:true,'
+            'getIdToken:async()=>"fixture-token"};'
+            "export const onAuthStateChanged=(_,fn)=>{queueMicrotask(()=>fn(user));return()=>{}};"
+            "export const sendEmailVerification=async()=>{};export const signOut=async()=>{};"
+        )
+        (folder / "firebase.mjs").write_text(
+            'import {user} from "./auth.mjs"; export const firebaseAuth=()=>({currentUser:user});'
+        )
+        (folder / "navigation.mjs").write_text(
+            "const router={replace:()=>{},push:()=>{}};export const useRouter=()=>router;"
+        )
+        (folder / "link.jsx").write_text(
+            'import React from "react";export default function '
+            "Link({children,...props}){return <a {...props}>{children}</a>}"
+        )
+        (folder / "image.jsx").write_text(
+            'import React from "react";export default function '
+            "Image({preload,...props}){return <img {...props}/>}"
+        )
+        (folder / "motion.mjs").write_text(
+            'import React from "react";export const '
+            'm={main:({initial,animate,transition,children,...props})=>React.createElement("main",props,children)};'
+        )
+        (folder / "entry.jsx").write_text(
+            'import React from "react";import {createRoot} from "react-dom/client";import '
+            "{Dashboard} from "
+            + json.dumps(str(WEB / "components/Dashboard.tsx"))
+            + ';createRoot(document.getElementById("root")).render(<Dashboard/>);'
+        )
+        args = [
+            "npx",
+            "--yes",
+            "--package=esbuild@0.25.12",
+            "esbuild",
+            str(folder / "entry.jsx"),
+            "--bundle",
+            "--jsx=automatic",
+            "--outfile=" + str(folder / "app.js"),
+            "--alias:@=" + str(WEB),
+            "--alias:react=" + str(WEB / "node_modules/react"),
+            "--alias:react-dom=" + str(WEB / "node_modules/react-dom"),
+        ]
+        for name, target in {
+            "firebase/auth": "auth.mjs",
+            "@/lib/firebase": "firebase.mjs",
+            "next/navigation": "navigation.mjs",
+            "next/link": "link.jsx",
+            "next/image": "image.jsx",
+            "motion/react": "motion.mjs",
+        }.items():
+            args.append("--alias:" + name + "=" + str(folder / target))
+        subprocess.run(args, check=True, text=True)
+        import shutil
+
+        shutil.copytree(WEB / "public/brand", folder / "brand")
+        (folder / "style.css").write_text(
+            (WEB / "app/globals.css").read_text() + ":root{--font-sans:Arial;--font-serif:Georgia}"
+        )
+        (folder / "index.html").write_text(
+            '<!doctype html><html lang="en"><head><meta charset="UTF-8">'
+            "<title>Workspace fixture QA</title><meta "
+            'name="viewport" content="width=device-width, initial-scale=1"><link '
+            'rel="stylesheet" href="/style.css"></head><body><div id="root"></div><script '
+            'src="/app.js"></script></body></html>'
+        )
+        server = ThreadingHTTPServer(
+            ("127.0.0.1", 0), partial(SimpleHTTPRequestHandler, directory=str(folder))
+        )
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        try:
+            with sync_playwright() as runtime:
+                browser = runtime.chromium.launch(channel="chromium")
+                page = browser.new_page(viewport={"width": 1440, "height": 1080})
+                errors = []
+                page.on("pageerror", lambda error: errors.append(str(error)))
+                state = {"account_calls": 0, "mode": "normal", "mutations": 0}
+
+                def respond(route):
+                    path = route.request.url.split("/api/backend/", 1)[1]
+                    if path == "account":
+                        state["account_calls"] += 1
+                        if state["mode"] == "fail" or state["account_calls"] == 1:
+                            route.fulfill(
+                                status=502,
+                                content_type="text/html",
+                                body="<h1>Temporary gateway error</h1>",
+                            )
+                            return
+                        data = {
+                            "email": "tester@example.test",
+                            "tier": "free",
+                            "jobs_used": 2,
+                            "job_limit": 100,
+                            "project_limit": 3,
+                            "github_connection": {"status": "connected", "login": "fictional"},
+                        }
+                    elif path == "projects":
+                        data = [project]
+                    elif path == "projects/site/activity":
+                        data = activity
+                    elif path == "projects/site":
+                        data = project
+                    elif path.endswith("/workspace"):
+                        data = {}
+                    elif path.endswith("/strategy"):
+                        data = {"opportunities": [], "dependencies": []}
+                    elif path.endswith("/jobs"):
+                        state["mutations"] += 1
+                        data = {"id": "new-job", "status": "queued"}
+                    else:
+                        route.fulfill(status=404, json={"detail": "Fixture endpoint absent"})
+                        return
+                    route.fulfill(status=200, json=data)
+
+                page.route("**/api/backend/**", respond)
+                page.goto(f"http://127.0.0.1:{server.server_port}")
+                page.get_by_role("heading", name="Your search visibility,").wait_for()
+                assert state["account_calls"] == 2
+                assert page.get_by_text("Retry connection", exact=True).count() == 0
+                results.append("HTML gateway read recovers; normal loading never shows retry")
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.get_by_role("heading", name="Health over time").wait_for()
+                assert page.get_by_role("img", name="out of 100").count() == 1
+                page.screenshot(path=str(output / "overview.png"), full_page=True)
+                page.get_by_role("tab", name="Findings").click()
+                page.get_by_label("Filter findings").select_option("unresolved")
+                page.get_by_text("Confirm account page visibility", exact=True).click()
+                expect(page.get_by_text("Owner-confirmed page intent", exact=True)).to_be_visible()
+                assert page.get_by_text("A collection link returns 404", exact=True).count() == 0
+                page.get_by_label("Filter findings").select_option("defect")
+                page.get_by_text("A collection link returns 404", exact=True).click()
+                expect(
+                    page.get_by_text("Collected destination response", exact=True)
+                ).to_be_visible()
+                page.get_by_label("Search findings").fill("no-match")
+                expect(page.get_by_role("heading", name="No findings in this view")).to_be_visible()
+                results.append(
+                    "Findings filter and search; independent strength, dependencies and evidence"
+                )
+                page.get_by_role("tab", name="AI audits & logs").click()
+                page.get_by_text("Audited 4 pages; 2 new findings", exact=True).click()
+                expect(page.get_by_text("Read source file", exact=False).first).to_be_visible()
+                expect(
+                    page.locator(".audit-run[open]").get_by_text(
+                        "API cost was not supplied.", exact=False
+                    )
+                ).to_be_visible()
+                assert (
+                    page.get_by_role("link", name="Review pull request #1").get_attribute("href")
+                    == "https://github.com/fictional/site/pull/1"
+                )
+                page.get_by_label("Job status").select_option("blocked")
+                expect(
+                    page.get_by_text("Build verification needs configuration", exact=True).first
+                ).to_be_visible()
+                assert page.get_by_text("Audited 4 pages; 2 new findings", exact=True).count() == 0
+                results.append("Audit history, failed checks, job filters and PR destination")
+                page.get_by_role("tab", name="Pages", exact=True).click()
+                expect(page.get_by_role("heading", name="Workshop lighting")).to_be_visible()
+                page.get_by_role("button", name="Run audit").click()
+                expect(page.get_by_text("Audit queued.", exact=True)).to_be_visible()
+                assert state["mutations"] == 1
+                results.append("Page observations and single audit submission")
+                page.set_viewport_size({"width": 390, "height": 844})
+                assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                page.screenshot(path=str(output / "mobile.png"), full_page=True)
+                results.append("390px viewport without horizontal overflow")
+                page.set_viewport_size({"width": 1440, "height": 1080})
+                page.get_by_role("tab", name="Overview", exact=True).click()
+                page.add_script_tag(path=str(WEB / "node_modules/axe-core/axe.min.js"))
+                violations = page.evaluate(
+                    "async()=> (await "
+                    "axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.length}))"
+                )
+                assert not violations, violations
+                results.append("Workspace overview accessibility checks")
+                state["mode"] = "fail"
+                page.reload()
+                page.get_by_role("heading", name="Your workspace couldn’t be loaded").wait_for()
+                expect(page.get_by_role("button", name="Reload workspace")).to_be_visible()
+                state["mode"] = "normal"
+                page.get_by_role("button", name="Reload workspace").click()
+                page.get_by_role("heading", name="Your search visibility,").wait_for()
+                results.append("Persistent connection failure has actionable recovery")
+                assert not errors, errors
+                browser.close()
+        finally:
+            server.shutdown()
+            server.server_close()
+    (output / "results.json").write_text(
+        json.dumps({"passed": results, "fixture_only": True}, indent=2)
+    )
+    print(json.dumps({"passed": results}, indent=2))
+
+
+if __name__ == "__main__":
+    main()
