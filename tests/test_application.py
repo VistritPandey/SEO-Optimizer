@@ -245,3 +245,41 @@ def test_live_progress_scoped_bounded_and_requires_active_lease(application, mon
     with pytest.raises(ValueError, match="lease"):
         store.progress(alice.id, recovered.id, "second", "Already complete")
     assert store.project(alice.id, project.id).id == project.id
+
+
+def test_owner_agent_preferences_persist_without_cross_project_or_permission_changes(application):
+    client, store, alice, token, _, bob_token = application
+    project = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
+    second = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
+    headers = {"Authorization": "Bearer " + token}
+    preferences = {
+        **project.spec,
+        "agent_instructions": "Keep existing components and prefer focused repairs.",
+        "git_conventions": {
+            "branch_prefix": "team/seo",
+            "branch_suffix": "automated",
+            "commit_style": "conventional",
+            "commit_type": "fix",
+            "commit_scope": "search",
+        },
+    }
+    path = f"/api/v1/projects/{project.id}"
+    assert (
+        client.patch(
+            path, headers={"Authorization": "Bearer " + bob_token}, json=preferences
+        ).status_code
+        == 404
+    )
+    assert client.patch(path, headers=headers, json=preferences).status_code == 200
+    saved = client.get(path, headers=headers).json()["spec"]
+    assert saved["agent_instructions"] == preferences["agent_instructions"]
+    assert saved["git_conventions"] == preferences["git_conventions"]
+    assert saved["allowed_paths"] == project.spec["allowed_paths"]
+    assert saved["auto_merge"] == project.spec["auto_merge"]
+    assert (
+        store.secrets(store.project(alice.id, project.id)).github_token == "fixture-private-value"
+    )
+    assert not store.project(alice.id, second.id).spec["agent_instructions"]
+    invalid = {**saved, "git_conventions": {"branch_prefix": "../main"}}
+    assert client.patch(path, headers=headers, json=invalid).status_code == 422
+    assert store.project(alice.id, project.id).spec["git_conventions"] == saved["git_conventions"]
