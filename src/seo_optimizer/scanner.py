@@ -2,7 +2,7 @@
 
 import re
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from urllib.robotparser import RobotFileParser
 
 from seo_optimizer.application_models import ProjectSpec
@@ -100,6 +100,27 @@ def scan(
         url = str(item.url)
         if not project.page_intents.get(url, spec.environment == "production"):
             continue
+        if item.data.get("status_code") != 200:
+            declared = (
+                url == str(spec.website_url)
+                or urlparse(url).path in spec.route_map
+                or project.page_intents.get(url) is True
+            )
+            if declared:
+                emit(
+                    "tech.status",
+                    item,
+                    "Declared public route did not serve a successful page."
+                    if item.data.get("status_code") is not None
+                    else "No HTTP response was collected for the configured public route.",
+                    Severity.HIGH,
+                    unresolved=item.data.get("status_code") is None,
+                    dependencies=["Collect an HTTP response before classifying the route status."],
+                )
+            # A discovered 404 is evidence for its referring link. Its error
+            # document is not a content page needing metadata or indexability edits.
+            continue
+        outcomes.setdefault("tech.status", "healthy")
         checks = ["tech.title", "tech.indexability", "tech.canonical", "tech.links"]
         if "ecommerce" in spec.website_types:
             checks.append("commerce.facts")
@@ -134,15 +155,6 @@ def scan(
         html = item.data.get("html")
         if not isinstance(html, str):
             continue
-        if item.data.get("status_code") != 200:
-            emit(
-                "tech.status",
-                item,
-                "Declared public route did not serve a successful page.",
-                Severity.HIGH,
-            )
-        else:
-            outcomes.setdefault("tech.status", "healthy")
         if not re.search(r'<meta\b[^>]*name\s*=\s*["\']description["\']', html, re.I):
             emit(
                 "tech.metadata",
