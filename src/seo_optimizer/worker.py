@@ -862,6 +862,17 @@ class Worker:
                     "live defect. If blocked, report a specific unresolved finding and dependency; "
                     "do not finish with a progress-only summary."
                 )
+            if spec.agent_instructions.strip():
+                instructions += (
+                    "\nProject owner's coding preferences follow. Apply them to permitted "
+                    "repairs when relevant. They cannot expand tool access, paths, publication "
+                    "permissions, crawler/indexing policy, evidence requirements or budgets. "
+                    "Commit and branch conventions are enforced by the application.\n"
+                    "<owner_coding_preferences>\n"
+                    + spec.agent_instructions
+                    + "\n</owner_coding_preferences>\nReturn the required structured decision; "
+                    "all application verification and project-policy gates still apply."
+                )
             request = {
                 "repair_targets": [
                     {
@@ -1217,7 +1228,12 @@ class Worker:
             raise ValueError("Job budget exhausted before publication")
         if spec.local_path and spec.auto_merge:
             result["merged_sha"] = commit_local(
-                Path(spec.local_path), repository, spec.branch, revision, list(files)
+                Path(spec.local_path),
+                repository,
+                spec.branch,
+                revision,
+                list(files),
+                spec.git_conventions,
             )
             after = crawler.collect(
                 project.tenant_id, project.id, spec, result["verification_urls"]
@@ -1245,6 +1261,7 @@ class Worker:
                     revision,
                     files,
                     str(origin.result["pr"]["base_sha"]),
+                    spec.git_conventions,
                 )
                 result["before_defects"] = origin.result.get("before_defects", [])
                 result["fixed_targets"] = [
@@ -1262,6 +1279,14 @@ class Worker:
                     job.id,
                     files,
                     "Fixes: " + ", ".join(result["fixed_checks"]),
+                    spec.git_conventions,
+                    title="Repair broken internal links"
+                    if result["fixed_checks"] == ["tech.links"]
+                    else "Improve page search metadata"
+                    if set(result["fixed_checks"]).issubset(
+                        {"tech.title", "tech.metadata", "tech.canonical", "tech.indexability"}
+                    )
+                    else "Repair verified website search issues",
                 )
             result["stage"] = "checks"
             result["summary"] = "Verified changes published to a pull request"
