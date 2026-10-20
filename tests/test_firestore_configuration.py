@@ -57,3 +57,19 @@ def test_sdk_targets_selected_database_without_network(tmp_path, monkeypatch, em
 def test_database_ids_reject_paths_and_invalid_names(value):
     with pytest.raises(ValueError, match="OPT_FIRESTORE_DATABASE"):
         validate_firestore_database(value)
+
+
+def test_small_nested_command_arrays_are_encoded_and_round_trip(tmp_path):
+    store = FirestoreStore.__new__(FirestoreStore)
+    value = {
+        "spec": {"check_commands": [["node", "--version"], ["npm", "test"]]},
+        "result": {"tool": {"matrix": [[1, 2], [3, 4]]}},
+        "status": "running",
+    }
+    packed = store._pack(value)
+    assert set(packed["spec"]) == {"_json"}
+    assert packed["status"] == "running"
+    assert store._unpack(packed) == value
+    assert store._unpack({"spec": {"goals": ["Help readers"]}}) == {
+        "spec": {"goals": ["Help readers"]}
+    }
