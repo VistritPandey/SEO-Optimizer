@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Brand } from "./Brand";
+import { ThemeControl } from "./ThemeControl";
 import { site } from "@/lib/site";
 
 export function SiteHeader() {
@@ -28,10 +29,11 @@ export function SiteHeader() {
           </svg>
           <span>GitHub</span>
         </a>
-        <Link className="nav-signin" href="/login">
+        <Link className="nav-signin" href="/dashboard">
           Your workspace ↗
         </Link>
       </nav>
+      <ThemeControl compact />
     </header>
   );
 }
