@@ -43,7 +43,9 @@ function duration(job: Job) {
     : "—";
 }
 function reportFor(job: Job): AuditReport | undefined {
-  return job.result.after_report || job.result.report;
+  return job.result.after_report
+    ? { ...job.result.report, ...job.result.after_report }
+    : job.result.report;
 }
 function safeLink(value?: string, github = false) {
   try {
@@ -139,7 +141,7 @@ export function AuditWorkspace({
         <Metric
           label="Issues found"
           value={defects.length}
-          note={`${unresolved.length} open questions need evidence`}
+          note={`${unresolved.length} open ${unresolved.length === 1 ? "question needs" : "questions need"} evidence`}
         />
         <Metric
           label="Pages observed"
@@ -187,7 +189,9 @@ export function AuditWorkspace({
                   <span className="eyebrow">MEASURED, NOT ASSUMED</span>
                   <h2>Health over time</h2>
                 </div>
-                <span className="audit-subtle">Last {trend.length} audits</span>
+                <span className="audit-subtle">
+                  Last {trend.length} {trend.length === 1 ? "audit" : "audits"}
+                </span>
               </div>
               {trend.length ? (
                 <>
@@ -251,7 +255,8 @@ export function AuditWorkspace({
                 }}
               >
                 <strong>
-                  {defects.length} issues to review <span>↗</span>
+                  {defects.length} {defects.length === 1 ? "issue" : "issues"}{" "}
+                  to review <span>↗</span>
                 </strong>
                 <p>
                   {defects.length
@@ -267,7 +272,9 @@ export function AuditWorkspace({
                 }}
               >
                 <strong>
-                  {unresolved.length} evidence dependencies <span>↗</span>
+                  {unresolved.length} evidence{" "}
+                  {unresolved.length === 1 ? "dependency" : "dependencies"}{" "}
+                  <span>↗</span>
                 </strong>
                 <p>
                   Confirm page visibility, business facts or other missing
