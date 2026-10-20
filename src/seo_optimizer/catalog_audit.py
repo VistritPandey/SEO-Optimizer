@@ -28,7 +28,7 @@ from seo_optimizer.contracts import (
 from seo_optimizer.growth import Workspace
 from seo_optimizer.knowledge import KnowledgePackage
 
-VERSION = "3"
+VERSION = "4"
 BASELINE = {"tech.title", "tech.indexability", "tech.canonical", "tech.links", "tech.status"}
 MODEL_INPUTS: dict[str, tuple[str, ...]] = {
     "tech.metadata": ("pages",),
@@ -376,6 +376,16 @@ def complete_catalog(
             )
     report.update(coverage=rows, coverage_version=VERSION)
     summarize(report)
+    for request in requests:
+        required = {**MODEL_INPUTS, **SEMANTIC_FOLLOWUPS}[request["id"]]
+        request["required_evidence_kinds"] = [
+            kind for name, kind in (("pages", "http"), ("dom", "dom")) if name in required
+        ]
+        request["review_contract"] = (
+            "For a conclusive review, cite supplied evidence IDs of every required kind. "
+            "Owner context or a screenshot cannot replace required HTTP/DOM evidence. "
+            "If the evidence is insufficient, return needs_data with dependencies."
+        )
     return [
         request
         for request in requests
