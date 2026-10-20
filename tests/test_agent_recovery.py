@@ -10,6 +10,7 @@ from seo_optimizer.application_models import (
     AgentDecision,
     CheckReview,
     FileChange,
+    GitConventions,
     ProjectCreate,
     ProjectSpec,
     ProviderConfig,
@@ -70,6 +71,8 @@ def test_failed_check_recovery_requires_successful_source_read(
         website_url=f"http://127.0.0.1:{server.server_port}/",
         local_path=str(repository),
         allowed_paths=["web"],
+        agent_instructions="Prefer existing helpers and keep repairs focused.",
+        git_conventions=GitConventions(commit_style="conventional", commit_scope="seo"),
         provider=ProviderConfig(
             kind="ollama",
             model="fixture",
@@ -126,6 +129,8 @@ def test_failed_check_recovery_requires_successful_source_read(
                     runtime_ms=1,
                 )
             assert not request["requested_check_reviews"]
+            assert "Prefer existing helpers and keep repairs focused." in instructions
+            assert "cannot expand tool access" in instructions
             assert request["repair_targets"][0]["check_id"] == "tech.metadata"
             assert request["repair_targets"][0]["evidence_ids"]
             assert request["observed_destinations"][0]["status_code"] == 200
@@ -191,6 +196,7 @@ def test_failed_check_recovery_requires_successful_source_read(
             assert result.status == "complete" and result.result["stage"] == "verified"
             assert any(not item["success"] for item in result.result["report"]["tool_trace"])
             assert 'content="Cedar lamps for thoughtful everyday lighting."' in page.read_text()
+            assert run_git(repository, "log", "-1", "--format=%s") == "fix(seo): fix index.html"
             assert bool(result.result["report"].get("semantic_review_error")) == bool(
                 invalid_review
             )
