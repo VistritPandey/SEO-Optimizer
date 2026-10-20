@@ -118,8 +118,16 @@ export function AuditWorkspace({
   );
   const liveEvents = (working[0]?.events || []).slice(-4);
   const liveMessage = liveEvents.at(-1)?.message || working[0]?.result.summary;
-  const fixes = activity.jobs.reduce(
-    (total, job) => total + (job.result.verified_fixes || 0),
+  const repairs = new Map<string, number>();
+  for (const job of activity.jobs) {
+    const key = job.result.pr?.url || job.id;
+    repairs.set(
+      key,
+      Math.max(repairs.get(key) || 0, job.result.verified_fixes || 0),
+    );
+  }
+  const fixes = [...repairs.values()].reduce(
+    (total, count) => total + count,
     0,
   );
   const trend = audits
