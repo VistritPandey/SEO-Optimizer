@@ -166,17 +166,22 @@ def scan(
             )
         else:
             outcomes.setdefault("tech.metadata", "healthy")
-        for script in re.findall(
+        scripts = re.findall(
             r'<script\b[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
             html,
             re.S | re.I,
-        ):
+        )
+        for script in scripts:
             import json
 
             try:
                 json.loads(script)
             except json.JSONDecodeError:
                 emit("geo.entities", item, "Structured data is not valid JSON.")
+        if scripts:
+            outcomes.setdefault(
+                "geo.entities", "healthy"
+            )  # Syntax only; semantic review is separate.
         raw_robots = item.data.get("robots_txt")
         if isinstance(raw_robots, str) and spec.crawler_preferences:
             if re.search(r"(?:Allow|Disallow)\s*:[^\n]*[\*$]", raw_robots, re.I):
