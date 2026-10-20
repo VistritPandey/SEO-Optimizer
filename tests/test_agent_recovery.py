@@ -8,6 +8,7 @@ import pytest
 
 from seo_optimizer.application_models import (
     AgentDecision,
+    CheckReview,
     FileChange,
     ProjectCreate,
     ProjectSpec,
@@ -26,7 +27,10 @@ from seo_optimizer.worker import Worker
 @pytest.mark.enable_socket
 @pytest.mark.allow_hosts(["127.0.0.1"])
 @pytest.mark.parametrize("has_source", [True, False])
-def test_failed_check_recovery_requires_successful_source_read(tmp_path, monkeypatch, has_source):
+@pytest.mark.parametrize("invalid_review", [True, False])
+def test_failed_check_recovery_requires_successful_source_read(
+    tmp_path, monkeypatch, has_source, invalid_review
+):
     repository = tmp_path / "source"
     (repository / "web").mkdir(parents=True)
     original = (
@@ -100,6 +104,25 @@ def test_failed_check_recovery_requires_successful_source_read(tmp_path, monkeyp
             pass
 
         def complete(self, instructions, request, tools, execute, *rest):
+            if request.get("mode") == "read_only_catalog_review":
+                assert not tools and not execute("apply_patch", {})["success"]
+                return Inference(
+                    decision=AgentDecision(
+                        check_reviews=[
+                            CheckReview(
+                                check_id="not.a.check" if invalid_review else check["id"],
+                                state="needs_data",
+                                reason="Fixture needs context",
+                                dependencies=["Collect additional semantic observations"],
+                            )
+                            for check in request["requested_check_reviews"]
+                        ]
+                    ),
+                    usage=Usage(),
+                    model="fixture",
+                    runtime_ms=1,
+                )
+            assert not request["requested_check_reviews"]
             trace = []
 
             def call(name, args):
@@ -158,6 +181,7 @@ def test_failed_check_recovery_requires_successful_source_read(tmp_path, monkeyp
             assert result.status == "complete" and result.result["stage"] == "verified"
             assert any(not item["success"] for item in result.result["report"]["tool_trace"])
             assert 'content="Cedar lamps for thoughtful everyday lighting."' in page.read_text()
+            assert bool(result.result["report"].get("semantic_review_error")) == invalid_review
         else:
             assert result.status == "blocked"
             assert "Read the same" in result.result["summary"]
