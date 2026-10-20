@@ -2652,6 +2652,52 @@ html {
   margin: 0;
   font-size: 11px;
 }
+.agent-preferences {
+  display: grid;
+  gap: 24px;
+  margin: 24px 0;
+}
+.agent-preferences fieldset {
+  margin: 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  min-width: 0;
+}
+.agent-preferences legend {
+  padding: 0 8px;
+  font-weight: 650;
+}
+.agent-preferences fieldset > p {
+  color: var(--muted);
+}
+.agent-preferences-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 24px;
+}
+.agent-convention-preview {
+  padding: 12px 16px;
+  background: var(--paper);
+  border-radius: 10px;
+  margin-top: 16px;
+}
+.agent-convention-preview p {
+  margin: 6px 0;
+  overflow-wrap: anywhere;
+}
+.agent-convention-preview code {
+  display: block;
+  font-size: 12px;
+}
+@media (max-width: 600px) {
+  .agent-preferences fieldset {
+    padding: 16px;
+  }
+  .agent-preferences-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .audit-coverage {
   display: grid;
   grid-template-columns: 1fr 1fr;
