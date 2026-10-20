@@ -49,3 +49,29 @@ def test_static_root_entrypoint_is_inferred_without_allowing_repository_root(tmp
     spec = ProjectSpec(name="Site", website_url=HttpUrl("https://example.test"))
     assert infer_route_map(tmp_path, spec)["/"] == "index.html"
     assert "." not in spec.allowed_paths
+
+
+def test_workspace_application_routes_exclude_package_and_router_directories(tmp_path):
+    files = [
+        "web/package.json",
+        "web/src/app/page.tsx",
+        "web/src/app/(marketing)/about/page.tsx",
+        "web/src/app/[slug]/page.tsx",
+        "web/src/app/@dialog/page.tsx",
+        "web/src/pages/contact.tsx",
+        "web/src/pages/api/private.tsx",
+    ]
+    for name in files:
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("{}" if path.name == "package.json" else "export default () => null")
+    spec = ProjectSpec(name="Site", website_url=HttpUrl("https://example.test"))
+    assert infer_route_map(tmp_path, spec) == {
+        "/": "web/src/app/page.tsx",
+        "/about": "web/src/app/(marketing)/about/page.tsx",
+        "/contact": "web/src/pages/contact.tsx",
+    }
+    assert affected_urls(
+        spec.model_copy(update={"route_map": infer_route_map(tmp_path, spec)}),
+        ["web/src/app/(marketing)/about/page.tsx"],
+    ) == ["https://example.test/about"]
