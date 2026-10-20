@@ -13,6 +13,7 @@ from urllib.robotparser import RobotFileParser
 
 from seo_optimizer.application_models import FileChange, ProjectSpec
 from seo_optimizer.contracts import utc_now
+from seo_optimizer.navigation import literal_link_changes
 
 SECRET_NAMES = re.compile(
     r"(^\.env($|\.)|\.pem$|\.key$|credentials|secret|id_rsa|id_ed25519)", re.I
@@ -290,7 +291,17 @@ def apply_changes(
                     or not all(intents.get(route) is True for route in routes)
                 ):
                     raise ValueError("Indexing directives require explicit matching public intent")
-        if target.name == "robots.txt":
+        if change.check_id == "tech.links" and target.suffix.lower() in {
+            ".html",
+            ".tsx",
+            ".jsx",
+            ".js",
+            ".ts",
+        }:
+            if not spec.check_commands:
+                raise ValueError("Navigation repairs require configured build verification")
+            literal_link_changes(original, updated)
+        elif target.name == "robots.txt":
             if change.check_id != "geo.crawlers" or not spec.crawler_preferences:
                 raise ValueError("Crawler changes require explicit crawler policy")
             validate_robots_policy(original, updated, spec)
