@@ -34,7 +34,7 @@ from seo_optimizer.execution import (
 from seo_optimizer.github import GitHubClient
 from seo_optimizer.growth import Workspace
 from seo_optimizer.knowledge import load_knowledge
-from seo_optimizer.llm import ModelClient
+from seo_optimizer.llm import ModelClient, ModelOutputError
 from seo_optimizer.policy import validate_assessment
 from seo_optimizer.scanner import affected_urls, context, scan
 from seo_optimizer.settings import Settings
@@ -221,6 +221,14 @@ class Worker:
                 if secret:
                     message = message.replace(secret, "[redacted]")
             result = {"summary": message[:500], "error_type": type(error).__name__}
+            if isinstance(error, ModelOutputError):
+                result["report"] = {
+                    "validation_errors": error.validation_errors,
+                    "tool_trace": error.tool_trace,
+                    "usage": error.usage.model_dump(mode="json"),
+                    "model_runtime_ms": error.runtime_ms,
+                }
+
         if result.get("stage") == "verified":
             self.store.remember_findings(
                 job.tenant_id,
