@@ -31,7 +31,8 @@ jobs:
           uv export --locked --all-extras --no-hashes --no-emit-project --output-file /tmp/optimiser-requirements.txt > /dev/null
           uvx --from pip-audit==2.10.1 pip-audit --requirement /tmp/optimiser-requirements.txt --no-deps --disable-pip
       - run: uv run seo-optimizer validate
-      - run: uv run pytest -q
+      - name: Verify catalog and Git/HTTP/Docker repair workflows
+        run: uv run python scripts/verify_workflows.py --sandbox --output reports/workflow-validation.json
       - run: bash -n deploy.sh
       - run: uv run ruff check src tests scripts api deploy/combined-entrypoint.py
       - run: uv run ruff format --check src tests scripts api deploy/combined-entrypoint.py
