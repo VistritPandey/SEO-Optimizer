@@ -11,7 +11,7 @@ from typing import Any
 from urllib.parse import urlparse
 from urllib.robotparser import RobotFileParser
 
-from seo_optimizer.application_models import FileChange, ProjectSpec
+from seo_optimizer.application_models import FileChange, GitConventions, ProjectSpec
 from seo_optimizer.contracts import utc_now
 from seo_optimizer.navigation import literal_link_changes
 
@@ -467,8 +467,14 @@ def verify_proposals(
 
 
 def commit_local(
-    source: Path, workspace: Path, branch: str, base_sha: str, files: list[str]
+    source: Path,
+    workspace: Path,
+    branch: str,
+    base_sha: str,
+    files: list[str],
+    conventions: GitConventions | None = None,
 ) -> str:
+    conventions = conventions or GitConventions()
     if run_git(source, "rev-parse", branch) != base_sha or run_git(source, "status", "--porcelain"):
         raise ValueError("Target repository changed or contains uncommitted work")
     if run_git(source, "branch", "--show-current") != branch:
@@ -486,7 +492,7 @@ def commit_local(
             "commit",
             "--only",
             "-m",
-            "Fix " + Path(path).name,
+            conventions.commit_message(path),
             "--",
             path,
         )
