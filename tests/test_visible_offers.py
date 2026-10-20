@@ -50,6 +50,7 @@ def test_visible_offer_uses_actual_browser_text(tmp_path, price, expected):
 @pytest.mark.enable_socket
 @pytest.mark.allow_hosts(["127.0.0.1"])
 def test_browser_collects_visible_media_and_navigation_without_claiming_mobile(tmp_path):
+    pytest.importorskip("playwright")
     html = (
         "<html><head><title>Guide</title></head><body><nav>"
         '<a href="/shop" aria-label="Shop lights">Shop</a>'
