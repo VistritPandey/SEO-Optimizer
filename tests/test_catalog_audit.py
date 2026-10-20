@@ -387,16 +387,21 @@ def test_semantic_observations_include_head_facts_and_explicit_truncation():
     from seo_optimizer.catalog_audit import model_observation
 
     item = page(
+        link_status={"https://example.test/about-typo": 404, "https://example.test/about": 200},
         html=HTML
         + '<link rel="canonical" href="https://example.test/">'
         + (
             '<script type="application/ld+json">{"@type":"WebPage","description":"Page facts"}'
             "</script><p>" + "Long content. " * 200 + "</p>"
-        )
+        ),
     )
     observation = model_observation(item)
     assert observation["data"]["description"] == "A guide"
     assert observation["data"]["canonical"] == "https://example.test/"
+    assert observation["data"]["link_status"] == {
+        "https://example.test/about-typo": 404,
+        "https://example.test/about": 200,
+    }
     assert '"WebPage"' in observation["data"]["structured_data_json"]
     assert observation["text_excerpt_truncated"] and len(observation["excerpt"]) <= 1200
     assert "html" not in observation["data"]
