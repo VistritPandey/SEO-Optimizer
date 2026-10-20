@@ -37,6 +37,12 @@ export type AuditReport = {
     title: string;
     module: string;
     state: string;
+    reason?: string;
+    dependencies?: string[];
+    method?: string;
+    evidence_ids?: string[];
+    evidence_urls?: string[];
+    assessment_path?: string;
   }[];
   page_summaries?: {
     url: string;
