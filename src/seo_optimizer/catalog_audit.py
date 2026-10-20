@@ -28,7 +28,7 @@ from seo_optimizer.contracts import (
 from seo_optimizer.growth import Workspace
 from seo_optimizer.knowledge import KnowledgePackage
 
-VERSION = "2"
+VERSION = "3"
 BASELINE = {"tech.title", "tech.indexability", "tech.canonical", "tech.links", "tech.status"}
 MODEL_INPUTS: dict[str, tuple[str, ...]] = {
     "tech.metadata": ("pages",),
@@ -349,9 +349,11 @@ def complete_catalog(
         row["evidence_urls"] = sorted(
             {str(e.url) for e in scoped if e.id in row["evidence_ids"] and e.url}
         )
-        if row["state"] in {"healthy", "defect"}:
+        if row["state"] in {"healthy", "defect", "needs_model"}:
             # Replace the preliminary scanner's missing-context notice when richer
-            # observations actually resolve it. Confirmed defects are never removed.
+            # inputs resolve collection dependencies. A pending semantic review
+            # remains unknown; it must not conflict with its own collection notice.
+            # Confirmed defects are never removed.
             findings[:] = [f for f in findings if f.check_id != id or f.status != "unresolved"]
         rows.append(row)
         if row["state"] == "defect" and not any(
@@ -706,6 +708,13 @@ def deterministic(
     elif id == "intl.hreflang":
         annotated = {url: doc for url, doc in docs.items() if doc.alternates}
         if not annotated:
+            if not pages or data.get("locale_map"):
+                result(
+                    "needs_data",
+                    "Locale annotations were not observed for the configured variants.",
+                    dependencies=["Collect locale responses and confirm alternative-page policy"],
+                )
+                return
             result(
                 "not_applicable",
                 (
