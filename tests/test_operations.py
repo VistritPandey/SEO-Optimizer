@@ -558,3 +558,80 @@ def test_repaired_link_does_not_require_orphaned_error_url_to_become_a_page(tmp_
     status, report, _ = worker.verify_deployment(spec, result, [about], None)
     assert status == "blocked" and "inconclusive" in report["summary"]
     store.close()
+
+
+@pytest.mark.parametrize("check_id", ["content.factual", "geo.entities", "tech.metadata"])
+def test_published_semantic_change_requires_fresh_proof_before_verified_fix(tmp_path, check_id):
+    store, settings = make_store(tmp_path)
+    target = {"check_id": check_id, "url": "https://example.test/"}
+    result = {
+        "revision": "before",
+        "merged_sha": "after",
+        "fixed_checks": [check_id],
+        "fixed_targets": [target],
+        "before_defects": [target],
+        "deterministic_defects": [],
+        "audited_urls": ["https://example.test/"],
+    }
+    github = Mock()
+    status, observed, _ = Worker(store, settings).verify_deployment(
+        ProjectSpec(name="Site", website_url="https://example.test/"),
+        result,
+        [page()],
+        github,
+    )
+    assert status == "blocked" and observed["stage"] == "verification_pending"
+    assert observed["verified_fixes"] == 0 and observed["unverified_targets"][0]["dependency"]
+    assert observed["after_evidence"] and observed["regressions"] == 0
+    github.revert.assert_not_called()  # Missing proof does not establish a regression.
+    store.engine.dispose()
+
+
+def test_partial_verification_counts_only_independently_confirmed_fix(tmp_path):
+    store, settings = make_store(tmp_path)
+    structural = {"check_id": "tech.metadata", "url": "https://example.test/"}
+    semantic = {"check_id": "content.factual", "url": "https://example.test/"}
+    result = {
+        "revision": "before",
+        "merged_sha": "after",
+        "fixed_checks": ["tech.metadata", "content.factual"],
+        "fixed_targets": [structural, semantic],
+        "before_defects": [structural, semantic],
+        "deterministic_defects": [structural],
+        "audited_urls": ["https://example.test/"],
+    }
+    status, observed, _ = Worker(store, settings).verify_deployment(
+        ProjectSpec(name="Site", website_url="https://example.test/"),
+        result,
+        [page()],
+        None,
+    )
+    assert status == "blocked" and observed["verified_fixes"] == 1
+    assert [t["check_id"] for t in observed["unverified_targets"]] == ["content.factual"]
+    store.engine.dispose()
+
+
+def test_followup_cannot_drop_verification_of_an_earlier_repair(tmp_path):
+    store, settings = make_store(tmp_path)
+    targets = [
+        {"check_id": check, "url": "https://example.test/"}
+        for check in ("tech.title", "tech.metadata")
+    ]
+    result = {
+        "revision": "before",
+        "merged_sha": "after",
+        "fixed_checks": ["tech.metadata"],
+        "fixed_targets": targets,
+        "before_defects": targets,
+        "audited_urls": ["https://example.test/"],
+    }
+    github = Mock()
+    status, observed, _ = Worker(store, settings).verify_deployment(
+        ProjectSpec(name="Site", website_url="https://example.test/"),
+        result,
+        [page(HEALTHY.replace("<title>Observed guide</title>", ""))],
+        github,
+    )
+    assert status == "blocked" and "failed verification" in observed["summary"]
+    github.revert.assert_called_once()
+    store.engine.dispose()
