@@ -2,9 +2,9 @@
   "verified_on": "2026-10-20",
   "scope": "Software workflow validation plus previously recorded real hosted GitHub repair and deployed observations",
   "passed": {
-    "python_tests": 560,
+    "python_tests": 572,
     "frontend_tests": 7,
-    "workspace_browser_groups": 18,
+    "workspace_browser_groups": 19,
     "type_checks": true,
     "production_frontend_build": true,
     "ci": true,
@@ -27,11 +27,15 @@
     "firestore_emulator_tests_separately_passed": 12,
     "catalog_workflow_scenarios": 39,
     "semantic_and_missing_input_contract_scenarios": 85,
-    "native_adapter_git_http_docker_scenarios": 6,
-    "healthy_repair_repeat_scenarios": 5,
+    "native_adapter_git_http_docker_scenarios": 7,
+    "healthy_repair_repeat_scenarios": 6,
     "semantic_repairs_require_fresh_verification": true,
     "empty_descriptions_detected": true,
-    "followup_preserves_earlier_verification_targets": true
+    "followup_preserves_earlier_verification_targets": true,
+    "current_real_inference_fixture_repairs": 4,
+    "current_real_inference_healthy_and_irrelevant_controls": true,
+    "fresh_hosted_healthy_site_audit": true,
+    "ci_verified_source_revision": "96b02fa02c69cbcc0aabd1b05cdacbe933a16b26"
   },
   "before_after": [
     {
@@ -50,7 +54,9 @@
   "failed_and_recovered": [
     "Earlier runs exposed executor serialization and build-polling failures, unfinished model decisions, insufficient tool-round allocation and a metadata-only framework edit restriction.",
     "Those runs required implementation fixes and explicit operator retries. Their failures are retained; they are not first-attempt autonomous successes.",
-    "One invalid semantic review previously discarded valid reviews in the same batch; accepted and rejected reviews are now recorded independently."
+    "One invalid semantic review previously discarded valid reviews in the same batch; accepted and rejected reviews are now recorded independently.",
+    "Two broader real-inference attempts were blocked without publication; a combined metadata/navigation patch exceeded the previous one-check scope and later exhausted the token budget.",
+    "A fresh hosted healthy audit exposed an invalid semantic evidence citation aborting the whole batch. Valid reviews now survive per-check rejection; a subsequent hosted audit completed with no changes."
   ],
   "skipped": {
     "default_suite_firestore_emulator_tests": 12,
@@ -64,7 +70,15 @@
     "post_deployment_semantic_claims": "Reset until reassessed against newly served evidence",
     "score_meaning": "Partial observed check health, not ranking, traffic, indexing status or a complete site quality rating",
     "scripted_workflow_context": "All 39 catalog paths exercised with fictional complete inputs; not actual model judgment or customer-site evidence",
-    "workflow_report": "reports/workflow-validation.json"
+    "workflow_report": "reports/workflow-validation.json",
+    "latest_hosted_audit": {
+      "conclusive": 11,
+      "dependencies": 19,
+      "not_applicable": 9,
+      "all_catalog_paths_attempted": 39,
+      "note": "Missing facts and external observations remain explicit dependencies"
+    },
+    "real_inference_report": "reports/repair-workflow-verification.json"
   },
   "unverified": [
     "Long-term search indexing, ranking, traffic, conversion or AI citation effects",
