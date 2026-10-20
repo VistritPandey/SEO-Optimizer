@@ -65,6 +65,13 @@ def test_firestore_scope_dedupe_chunked_evidence_and_findings(store) -> None:
     assert job is not None
     with pytest.raises(ValueError):
         store.finish(other.id, job.id, "worker", "complete", {})
+    store.progress(tenant.id, job.id, "worker", "Collecting evidence")
+    assert store.job(tenant.id, job.id).events[-1]["message"] == "Collecting evidence"
+    with pytest.raises(ValueError):
+        store.progress(other.id, job.id, "worker", "Wrong tenant")
+    with pytest.raises(ValueError):
+        store.progress(tenant.id, job.id, "other-worker", "Wrong worker")
+    assert store.claim("other-worker", tenant.id) is None
     large = {"report": {"pages": 1, "example": "evidence " * 30_000}, "summary": "Complete"}
     store.finish(tenant.id, job.id, "worker", "complete", large)
     assert store.job(tenant.id, job.id).result == large
