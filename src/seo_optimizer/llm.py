@@ -83,7 +83,7 @@ def pending_repairs(
         target
         for target in request.get("repair_targets", [])
         if not any(
-            patch.get("check_id") == target["check_id"]
+            target["check_id"] in {patch.get("check_id"), *patch.get("related_check_ids", [])}
             and set(patch.get("evidence_ids", [])) & set(target["evidence_ids"])
             for patch in patches
         )
