@@ -73,8 +73,8 @@ def test_progress_only_completion_retries_with_tools_then_blocks_at_budget(alway
         if always_progress:
             with pytest.raises(ModelOutputError) as caught:
                 client.complete(**kwargs)
-            assert len(seen) == 4
-            assert caught.value.usage.input_tokens == 40
+            assert len(seen) == 5
+            assert caught.value.usage.input_tokens == 50
             assert "unfinished" in str(caught.value.validation_errors)
         else:
             result = client.complete(**kwargs)
@@ -105,3 +105,42 @@ def test_repair_completion_requires_matching_check_and_page_evidence():
         {"name": "apply_patch", "success": True, "arguments": {**patch, "check_id": "other"}}
     )
     assert pending_repairs(request, AgentDecision(), trace) == [TARGET]
+
+
+def test_every_configured_tool_round_is_available_before_final_schema_output():
+    seen = []
+    executed = []
+
+    def transport(request):
+        payload = json.loads(request.content)
+        seen.append(payload)
+        message = (
+            {
+                "tool_calls": [
+                    {"function": {"name": "read_file", "arguments": {"path": "web/index.html"}}}
+                ]
+            }
+            if len(seen) <= 2
+            else {"content": json.dumps({"summary": "Observed"})}
+        )
+        return httpx.Response(200, json={"message": message})
+
+    with httpx.Client(transport=httpx.MockTransport(transport)) as connection:
+        client = ModelClient(
+            ProviderConfig(
+                kind="ollama",
+                model="fixture",
+                capabilities=ProviderCapabilities(tool_calling=True, json_schema=True),
+            ),
+            client=connection,
+        )
+        client.complete(
+            "Inspect",
+            {},
+            [{"name": "read_file", "parameters": {"type": "object"}}],
+            lambda name, args: executed.append(name) or {"success": True},
+            max_steps=2,
+        )
+    assert executed == ["read_file", "read_file"]
+    assert all(payload.get("tools") and "format" not in payload for payload in seen[:2])
+    assert "tools" not in seen[2] and seen[2]["format"]
