@@ -27,7 +27,7 @@ from seo_optimizer.worker import Worker
 @pytest.mark.enable_socket
 @pytest.mark.allow_hosts(["127.0.0.1"])
 @pytest.mark.parametrize("has_source", [True, False])
-@pytest.mark.parametrize("invalid_review", [True, False])
+@pytest.mark.parametrize("invalid_review", [True, False, "partial"])
 def test_failed_check_recovery_requires_successful_source_read(
     tmp_path, monkeypatch, has_source, invalid_review
 ):
@@ -110,12 +110,15 @@ def test_failed_check_recovery_requires_successful_source_read(
                     decision=AgentDecision(
                         check_reviews=[
                             CheckReview(
-                                check_id="not.a.check" if invalid_review else check["id"],
+                                check_id="not.a.check"
+                                if invalid_review is True
+                                or (invalid_review == "partial" and i == 0)
+                                else check["id"],
                                 state="needs_data",
                                 reason="Fixture needs context",
                                 dependencies=["Collect additional semantic observations"],
                             )
-                            for check in request["requested_check_reviews"]
+                            for i, check in enumerate(request["requested_check_reviews"])
                         ]
                     ),
                     usage=Usage(),
@@ -187,7 +190,12 @@ def test_failed_check_recovery_requires_successful_source_read(
             assert result.status == "complete" and result.result["stage"] == "verified"
             assert any(not item["success"] for item in result.result["report"]["tool_trace"])
             assert 'content="Cedar lamps for thoughtful everyday lighting."' in page.read_text()
-            assert bool(result.result["report"].get("semantic_review_error")) == invalid_review
+            assert bool(result.result["report"].get("semantic_review_error")) == bool(
+                invalid_review
+            )
+            if invalid_review == "partial":
+                assert result.result["report"]["semantic_review_accepted_check_ids"]
+                assert len(result.result["report"]["semantic_review_rejections"]) == 1
         else:
             assert result.status == "blocked"
             assert "Read the same" in result.result["summary"]
