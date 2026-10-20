@@ -206,3 +206,42 @@ def test_reconcile_is_scoped(application):
     result = client.post("/api/v1/reconcile", headers={"Authorization": "Bearer " + token})
     assert result.json()["scheduled"] == 1
     assert len(store.jobs(alice.id)) == 2 and len(store.jobs(bob.id)) == 1
+
+
+def test_live_progress_scoped_bounded_and_requires_active_lease(application, monkeypatch):
+    client, store, alice, token, bob, bob_token = application
+    project = store.create_project(alice.id, ProjectCreate.model_validate(project_value()))
+    job = store.claim("first", alice.id)
+    endpoint = f"/api/v1/worker/jobs/{job.id}/progress"
+    payload = {"worker_id": "first", "message": "Collecting page evidence"}
+    headers = {"Authorization": "Bearer " + token}
+    assert client.post(endpoint, json=payload).status_code == 401
+    assert (
+        client.post(
+            endpoint, headers={"Authorization": "Bearer " + bob_token}, json=payload
+        ).status_code
+        == 409
+    )
+    assert (
+        client.post(endpoint, headers=headers, json={**payload, "worker_id": "other"}).status_code
+        == 409
+    )
+    assert client.post(endpoint, headers=headers, json={**payload, "message": 1}).status_code == 400
+    assert client.post(endpoint, headers=headers, json=payload).status_code == 200
+    for index in range(105):
+        store.progress(alice.id, job.id, "first", f"Observation {index}")
+    updated = store.job(alice.id, job.id)
+    assert len(updated.events) == 100
+    assert updated.events[-1]["message"] == "Observation 104"
+    assert updated.events[-1]["time"] >= job.created_at
+    assert updated.status == "running" and updated.lease_until == job.lease_until
+    assert store.claim("second", alice.id) is None
+    expired = time.time() + 901
+    monkeypatch.setattr("seo_optimizer.store.time.time", lambda: expired)
+    with pytest.raises(ValueError, match="lease"):
+        store.progress(alice.id, job.id, "first", "Expired")
+    recovered = store.claim("second", alice.id)
+    store.finish(alice.id, recovered.id, "second", "complete", {})
+    with pytest.raises(ValueError, match="lease"):
+        store.progress(alice.id, recovered.id, "second", "Already complete")
+    assert store.project(alice.id, project.id).id == project.id
