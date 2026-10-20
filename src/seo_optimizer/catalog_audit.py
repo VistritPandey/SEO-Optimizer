@@ -944,3 +944,34 @@ def summarize(report: dict[str, Any]) -> None:
         if len(assessed) != len(applicable)
         else "Observed check health",
     )
+
+
+def model_observation(item: Evidence) -> dict[str, Any]:
+    """Give semantic reviewers actual head values without repeatedly sending raw HTML."""
+    text = " ".join(Document(str(item.data.get("html", ""))).visible)
+    data: dict[str, Any] | None = None
+    if item.kind in {"http", "dom"}:
+        doc = Document(str(item.data.get("html", "")))
+        schemas = json.dumps(doc.schemas)
+        data = {
+            "description": doc.description,
+            "canonical": doc.canonical,
+            "language": doc.language,
+            "hreflang": doc.alternates,
+            "structured_data_json": schemas[:8000],
+            "structured_data_truncated": len(schemas) > 8000,
+            "robots": doc.robots,
+        }
+        if item.kind == "dom":
+            data.update({k: v for k, v in item.data.items() if k != "html"})
+    elif item.kind == "tool":
+        data = dict(item.data)
+    return {
+        "id": item.id,
+        "url": str(item.url),
+        "kind": item.kind,
+        "excerpt": re.sub(r"\s+", " ", text).strip()[:1200],
+        "text_excerpt_truncated": len(text) > 1200,
+        "status_code": item.data.get("status_code"),
+        "data": data,
+    }
