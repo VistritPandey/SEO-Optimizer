@@ -66,7 +66,10 @@ npm test --prefix frontend
 ```
 
 Offline tests need no model key or GitHub credentials. Optional Firestore integration tests
-require the emulator. See [architecture](docs/architecture.md), [benchmark protocol](docs/benchmark.md)
+require the emulator. With Docker running, `uv run python scripts/verify_workflows.py --sandbox`
+also exercises real isolated checks, temporary Git publication and served-page verification.
+The [workflow report](reports/workflow-validation.json) separates scripted decision tests from
+actual model quality and live search outcomes. See [architecture](docs/architecture.md), [benchmark protocol](docs/benchmark.md)
 and [supported content workflows](docs/research-workspace.md) for engineering details.
 
 ## Security and privacy
