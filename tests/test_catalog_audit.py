@@ -381,3 +381,22 @@ def test_root_canonical_without_slash_and_script_language_are_not_false_defects(
         next(r for r in report["coverage"] if r["check_id"] == "tech.sitemap")["state"] == "healthy"
     )
     assert not any(f.check_id == "intl.hreflang" and f.status == "defect" for f in findings)
+
+
+def test_semantic_observations_include_head_facts_and_explicit_truncation():
+    from seo_optimizer.catalog_audit import model_observation
+
+    item = page(
+        html=HTML
+        + '<link rel="canonical" href="https://example.test/">'
+        + (
+            '<script type="application/ld+json">{"@type":"WebPage","description":"Page facts"}'
+            "</script><p>" + "Long content. " * 200 + "</p>"
+        )
+    )
+    observation = model_observation(item)
+    assert observation["data"]["description"] == "A guide"
+    assert observation["data"]["canonical"] == "https://example.test/"
+    assert '"WebPage"' in observation["data"]["structured_data_json"]
+    assert observation["text_excerpt_truncated"] and len(observation["excerpt"]) <= 1200
+    assert "html" not in observation["data"]
