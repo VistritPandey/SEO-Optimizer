@@ -90,6 +90,7 @@ class ProjectSpec(Contract):
     sandbox_image: str = "python:3.12-slim"
     browser_enabled: bool = False
     measure_performance: bool = False
+    wait_for_deployment: bool = False
     rollback_on_regression: bool = True
 
     @model_validator(mode="after")
@@ -144,10 +145,27 @@ class FileChange(Contract):
     fact_ids: list[str] = Field(default_factory=list)
 
 
+class CheckReview(Contract):
+    check_id: str
+    state: Literal["healthy", "defect", "needs_data"]
+    reason: str = Field(min_length=1, max_length=2000)
+    evidence_ids: list[str] = Field(default_factory=list)
+    dependencies: list[str] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def justified(self) -> Self:
+        if self.state != "needs_data" and not self.evidence_ids:
+            raise ValueError("A conclusive review requires evidence")
+        if self.state == "needs_data" and not self.dependencies:
+            raise ValueError("An unresolved review requires dependencies")
+        return self
+
+
 class AgentDecision(Contract):
     findings: list[Finding] = Field(default_factory=list)
     changes: list[FileChange] = Field(default_factory=list)
     summary: str = ""
+    check_reviews: list[CheckReview] = Field(default_factory=list)
 
 
 class Registration(Contract):
