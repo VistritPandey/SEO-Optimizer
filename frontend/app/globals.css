@@ -3585,10 +3585,13 @@ html {
   padding-left: 18px;
   overflow-wrap: anywhere;
 }
-html[data-theme="dark"]:has(.workspace-shell) {
+html[data-theme="light"] {
+  color-scheme: light;
+}
+html[data-theme="dark"] {
   color-scheme: dark;
 }
-html[data-theme="dark"]:has(.workspace-shell),
+html[data-theme="dark"],
 html[data-theme="dark"] .workspace-shell,
 html[data-theme="dark"] .workspace-tour {
   --paper: #171e1a;
@@ -3722,4 +3725,117 @@ html[data-theme="dark"] .workspace-v2 .button:hover {
 }
 html[data-theme="dark"] .workspace-v2 .button.secondary:hover {
   background: #324936;
+}
+
+/* One appearance preference follows visitors from the website into their workspace. */
+.marketing-nav {
+  gap: 24px;
+}
+.theme-compact {
+  margin: 0;
+  flex: 0 0 auto;
+}
+.theme-compact legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.theme-compact .theme-label {
+  display: none;
+}
+.theme-compact button {
+  width: 29px;
+  height: 29px;
+  padding: 0;
+  font-size: 16px;
+}
+.auth-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+html[data-theme="dark"] .brand-mark img {
+  filter: invert(1) hue-rotate(180deg);
+  mix-blend-mode: screen;
+}
+html[data-theme="dark"]
+  :is(.auth-card, .price-card, .hero-sheet, .review-receipt) {
+  background: var(--white);
+}
+html[data-theme="dark"] .site-footer {
+  background: #1d2720;
+}
+html[data-theme="dark"] .footer-bottom {
+  border-color: var(--line);
+}
+html[data-theme="dark"] :is(input, textarea, select) {
+  background: #18211b;
+  color: var(--ink);
+  border-color: var(--line);
+}
+html[data-theme="dark"] .button {
+  background: #afcdb2;
+  border-color: #afcdb2;
+  color: #17251b;
+}
+html[data-theme="dark"] .button:hover {
+  background: #bedac0;
+}
+html[data-theme="dark"] .button.secondary {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--green);
+}
+html[data-theme="dark"] .button.secondary:hover {
+  background: #324936;
+}
+/* The fictional website previews retain their own light palette, like a page
+   being inspected inside a dark application. Their text stays readable. */
+html[data-theme="dark"] :is(.customer-demo, .hero-workflow) {
+  --paper: #f7f7f0;
+  --ink: #242d25;
+  --muted: #5d685f;
+  --green: #315443;
+  --line: #dbe0d6;
+  --white: #fff;
+  --soft: #ecf0e6;
+  color: var(--ink);
+  background: #fff;
+  color-scheme: light;
+}
+@media (max-width: 760px) {
+  .marketing-nav {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    padding-block: 16px;
+  }
+  .marketing-nav > .brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .marketing-nav > .theme-control {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .marketing-nav > nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .marketing-nav nav a:first-child {
+    display: inline;
+  }
+  .nav-signin::after {
+    content: "Workspace ↗";
+  }
+}
+
+.button {
+  transition: transform 0.15s ease;
 }
