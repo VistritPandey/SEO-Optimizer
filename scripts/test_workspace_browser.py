@@ -209,7 +209,10 @@ def main():
             'import React from "react";import {createRoot} from "react-dom/client";import '
             "{Dashboard} from "
             + json.dumps(str(WEB / "components/Dashboard.tsx"))
-            + ';createRoot(document.getElementById("root")).render(<Dashboard/>);'
+            + ";import {ThemeProvider} from "
+            + json.dumps(str(WEB / "components/ThemeProvider.tsx"))
+            + ';createRoot(document.getElementById("root")).render('
+            + "<ThemeProvider><Dashboard/></ThemeProvider>);"
         )
         args = [
             "npx",
@@ -383,6 +386,13 @@ def main():
                 page.emulate_media(color_scheme="dark")
                 expect(page.locator("html")).to_have_attribute("data-theme", "light")
                 results.append("Light/dark/system appearance, reload persistence and OS changes")
+
+                logo = page.get_by_role("link", name="Your Optimiser workspace home")
+                assert logo.get_attribute("href") == "/dashboard"
+                logo.click()
+                expect(page.get_by_role("heading", name="Your search visibility,")).to_be_visible()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                results.append("Dashboard logo returns to workspace home without leaving the app")
 
                 page.get_by_role("tab", name="Findings").click()
                 page.get_by_label("Filter findings").select_option("unresolved")
