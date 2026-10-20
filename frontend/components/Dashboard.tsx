@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   onAuthStateChanged,
   sendEmailVerification,
@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { firebaseAuth } from "@/lib/firebase";
 import { api, type Activity, type Project } from "@/lib/api";
+import { AuditWorkspace } from "./AuditWorkspace";
 import { Brand } from "./Brand";
 import { m } from "motion/react";
 type Account = {
@@ -35,7 +36,7 @@ export function Dashboard() {
     jobs: [],
     findings: [],
   });
-  const [tab, setTab] = useState("findings");
+  const [tab, setTab] = useState("overview");
   const [workspace, setWorkspace] = useState("{}");
   const [spec, setSpec] = useState("{}");
   const [strategy, setStrategy] = useState<{
@@ -52,6 +53,11 @@ export function Dashboard() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [syncError, setSyncError] = useState("");
+  const [lastSync, setLastSync] = useState<Date | null>(null);
+  const [activityReady, setActivityReady] = useState(false);
+  const selectedId = useRef<string | null>(null);
   const refresh = useCallback(async () => {
     const [profile, list] = await Promise.all([
       api<Account>("account"),
@@ -59,6 +65,9 @@ export function Dashboard() {
     ]);
     setAccount(profile);
     setProjects(list);
+    setLastSync(new Date());
+    setSyncError("");
+    setLoading(false);
   }, []);
   useEffect(() => {
     try {
@@ -69,31 +78,46 @@ export function Dashboard() {
         }
         setUser(current);
         if (current.emailVerified)
-          refresh().catch((error) => setError(error.message));
+          refresh().catch((error) => {
+            setError(error.message);
+            setLoading(false);
+          });
       });
     } catch (error) {
+      setLoading(false);
       setError(
         error instanceof Error ? error.message : "Authentication unavailable.",
       );
     }
   }, [refresh, router]);
   useEffect(() => {
+    selectedId.current = selected?.id || null;
     if (!selected) return;
     let alive = true;
-    const collect = () =>
-      Promise.all([
+    let collecting = false;
+    const collect = async () => {
+      if (collecting) return;
+      collecting = true;
+      await Promise.all([
         api<Activity>("projects/" + selected.id + "/activity"),
         api<Project>("projects/" + selected.id),
       ])
         .then(([value, project]) => {
-          if (alive) {
+          if (alive && selectedId.current === selected.id) {
             setActivity(value);
             setSelected(project);
+            setActivityReady(true);
+            setLastSync(new Date());
+            setSyncError("");
           }
         })
         .catch((error) => {
-          if (alive) setError(error.message);
+          if (alive) setSyncError(error.message);
+        })
+        .finally(() => {
+          collecting = false;
         });
+    };
     collect();
     const timer = setInterval(collect, 7000);
     return () => {
@@ -116,7 +140,14 @@ export function Dashboard() {
   async function choose(project: Project) {
     setSelected(project);
     setNewProject(false);
-    setTab("findings");
+    setTab("overview");
+    if (selected?.id !== project.id) {
+      setActivity({ jobs: [], findings: [] });
+      setActivityReady(false);
+    }
+    setWorkspace("{}");
+    setStrategy(null);
+    selectedId.current = project.id;
     const { provider: _provider, ...editable } = project.spec;
     setSpec(JSON.stringify(editable, null, 2));
     await action(async () => {
@@ -126,8 +157,10 @@ export function Dashboard() {
           "projects/" + project.id + "/strategy",
         ),
       ]);
-      setWorkspace(JSON.stringify(research, null, 2));
-      setStrategy(brief);
+      if (selectedId.current === project.id) {
+        setWorkspace(JSON.stringify(research, null, 2));
+        setStrategy(brief);
+      }
     });
   }
   async function connect() {
@@ -158,7 +191,11 @@ export function Dashboard() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     await action(async () => {
-      const repo = repos.find(
+      const verified = await api<{ repositories: Repository[] }>(
+        "github/repositories",
+      );
+      setRepos(verified.repositories);
+      const repo = verified.repositories.find(
         (item) => item.repository === data.get("repository"),
       );
       if (!repo) throw new Error("Choose a verified repository.");
@@ -179,18 +216,13 @@ export function Dashboard() {
         },
       });
       await refresh();
-      setSelected(value);
+      await choose(value);
       setNewProject(false);
       setNotice("Connected. Your first audit is queued.");
     });
   }
-  const activeJobs = activity.jobs.filter((job) =>
-    ["queued", "running", "waiting_checks", "waiting_deployment"].includes(
-      job.status,
-    ),
-  );
   return (
-    <div className="workspace-shell">
+    <div className="workspace-shell workspace-v2">
       <aside className="sidebar">
         <Brand />
         <span className="eyebrow">WORKSPACE</span>
@@ -212,6 +244,29 @@ export function Dashboard() {
         >
           ＋ Connect website
         </button>
+        {!!projects.length && (
+          <nav className="workspace-project-nav" aria-label="Your websites">
+            <span className="eyebrow">WEBSITES</span>
+            {projects.map((project) => (
+              <button
+                key={project.id}
+                className={
+                  selected?.id === project.id ? "nav-item active" : "nav-item"
+                }
+                onClick={() => choose(project)}
+              >
+                <span
+                  className={
+                    project.spec.enabled
+                      ? "project-status-dot enabled"
+                      : "project-status-dot"
+                  }
+                />
+                <span>{project.spec.name}</span>
+              </button>
+            ))}
+          </nav>
+        )}
         <div className="sidebar-note">
           <span className="dot" />
           Evidence before action
@@ -246,12 +301,31 @@ export function Dashboard() {
             {selected?.spec.name ||
               (newProject ? "CONNECT WEBSITE" : "OVERVIEW")}
           </span>
-          <span className="pill">{account?.tier || "Workspace"}</span>
+          <div className="workspace-sync">
+            <span className={syncError ? "sync-dot stale" : "sync-dot"} />
+            <span>
+              {syncError
+                ? "Updates interrupted"
+                : lastSync
+                  ? `Updated ${lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+                  : "Connecting…"}
+            </span>
+            <span className="pill">{account?.tier || "Workspace"}</span>
+          </div>
         </header>
         {error && (
           <p role="alert" className="alert">
             {error}
           </p>
+        )}
+        {syncError && selected && (
+          <div className="notice" role="status">
+            Live updates paused. Your last saved results are still shown.{" "}
+            {syncError}{" "}
+            <button className="text-link" onClick={() => choose(selected)}>
+              Reload project
+            </button>
+          </div>
         )}
         {notice && (
           <p role="status" className="notice">
@@ -289,8 +363,50 @@ export function Dashboard() {
           </section>
         ) : !account ? (
           <section className="panel">
-            <p>Loading your workspace…</p>
-            <button onClick={() => action(refresh)}>Retry connection</button>
+            <span className="eyebrow">YOUR WORKSPACE</span>
+            <h1>
+              {loading
+                ? "Loading your workspace"
+                : "Your workspace couldn’t be loaded"}
+            </h1>
+            <p>
+              {loading
+                ? "Checking your session and loading your saved websites. This can take a moment when the service starts."
+                : "Your session or the workspace service may be unavailable. Your saved websites have not been changed."}
+            </p>
+            {loading ? (
+              <div
+                className="workspace-skeleton"
+                role="status"
+                aria-label="Loading saved websites"
+              >
+                <span />
+                <span />
+                <span />
+              </div>
+            ) : (
+              <div className="actions">
+                <button
+                  className="button"
+                  disabled={busy}
+                  onClick={() =>
+                    action(async () => {
+                      setLoading(true);
+                      try {
+                        await refresh();
+                      } finally {
+                        setLoading(false);
+                      }
+                    })
+                  }
+                >
+                  Reload workspace
+                </button>
+                <Link className="text-link" href="/login">
+                  Sign in again ↗
+                </Link>
+              </div>
+            )}
           </section>
         ) : newProject ? (
           <>
@@ -322,7 +438,9 @@ export function Dashboard() {
                   disabled={busy}
                   onClick={connect}
                 >
-                  Connect GitHub account ↗
+                  {account.github_connection?.status === "connected"
+                    ? "Refresh GitHub authorisation ↗"
+                    : "Connect GitHub account ↗"}
                 </button>
                 <button
                   className="text-link"
@@ -336,6 +454,12 @@ export function Dashboard() {
                 Installation limits access to selected repositories. Account
                 authorization verifies which repositories you can manage.
               </p>
+              {account.github_connection?.status === "connected" && (
+                <p className="audit-policy-strip">
+                  GitHub connected. Choose a granted repository below, or
+                  install the app on another repository.
+                </p>
+              )}
             </section>
             <form className="panel" onSubmit={create}>
               <h2>02 · Your website</h2>
@@ -407,9 +531,20 @@ export function Dashboard() {
         ) : selected ? (
           <>
             <section className="page-heading">
-              <span className="eyebrow">YOUR WEBSITE</span>
+              <div className="project-context">
+                <span className="eyebrow">YOUR WEBSITE</span>
+                <span className="audit-badge">
+                  {selected.spec.enabled
+                    ? "Monitoring enabled"
+                    : "Monitoring paused"}
+                </span>
+              </div>
               <h1>{selected.spec.name}</h1>
-              <p>{selected.spec.website_url}</p>
+              <p className="project-origin">{selected.spec.website_url}</p>
+              <p className="project-repository">
+                {selected.spec.repository} <span>·</span>{" "}
+                {String(selected.spec.branch || "main")}
+              </p>
               <div className="actions">
                 <button
                   className="button"
@@ -448,112 +583,19 @@ export function Dashboard() {
                 </button>
               </div>
             </section>
-            <div className="metrics">
-              <article>
-                <span>OBSERVED HEALTH</span>
-                <strong>
-                  {selected.last_report.score ?? "—"}
-                  <small>
-                    {selected.last_report.score !== undefined ? "/100" : ""}
-                  </small>
-                </strong>
-                <p>Supported checks only; this is not a ranking score.</p>
-              </article>
-              <article>
-                <span>ACTIVE FINDINGS</span>
-                <strong>
-                  {activity.findings.filter((item) => item.active).length}
-                </strong>
-                <p>Evidence-backed defects and unresolved assessments.</p>
-              </article>
-              <article>
-                <span>WORK IN PROGRESS</span>
-                <strong>{activeJobs.length}</strong>
-                <p>Queued work, checks and deployment verification.</p>
-              </article>
-            </div>
-            <div className="tabs" role="tablist" aria-label="Project details">
-              {["findings", "activity", "research", "policy"].map((item) => (
-                <button
-                  key={item}
-                  role="tab"
-                  aria-selected={tab === item}
-                  onClick={() => setTab(item)}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-            {tab === "findings" && (
-              <section className="panel">
-                <h2>Findings & evidence</h2>
-                {!activity.findings.length ? (
-                  <p>
-                    Your first findings appear after an audit. An empty list
-                    does not establish that every SEO check passed.
-                  </p>
-                ) : (
-                  activity.findings.map((item) => (
-                    <details key={item.id}>
-                      <summary>
-                        <span>{item.details.check_id}</span>
-                        <span className="pill">
-                          {item.active ? item.details.status : "resolved"}
-                        </span>
-                      </summary>
-                      <p>{item.details.url}</p>
-                      <pre>
-                        {JSON.stringify(
-                          {
-                            finding: item.details,
-                            evidence: activity.jobs
-                              .flatMap((job) => [
-                                ...(job.result.evidence || []),
-                                ...(job.result.after_evidence || []),
-                              ])
-                              .filter((record) =>
-                                item.details.evidence_ids?.includes(record.id),
-                              ),
-                          },
-                          null,
-                          2,
-                        )}
-                      </pre>
-                    </details>
-                  ))
-                )}
-              </section>
+            {!activityReady && (
+              <p className="audit-loading" role="status">
+                Loading audit history and evidence…
+              </p>
             )}
-            {tab === "activity" && (
-              <section className="panel">
-                <h2>Activity & pull requests</h2>
-                {!activity.jobs.length && <p>No jobs yet.</p>}
-                {activity.jobs.map((job) => (
-                  <details key={job.id}>
-                    <summary>
-                      <span>{job.result.summary || job.kind + " queued"}</span>
-                      <span className="pill">
-                        {job.status.replaceAll("_", " ")}
-                      </span>
-                    </summary>
-                    {job.result.pr?.url.startsWith("https://github.com/") && (
-                      <a
-                        href={job.result.pr.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-link"
-                      >
-                        View pull request #{job.result.pr.number} ↗
-                      </a>
-                    )}
-                    <p>
-                      Verified fixes:{" "}
-                      {job.result.verified_fixes ?? "not established"}
-                    </p>
-                    <pre>{JSON.stringify(job.result, null, 2)}</pre>
-                  </details>
-                ))}
-              </section>
+            {activityReady && (
+              <AuditWorkspace
+                key={selected.id}
+                project={selected}
+                activity={activity}
+                tab={tab}
+                onTab={setTab}
+              />
             )}
             {tab === "research" && (
               <section className="panel">
@@ -638,7 +680,18 @@ export function Dashboard() {
             )}
             {tab === "policy" && (
               <section className="panel">
-                <h2>Your project policy</h2>
+                <h2>Monitoring & repair policy</h2>
+                <div className="audit-policy-strip">
+                  <p>
+                    <strong>
+                      {selected.spec.auto_fix
+                        ? "Repair proposals enabled"
+                        : "Audit only"}
+                    </strong>{" "}
+                    · Hosted pull requests require your review and merge.
+                    Private pages and crawler preferences are preserved.
+                  </p>
+                </div>
                 <p>
                   Configure monitored paths, route mappings, verified facts,
                   crawler preferences and required checks. Application policy
@@ -660,11 +713,12 @@ export function Dashboard() {
                   disabled={busy}
                   onClick={() =>
                     action(async () => {
-                      await api(
+                      const updated = await api<Project>(
                         "projects/" + selected.id,
                         "PATCH",
                         JSON.parse(spec),
                       );
+                      setSelected(updated);
                       await refresh();
                       setNotice("Policy updated.");
                     })
@@ -678,13 +732,15 @@ export function Dashboard() {
         ) : (
           <>
             <section className="page-heading">
-              <span className="eyebrow">A CLEARER VIEW</span>
+              <span className="eyebrow">WEBSITE OPERATIONS</span>
               <h1>
-                Your websites,
+                Your search visibility,
                 <br />
-                <em>moving forward.</em>
+                <em>in good hands.</em>
               </h1>
-              <p>Evidence-backed updates. A clear record of what happened.</p>
+              <p>
+                Your websites, the agent’s work, and what needs your attention.
+              </p>
             </section>
             <div className="metrics">
               <article>
@@ -706,9 +762,12 @@ export function Dashboard() {
                 </p>
               </article>
               <article>
-                <span>YOUR PLAN</span>
-                <strong className="text-metric">Free</strong>
-                <p>No payment required. Paid plans come later.</p>
+                <span>MONITORING ENABLED</span>
+                <strong>
+                  {projects.filter((project) => project.spec.enabled).length}
+                  <small>/{projects.length}</small>
+                </strong>
+                <p>Checks follow relevant repository changes.</p>
               </article>
             </div>
             <section className="section">
