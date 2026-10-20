@@ -141,7 +141,8 @@ def test_failed_check_recovery_requires_successful_source_read(
 
             assert not call("read_file", {"path": "not-permitted"})["success"]
             initial = call("run_checks", {})
-            assert not initial["success"] and initial["checks"][0]["stderr"]
+            assert not initial["success"] and not initial["checks"]
+            assert "No repair is staged" in initial["error"]
             source = call("read_file", {"path": "web/index.html"}) if has_source else None
             evidence_id = source["evidence_id"] if source else request["observations"][0]["id"]
             patch = {
