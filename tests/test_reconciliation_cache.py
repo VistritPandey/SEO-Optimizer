@@ -8,6 +8,7 @@ import pytest
 
 from seo_optimizer.application_models import (
     AgentDecision,
+    CheckReview,
     ProjectCreate,
     ProjectSpec,
     ProviderConfig,
@@ -88,7 +89,22 @@ def test_irrelevant_merge_then_periodic_audit_reuses_identical_model_inputs(tmp_
 
         def complete(self, *args, **kwargs):
             calls.append(True)
-            return Inference(decision=AgentDecision(), usage=Usage(), model="fixture", runtime_ms=1)
+            return Inference(
+                decision=AgentDecision(
+                    check_reviews=[
+                        CheckReview(
+                            check_id=check["id"],
+                            state="healthy",
+                            reason="Observed fixture content",
+                            evidence_ids=[args[1]["observations"][0]["id"]],
+                        )
+                        for check in args[1]["requested_check_reviews"]
+                    ]
+                ),
+                usage=Usage(),
+                model="fixture",
+                runtime_ms=1,
+            )
 
     monkeypatch.setattr("seo_optimizer.worker.ModelClient", Model)
     worker = Worker(store, store.settings)
