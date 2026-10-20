@@ -118,7 +118,7 @@ def main():
         )
     )
     complete = all(row["workflow_status"] == "passed" for row in catalog)
-    sandbox_passed = len(repairs) == 6 and all(row["status"] == "passed" for row in repairs)
+    sandbox_passed = len(repairs) == 7 and all(row["status"] == "passed" for row in repairs)
     return 0 if run.returncode == 0 and complete and (not args.sandbox or sandbox_passed) else 1
 
 
