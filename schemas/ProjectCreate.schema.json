@@ -1,5 +1,54 @@
 {
   "$defs": {
+    "GitConventions": {
+      "additionalProperties": false,
+      "properties": {
+        "branch_prefix": {
+          "default": "optimizer",
+          "maxLength": 64,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*(/[A-Za-z0-9][A-Za-z0-9_-]*)*$",
+          "title": "Branch Prefix",
+          "type": "string"
+        },
+        "branch_suffix": {
+          "default": "",
+          "maxLength": 40,
+          "pattern": "^([A-Za-z0-9][A-Za-z0-9_-]*)?$",
+          "title": "Branch Suffix",
+          "type": "string"
+        },
+        "commit_style": {
+          "default": "plain",
+          "enum": [
+            "plain",
+            "conventional"
+          ],
+          "title": "Commit Style",
+          "type": "string"
+        },
+        "commit_type": {
+          "default": "fix",
+          "enum": [
+            "fix",
+            "chore",
+            "perf",
+            "docs",
+            "refactor"
+          ],
+          "title": "Commit Type",
+          "type": "string"
+        },
+        "commit_scope": {
+          "default": "",
+          "maxLength": 32,
+          "pattern": "^([A-Za-z0-9][A-Za-z0-9_-]*)?$",
+          "title": "Commit Scope",
+          "type": "string"
+        }
+      },
+      "title": "GitConventions",
+      "type": "object"
+    },
     "JsonValue": {},
     "ProjectSecrets": {
       "additionalProperties": false,
@@ -85,6 +134,15 @@
           "default": "main",
           "title": "Branch",
           "type": "string"
+        },
+        "agent_instructions": {
+          "default": "",
+          "maxLength": 8000,
+          "title": "Agent Instructions",
+          "type": "string"
+        },
+        "git_conventions": {
+          "$ref": "#/$defs/GitConventions"
         },
         "environment": {
           "default": "production",
