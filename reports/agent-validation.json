@@ -1,0 +1,52 @@
+{
+  "verified_on": "2026-10-20",
+  "scope": "Authorized dummy project, real hosted worker, real GitHub App, real inference and live deployment observations",
+  "passed": {
+    "python_tests": 421,
+    "frontend_tests": 7,
+    "workspace_browser_groups": 18,
+    "type_checks": true,
+    "production_frontend_build": true,
+    "ci": true,
+    "live_verified_repair_runs": 3,
+    "distinct_controlled_defect_types": 2,
+    "observed_regressions": 0,
+    "latest_run_started_by_signed_push_without_operator_retry": true,
+    "latest_run_tool_calls": ["read_file", "read_file", "apply_patch", "run_checks"],
+    "latest_run_independent_builds_passed": 2,
+    "latest_run_fix_verified_after_review_merge_and_deployment": true,
+    "owner_coding_instructions_reach_repair_model": true,
+    "custom_naming_enforced_in_publication": true,
+    "custom_branch_followups_and_race_rejections": true,
+    "preferences_save_reload_and_tenant_isolation": true
+  },
+  "before_after": [
+    {"defect": "Homepage description omitted", "after": "Factual description served; canonical and indexing intent preserved"},
+    {"defect": "Internal navigation points to an observed 404", "after": "Referring link points to an observed public 200 destination; old mistyped URL remains 404"},
+    {"defect": "Repeated missing-description regression", "after": "Fresh merge automatically triggered detection, checked repair PR and deployed verification"}
+  ],
+  "failed_and_recovered": [
+    "Earlier runs exposed executor serialization and build-polling failures, unfinished model decisions, insufficient tool-round allocation and a metadata-only framework edit restriction.",
+    "Those runs required implementation fixes and explicit operator retries. Their failures are retained; they are not first-attempt autonomous successes.",
+    "One invalid semantic review previously discarded valid reviews in the same batch; accepted and rejected reviews are now recorded independently."
+  ],
+  "skipped": {
+    "default_suite_firestore_emulator_tests": 12,
+    "reason": "Require a separately running emulator; all 12 passed in a separate emulator run during this milestone"
+  },
+  "coverage": {
+    "catalog_entries_have_runtime_assessment_paths": 39,
+    "latest_pre_repair_conclusive_assessments": 10,
+    "latest_pre_repair_dependencies": 20,
+    "latest_pre_repair_not_applicable": 9,
+    "post_deployment_semantic_claims": "Reset until reassessed against newly served evidence",
+    "score_meaning": "Partial observed check health, not ranking, traffic, indexing status or a complete site quality rating"
+  },
+  "unverified": [
+    "Long-term search indexing, ranking, traffic, conversion or AI citation effects",
+    "General model quality across arbitrary repositories",
+    "Blinded open-model versus paid-provider comparison",
+    "Future live publication using newly saved custom naming preferences",
+    "API and infrastructure cost per verified fix where billing data is unavailable"
+  ]
+}
