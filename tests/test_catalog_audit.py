@@ -400,3 +400,19 @@ def test_semantic_observations_include_head_facts_and_explicit_truncation():
     assert '"WebPage"' in observation["data"]["structured_data_json"]
     assert observation["text_excerpt_truncated"] and len(observation["excerpt"]) <= 1200
     assert "html" not in observation["data"]
+
+
+def test_declared_failed_route_is_a_status_defect_not_an_error_page_content_brief():
+    _, _, findings, _, _ = run(
+        evidence=[page(html='<meta name="robots" content="noindex">', status_code=404)],
+        route_map={"/": "web/index.html"},
+    )
+    assert {f.check_id for f in findings} == {"tech.status"}
+
+
+def test_collection_failure_does_not_invent_an_http_status_defect():
+    unavailable = page()
+    unavailable.data = {"collection_error": "Timeout"}
+    _, _, findings, _, _ = run(evidence=[unavailable])
+    assert len(findings) == 1 and findings[0].check_id == "tech.status"
+    assert findings[0].status == "unresolved" and findings[0].dependencies
