@@ -389,6 +389,16 @@ def main():
                 results.append("Page observations and single audit submission")
                 page.set_viewport_size({"width": 390, "height": 844})
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                menu = page.get_by_role("button", name="Workspace menu", exact=True)
+                expect(menu).to_have_attribute("aria-expanded", "false")
+                menu.click()
+                expect(
+                    page.get_by_role("navigation", name="Selected website navigation")
+                ).to_be_visible()
+                page.get_by_role("navigation", name="Selected website navigation").get_by_role(
+                    "button", name="Website overview", exact=True
+                ).click()
+                expect(menu).to_have_attribute("aria-expanded", "false")
                 page.screenshot(path=str(output / "mobile.png"), full_page=True)
                 results.append("390px viewport without horizontal overflow")
                 page.set_viewport_size({"width": 1440, "height": 1080})
