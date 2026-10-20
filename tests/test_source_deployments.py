@@ -124,3 +124,53 @@ def test_successful_deployment_reaudits_and_duplicate_delivery_is_idempotent(pro
     with pytest.raises(HTTPException) as error:
         handle_event(store, site, "deployment_status", payload, "bad")
     assert error.value.status_code == 400
+
+
+@pytest.mark.parametrize("push_first", [True, False])
+@pytest.mark.parametrize("head_changed", [True, False])
+def test_agent_merge_events_do_not_start_another_model_audit(project, push_first, head_changed):
+    from seo_optimizer.followups import merge_key
+
+    store, site = project
+    origin = store.claim("fixture", site.tenant_id)
+    store.finish(
+        site.tenant_id,
+        origin.id,
+        "fixture",
+        "complete",
+        {
+            "pr": {"number": 7, "head_sha": "b" * 40},
+        },
+    )
+    push = {"repository": {"full_name": "example/site"}, "ref": "refs/heads/main", "after": SHA}
+    closed = {
+        "repository": {"full_name": "example/site"},
+        "action": "closed",
+        "pull_request": {
+            "number": 7,
+            "merged": True,
+            "merge_commit_sha": SHA,
+            "head": {"sha": ("c" if head_changed else "b") * 40},
+            "base": {"ref": "main"},
+        },
+    }
+    if push_first:
+        queued = handle_event(store, site, "push", push, "push")
+        assert queued["status"] == "queued"
+    verification = handle_event(store, site, "pull_request", closed, "closed")
+    assert verification["status"] == "queued"
+    assert store.job(site.tenant_id, verification["job_id"]).kind == "pull_request"
+    response = handle_event(store, site, "push", push, "push-again")
+    if head_changed:
+        assert response["status"] == "queued"
+        assert not store.state(merge_key(site, SHA))[0]
+        return
+    assert response["status"] == "own_change_suppressed"
+    if push_first:
+        job = store.job(site.tenant_id, queued["job_id"])
+        status, result, delay = Worker(store, store.settings).audit_job(
+            site, job, ProjectSpec.model_validate(site.spec), None, None
+        )
+        assert status == "superseded" and delay == 0
+        assert "tracked deployment verification" in result["summary"]
+    assert not store.state(merge_key(site, "d" * 40))[0]
