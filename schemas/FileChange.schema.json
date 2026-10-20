@@ -24,6 +24,14 @@
       "title": "Check Id",
       "type": "string"
     },
+    "related_check_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 8,
+      "title": "Related Check Ids",
+      "type": "array"
+    },
     "evidence_ids": {
       "items": {
         "type": "string"
