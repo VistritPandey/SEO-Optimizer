@@ -15,6 +15,8 @@ const labels: Record<string, string> = {
   healthy: "Passed",
   defect: "Issue found",
   not_checked: "Not assessed",
+  not_applicable: "Not applicable",
+  needs_model: "Awaiting review",
   read_file: "Read source file",
   get_diff: "Inspect changed routes",
   get_check: "Consult check guidance",
@@ -134,7 +136,13 @@ export function AuditWorkspace({
     <div className="audit-workspace">
       <div className="audit-metrics">
         <Metric
-          label="Observed health"
+          label={
+            coverage.some((item) =>
+              ["needs_model", "needs_data", "not_checked"].includes(item.state),
+            )
+              ? "Partial check health"
+              : "Observed health"
+          }
           value={report.score == null ? "—" : `${report.score}/100`}
           note={`${assessed.length} checks assessed · ${coverage.length || report.total_checks || 0} in catalog`}
         />
@@ -298,10 +306,27 @@ export function AuditWorkspace({
                 <h2>What was checked</h2>
               </div>
               <span className="audit-subtle">
-                {assessed.length} assessed / {coverage.length || 0} catalog
-                checks
+                {assessed.length} concluded ·{" "}
+                {
+                  coverage.filter((item) => item.state === "not_applicable")
+                    .length
+                }{" "}
+                not applicable ·{" "}
+                {
+                  coverage.filter((item) =>
+                    ["needs_model", "needs_data", "not_checked"].includes(
+                      item.state,
+                    ),
+                  ).length
+                }{" "}
+                need evidence or review
               </span>
             </div>
+            <p className="audit-subtle">
+              Every catalog check has an outcome below. A completed audit can
+              still have missing evidence. Health scores exclude unresolved and
+              inapplicable checks; they do not measure rankings.
+            </p>
             {!coverage.length ? (
               <p>Coverage appears after the first audit.</p>
             ) : (
@@ -325,10 +350,56 @@ export function AuditWorkspace({
                           </small>
                         </summary>
                         {rows.map((item) => (
-                          <div className="audit-check" key={item.check_id}>
-                            <span>{item.title}</span>
-                            <Badge value={item.state} />
-                          </div>
+                          <details
+                            className="audit-check-detail"
+                            key={item.check_id}
+                          >
+                            <summary>
+                              <span>{item.title}</span>
+                              <Badge value={item.state} />
+                            </summary>
+                            <p>
+                              {item.reason ||
+                                "This older audit did not record a per-check explanation. Run a fresh audit to collect the current assessment details."}
+                            </p>
+                            {item.method && (
+                              <small>
+                                Method: {human(item.method)} · {item.check_id}
+                              </small>
+                            )}
+                            {!!item.dependencies?.length && (
+                              <div>
+                                <strong>Needed to finish</strong>
+                                <ul>
+                                  {item.dependencies.map((dependency) => (
+                                    <li key={dependency}>{dependency}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {!!item.evidence_urls?.length && (
+                              <div>
+                                <strong>Observed pages</strong>
+                                <ul>
+                                  {item.evidence_urls.map((url) => (
+                                    <li key={url}>
+                                      {safeLink(url) ? (
+                                        <a
+                                          href={safeLink(url)}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                        >
+                                          {url} ↗
+                                        </a>
+                                      ) : (
+                                        url
+                                      )}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </details>
                         ))}
                       </details>
                     );
