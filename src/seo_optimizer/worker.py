@@ -838,6 +838,32 @@ class Worker:
                     "do not finish with a progress-only summary."
                 )
             request = {
+                "repair_targets": [
+                    {
+                        "check_id": finding.check_id,
+                        "url": next(
+                            (str(item.url) for item in evidence if item.id in finding.evidence_ids),
+                            None,
+                        ),
+                        "evidence_ids": finding.evidence_ids,
+                    }
+                    for finding in findings
+                    if repair_mode and finding.status == "defect"
+                ],
+                "observed_destinations": [
+                    {
+                        "id": item.id,
+                        "url": str(item.url),
+                        "status_code": item.data.get("status_code"),
+                        "title": item.data.get("title"),
+                    }
+                    for item in evidence
+                    if repair_mode
+                    and item.kind == "http"
+                    and item.url
+                    and item.data.get("status_code") == 200
+                    and project_context.page_intents.get(str(item.url), True)
+                ],
                 "requested_check_reviews": [] if repair_mode else requested_reviews,
                 "review_feedback_untrusted": job.payload.get("feedback", "")
                 if job.kind == "followup"
@@ -978,6 +1004,7 @@ class Worker:
                     except (ValueError, ProviderError, httpx.HTTPError) as error:
                         report["semantic_review_error"] = type(error).__name__
                         if isinstance(error, ModelOutputError):
+                            report["semantic_review_validation_errors"] = error.validation_errors
                             inference.runtime_ms += error.runtime_ms
                             for field in ("input_tokens", "output_tokens", "api_cost_usd"):
                                 a = getattr(inference.usage, field)
