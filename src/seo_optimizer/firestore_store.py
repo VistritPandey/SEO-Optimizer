@@ -32,6 +32,13 @@ T = TypeVar("T", User, Project, Job, FindingRecord)
 ACTIVE = {"queued", "running", "waiting_checks", "waiting_deployment"}
 
 
+def nested_arrays(value: Any) -> bool:
+    """Firestore does not accept an array as a direct member of another array."""
+    if isinstance(value, list):
+        return any(isinstance(item, list) or nested_arrays(item) for item in value)
+    return isinstance(value, dict) and any(nested_arrays(item) for item in value.values())
+
+
 class FirestoreStore(Store):
     def __init__(self, settings: Settings, client: Any = None):
         self.settings = settings
@@ -63,6 +70,8 @@ class FirestoreStore(Store):
                 continue
             encoded = json.dumps(packed[name], ensure_ascii=True, separators=(",", ":"))
             if len(encoded) <= 100_000:
+                if nested_arrays(packed[name]):
+                    packed[name] = {"_json": encoded}
                 continue
             if len(encoded) > 10_000_000:
                 raise ValueError("Stored record exceeds ten megabytes")
@@ -78,6 +87,9 @@ class FirestoreStore(Store):
     def _unpack(self, value: dict[str, Any]) -> dict[str, Any]:
         unpacked = dict(value)
         for name, body in value.items():
+            if isinstance(body, dict) and set(body) == {"_json"}:
+                unpacked[name] = json.loads(body["_json"])
+                continue
             if isinstance(body, dict) and set(body) == {"_chunks", "count"}:
                 chunks = []
                 for index in range(body["count"]):
