@@ -113,6 +113,11 @@ export function AuditWorkspace({
       job.status,
     ),
   );
+  const latestRepair = activity.jobs.find((job) =>
+    safeLink(job.result.pr?.url, true),
+  );
+  const liveEvents = (working[0]?.events || []).slice(-4);
+  const liveMessage = liveEvents.at(-1)?.message || working[0]?.result.summary;
   const fixes = activity.jobs.reduce(
     (total, job) => total + (job.result.verified_fixes || 0),
     0,
@@ -250,10 +255,69 @@ export function AuditWorkspace({
                 <div className="audit-next">
                   <Badge value={working[0].status} />
                   <p>
-                    {working[0].result.summary ||
-                      "The agent is collecting evidence and checking your website."}
+                    {liveMessage?.startsWith("Agent tool requested: ")
+                      ? human(liveMessage.replace("Agent tool requested: ", ""))
+                      : liveMessage ||
+                        "The agent is collecting evidence and checking your website."}
                   </p>
                 </div>
+              )}
+              {!!liveEvents.length && (
+                <ol
+                  className="audit-live-events"
+                  aria-label="Recent agent actions"
+                >
+                  {liveEvents.map((event, index) => (
+                    <li key={`${event.time}-${index}`}>
+                      <time
+                        dateTime={new Date(event.time * 1000).toISOString()}
+                      >
+                        {new Date(event.time * 1000).toLocaleTimeString(
+                          undefined,
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )}
+                      </time>
+                      <span>
+                        {event.message.startsWith("Agent tool requested: ")
+                          ? human(
+                              event.message.replace(
+                                "Agent tool requested: ",
+                                "",
+                              ),
+                            )
+                          : event.message}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+              {latestRepair?.result.pr && (
+                <a
+                  className="audit-repair-link"
+                  href={safeLink(latestRepair.result.pr.url, true)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="eyebrow">
+                    {latestRepair.result.verified_fixes
+                      ? "VERIFIED ON YOUR WEBSITE"
+                      : "THE AGENT PREPARED A REPAIR"}
+                  </span>
+                  <strong>
+                    {latestRepair.result.verified_fixes
+                      ? `View verified repair #${latestRepair.result.pr.number}`
+                      : `Review pull request #${latestRepair.result.pr.number}`}{" "}
+                    <span>↗</span>
+                  </strong>
+                  <small>
+                    {latestRepair.result.verified_fixes
+                      ? `${latestRepair.result.verified_fixes} fix verified after deployment.`
+                      : "Open the source changes and repository checks on GitHub. Your review is required before merging."}
+                  </small>
+                </a>
               )}
               <button
                 className="audit-next audit-next-button"
