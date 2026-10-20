@@ -32,6 +32,7 @@ from seo_optimizer.execution import (
     verify_workspace,
 )
 from seo_optimizer.github import GitHubClient
+from seo_optimizer.growth import Workspace
 from seo_optimizer.knowledge import load_knowledge
 from seo_optimizer.llm import ModelClient
 from seo_optimizer.policy import validate_assessment
@@ -309,7 +310,8 @@ class Worker:
                     if (
                         statuses
                         and statuses[0].get("state") == "success"
-                        and deployment.get("environment") == spec.environment
+                        and str(deployment.get("environment", "")).casefold()
+                        == spec.environment.casefold()
                     ):
                         deployed = True
                         break
@@ -335,7 +337,13 @@ class Worker:
                     after,
                     self.settings.data_dir / "artifacts" / job.id,
                 )
-                return self.verify_deployment(spec, job.result, after, github)
+                return self.verify_deployment(
+                    spec,
+                    job.result,
+                    after,
+                    github,
+                    self.store.workspace(project.tenant_id, project.id),
+                )
             return self.audit_job(project, job, spec, crawler, github)
         finally:
             crawler.close()
@@ -396,6 +404,25 @@ class Worker:
                     },
                     0,
                 )
+            if spec.wait_for_deployment and job.kind in {"push", "audit"}:
+                deployment_state = github.deployment_state(
+                    spec.repository, revision, spec.environment
+                )
+                if deployment_state != "ready":
+                    failed = deployment_state == "failed" or time.time() - job.created_at > 3600
+                    return (
+                        "blocked" if failed else "waiting_deployment",
+                        {
+                            "summary": (
+                                "Source deployment failed or is unconfirmed; no repair attempted"
+                                if failed
+                                else "Waiting for this source revision in the monitored environment"
+                            ),
+                            "pending_revision": revision,
+                            "awaiting_source_deployment": True,
+                        },
+                        0 if failed else 15,
+                    )
             changed = (
                 github.changed_files(spec.repository, source_baseline, revision)
                 if source_baseline
@@ -455,9 +482,36 @@ class Worker:
         self.observe_browser(spec, crawler, evidence, root / "artifacts")
         project_context = context(project.tenant_id, project.id, spec)
         findings, report = scan(project_context, spec, evidence, self.knowledge)
+        from seo_optimizer.catalog_audit import (
+            VERSION,
+            apply_reviews,
+            complete_catalog,
+            reuse_reviews,
+        )
         from seo_optimizer.state import input_fingerprint
 
         workspace = self.store.workspace(project.tenant_id, project.id)
+        # Explicit owner context and dated research stay separate from page observations.
+        evidence.append(
+            Evidence(
+                id=str(uuid4()),
+                tenant_id=project.tenant_id,
+                project_id=project.id,
+                environment=spec.environment,
+                kind="tool",
+                url=spec.website_url,
+                collected_at=utc_now(),
+                observation="Owner project context and attributed research inputs",
+                data={
+                    "provider": "owner_context",
+                    "project": project_context.model_dump(mode="json"),
+                    "workspace": workspace.model_dump(mode="json"),
+                },
+            )
+        )
+        requested_reviews = complete_catalog(
+            spec, evidence, workspace, self.knowledge, findings, report
+        )
         source_revision = (
             source_baseline if source_baseline and affected_urls(spec, changed) == [] else revision
         )
@@ -473,6 +527,7 @@ class Worker:
         report["input_fingerprint"] = fingerprint
         report["model_cache_hit"] = bool(
             job.kind != "followup"
+            and project.last_report.get("coverage_version") == VERSION
             and project.last_report.get("cacheable_model_result")
             and project.last_report.get("input_fingerprint") == fingerprint
         )
@@ -511,6 +566,7 @@ class Worker:
         model_name = "rules"
         if report["model_cache_hit"]:
             model_name = spec.provider.model
+            reuse_reviews(report, project.last_report, evidence)
         if (
             spec.provider.kind != "rules"
             and job.kind != "content"
@@ -735,16 +791,34 @@ class Worker:
                     "id": item.id,
                     "url": str(item.url),
                     "kind": item.kind,
-                    "excerpt": page_excerpt(str(item.data.get("html", ""))),
+                    "excerpt": page_excerpt(str(item.data.get("html", "")))[:1200],
                     "status_code": item.data.get("status_code"),
-                    "data": item.data if item.kind == "tool" else None,
+                    "data": (
+                        {key: value for key, value in item.data.items() if key != "html"}
+                        if item.kind in {"tool", "dom"}
+                        else None
+                    ),
                 }
                 for item in (
-                    [e for e in evidence if e.kind == "http"][:6]
-                    + [e for e in evidence if e.kind != "http"][:6]
+                    [e for e in evidence if e.kind == "http"]
+                    + [e for e in evidence if e.kind != "http"]
                 )
             ]
+            instructions += (
+                " For every requested_check_review, return exactly one check_reviews entry with "
+                "check_id, state (healthy, defect or needs_data), reason, evidence_ids "
+                "and dependencies. "
+                "Use only supplied scoped evidence. Mark missing evidence needs_data with specific "
+                "dependencies. A defect review requires a corresponding grounded Finding. "
+                "Never equate schema syntax with true business facts, a screenshot with indexing, "
+                "a lab run with field performance, or citation observations with ranking gains. "
+                "Google FAQ rich results and llms.txt visibility claims must follow "
+                "the dated private "
+                "guidance; valid reader FAQ content is not itself a defect. These reviews are "
+                "independent of repair proposals; never omit them because a patch passed checks."
+            )
             request = {
+                "requested_check_reviews": requested_reviews,
                 "review_feedback_untrusted": job.payload.get("feedback", "")
                 if job.kind == "followup"
                 else "",
@@ -792,7 +866,7 @@ class Worker:
                     max(5, spec.max_job_seconds - (time.monotonic() - started)),
                     spec.max_cost_usd,
                     images,
-                    True,
+                    not requested_reviews,
                 )
             finally:
                 client.close()
@@ -849,7 +923,21 @@ class Worker:
             report["model_runtime_ms"] = inference.runtime_ms
             report["model_summary"] = inference.decision.summary
             report["finalized_from_tools"] = inference.finalized_from_tools
-            report["cacheable_model_result"] = not inference.decision.findings
+            apply_reviews(
+                report,
+                inference.decision.check_reviews,
+                evidence,
+                [*findings, *inference.decision.findings],
+                requested_reviews,
+            )
+            report["cacheable_model_result"] = (
+                not inference.decision.findings
+                and not any(review.state == "defect" for review in inference.decision.check_reviews)
+                and {review.check_id for review in inference.decision.check_reviews}
+                == {check["id"] for check in requested_reviews}
+            )
+        if spec.provider.kind == "rules" or job.kind == "content":
+            apply_reviews(report, [], evidence, findings, requested_reviews)
         evidence_by_id = {item.id: item for item in evidence}
         enriched = [
             {
@@ -943,7 +1031,7 @@ class Worker:
                 self.knowledge,
                 self.use_knowledge,
             )
-            return self.verify_deployment(spec, result, after, None)
+            return self.verify_deployment(spec, result, after, None, workspace)
         if github:
             if job.kind == "followup":
                 origin = self.store.job(project.tenant_id, str(job.payload.get("origin", "")))
@@ -1066,6 +1154,7 @@ class Worker:
         result: dict[str, Any],
         after: list[Evidence],
         github: GitHubClient | None,
+        workspace: Workspace | None = None,
     ) -> tuple[str, dict[str, Any], float]:
         pages = [item for item in after if item.kind == "http"]
         if not pages or any(item.data.get("status_code") != 200 for item in pages):
@@ -1099,6 +1188,14 @@ class Worker:
                 )
             result["content_verified"] = True
         findings, report = scan(project_context, spec, after, self.knowledge)
+        from seo_optimizer.catalog_audit import apply_reviews, complete_catalog
+
+        requests = complete_catalog(
+            spec, after, workspace or Workspace(), self.knowledge, findings, report
+        )
+        # A deployed revision changes the evidence. Semantic passes from the prior
+        # revision cannot be reused as proof of the newly served content.
+        apply_reviews(report, [], after, findings, requests)
         fixed = set(result.get("fixed_checks", []))
         after_ids = {item.id: item for item in after}
         targets = {(item["check_id"], item["url"]) for item in result.get("fixed_targets", [])}
@@ -1166,7 +1263,7 @@ class Worker:
             finalized_from_tools=result.get("report", {}).get("finalized_from_tools", False),
             input_fingerprint=result.get("report", {}).get("input_fingerprint"),
             model_cache_hit=result.get("report", {}).get("model_cache_hit", False),
-            cacheable_model_result=result.get("report", {}).get("cacheable_model_result", False),
+            cacheable_model_result=False,
             source_revision=result.get("merged_sha", result.get("revision")),
         )
         from seo_optimizer.evidence_archive import archive_evidence
