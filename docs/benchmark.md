@@ -235,10 +235,10 @@ inputs, grounded findings, and locally validated scripted reviews. These fixture
 contracts and routing, not an actual model's ability to make the right judgment. An artificial
 site providing every input does not establish complete evidence for a connected customer site.
 
-Five repair scenarios use the native provider adapter with scripted replies and real temporary
+Six repair scenarios use the native provider adapter with scripted replies and real temporary
 Git repositories, HTTP collection, Docker checks, publication and fresh served observations:
 description, conflicting canonical, accidental public-page noindex, broken navigation, and
-configured crawler policy. Healthy repeat audits must leave Git unchanged. A sixth scenario
+configured crawler policy, and combined metadata/navigation defects in one file. Healthy repeat audits must leave Git unchanged. A seventh scenario
 rejects an owner check and must publish nothing. These scenarios replay inference responses;
 they do not use live GitHub or measure provider quality. Existing production validation is
 recorded separately in `reports/agent-validation.json`.
