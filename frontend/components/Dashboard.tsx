@@ -11,6 +11,7 @@ import {
 import { firebaseAuth } from "@/lib/firebase";
 import { api, type Activity, type Project } from "@/lib/api";
 import { AuditWorkspace } from "./AuditWorkspace";
+import { AgentPreferences } from "./AgentPreferences";
 import { WorkspaceSidebar } from "./WorkspaceSidebar";
 import { WorkspaceTour } from "./WorkspaceTour";
 import { m } from "motion/react";
@@ -737,15 +738,19 @@ export function Dashboard() {
                   run in an isolated executor; local workers use Docker and
                   hosted workers can use Cloud Build.
                 </p>
-                <label>
-                  Project settings JSON
-                  <textarea
-                    value={spec}
-                    onChange={(event) => setSpec(event.target.value)}
-                    rows={18}
-                    spellCheck={false}
-                  />
-                </label>
+                <AgentPreferences value={spec} onChange={setSpec} />
+                <details>
+                  <summary>Advanced project settings</summary>
+                  <label>
+                    Project settings JSON
+                    <textarea
+                      value={spec}
+                      onChange={(event) => setSpec(event.target.value)}
+                      rows={18}
+                      spellCheck={false}
+                    />
+                  </label>
+                </details>
                 <button
                   className="button"
                   disabled={busy}
