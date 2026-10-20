@@ -80,7 +80,21 @@ export function WorkspaceSidebar({
   return (
     <aside className="sidebar workspace-sidebar">
       <div className="sidebar-brand-row">
-        <Brand />
+        <Brand
+          href="/dashboard"
+          label="Your Optimiser workspace home"
+          onClick={(event) => {
+            if (
+              event.metaKey ||
+              event.ctrlKey ||
+              event.shiftKey ||
+              event.altKey
+            )
+              return;
+            event.preventDefault();
+            navigate(() => onHome());
+          }}
+        />
         <button
           className="sidebar-toggle"
           aria-label="Workspace menu"
