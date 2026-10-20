@@ -102,6 +102,49 @@ def test_managed_creation_and_tenant_isolation(hosted) -> None:
     assert store.projects(other.id) == []
 
 
+@pytest.mark.parametrize(
+    ("grant", "expected"),
+    [
+        ({}, "not_connected"),
+        ({"token": "example-grant", "expires": 9e12}, "connected"),
+        (
+            {
+                "token": "example-grant",
+                "expires": 1,
+                "refresh": "example-refresh",
+                "refresh_expires": 9e12,
+            },
+            "connected",
+        ),
+        ({"token": "example-grant", "expires": 1}, "reconnect_required"),
+        (
+            {
+                "token": "example-grant",
+                "expires": 1,
+                "refresh": "example-refresh",
+                "refresh_expires": 1,
+            },
+            "reconnect_required",
+        ),
+    ],
+)
+def test_account_reports_own_connection_without_credentials(hosted, grant, expected) -> None:
+    _, store, account, token, client = hosted
+    if grant:
+        store.save_state("github-grant:" + account.id, {**grant, "login": "example-owner"}, 0)
+    response = client.get("/api/v1/account", headers={"Authorization": "Bearer " + token})
+    assert response.status_code == 200
+    assert response.json()["github_connection"] == {
+        "status": expected,
+        "login": "example-owner" if grant else None,
+    }
+    assert "example-grant" not in response.text and "example-refresh" not in response.text
+    _, other_token = store.create_user("other@example.test", "!federated-only")
+    other = client.get("/api/v1/account", headers={"Authorization": "Bearer " + other_token})
+    assert other.json()["github_connection"] == {"status": "not_connected", "login": None}
+    assert client.get("/api/v1/account").status_code == 401
+
+
 def test_hosted_views_keep_engine_configuration_private(hosted) -> None:
     _, store, account, token, client = hosted
     headers = {"Authorization": "Bearer " + token}
