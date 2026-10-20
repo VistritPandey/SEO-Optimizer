@@ -97,6 +97,8 @@ def run_observed(worker: Worker, tenant: str) -> dict[str, Any]:
                         "path": arguments.get("path"),
                         "error": result.get("error"),
                         "scope": result.get("scope"),
+                        "proposal": arguments if name == "apply_patch" else None,
+                        "checks": result.get("checks"),
                     }
                 )
                 return result
