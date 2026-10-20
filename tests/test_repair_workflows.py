@@ -146,6 +146,15 @@ def test_native_replay_repairs_commit_and_served_verification(tmp_path, monkeypa
                     for row in task["requested_check_reviews"]
                 ]
             }
+            if not task.get("mode"):
+                for review in decision["check_reviews"]:
+                    if review["check_id"] in {"tech.metadata", "geo.google-llms"}:
+                        review.update(state="healthy", dependencies=[])
+                        review["evidence_ids"] = (
+                            [o["id"] for o in task["observations"] if o["kind"] == "http"]
+                            if review["check_id"] == "tech.metadata"
+                            else [o["id"] for o in task["observations"] if o["kind"] == "tool"]
+                        )
             message = {"role": "assistant", "content": json.dumps(decision)}
         else:
             assert any(t["check_id"] == check_id for t in task["repair_targets"])
@@ -229,7 +238,20 @@ def test_native_replay_repairs_commit_and_served_verification(tmp_path, monkeypa
             merged = run_git(repository, "rev-parse", "HEAD")
             repeat = store.enqueue(owner.id, project.id, "audit", "repeat-healthy", {})
             assert Worker(store, settings).tick(owner.id)
-            assert store.job(owner.id, repeat.id).status == "complete"
+            assert store.job(owner.id, repeat.id).status == "complete", store.job(
+                owner.id, repeat.id
+            ).result
+            repeated = store.job(owner.id, repeat.id).result["report"]
+            assert "tech.metadata" in repeated["semantic_review_accepted_check_ids"]
+            assert [r["check_id"] for r in repeated["semantic_review_rejections"]] == [
+                "geo.google-llms"
+            ]
+            assert (
+                next(row for row in repeated["coverage"] if row["check_id"] == "geo.google-llms")[
+                    "state"
+                ]
+                == "needs_data"
+            )
             assert run_git(repository, "rev-parse", "HEAD") == merged
             assert not store.job(owner.id, repeat.id).result.get("proposals")
         assert (web / "private/index.html").read_text() == private
