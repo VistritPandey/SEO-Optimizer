@@ -69,6 +69,34 @@ class ModelOutputError(ProviderError):
         self.usage, self.runtime_ms = usage, runtime_ms
 
 
+def pending_repairs(
+    request: dict[str, Any], decision: AgentDecision, trace: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """A progress message cannot discharge a confirmed repair target."""
+    staged = {
+        item["arguments"]["path"]: item["arguments"]
+        for item in trace
+        if item["name"] == "apply_patch" and item.get("success")
+    }
+    patches = [*[change.model_dump() for change in decision.changes], *staged.values()]
+    return [
+        target
+        for target in request.get("repair_targets", [])
+        if not any(
+            patch.get("check_id") == target["check_id"]
+            and set(patch.get("evidence_ids", [])) & set(target["evidence_ids"])
+            for patch in patches
+        )
+        and not any(
+            finding.check_id == target["check_id"]
+            and finding.status == "unresolved"
+            and finding.dependencies
+            and set(finding.evidence_ids) & set(target["evidence_ids"])
+            for finding in decision.findings
+        )
+    ]
+
+
 class ModelClient:
     def __init__(
         self,
@@ -432,6 +460,22 @@ class ModelClient:
                         raise ValueError("Return exactly one review for each requested check ID")
                     if request.get("mode") == "read_only_catalog_review" and decision.changes:
                         raise ValueError("A read-only review cannot contain source changes")
+                    pending = pending_repairs(request, decision, trace)
+                    if pending:
+                        feedback = (
+                            "The repair task is unfinished. A progress summary is not a final "
+                            "decision. Use the remaining tools to stage and verify a grounded "
+                            "patch, or return an unresolved Finding with the same check_id, "
+                            "evidence references and specific dependencies explaining the blocker. "
+                            "Do not invent a blocker or change code just to satisfy this contract. "
+                            "Unhandled confirmed targets: " + json.dumps(pending)
+                        )
+                        if step >= max_steps - 1:
+                            raise ValueError(feedback)
+                        history.append({"role": "user", "content": feedback})
+                        native_input.append({"role": "user", "content": feedback})
+                        google_history.append({"role": "user", "parts": [{"text": feedback}]})
+                        continue
                 except (ValidationError, ValueError) as error:
                     errors = (
                         [
@@ -543,7 +587,11 @@ class ModelClient:
                     results.append(
                         {"functionResponse": {"name": call["name"], "response": outcome}}
                     )
-            if stop_after_verified_tools and verified_staged:
+            if (
+                stop_after_verified_tools
+                and verified_staged
+                and not pending_repairs(request, AgentDecision(), trace)
+            ):
                 return Inference(
                     decision=AgentDecision(
                         summary="Staged proposals passed tool verification; independent "
