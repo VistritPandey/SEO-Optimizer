@@ -29,6 +29,7 @@ export type AuditReport = {
   evaluated_checks?: number;
   total_checks?: number;
   model_runtime_ms?: number;
+  assessment_reused?: boolean;
   findings?: number;
   tool_trace?: { name: string; success: boolean; runtime_ms?: number }[];
   coverage?: {
