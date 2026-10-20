@@ -417,8 +417,20 @@ def main():
                 expect(page.locator(".audit-repair-link")).to_contain_text(
                     "View verified repair #1"
                 )
+                duplicate = {
+                    **activity["jobs"][1],
+                    "id": "same-repair-verification-event",
+                }
+                activity["jobs"].append(duplicate)
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                metric = page.locator(".audit-metrics article").filter(has_text="Verified fixes")
+                expect(metric.locator("strong")).to_have_text("1")
+                activity["jobs"].pop()
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
                 results.append(
-                    "Live tool progress replaces stale status and verified repairs stay visible"
+                    "Live progress and repair links stay visible; duplicate events count one repair"
                 )
 
                 page.get_by_role("tab", name="Findings").click()
