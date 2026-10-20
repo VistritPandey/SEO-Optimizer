@@ -3839,3 +3839,44 @@ html[data-theme="dark"] :is(.customer-demo, .hero-workflow) {
 .button {
   transition: transform 0.15s ease;
 }
+
+.audit-repair-link {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  margin: 18px 0;
+  border: 1px solid var(--green);
+  border-radius: 7px;
+  background: var(--soft);
+}
+.audit-repair-link strong {
+  font-size: 14px;
+  color: var(--green);
+}
+.audit-repair-link strong > span {
+  float: right;
+}
+.audit-repair-link small {
+  font-size: 11px;
+  line-height: 1.7;
+}
+.audit-repair-link:hover {
+  outline: 1px solid var(--green);
+}
+.audit-live-events {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+.audit-live-events li {
+  display: grid;
+  grid-template-columns: 65px 1fr;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.audit-live-events time {
+  font-variant-numeric: tabular-nums;
+}
