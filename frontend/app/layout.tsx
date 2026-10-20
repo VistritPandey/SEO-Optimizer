@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import Script from "next/script";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import { MotionProvider } from "@/components/Motion";
 import { site } from "@/lib/site";
@@ -49,12 +51,25 @@ export const metadata: Metadata = {
 };
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable}`}>
+    <html
+      lang="en"
+      className={`${sans.variable} ${serif.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <MotionProvider>{children}</MotionProvider>
+        <Script
+          id="theme-initialization"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t='system';try{var s=localStorage.getItem('optimiser-theme');if(s==='light'||s==='dark')t=s;}catch(e){}document.documentElement.dataset.theme=t==='system'?(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'):t;})();`,
+          }}
+        />
+        <ThemeProvider>
+          <MotionProvider>{children}</MotionProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
