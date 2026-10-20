@@ -144,12 +144,16 @@ def verify_cloud(root: Path, spec: ProjectSpec) -> list[dict[str, Any]]:
     region = os.getenv("OPT_BUILD_REGION", "us-central1")
     object_name = f"checks/{scope.tenant}/{scope.job}/{uuid4()}.tar.gz"
     storage_client = storage.Client(project=project)
-    build_client = cloudbuild_v1.CloudBuildClient()
+    build_client = cloudbuild_v1.CloudBuildClient(
+        client_options={"api_endpoint": f"{region}-cloudbuild.googleapis.com"}
+    )
     blob = storage_client.bucket(bucket).blob(object_name)
     started = time.monotonic()
     operation: Any = None
+    submitted, terminal = False, False
     try:
         blob.upload_from_string(archive_source(root), content_type="application/gzip", timeout=30)
+        submitted = True
         operation = build_client.create_build(
             request={
                 "parent": f"projects/{project}/locations/{region}",
@@ -161,6 +165,14 @@ def verify_cloud(root: Path, spec: ProjectSpec) -> list[dict[str, Any]]:
             timeout=30,
         )
         build = operation.result(timeout=260)
+        terminal = build.status not in {
+            cloudbuild_v1.Build.Status.STATUS_UNKNOWN,
+            cloudbuild_v1.Build.Status.PENDING,
+            cloudbuild_v1.Build.Status.QUEUED,
+            cloudbuild_v1.Build.Status.WORKING,
+        }
+        if not terminal:
+            raise ValueError("Cloud verification has not reached a terminal result")
         passed = build.status == cloudbuild_v1.Build.Status.SUCCESS
         checks = [
             {
@@ -187,7 +199,8 @@ def verify_cloud(root: Path, spec: ProjectSpec) -> list[dict[str, Any]]:
         raise ValueError("Cloud verification service is unavailable") from error
     finally:
         try:
-            blob.delete(timeout=15)
+            if terminal or not submitted:
+                blob.delete(timeout=15)
         except GoogleAPICallError:
             pass  # The required bucket lifecycle removes orphaned source objects.
         finally:
