@@ -48,6 +48,8 @@ def input_fingerprint(
                 "sitemap_xml",
                 "visible_offer",
                 "render_settled",
+                "media_observations",
+                "navigation_observations",
                 "final_url",
             }
         }
