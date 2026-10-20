@@ -403,6 +403,40 @@ class FirestoreStore(Store):
                 return Job(**self._unpack(body))
         return None
 
+    def progress(self, tenant: str, id: str, worker: str, message: str) -> None:
+        job = self.job(tenant, id)
+        if job is None:
+            raise ValueError("Job not found")
+        ref = self.db.collection("optimizer_jobs").document(id)
+        lease_ref = self.db.collection("optimizer_leases").document(job.project_id)
+
+        @firestore.transactional
+        def record(transaction: Any) -> None:
+            snapshot = ref.get(transaction=transaction)
+            lease = lease_ref.get(transaction=transaction)
+            body, now = snapshot.to_dict(), time.time()
+            if (
+                body["tenant_id"] != tenant
+                or body["worker_id"] != worker
+                or body["status"] != "running"
+                or body["lease_until"] <= now
+                or not lease.exists
+                or lease.to_dict().get("job_id") != id
+                or lease.to_dict().get("worker") != worker
+                or lease.to_dict().get("tenant_id") != tenant
+                or lease.to_dict().get("until", 0) <= now
+            ):
+                raise ValueError("Job lease no longer owned")
+            transaction.update(
+                ref,
+                {
+                    "events": [*body["events"][-99:], {"time": now, "message": message[:200]}],
+                    "updated_at": now,
+                },
+            )
+
+        record(self.db.transaction())
+
     def finish(
         self,
         tenant: str,
