@@ -40,6 +40,21 @@ from seo_optimizer.settings import Settings
 from seo_optimizer.store import Job, Project, Store
 
 
+def _router_parts(root: Path, path: Path, router: str) -> list[str] | None:
+    """Resolve file routes relative to their application, including workspace packages."""
+    for directory in path.parents:
+        if directory == root:
+            break
+        if directory.name != router:
+            continue
+        application = directory.parent
+        if application.name == "src":
+            application = application.parent
+        if application == root or (application / "package.json").is_file():
+            return list(path.relative_to(directory).with_suffix("").parts)
+    return None
+
+
 def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
     mapping = dict(spec.route_map)
     for base in spec.allowed_paths:
@@ -62,13 +77,8 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
             if path.suffix == ".html":
                 route = "/" + str(relative).replace("index.html", "")
             elif path.name in {"page.tsx", "page.jsx", "page.js", "page.py"}:
-                parts = list(path.relative_to(root).parts[:-1])
-                if parts[:2] == ["src", "app"]:
-                    parts = parts[2:]
-                elif parts[:1] == ["app"]:
-                    parts = parts[1:]
-                else:
-                    parts = list(relative.parent.parts)
+                routed = _router_parts(root, path, "app")
+                parts = routed[:-1] if routed is not None else list(relative.parent.parts)
                 if any(part.startswith(("@", "(.)", "(..)", "(...)")) for part in parts):
                     continue  # Parallel/intercepted outlets are not standalone public routes.
                 parts = [
@@ -77,12 +87,8 @@ def infer_route_map(root: Path, spec: ProjectSpec) -> dict[str, str]:
                 if not any("[" in part for part in parts):
                     route = "/" + "/".join(parts)
             elif path.suffix in {".tsx", ".jsx", ".js", ".astro"}:
-                parts = list(path.relative_to(root).with_suffix("").parts)
-                if parts[:2] == ["src", "pages"]:
-                    parts = parts[2:]
-                elif parts[:1] == ["pages"]:
-                    parts = parts[1:]
-                else:
+                parts = _router_parts(root, path, "pages")
+                if parts is None:
                     continue
                 if parts and not (
                     parts[0] == "api"
