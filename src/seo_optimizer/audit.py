@@ -36,6 +36,7 @@ class PageParser(HTMLParser):
         super().__init__(convert_charrefs=True)
         self.title: list[str] = []
         self.robots: list[str] = []
+        self.descriptions: list[str] = []
         self.canonicals: list[str] = []
         self.links: list[str] = []
         self.schemas: list[JsonValue] = []
@@ -49,6 +50,8 @@ class PageParser(HTMLParser):
             self._in_title = True
         elif tag == "meta" and (values.get("name") or "").lower() in {"robots", "googlebot"}:
             self.robots.append(values.get("content") or "")
+        elif tag == "meta" and (values.get("name") or "").lower() == "description":
+            self.descriptions.append(values.get("content") or "")
         elif tag == "link" and "canonical" in (values.get("rel") or "").lower().split():
             self.canonicals.append(values.get("href") or "")
         elif tag == "a" and values.get("href"):
