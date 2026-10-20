@@ -155,7 +155,9 @@ def scan(
         html = item.data.get("html")
         if not isinstance(html, str):
             continue
-        if not re.search(r'<meta\b[^>]*name\s*=\s*["\']description["\']', html, re.I):
+        document = PageParser()
+        document.feed(html)
+        if not any(description.strip() for description in document.descriptions):
             emit(
                 "tech.metadata",
                 item,
