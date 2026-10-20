@@ -542,6 +542,15 @@ class Worker:
         requested_reviews = complete_catalog(
             spec, evidence, workspace, self.knowledge, findings, report
         )
+        # Retain rule-established defects separately from later semantic judgments.
+        # An absent finding on a subsequent crawl is not proof of a semantic repair.
+        deterministic_defects = [
+            {"check_id": finding.check_id, "url": str(item.url)}
+            for finding in findings
+            if finding.status == FindingStatus.DEFECT
+            for item in evidence
+            if item.id in finding.evidence_ids and item.url
+        ]
         source_revision = (
             source_baseline if source_baseline and affected_urls(spec, changed) == [] else revision
         )
@@ -1181,6 +1190,7 @@ class Worker:
                 for item in enriched
                 if item["status"] == "defect"
             ],
+            "deterministic_defects": deterministic_defects,
         }
         from seo_optimizer.evidence_archive import archive_evidence
 
@@ -1263,7 +1273,14 @@ class Worker:
                     str(origin.result["pr"]["base_sha"]),
                     spec.git_conventions,
                 )
-                result["before_defects"] = origin.result.get("before_defects", [])
+                result["before_defects"] = [
+                    *origin.result.get("before_defects", []),
+                    *result["before_defects"],
+                ]
+                result["deterministic_defects"] = [
+                    *origin.result.get("deterministic_defects", []),
+                    *result["deterministic_defects"],
+                ]
                 result["fixed_targets"] = [
                     *origin.result.get("fixed_targets", []),
                     *result["fixed_targets"],
@@ -1433,6 +1450,7 @@ class Worker:
         fixed = set(result.get("fixed_checks", []))
         after_ids = {item.id: item for item in after}
         targets = {(item["check_id"], item["url"]) for item in result.get("fixed_targets", [])}
+        fixed.update(check_id for check_id, _ in targets)
         still_broken = [
             item
             for item in findings
@@ -1514,15 +1532,66 @@ class Worker:
         from seo_optimizer.evidence_archive import archive_evidence
 
         result["after_evidence"] = archive_evidence(after)
+        # Only independently repeated conclusions count toward verified repairs.
+        # Baseline checks can prove narrow structural fixes even where a separate
+        # semantic follow-up remains unknown (for example snippet usefulness).
+        structural = {
+            "tech.title",
+            "tech.metadata",
+            "tech.indexability",
+            "tech.canonical",
+            "tech.links",
+            "tech.status",
+            "commerce.facts",
+            "geo.crawlers",
+        }
+        rule_targets = {
+            (item["check_id"], item["url"])
+            for item in result.get("deterministic_defects", result.get("before_defects", []))
+        }
+        verified: set[tuple[str, str]] = set()
+        for check_id, url in targets & before:
+            page = observed_pages.get(url)
+            if page is None:
+                continue
+            if (
+                result.get("content_verified")
+                and brief
+                and (check_id == "content.originality" and url == brief["target_url"])
+            ):
+                verified.add((check_id, url))
+                continue
+            if (check_id, url) not in rule_targets:
+                continue
+            if check_id in structural:
+                _, repeated = scan(project_context, spec, [page], self.knowledge)
+            else:
+                repeated = report
+            if any(
+                row["check_id"] == check_id and row["state"] == "healthy"
+                for row in repeated["coverage"]
+            ):
+                verified.add((check_id, url))
+        unverified = (targets & before) - verified
         result.update(
-            summary="Changes verified on the deployed website",
-            stage="verified",
+            summary="Changes verified on the deployed website"
+            if not unverified
+            else "Changes deployed; additional evidence is required to verify some repairs",
+            stage="verified" if not unverified else "verification_pending",
             report=report,
-            verified_fixes=len(targets & before),
+            verified_fixes=len(verified),
+            unverified_targets=[
+                {
+                    "check_id": check_id,
+                    "url": url,
+                    "dependency": "Collect a fresh conclusive assessment of the repaired condition",
+                }
+                for check_id, url in sorted(unverified)
+            ],
             after_report=report,
             findings=enriched,
             prior_revision=result.get("revision"),
             revision=result.get("merged_sha", result.get("revision")),
             regressions=0,
         )
-        return "complete", result, 0
+        return "blocked" if unverified else "complete", result, 0
