@@ -191,3 +191,85 @@ def test_missing_usage_remains_unknown_with_configured_prices():
     result = client.complete("Return JSON", {}, [], lambda n, a: {})
     assert result.usage.input_tokens is None and result.usage.output_tokens is None
     assert result.usage.api_cost_usd is None
+
+
+def test_final_schema_correction_has_a_reserved_round_and_no_additional_tools():
+    seen = []
+
+    def transport(request):
+        payload = json.loads(request.content)
+        seen.append(payload)
+        return httpx.Response(
+            200,
+            json={
+                "message": {
+                    "role": "assistant",
+                    "content": (
+                        json.dumps(
+                            {
+                                **FINAL,
+                                "check_reviews": [
+                                    {
+                                        "check_id": "tech.metadata",
+                                        "state": "healthy",
+                                        "reason": "Observed",
+                                        "evidence_ids": [],
+                                    }
+                                ],
+                            }
+                        )
+                        if len(seen) == 1
+                        else json.dumps(FINAL)
+                    ),
+                },
+                "prompt_eval_count": 10,
+                "eval_count": 5,
+            },
+        )
+
+    client = ModelClient(
+        ProviderConfig(
+            kind="ollama",
+            model="fixture",
+            capabilities=ProviderCapabilities(json_schema=True),
+        ),
+        client=httpx.Client(transport=httpx.MockTransport(transport)),
+    )
+    try:
+        result = client.complete("Return grounded JSON", {}, [TOOL], lambda *a: {}, max_steps=1)
+        assert len(seen) == 2 and result.usage.input_tokens == 20
+        assert not seen[1].get("tools")
+        correction = seen[1]["messages"][-1]["content"]
+        assert "check_reviews.0" in correction and "value_error" in correction
+        assert '"input"' not in correction
+    finally:
+        client.client.close()
+
+
+def test_invalid_final_preserves_usage_and_safe_validation_locations():
+    from seo_optimizer.llm import ModelOutputError
+
+    client = ModelClient(
+        ProviderConfig(kind="ollama", model="fixture"),
+        client=httpx.Client(
+            transport=httpx.MockTransport(
+                lambda _: httpx.Response(
+                    200,
+                    json={
+                        "message": {"content": '{"summary": 123, "unexpected": "private-input"}'},
+                        "prompt_eval_count": 10,
+                        "eval_count": 5,
+                    },
+                )
+            )
+        ),
+    )
+    try:
+        with pytest.raises(ModelOutputError) as caught:
+            client.complete("JSON", {}, [], lambda *a: {}, max_steps=1)
+        error = caught.value
+        assert error.usage.input_tokens == 10 and error.runtime_ms >= 0
+        assert "private-input" not in json.dumps(error.validation_errors)
+        assert any(e["path"] == "unexpected" for e in error.validation_errors)
+    finally:
+        client.client.close()
