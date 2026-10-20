@@ -178,3 +178,16 @@ def test_recreated_firebase_uid_does_not_inherit_existing_workspace(store):
     assert first.uid != second.uid
     assert firebase_user(sign_in(), store.settings, store) is None
     assert store.project(owner.id, site.id) is not None
+
+
+def test_firestore_retains_nested_command_arrays(store):
+    tenant, _ = store.create_user(f"commands-{uuid4()}@example.test", "hash")
+    site = project(store, tenant.id)
+    spec = ProjectSpec.model_validate(site.spec)
+    spec.check_commands = [["node", "--version"], ["npm", "test"]]
+    store.update_project(tenant.id, site.id, spec)
+    updated = store.project(tenant.id, site.id)
+    assert updated.spec["check_commands"] == spec.check_commands
+    job = store.claim("worker", tenant.id)
+    store.finish(tenant.id, job.id, "worker", "complete", {"tool": {"matrix": [[1, 2], [3, 4]]}})
+    assert store.job(tenant.id, job.id).result["tool"]["matrix"] == [[1, 2], [3, 4]]
