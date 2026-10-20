@@ -1,5 +1,5 @@
 {
-  "environment": "https://youroptimiser.com",
+  "environment": "http://127.0.0.1:3002",
   "passed": [
     "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
@@ -11,7 +11,9 @@
     "Reduced-motion visitors start paused and can explicitly play the example",
     "Eight public pages fit a 390px mobile viewport without horizontal overflow",
     "Reduced-motion preference is active during responsive accessibility checks",
-    "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks"
+    "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks",
+    "Public light/dark/system controls persist across routes and reloads",
+    "Dark public, policy and authentication pages pass mobile accessibility scans"
   ],
   "browser_errors": [],
   "accessibility_violations": [],
