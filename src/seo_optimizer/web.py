@@ -719,6 +719,22 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             "credentials": storage.secrets(project).model_dump(),
         }
 
+    @app.post("/api/v1/worker/jobs/{id}/progress")
+    def api_progress(request: Request, id: str, value: dict[str, Any]) -> Any:
+        account = require_user(request)
+        if not request.headers.get("authorization", "").startswith("Bearer "):
+            raise HTTPException(403, "Worker requires a scoped API token")
+        worker, message = value.get("worker_id"), value.get("message")
+        if not isinstance(worker, str) or not re_worker_id(worker):
+            raise HTTPException(400, "Invalid worker identifier")
+        if not isinstance(message, str) or not message or len(message) > 200:
+            raise HTTPException(400, "Invalid progress message")
+        try:
+            storage.progress(account.id, id, worker, message)
+        except ValueError:
+            raise HTTPException(409, "Job lease is not owned by this worker") from None
+        return {"status": "recorded"}
+
     @app.post("/api/v1/worker/jobs/{id}/finish")
     def api_finish(request: Request, id: str, value: dict[str, Any]) -> Any:
         account = require_user(request)
