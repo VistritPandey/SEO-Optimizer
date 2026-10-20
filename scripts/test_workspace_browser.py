@@ -432,6 +432,32 @@ def main():
                 results.append(
                     "Live progress and repair links stay visible; duplicate events count one repair"
                 )
+                activity["jobs"][1]["result"]["unverified_targets"] = [
+                    {
+                        "check_id": "content.factual",
+                        "url": "https://example.test/",
+                        "dependency": "Obtain a fresh factual assessment",
+                    }
+                ]
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                expect(page.locator(".audit-repair-link")).to_contain_text(
+                    "VERIFICATION NEEDS EVIDENCE"
+                )
+                expect(page.locator(".audit-repair-link")).to_contain_text(
+                    "1 confirmed; 1 awaiting evidence"
+                )
+                page.get_by_role("tab", name="AI audits & logs").click()
+                page.get_by_text("Audited 4 pages; 2 new findings", exact=True).click()
+                expect(
+                    page.get_by_text("Obtain a fresh factual assessment", exact=True)
+                ).to_be_visible()
+                activity["jobs"][1]["result"].pop("unverified_targets")
+                page.reload()
+                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                results.append(
+                    "Partial repairs show unresolved proof without claiming full verification"
+                )
 
                 page.get_by_role("tab", name="Findings").click()
                 page.get_by_label("Filter findings").select_option("unresolved")
