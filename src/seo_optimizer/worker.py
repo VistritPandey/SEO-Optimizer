@@ -496,6 +496,7 @@ class Worker:
             VERSION,
             apply_reviews,
             complete_catalog,
+            model_observation,
             reuse_reviews,
         )
         from seo_optimizer.state import input_fingerprint
@@ -796,24 +797,7 @@ class Worker:
                     "Do not duplicate tool-staged changes in final changes. Report missing "
                     "evidence; never invent it."
                 )
-            observations = [
-                {
-                    "id": item.id,
-                    "url": str(item.url),
-                    "kind": item.kind,
-                    "excerpt": page_excerpt(str(item.data.get("html", "")))[:1200],
-                    "status_code": item.data.get("status_code"),
-                    "data": (
-                        {key: value for key, value in item.data.items() if key != "html"}
-                        if item.kind in {"tool", "dom"}
-                        else None
-                    ),
-                }
-                for item in (
-                    [e for e in evidence if e.kind == "http"]
-                    + [e for e in evidence if e.kind != "http"]
-                )
-            ]
+            observations = [model_observation(item) for item in evidence]
             instructions += (
                 " For every requested_check_review, return exactly one check_reviews entry with "
                 "check_id, state (healthy, defect or needs_data), reason, evidence_ids "
