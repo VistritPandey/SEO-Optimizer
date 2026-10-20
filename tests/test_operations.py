@@ -513,3 +513,44 @@ def test_content_publication_requires_current_fact_references(tmp_path):
     change.fact_ids = ["heading"]
     with pytest.raises(ValueError, match="expired"):
         apply_changes(tmp_path, spec, [change], {"page"}, {"content.factual"})
+
+
+def test_repaired_link_does_not_require_orphaned_error_url_to_become_a_page(tmp_path):
+    store, settings = make_store(tmp_path)
+    spec = ProjectSpec(
+        name="Example",
+        website_url="https://example.test/",
+        route_map={"/": "web/index.html", "/about": "web/about.html"},
+    )
+    orphan = page(
+        '<title>Not found</title><meta name="robots" content="noindex">',
+        status=404,
+        url="https://example.test/typo",
+    )
+    orphan.id = "orphan"
+    about = page(url="https://example.test/about")
+    about.id = "about"
+    result = {
+        "revision": "before",
+        "merged_sha": "after",
+        "fixed_checks": ["tech.links"],
+        "fixed_targets": [{"check_id": "tech.links", "url": "https://example.test/"}],
+        "before_defects": [{"check_id": "tech.links", "url": "https://example.test/"}],
+        "audited_urls": [
+            "https://example.test/",
+            "https://example.test/about",
+            "https://example.test/typo",
+        ],
+        "verification_urls": ["https://example.test/", "https://example.test/about"],
+    }
+    worker = Worker(store, settings)
+    status, report, _ = worker.verify_deployment(spec, result, [page(), about, orphan], None)
+    assert status == "complete" and report["verified_fixes"] == 1
+    assert report["regressions"] == 0
+    assert not any(
+        f["check_id"] in {"tech.metadata", "tech.indexability", "tech.status"}
+        for f in report["findings"]
+    )
+    status, report, _ = worker.verify_deployment(spec, result, [about], None)
+    assert status == "blocked" and "inconclusive" in report["summary"]
+    store.close()
