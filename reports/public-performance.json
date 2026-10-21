@@ -428,5 +428,47 @@
     "reason": "Release CI found PYSEC-2026-4320 in the previous lock; the updated lock passes the dependency audit.",
     "upstream": "https://github.com/certifi/python-certifi/security/advisories/GHSA-6q48-6c7w-9gw2"
   },
-  "raw_artifacts": "Full HTML/JSON reports for every run are retained under ignored .data/production-e2e/ in the testing workspace."
+  "raw_artifacts": "Full HTML/JSON reports for every run are retained under ignored .data/production-e2e/ in the testing workspace.",
+  "follow_up_releases": [
+    {
+      "verified_at": "2026-10-21T01:05:26.267603+00:00",
+      "git_sha": "e93907c9346c3a4e645a512c1dbb7ca23621ed4c",
+      "revision": "your-optimiser-00030-nfp",
+      "changes": "Theme-matched vector logo, dark demo surfaces, centred walkthrough badge and 1.5-second playback.",
+      "ci_url": "https://github.com/YourOptimiser/SEO-Optimizer/actions/runs/39524540973",
+      "public_browser_checks": 18,
+      "workspace_fixture_checks": 19,
+      "live_interaction_checks": 6,
+      "mobile_scores": [
+        {
+          "performance": 99,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        {
+          "performance": 94,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        }
+      ],
+      "performance_median": 99,
+      "metric_medians": {
+        "first-contentful-paint": 1326.217,
+        "largest-contentful-paint": 1359.717,
+        "speed-index": 2908.6217613532885,
+        "total-blocking-time": 64,
+        "cumulative-layout-shift": 0.0134062779855144
+      },
+      "script_transfer_bytes_median": 154803,
+      "note": "All three samples are retained. Performance varied from 94 to 100; a 100 on every run remains unverified."
+    }
+  ]
 }
