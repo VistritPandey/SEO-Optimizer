@@ -195,7 +195,7 @@ def main():
             if path in {"/", "/how-it-works", "/privacy"}:
                 filename = "mobile" if path == "/" else path.strip("/").replace("/", "-")
                 page.screenshot(path=str(screenshots / (filename + ".png")), full_page=True)
-        passed.append("Eight public pages fit a 390px mobile viewport without horizontal overflow")
+        passed.append(f"{len(PAGES)} public pages fit a 390px viewport without horizontal overflow")
         assert page.evaluate("matchMedia('(prefers-reduced-motion: reduce)').matches")
         passed.append("Reduced-motion preference is active during responsive accessibility checks")
         for path in ("/", "/login", "/login?mode=register"):
@@ -283,6 +283,17 @@ def main():
                 "getComputedStyle(e.querySelector('.brand-symbol path')).fill"
             )
             expect(page.locator(".customer-demo")).to_have_css("color-scheme", theme)
+            expect(page.locator(".hero-terminal")).to_have_css("color-scheme", theme)
+            for selector in (".hero-terminal", ".terminal-window", ".demo-agent"):
+                surface = page.locator(selector).evaluate(
+                    "e => getComputedStyle(e).backgroundColor"
+                )
+                channels = [int(c) for c in re.findall(r"\d+", surface)[:3]]
+                assert all(c > 200 if theme == "light" else c < 80 for c in channels), (
+                    theme,
+                    selector,
+                    surface,
+                )
             mark = page.locator(".demo-agent-mark").bounding_box()
             name = page.locator(".demo-agent-heading > div").bounding_box()
             assert mark and name
