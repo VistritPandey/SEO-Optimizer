@@ -6,8 +6,8 @@ import { pageMetadata, site } from "@/lib/site";
 import { articles } from "@/lib/articles";
 
 export const metadata = pageMetadata(
-  "The SEO journal",
-  "Practical articles on autonomous SEO agents, website release checks and AI-search visibility. Clear methods, original examples and evidence you can inspect.",
+  "SEO & GEO Blog",
+  "The Your Optimiser Blog: practical SEO and GEO guides, autonomous agent workflows and website release checklists, with original examples and clear evidence.",
   "/blog",
 );
 
@@ -15,8 +15,21 @@ export default function Page() {
   const schema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "The Your Optimiser journal",
+    "@id": `${site.url}/blog#webpage`,
+    name: "Your Optimiser Blog",
     url: `${site.url}/blog`,
+    isPartOf: {
+      "@type": "WebSite",
+      "@id": `${site.url}/#website`,
+      name: site.name,
+      url: site.url,
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": `${site.url}/#organization`,
+      name: site.name,
+      url: site.url,
+    },
     mainEntity: {
       "@type": "ItemList",
       itemListElement: articles.map((article, index) => ({
@@ -38,11 +51,11 @@ export default function Page() {
           }}
         />
         <header className="journal-heading">
-          <span className="eyebrow">THE YOUR OPTIMISER JOURNAL</span>
+          <span className="eyebrow">THE YOUR OPTIMISER BLOG</span>
           <h1>
-            Keep your website moving.
+            Practical SEO.
             <br />
-            <em>Keep learning as you go.</em>
+            <em>Clearer AI visibility.</em>
           </h1>
           <p>
             Practical notes on autonomous SEO, better website updates and being
