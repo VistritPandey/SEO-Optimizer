@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArticleCards } from "@/components/ArticleCards";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { pageMetadata, site } from "@/lib/site";
-import { articles } from "@/lib/articles";
+import { articles, continuousSeoGuideCover } from "@/lib/articles";
 
 export const metadata = pageMetadata(
   "SEO & GEO Blog",
@@ -66,8 +66,8 @@ export default function Page() {
         <ArticleCards />
         <section className="journal-guide" aria-labelledby="field-guide-title">
           <Image
-            src="/editorial/clear-discovery.webp"
-            alt="Layered ivory paper opening onto a green path."
+            src={continuousSeoGuideCover.image}
+            alt={continuousSeoGuideCover.imageAlt}
             width={1440}
             height={960}
             sizes="(max-width: 760px) 88vw, 40vw"
