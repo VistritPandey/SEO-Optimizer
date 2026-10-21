@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-20",
+  "website": "https://youroptimiser.com",
+  "deployed_commit": "825fe1f77d20ac57852282d8cadab6402c258626",
+  "revision": "your-optimiser-00033-zjp",
+  "traffic_percent": 100,
+  "clean_build": "8801c60e-7de4-4486-94fa-313c6a28e993",
+  "ci": {
+    "url": "https://github.com/YourOptimiser/your-optimiser/actions/runs/39541208942",
+    "conclusion": "success",
+    "jobs": [
+      "secrets",
+      "verify",
+      "frontend",
+      "combined"
+    ]
+  },
+  "release": "https://github.com/YourOptimiser/your-optimiser/releases/tag/v1.0.0-beta.1",
+  "public_site": {
+    "environment": "https://youroptimiser.com",
+    "passed": [
+      "12 public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
+      "Sign-in and workspace pages carry noindex in HTML and HTTP headers",
+      "Sitemap includes public canonical pages only; robots allows them and excludes API crawling",
+      "LLM product index is readable, links to public facts and states its limits",
+      "Structured data describes the real product and free offer without fabricated reviews or FAQ rich-result markup",
+      "Favicon, Apple touch icon and branded social image have correct PNG dimensions",
+      "Every internal navigation link and in-page anchor resolves",
+      "Unknown pages return 404 and workspace API access stays protected"
+    ],
+    "failed": [],
+    "model_calls": 0,
+    "unverified": [
+      "Search indexing and rankings",
+      "AI citation outcomes",
+      "Field Core Web Vitals",
+      "Real customer sign-in and GitHub lifecycle",
+      "Public www redirect: verify after alias DNS and TLS are ready"
+    ]
+  },
+  "journal": {
+    "environment": "https://youroptimiser.com",
+    "passed": [
+      "Homepage names the autonomous SEO agent and links all three original articles",
+      "Journal index links exactly the published articles in its collection metadata",
+      "Three articles and the existing guide have matching visible facts, authorship, dates, canonicals, breadcrumbs, contents and optimised cover images",
+      "Unpublished article paths return 404",
+      "Original repair evidence and engine-specific AI-search limits stay explicit",
+      "Recorded silent demo and captions resolve from the how-it-works page"
+    ],
+    "failed": [],
+    "unverified": [
+      "Search indexing, rankings, traffic and AI citations"
+    ]
+  },
+  "browser": {
+    "environment": "https://youroptimiser.com",
+    "passed": [
+      "Public landing page does not prefetch authentication or workspace routes",
+      "Landing JavaScript stays within the 200 KB compressed transfer budget",
+      "Hero auto-plays and loops with stable height; pause and manual takeover work",
+      "Hero workflow: update, findings, review, verification, replay and keyboard controls",
+      "Silent captioned video mounts only on request and unloads when closed",
+      "Store auto-plays every 1.5 seconds and stops its timer off screen",
+      "Broken update: missing destination, before/after review and repaired destination",
+      "Healthy update: working collection and no proposed fix or approval",
+      "FAQ answers expand with native accessible controls",
+      "Reduced-motion visitors start paused and can explicitly play the example",
+      "12 public pages fit a 390px viewport without horizontal overflow",
+      "Reduced-motion preference is active during responsive accessibility checks",
+      "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks",
+      "Public light/dark/system controls persist across routes and reloads",
+      "Dark public, policy and authentication pages pass mobile accessibility scans",
+      "Both demos and every step pass contrast checks in light and dark themes",
+      "Shared logo matches the brand colour and the walkthrough badge stays aligned",
+      "Headline, terminal example and sign-up links render without JavaScript"
+    ],
+    "browser_errors": [],
+    "accessibility_violations": [],
+    "screenshots": "reports/public-site",
+    "model_calls": 0,
+    "unverified": [
+      "Manual assistive-technology audit",
+      "Authenticated customer workflow"
+    ]
+  },
+  "contact": {
+    "environment": "https://youroptimiser.com",
+    "passed": [
+      "Native required-field and email validation prevent invalid submissions",
+      "Pending submissions cannot duplicate; rejected messages remain editable",
+      "Malformed, HTML, unacknowledged and rate-limited replies never show success",
+      "Network failure preserves the message without automatic POST retries",
+      "Acknowledged submissions show an inline confirmation and clear the form",
+      "Timed-out submissions recover and retain the message",
+      "Honeypot submissions do not contact the provider",
+      "Optional native submission preserves fields for provider verification",
+      "Server-rendered form retains native Formspree submission without JavaScript"
+    ],
+    "failed": [],
+    "actual_provider_submissions": 0,
+    "unverified": [
+      "Live Formspree acceptance, account limits, CAPTCHA and inbox delivery"
+    ]
+  },
+  "frontend_unit_tests": {
+    "passed": 7,
+    "failed": 0
+  },
+  "resolved_issues": [
+    "Recorded video overflow on narrow screens",
+    "Article image link accessible-label mismatch",
+    "Accumulated Docker layer limit; deployed a clean image from the repository Dockerfile"
+  ],
+  "artwork_provenance": "reports/editorial-assets.json",
+  "video": {
+    "seconds": 52,
+    "width": 1920,
+    "height": 1080,
+    "audio_streams": 0,
+    "release_download_status": 200
+  },
+  "unverified": [
+    "Search indexing, rankings, traffic and AI citations",
+    "Field Core Web Vitals",
+    "Manual assistive-technology audit",
+    "Real Formspree delivery",
+    "Public www alias DNS and TLS"
+  ]
+}
