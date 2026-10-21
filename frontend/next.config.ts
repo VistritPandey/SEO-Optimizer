@@ -3,6 +3,8 @@ const config: NextConfig = {
   output: "standalone",
   turbopack: { root: process.cwd() },
   poweredByHeader: false,
+  // Deliver first-paint styles with the HTML instead of another blocking request.
+  experimental: { inlineCss: true },
   async redirects() {
     return [
       {
