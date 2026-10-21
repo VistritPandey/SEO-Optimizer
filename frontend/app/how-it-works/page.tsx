@@ -5,7 +5,7 @@ import { Workflow } from "@/components/Workflow";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
-  "How Your Optimiser works",
+  "How the autonomous SEO agent works",
   "From a website change to a reviewed, tested fix. See how Your Optimiser connects GitHub, checks the right pages and verifies the deployed result.",
   "/how-it-works",
 );
@@ -42,7 +42,7 @@ export default function Page() {
   return (
     <EditorialPage
       wide
-      eyebrow="A WORKING AGENT, FROM START TO FINISH"
+      eyebrow="YOUR AUTONOMOUS SEO AGENT, AT WORK"
       title={
         <>
           You make the next move.
