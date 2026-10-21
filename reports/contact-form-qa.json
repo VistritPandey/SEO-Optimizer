@@ -1,5 +1,5 @@
 {
-  "environment": "http://127.0.0.1:3002",
+  "environment": "https://youroptimiser.com",
   "passed": [
     "Native required-field and email validation prevent invalid submissions",
     "Pending submissions cannot duplicate; rejected messages remain editable",
