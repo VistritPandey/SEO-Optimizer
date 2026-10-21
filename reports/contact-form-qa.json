@@ -1,0 +1,19 @@
+{
+  "environment": "http://127.0.0.1:3002",
+  "passed": [
+    "Native required-field and email validation prevent invalid submissions",
+    "Pending submissions cannot duplicate; rejected messages remain editable",
+    "Malformed, HTML, unacknowledged and rate-limited replies never show success",
+    "Network failure preserves the message without automatic POST retries",
+    "Acknowledged submissions show an inline confirmation and clear the form",
+    "Timed-out submissions recover and retain the message",
+    "Honeypot submissions do not contact the provider",
+    "Optional native submission preserves fields for provider verification",
+    "Server-rendered form retains native Formspree submission without JavaScript"
+  ],
+  "failed": [],
+  "actual_provider_submissions": 0,
+  "unverified": [
+    "Live Formspree acceptance, account limits, CAPTCHA and inbox delivery"
+  ]
+}
