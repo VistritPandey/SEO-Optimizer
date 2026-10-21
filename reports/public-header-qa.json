@@ -1,0 +1,21 @@
+{
+  "environment": "https://youroptimiser.com",
+  "passed": [
+    "1440px: all desktop links stay on one aligned row",
+    "1280px: all desktop links stay on one aligned row",
+    "1101px: all desktop links stay on one aligned row",
+    "1100px: complete menu, keyboard, Escape, outside click and link dismissal",
+    "1024px: complete menu, keyboard, Escape, outside click and link dismissal",
+    "768px: complete menu, keyboard, Escape, outside click and link dismissal",
+    "640px: complete menu, keyboard, Escape, outside click and link dismissal",
+    "390px: complete menu, keyboard, Escape, outside click and link dismissal",
+    "320px: complete menu, keyboard, Escape, outside click and link dismissal",
+    "Open light menu passes automated A/AA accessibility checks",
+    "Open dark menu passes automated A/AA accessibility checks",
+    "Resizing between desktop and compact layouts resets the menu safely",
+    "Tab can leave the disclosure; navigation never traps keyboard focus",
+    "All navigation destinations remain available without JavaScript"
+  ],
+  "browser_errors": [],
+  "failed": []
+}
