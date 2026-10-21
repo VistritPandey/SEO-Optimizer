@@ -23,10 +23,13 @@ export const articles: Article[] = [
     slug: "what-is-an-autonomous-seo-agent",
     category: "THE AGENT EXPLAINED",
     title: "What is an autonomous SEO agent?",
-    description: "An audit tells you what needs attention. An autonomous SEO agent follows the work through: inspect, repair, test and verify. Here is what that means in practice.",
-    takeaway: "Autonomy means the agent can move work forward within your rules. It does not mean every finding deserves an edit, or every proposed change should skip review.",
+    description:
+      "An audit tells you what needs attention. An autonomous SEO agent follows the work through: inspect, repair, test and verify. Here is what that means in practice.",
+    takeaway:
+      "Autonomy means the agent can move work forward within your rules. It does not mean every finding deserves an edit, or every proposed change should skip review.",
     image: "/editorial/continuous-care.webp",
-    imageAlt: "A forest-green paper loop passing through three ivory frames, with a small aligned block at its centre.",
+    imageAlt:
+      "A forest-green paper loop passing through three ivory frames, with a small aligned block at its centre.",
     published: "2026-10-20",
     sections: [
       {
@@ -60,7 +63,10 @@ export const articles: Article[] = [
           "The worker rechecked the served pages and recorded four resolved defects with no regressions detected in that audit. The private preview and crawler preferences stayed unchanged. A repeat audit created no new commit. A subsequent docs-only merge produced no inference request because it affected no configured website route.",
           "This is evidence of one repair workflow, not a customer case study or an estimate of ranking impact. The demo used local Git. It did not publish a live GitHub pull request, and it did not measure organic traffic or AI citations.",
         ],
-        source: { label: "Inspect the recorded repair evidence", url: "https://github.com/YourOptimiser/your-optimiser/blob/main/reports/agent-session.json" },
+        source: {
+          label: "Inspect the recorded repair evidence",
+          url: "https://github.com/YourOptimiser/your-optimiser/blob/main/reports/agent-session.json",
+        },
       },
       {
         id: "healthy-is-an-outcome",
@@ -85,10 +91,13 @@ export const articles: Article[] = [
     slug: "seo-checklist-after-a-website-update",
     category: "PRACTICAL SEO",
     title: "The SEO checks to run after a website update",
-    description: "A launch can look perfect and still break discovery. Use this practical checklist to inspect the pages, links and search information your update actually changed.",
-    takeaway: "Start with the change and its dependencies. Check the served website after deployment, then distinguish a verified technical repair from a search outcome that needs more time.",
+    description:
+      "A launch can look perfect and still break discovery. Use this practical checklist to inspect the pages, links and search information your update actually changed.",
+    takeaway:
+      "Start with the change and its dependencies. Check the served website after deployment, then distinguish a verified technical repair from a search outcome that needs more time.",
     image: "/editorial/continuous-care.webp",
-    imageAlt: "Ivory paper frames joined by a continuous green loop, representing checks that continue after a launch.",
+    imageAlt:
+      "Ivory paper frames joined by a continuous green loop, representing checks that continue after a launch.",
     published: "2026-10-20",
     sections: [
       {
@@ -119,7 +128,10 @@ export const articles: Article[] = [
           "Inspect the title, description, canonical URL and indexing directives in the served response. Compare these with the intended page and the last known good version. Two canonical declarations naming different destinations deserve investigation; deleting one at random is not a reliable repair.",
           "A page description should accurately summarise that page. It should not invent an offer or become the same generic sentence across a whole site. Google may use page content instead of your description when producing a search snippet, so writing a description does not give you exact control over the search result.",
         ],
-        source: { label: "Google’s guidance on search snippets", url: "https://developers.google.com/search/docs/appearance/snippet" },
+        source: {
+          label: "Google’s guidance on search snippets",
+          url: "https://developers.google.com/search/docs/appearance/snippet",
+        },
       },
       {
         id: "rendering-and-facts",
@@ -128,7 +140,10 @@ export const articles: Article[] = [
           "If the update changes JavaScript rendering, compare the initial response with the rendered page. A heading visible only after a failed request, or navigation that depends on an unavailable script, deserves a closer look. Your build passing does not by itself prove the relevant content is present in the served page.",
           "For products and business pages, compare structured data with what visitors can read. A price of USD 89 on the page and USD 129 in product markup is an inconsistency to resolve using verified facts. Do not fill missing reviews, opening hours, stock or service locations with plausible values.",
         ],
-        source: { label: "Google’s structured data quality requirements", url: "https://developers.google.com/search/docs/appearance/structured-data/sd-policies" },
+        source: {
+          label: "Google’s structured data quality requirements",
+          url: "https://developers.google.com/search/docs/appearance/structured-data/sd-policies",
+        },
       },
       {
         id: "verify-and-record",
@@ -145,10 +160,13 @@ export const articles: Article[] = [
     slug: "seo-and-geo-what-to-fix-first",
     category: "SEARCH & AI DISCOVERY",
     title: "SEO and GEO: what should you fix first?",
-    description: "Start with accessible pages, clear facts and useful answers. A practical approach to AI-search visibility without magic files, invented citations or misleading scores.",
-    takeaway: "Make the business easy to find and understand, then measure each search experience separately. A technical score, a citation and a conversion answer different questions.",
+    description:
+      "Start with accessible pages, clear facts and useful answers. A practical approach to AI-search visibility without magic files, invented citations or misleading scores.",
+    takeaway:
+      "Make the business easy to find and understand, then measure each search experience separately. A technical score, a citation and a conversion answer different questions.",
     image: "/editorial/clear-discovery.webp",
-    imageAlt: "Layered ivory paper with a green path and an aligned opening, an abstract study of clear discovery.",
+    imageAlt:
+      "Layered ivory paper with a green path and an aligned opening, an abstract study of clear discovery.",
     published: "2026-10-20",
     sections: [
       {
@@ -167,7 +185,10 @@ export const articles: Article[] = [
           "A helpful explanation cannot do much for a visitor who follows a broken link. Check the public URL, important internal links, preferred URL declarations and whether the intended content reaches the served page. Preserve private areas. Crawl access and indexing are distinct: permitting a fetch is not proof that a page is indexed.",
           "An AI-answer result also depends on the engine and retrieval context. A page that is available to one crawler is not automatically used by every answer system. Avoid a blanket “allow all bots” change when a site owner has deliberately chosen a crawler policy.",
         ],
-        source: { label: "Google’s explanation of robots.txt and its limits", url: "https://developers.google.com/search/docs/crawling-indexing/robots/intro" },
+        source: {
+          label: "Google’s explanation of robots.txt and its limits",
+          url: "https://developers.google.com/search/docs/crawling-indexing/robots/intro",
+        },
       },
       {
         id: "google-specific-guidance",
@@ -176,7 +197,10 @@ export const articles: Article[] = [
           "Google’s current guidance for its generative Search features points back to established SEO and useful, distinctive content. It does not recommend llms.txt or special AI markup as a way to improve visibility in Google. That is a Google-specific statement, not a universal claim about every consumer of an llms.txt file.",
           "Our own llms.txt is a readable index of product facts and public links. We do not treat its presence as a ranking improvement or use it to control crawlers. Likewise, article markup describes an article; it cannot turn unsupported copy into trustworthy evidence or guarantee an AI citation.",
         ],
-        source: { label: "Google’s generative AI search optimisation guide", url: "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide" },
+        source: {
+          label: "Google’s generative AI search optimisation guide",
+          url: "https://developers.google.com/search/docs/fundamentals/ai-optimization-guide",
+        },
       },
       {
         id: "provide-evidence",
@@ -186,7 +210,10 @@ export const articles: Article[] = [
           "Structure the page for readers. Use a descriptive heading, a direct introduction and sections that answer the next likely questions. Explain the method and limits of any result. A fictional demonstration should say it is fictional; a local test should not be presented as a customer’s production improvement.",
           "Do not pad a page to reach an arbitrary length. A blog is a publishing format, not a ranking feature. Before creating another article, ask whether it solves a different reader problem or only restates what an existing page already covers.",
         ],
-        source: { label: "Google’s people-first content guidance", url: "https://developers.google.com/search/docs/fundamentals/creating-helpful-content" },
+        source: {
+          label: "Google’s people-first content guidance",
+          url: "https://developers.google.com/search/docs/fundamentals/creating-helpful-content",
+        },
       },
       {
         id: "measure-with-care",
@@ -202,6 +229,15 @@ export const articles: Article[] = [
 ];
 
 export function readingMinutes(article: Article) {
-  const words = [article.description, ...article.sections.flatMap(s => [s.title, ...s.paragraphs, ...(s.bullets ?? [])])].join(" ").split(/\s+/).length;
+  const words = [
+    article.description,
+    ...article.sections.flatMap((s) => [
+      s.title,
+      ...s.paragraphs,
+      ...(s.bullets ?? []),
+    ]),
+  ]
+    .join(" ")
+    .split(/\s+/).length;
   return Math.max(1, Math.ceil(words / 220));
 }
