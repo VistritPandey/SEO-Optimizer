@@ -1,8 +1,13 @@
 import { Dashboard } from "@/components/Dashboard";
+import { MotionProvider } from "@/components/Motion";
 export const metadata = {
   title: "Workspace",
   robots: { index: false, follow: false },
 };
 export default function Page() {
-  return <Dashboard />;
+  return (
+    <MotionProvider>
+      <Dashboard />
+    </MotionProvider>
+  );
 }
