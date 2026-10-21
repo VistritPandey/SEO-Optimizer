@@ -1,12 +1,12 @@
 {
-  "environment": "https://youroptimiser.com",
+  "environment": "http://127.0.0.1:3002",
   "passed": [
     "Public landing page does not prefetch authentication or workspace routes",
     "Landing JavaScript stays within the 200 KB compressed transfer budget",
     "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
     "Silent captioned video mounts only on request and unloads when closed",
-    "Store auto-plays the illustrated full cycle and stops its timer off screen",
+    "Store auto-plays every 1.5 seconds and stops its timer off screen",
     "Broken update: missing destination, before/after review and repaired destination",
     "Healthy update: working collection and no proposed fix or approval",
     "FAQ answers expand with native accessible controls",
@@ -16,6 +16,8 @@
     "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks",
     "Public light/dark/system controls persist across routes and reloads",
     "Dark public, policy and authentication pages pass mobile accessibility scans",
+    "Both demos and every step pass contrast checks in light and dark themes",
+    "Shared logo matches the brand colour and the walkthrough badge stays aligned",
     "Headline, illustrated example and sign-up links render without JavaScript"
   ],
   "browser_errors": [],
