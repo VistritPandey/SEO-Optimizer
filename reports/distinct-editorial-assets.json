@@ -1,0 +1,21 @@
+{
+  "tool": "image_gen.imagegen",
+  "created": "2026-10-21",
+  "purpose": "Distinct covers for the release checklist and continuous SEO field guide. Existing agent and GEO covers remain unique to their respective posts.",
+  "assets": [
+    {
+      "path": "frontend/public/editorial/release-checklist.webp",
+      "width": 1440,
+      "height": 960,
+      "prompt": "Use case: illustration-story. Asset type: unique editorial cover for an article called The SEO checks to run after a website update, for Your Optimiser. Primary request: a sophisticated photograph of a physical paper checklist sculpture. Three small ivory cards lie slightly offset in a neat diagonal arrangement on a warm off-white #f7f7f0 tabletop; each card has one clearly visible deep forest-green #315443 cut-paper check mark, with one small unfilled sage-green square on the foreground card. No printed words, no lettering, no digits. Cards, ticks and square are tactile matte paper with believable fine fibres and gentle imperfect edges. Art-directed contemporary design magazine still life, natural side lighting, real soft shadows, cream, forest and muted sage palette. Landscape 3:2 composition, a compact clear subject surrounded by generous breathing room; legible as a small thumbnail. Avoid architectural frames, ribbon loops, tunnels, layered openings, books, robots, screens, charts, glossy 3D, gradients, neon, logos and watermarks. This must look visually distinct from paper-loop and layered-opening images in the same editorial series.",
+      "processing": "Resized and encoded as WebP with Sharp; composition preserved."
+    },
+    {
+      "path": "frontend/public/editorial/continuous-seo-guide.webp",
+      "width": 1440,
+      "height": 960,
+      "prompt": "Use case: illustration-story. Asset type: a unique editorial cover for the long-form continuous SEO field guide on Your Optimiser. Primary request: an art-directed still-life photograph of a beautiful small open field notebook with an unprinted deep forest-green #315443 cloth cover and warm ivory pages. One page folds outward into a simple accordion with three successive paper steps, suggesting a practical process that continues. A thin muted sage bookmark lies gently across the book. No printed text, no handwriting, no icons, no numbers, no logos. Tactile paper fibres and cloth grain, credible book construction, quietly imperfect materials, natural directional daylight, realistic soft shadows on a warm off-white #f7f7f0 tabletop. Contemporary editorial photography, restrained forest, sage and cream palette. Landscape 3:2 composition with one unmistakable book silhouette, generous negative space, easy to distinguish at small thumbnail size. Avoid checklists, check marks, architectural frames, ribbon loops, tunnels, circular openings, floating UI, robots, screens, gradients, glossy 3D and watermarks.",
+      "processing": "Resized and encoded as WebP with Sharp; composition preserved."
+    }
+  ]
+}
