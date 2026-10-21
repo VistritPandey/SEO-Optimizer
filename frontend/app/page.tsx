@@ -1,4 +1,6 @@
 import Link from "next/link";
+import Image from "next/image";
+import { ArticleCards } from "@/components/ArticleCards";
 import { Workflow } from "@/components/Workflow";
 import { HeroWorkflow } from "@/components/HeroWorkflow";
 import { WalkthroughVideo } from "@/components/WalkthroughVideo";
@@ -92,16 +94,16 @@ export default function Home() {
         />
         <section className="hero">
           <div>
-            <span className="eyebrow">YOUR AI AGENT FOR ONGOING SEO</span>
+            <span className="eyebrow">CONTINUOUS CARE. EVIDENCE BEFORE ACTION.</span>
             <h1>
-              Your website evolves.
+              Your autonomous
               <br />
-              <em>Your SEO needs to keep up.</em>
+              <em>SEO agent.</em>
             </h1>
             <p>
-              A new page. A fresh design. A product update. Catch the quiet SEO
-              problems that can come with them. Your Optimiser checks what
-              changed, prepares a focused fix and checks the live result.
+              Your website keeps changing. Your Optimiser watches the updates,
+              finds supported SEO issues, prepares tested fixes in GitHub and
+              checks the result after deployment.
             </p>
             <div className="actions">
               <a className="button" href="#how">
@@ -383,21 +385,13 @@ export default function Home() {
             ))}
           </div>
         </section>
-        <section className="guide-invitation marketing-section">
-          <span className="eyebrow">A PRACTICAL GUIDE FOR YOUR TEAM</span>
-          <h2>
-            An SEO habit
-            <br />
-            <em>that survives the next launch.</em>
-          </h2>
-          <p>
-            How to follow a website change, establish the evidence, review a fix
-            and measure what actually happened. A useful read whether you use an
-            agent or do the work yourself.
-          </p>
-          <Link href="/guides/continuous-seo" className="text-link">
-            Read the ongoing SEO guide →
-          </Link>
+        <section className="journal-home marketing-section" aria-labelledby="journal-title">
+          <div className="journal-section-heading"><div><span className="eyebrow">THE JOURNAL</span><h2 id="journal-title">Good SEO starts with<br/><em>understanding the work.</em></h2></div><Link href="/blog" className="text-link">Explore the journal →</Link></div>
+          <ArticleCards />
+        </section>
+        <section className="journal-guide marketing-section" aria-labelledby="guide-title">
+          <Image src="/editorial/clear-discovery.webp" alt="Layered ivory paper revealing a clear green path." width={1440} height={960} sizes="(max-width: 760px) 88vw, 40vw" />
+          <div><span className="eyebrow">A PRACTICAL GUIDE FOR YOUR TEAM</span><h2 id="guide-title">An SEO habit that survives the next launch.</h2><p>Follow a website change, establish the evidence, review a fix and measure what happened. A useful process whether you use an agent or do the work yourself.</p><Link href="/guides/continuous-seo" className="text-link">Read the ongoing SEO guide →</Link></div>
         </section>
         <section className="closing marketing-section">
           <span className="eyebrow">THE WORK CONTINUES AFTER THE AUDIT</span>
