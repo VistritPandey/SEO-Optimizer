@@ -29,6 +29,10 @@ def main():
         page.on("request", lambda request: requests.append(request.url))
         page.clock.install()
         page.goto(args.base_url, wait_until="networkidle")
+        assert not any(re.search(r"/(?:login|dashboard)\?[^#]*_rsc=", url) for url in requests), (
+            "Public navigation must not preload authentication or workspace bundles"
+        )
+        passed.append("Public landing page does not prefetch authentication or workspace routes")
         hero = page.get_by_role("complementary", name="Interactive SEO workflow example")
         assert hero.get_by_role("heading", name="Your team ships a new homepage.").is_visible()
         playback = hero.locator(".demo-playback")
@@ -257,6 +261,17 @@ def main():
         passed.append(
             "Dark public, policy and authentication pages pass mobile accessibility scans"
         )
+        static = browser.new_context(
+            java_script_enabled=False, viewport={"width": 390, "height": 844}
+        )
+        static_page = static.new_page()
+        static_page.goto(args.base_url, wait_until="networkidle")
+        expect(static_page.locator(".hero h1")).to_be_visible()
+        expect(static_page.locator(".workflow-artifact")).to_be_visible()
+        expect(static_page.locator(".demo-story")).to_have_css("opacity", "1")
+        assert static_page.get_by_role("link", name="Get started free").count() >= 1
+        passed.append("Headline, illustrated example and sign-up links render without JavaScript")
+        static.close()
         browser.close()
     report = {
         "environment": args.base_url,
