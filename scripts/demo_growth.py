@@ -53,7 +53,7 @@ def main():
     guide = repository / "web/guide/index.html"
     guide.write_text(
         '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Desk lighting setup '
-        '— Cedar Workshop</title><meta name="description" content="Plan a desk lighting setup '
+        '- Cedar Workshop</title><meta name="description" content="Plan a desk lighting setup '
         'with the Cedar Desk Lamp and original owner observations."><link rel="stylesheet" '
         'href="/style.css"></head><body><header><a class="brand" href="/">Cedar Workshop</a>'
         '<nav><a href="/guide/">Desk guide</a></nav></header><main><section class="hero"><div>'
