@@ -42,7 +42,7 @@ function date(value?: number) {
 function duration(job: Job) {
   return job.created_at && job.updated_at
     ? `${Math.max(0, Math.round(job.updated_at - job.created_at))}s`
-    : "—";
+    : "-";
 }
 function reportFor(job: Job): AuditReport | undefined {
   return job.result.after_report
@@ -156,7 +156,7 @@ export function AuditWorkspace({
               ? "Partial check health"
               : "Observed health"
           }
-          value={report.score == null ? "—" : `${report.score}/100`}
+          value={report.score == null ? "-" : `${report.score}/100`}
           note={`${assessed.length} checks assessed · ${coverage.length || report.total_checks || 0} in catalog`}
         />
         <Metric
@@ -166,7 +166,7 @@ export function AuditWorkspace({
         />
         <Metric
           label="Pages observed"
-          value={report.pages ?? "—"}
+          value={report.pages ?? "-"}
           note="From the latest audit, not a site-wide index count"
         />
         <Metric
@@ -766,7 +766,7 @@ function AuditRuns({
             <div className="audit-run-body">
               <div className="audit-run-stats">
                 <span>
-                  Pages <strong>{report?.pages ?? "—"}</strong>
+                  Pages <strong>{report?.pages ?? "-"}</strong>
                 </span>
                 <span>
                   Verified fixes{" "}
