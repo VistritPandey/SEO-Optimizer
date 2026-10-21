@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { EditorialPage } from "@/components/EditorialPage";
+import { ContactForm } from "@/components/ContactForm";
 import { pageMetadata, site } from "@/lib/site";
 
 export const metadata = pageMetadata(
@@ -21,23 +22,16 @@ export default function Page() {
           <em>We’re listening.</em>
         </>
       }
-      intro="Your Optimiser is in its early public release. Support is handled by the project maintainers. Use our support address for product, account, privacy and security questions."
+      intro="A product question, a problem to solve or an idea to share. Send a message to the people building Your Optimiser."
     >
       <section>
-        <h2>Product questions and reproducible problems.</h2>
+        <h2>Let’s talk.</h2>
         <p>
           Tell us what you expected and what happened, along with the page or
-          feature involved. Remove tokens, passwords and unnecessary customer
-          data from screenshots or attachments.
+          feature involved. For account or security questions, start with a
+          brief description so we can arrange a suitable follow-up.
         </p>
-        <a
-          className="button"
-          href={support}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Email support ↗
-        </a>
+        <ContactForm />
       </section>
       <section>
         <h2>Privacy, account or security requests.</h2>
