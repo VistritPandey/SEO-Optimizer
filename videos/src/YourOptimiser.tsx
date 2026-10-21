@@ -579,7 +579,7 @@ const Fix = () => {
       <Agent status="Preparing a fix">
         <Row
           label="Use the working destination"
-          detail="An existing collection page-not a guessed URL."
+          detail="Links to the verified collection page."
           done={frame > 40}
         />
         <Row
