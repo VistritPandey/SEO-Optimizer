@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { NavigationScroll } from "@/components/NavigationScroll";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -51,6 +52,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="en"
+      data-scroll-behavior="smooth"
       className={`${sans.variable} ${serif.variable}`}
       suppressHydrationWarning
     >
@@ -66,7 +68,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+          <NavigationScroll />
+        </ThemeProvider>
       </body>
     </html>
   );
