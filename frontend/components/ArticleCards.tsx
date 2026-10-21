@@ -5,7 +5,7 @@ import { articles, readingMinutes } from "@/lib/articles";
 export function ArticleCards() {
   return (
     <div className="journal-cards">
-      {articles.map((article, index) => (
+      {articles.map((article) => (
         <article key={article.slug} className="journal-card">
           <Link
             href={`/blog/${article.slug}`}
@@ -19,7 +19,6 @@ export function ArticleCards() {
               height={960}
               sizes="(max-width: 760px) 88vw, 30vw"
             />
-            <span aria-hidden="true">0{index + 1} ↗</span>
           </Link>
           <div className="journal-card-copy">
             <span className="eyebrow">{article.category}</span>
