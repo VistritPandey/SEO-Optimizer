@@ -1,0 +1,21 @@
+{
+  "tool": "image_gen.imagegen",
+  "created": "2026-10-20",
+  "purpose": "Editorial paper artwork for the Your Optimiser landing page and journal. Illustrations are decorative, not product screenshots.",
+  "assets": [
+    {
+      "path": "frontend/public/editorial/continuous-care.webp",
+      "width": 1440,
+      "height": 960,
+      "prompt": "Use case: illustration-story. Asset type: landscape editorial cover for Your Optimiser, an autonomous SEO agent website. Create a refined physical paper sculpture photograph: a single continuous dark forest-green paper ribbon passes through three precisely cut warm ivory architectural frames and returns in a quiet loop, suggesting ongoing inspection and repair. A small sage-green square is carefully realigned in the middle frame. Tangible fibrous paper, slight handmade irregularities, soft directional daylight, gentle true shadows on warm off-white #f7f7f0. Restrained forest green #315443, sage and cream palette matching a contemporary editorial website. Wide 3:2 composition, sculptural subject centred with generous breathing room, sophisticated art direction, crisp realistic macro textures. No people, no text, letters, logos, numbers, screens, charts, robots, neon, gradients, glossy plastic or floating UI. Feels like an art-directed design magazine photograph rather than a generic AI illustration.",
+      "processing": "Converted to WebP and resized with Sharp; composition preserved."
+    },
+    {
+      "path": "frontend/public/editorial/clear-discovery.webp",
+      "width": 1440,
+      "height": 960,
+      "prompt": "Use case: illustration-story. Asset type: a second landscape editorial cover for Your Optimiser, an autonomous SEO agent website, coordinated with an architectural paper sculpture series. Create an art-directed photograph of three layered ivory paper sheets with fine forest-green cut-paper paths; a single clean opening aligns through the layers so daylight reaches a small sage-green circle underneath. This is an abstract metaphor for clear, discoverable information. Physical fibrous stock, subtle imperfect cut edges, restrained composition, natural shadows, warm off-white #f7f7f0 surface, deep forest #315443 and muted sage. Wide 3:2 composition, centred tactile sculpture, generous negative space. Elegant contemporary editorial photography, believable real materials. No text, lettering, numbers, logos, robots, faces, screens, charts, neon, glow, glossy 3D or floating UI. Make this look like a deliberately photographed commissioned paper artwork.",
+      "processing": "Converted to WebP and resized with Sharp; composition preserved."
+    }
+  ]
+}
