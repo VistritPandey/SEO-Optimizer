@@ -112,7 +112,7 @@ export function WorkspaceTour({
               Needs more context <span>?</span>
             </p>
             <p>
-              Not yet assessed <span>—</span>
+              Not yet assessed <span>-</span>
             </p>
           </div>
         )}
