@@ -2,6 +2,7 @@
   "environment": "http://127.0.0.1:3002",
   "passed": [
     "Public landing page does not prefetch authentication or workspace routes",
+    "Landing JavaScript stays within the 200 KB compressed transfer budget",
     "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
     "Silent captioned video mounts only on request and unloads when closed",
