@@ -36,6 +36,8 @@ def main():
         index = client.get("/blog")
         assert index.status_code == 200
         index_document = Document(index.text)
+        assert "Blog" in index_document.title and "Your Optimiser" in index_document.title
+        assert "Journal" not in index.text and "JOURNAL" not in index.text
         assert all(path in index_document.links for path in ARTICLES)
         collection = next(s for s in index_document.schemas if s.get("@type") == "CollectionPage")
         assert {item["url"] for item in collection["mainEntity"]["itemListElement"]} == {
@@ -56,10 +58,17 @@ def main():
             assert article["mainEntityOfPage"] == CANONICAL + path
             assert article["author"]["@type"] == "Organization"
             assert article["author"]["name"] == "Your Optimiser"
+            assert article["author"]["@id"] == CANONICAL + "/#organization"
+            assert article["publisher"]["@id"] == CANONICAL + "/#organization"
+            assert article["isPartOf"]["name"] == "Your Optimiser Blog"
+            assert article["mentions"]["@id"] == CANONICAL + "/#application"
+            assert "Your Optimiser" in page.meta["description"]
+            assert "Your Optimiser" in page.meta["twitter:title"]
+            assert page.meta["author"] == "Your Optimiser"
             assert article["datePublished"] in response.text
             assert article["dateModified"] in response.text
             assert breadcrumb["itemListElement"][-1]["item"] == CANONICAL + path
-            assert page.meta["og:type"] == "article" if path in ARTICLES else True
+            assert page.meta["og:type"] == "article"
             image_path = article["image"].removeprefix(CANONICAL)
             image = client.get(image_path)
             assert image.status_code == 200
@@ -70,7 +79,8 @@ def main():
             assert "THE TAKEAWAY" in response.text
         passed.append(
             "Three articles and the existing guide have matching visible facts, "
-            "authorship, dates, canonicals, breadcrumbs, contents and optimised cover images"
+            "brand identity, authorship, dates, canonicals, article sharing metadata, "
+            "breadcrumbs, contents and optimised cover images"
         )
         assert client.get("/blog/an-unpublished-article").status_code == 404
         passed.append("Unpublished article paths return 404")
