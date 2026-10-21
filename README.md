@@ -34,7 +34,7 @@ Coverage includes technical SEO, content, AI-search discovery, local business fa
 and international targeting. Checks distinguish directly observed defects from questions that
 need external data. Search rankings, citations and traffic are not guaranteed.
 
-[Try the interactive example](https://youroptimiser.com/#how) · [Read the journal](https://youroptimiser.com/blog)
+[Try the interactive example](https://youroptimiser.com/#how) · [Read the blog](https://youroptimiser.com/blog)
 
 ## Run locally
 
