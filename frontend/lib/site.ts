@@ -32,6 +32,9 @@ export function pageMetadata(
   return {
     title,
     description,
+    authors: [{ name: site.name, url: site.url }],
+    creator: site.name,
+    publisher: site.name,
     alternates: { canonical: path },
     openGraph: {
       type: "website",
@@ -53,6 +56,43 @@ export function pageMetadata(
       title: `${title} · ${site.name}`,
       description,
       images: [`${site.url}/opengraph-image`],
+    },
+  };
+}
+
+export function articleMetadata({
+  title,
+  description,
+  path,
+  image,
+  imageAlt,
+  published,
+  updated,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  image: string;
+  imageAlt: string;
+  published: string;
+  updated?: string;
+}): Metadata {
+  const metadata = pageMetadata(title, description, path);
+  return {
+    ...metadata,
+    openGraph: {
+      ...metadata.openGraph,
+      type: "article",
+      authors: [site.url],
+      publishedTime: published,
+      modifiedTime: updated ?? published,
+      images: [
+        { url: `${site.url}${image}`, width: 1440, height: 960, alt: imageAlt },
+      ],
+    },
+    twitter: {
+      ...metadata.twitter,
+      images: [`${site.url}${image}`],
     },
   };
 }
