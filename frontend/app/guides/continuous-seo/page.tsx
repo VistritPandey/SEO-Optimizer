@@ -1,12 +1,17 @@
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
-import { pageMetadata } from "@/lib/site";
+import { articleMetadata } from "@/lib/site";
 
-export const metadata = pageMetadata(
-  "A practical guide to continuous SEO",
-  "A website change is the start of an SEO check. Learn a practical process for detecting regressions, reviewing focused fixes and verifying what went live.",
-  "/guides/continuous-seo",
-);
+export const metadata = articleMetadata({
+  title: "A practical guide to continuous SEO",
+  description:
+    "Your Optimiser’s guide to continuous SEO: detect website regressions, review focused fixes and verify what went live, with evidence at each step.",
+  path: "/guides/continuous-seo",
+  image: "/editorial/continuous-care.webp",
+  imageAlt: "A continuous green paper loop through three ivory frames.",
+  published: "2026-10-19",
+  updated: "2026-10-20",
+});
 
 export default function Page() {
   return (
