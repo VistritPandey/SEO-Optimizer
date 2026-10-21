@@ -1,0 +1,15 @@
+{
+  "environment": "http://127.0.0.1:3002",
+  "passed": [
+    "Homepage names the autonomous SEO agent and links all three original articles",
+    "Journal index links exactly the published articles in its collection metadata",
+    "Three articles and the existing guide have matching visible facts, authorship, dates, canonicals, breadcrumbs, contents and optimised cover images",
+    "Unpublished article paths return 404",
+    "Original repair evidence and engine-specific AI-search limits stay explicit",
+    "Recorded silent demo and captions resolve from the how-it-works page"
+  ],
+  "failed": [],
+  "unverified": [
+    "Search indexing, rankings, traffic and AI citations"
+  ]
+}
