@@ -59,7 +59,8 @@
     "frontend_format_and_types": "passed",
     "python_lint_and_types": "passed",
     "remotion_types": "passed",
-    "knowledge_package": "39 checks and 31 sources validated"
+    "knowledge_package": "39 checks and 31 sources validated",
+    "workspace_browser_checks": 19
   },
   "playback_harness_notes": [
     "Initial built-in browser media-document load did not preload.",
