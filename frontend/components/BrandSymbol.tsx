@@ -1,31 +1,14 @@
-"use client";
-
-import { useId } from "react";
-
 export function BrandSymbol() {
-  const id = useId();
   return (
-    <svg className="brand-symbol" viewBox="0 0 96 96" aria-hidden="true">
-      <defs>
-        {/* Remove the paper background and tint the existing silhouette with the theme colour. */}
-        <filter id={id} colorInterpolationFilters="sRGB">
-          <feColorMatrix
-            in="SourceGraphic"
-            type="matrix"
-            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1 0 0 0 1"
-          />
-          <feComponentTransfer result="shape">
-            <feFuncA type="table" tableValues="0 0 0.4 1 1" />
-          </feComponentTransfer>
-          <feFlood floodColor="currentColor" />
-          <feComposite in2="shape" operator="in" />
-        </filter>
-      </defs>
-      <image
-        href="/brand/mark.png"
-        width="96"
-        height="96"
-        filter={`url(#${id})`}
+    <svg
+      className="brand-symbol"
+      viewBox="0 0 96 96"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path
+        d="M0 0 C3.5 2.81 4.61 5.07 5.48 9.42 C5.59 9.93 5.59 9.93 6.13 12.53 C6.33 13.59 6.54 14.65 6.75 15.75 C6.97 16.83 7.19 17.91 7.42 19.02 C7.96 21.68 8.49 24.34 9 27 C10.29 23.63 11.58 20.25 12.88 16.88 C13.24 15.92 13.6 14.97 13.98 13.99 C15.75 9.36 17.49 4.73 19 0 C22.3 0 25.6 0 29 0 C28.15 0.89 27.3 1.77 26.43 2.68 C21.97 7.89 19.21 13.96 16.19 20.06 C0.97 50.12 0.97 50.12 -7 54 C-10.37 54.89 -13.53 55.44 -17 55 C-18.82 53.66 -18.82 53.66 -20 52 C-19.69 49.31 -19.69 49.31 -19 47 C-16.63 46.38 -16.63 46.38 -14 46 C-12 48 -12 48 -12 51 C-7.05 50.31 -4.59 49.13 -1.5 45.12 C2 39.21 1.23 34.54 0 28 C-0.26 26.36 -0.51 24.72 -0.77 23.08 C-1.07 21.34 -1.38 19.61 -1.69 17.88 C-1.82 17.03 -1.96 16.19 -2.1 15.32 C-2.55 13.04 -2.98 11.09 -4 9 C-7.14 7.45 -7.14 7.45 -10 7 C-9.69 4.63 -9.69 4.63 -9 2 C-5.51 -0.33 -4.11 -0.5 0 0 Z"
+        transform="translate(44,22)"
       />
     </svg>
   );
