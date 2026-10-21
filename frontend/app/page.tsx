@@ -7,6 +7,7 @@ import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/lib/site";
+import { continuousSeoGuideCover } from "@/lib/articles";
 
 export const metadata = { alternates: { canonical: "/" } };
 
@@ -413,8 +414,8 @@ export default function Home() {
           aria-labelledby="guide-title"
         >
           <Image
-            src="/editorial/clear-discovery.webp"
-            alt="Layered ivory paper revealing a clear green path."
+            src={continuousSeoGuideCover.image}
+            alt={continuousSeoGuideCover.imageAlt}
             width={1440}
             height={960}
             sizes="(max-width: 760px) 88vw, 40vw"
