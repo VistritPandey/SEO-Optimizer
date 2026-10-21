@@ -42,14 +42,32 @@ export function ArticleLayout({
         image: `${site.url}${image}`,
         datePublished: published,
         dateModified: updated ?? published,
-        author: { "@type": "Organization", name: site.name, url: site.url },
+        author: {
+          "@type": "Organization",
+          "@id": `${site.url}/#organization`,
+          name: site.name,
+          url: site.url,
+        },
         publisher: {
           "@type": "Organization",
+          "@id": `${site.url}/#organization`,
           name: site.name,
           url: site.url,
           logo: { "@type": "ImageObject", url: `${site.url}/brand/logo.png` },
         },
         mainEntityOfPage: `${site.url}${path}`,
+        isPartOf: {
+          "@type": "Blog",
+          "@id": `${site.url}/blog#blog`,
+          name: `${site.name} Blog`,
+          url: `${site.url}/blog`,
+        },
+        mentions: {
+          "@type": "SoftwareApplication",
+          "@id": `${site.url}/#application`,
+          name: site.name,
+          url: site.url,
+        },
         inLanguage: "en",
       },
       {
@@ -59,7 +77,7 @@ export function ArticleLayout({
           {
             "@type": "ListItem",
             position: 2,
-            name: "Journal",
+            name: "Blog",
             item: `${site.url}/blog`,
           },
           {
@@ -85,7 +103,7 @@ export function ArticleLayout({
         <nav className="article-breadcrumb" aria-label="Breadcrumb">
           <Link href="/">Home</Link>
           <span aria-hidden="true">/</span>
-          <Link href="/blog">Journal</Link>
+          <Link href="/blog">Blog</Link>
           <span aria-hidden="true">/</span>
           <span>{category}</span>
         </nav>
@@ -180,7 +198,7 @@ export function ArticleLayout({
                   Meet your SEO agent ↗
                 </Link>
                 <Link href="/blog" className="text-link">
-                  More from the journal →
+                  More from the blog →
                 </Link>
               </div>
             </div>
