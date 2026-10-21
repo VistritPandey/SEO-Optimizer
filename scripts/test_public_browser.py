@@ -13,6 +13,21 @@ from test_public_site import PAGES
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def open_navigation(page):
+    toggle = page.get_by_role("button", name="Open navigation menu", exact=True)
+    if toggle.is_visible():
+        toggle.click()
+
+
+def choose_appearance(page, name):
+    open_navigation(page)
+    page.get_by_role("group", name="Appearance").get_by_role(
+        "button", name=name, exact=True
+    ).click()
+    if page.get_by_role("button", name="Close navigation menu", exact=True).is_visible():
+        page.keyboard.press("Escape")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:3002")
@@ -225,9 +240,10 @@ def main():
         # Exercise the public controls and actual persisted preference on every page.
         page.goto(args.base_url, wait_until="networkidle")
         appearance = page.get_by_role("group", name="Appearance")
-        appearance.get_by_role("button", name="Dark", exact=True).click()
+        choose_appearance(page, "Dark")
         expect(page.locator("html")).to_have_attribute("data-theme", "dark")
         page.reload(wait_until="networkidle")
+        open_navigation(page)
         expect(appearance.get_by_role("button", name="Dark", exact=True)).to_have_attribute(
             "aria-pressed", "true"
         )
@@ -237,6 +253,7 @@ def main():
             .get_attribute("href")
             == "/dashboard"
         )
+        page.keyboard.press("Escape")
         for path in (*PAGES, "/login", "/login?mode=register"):
             page.goto(args.base_url + path, wait_until="networkidle")
             expect(page.locator("html")).to_have_attribute("data-theme", "dark")
@@ -262,9 +279,9 @@ def main():
         page.set_viewport_size({"width": 390, "height": 844})
         page.screenshot(path=str(ROOT / ".data/public-dark-mobile.png"))
         page.emulate_media(color_scheme="dark")
-        appearance.get_by_role("button", name="Light", exact=True).click()
+        choose_appearance(page, "Light")
         expect(page.locator("html")).to_have_attribute("data-theme", "light")
-        appearance.get_by_role("button", name="System", exact=True).click()
+        choose_appearance(page, "System")
         expect(page.locator("html")).to_have_attribute("data-theme", "dark")
         page.emulate_media(color_scheme="light")
         expect(page.locator("html")).to_have_attribute("data-theme", "light")
@@ -275,7 +292,7 @@ def main():
         page.emulate_media(reduced_motion="reduce")
         page.add_script_tag(path=str(ROOT / "frontend/node_modules/axe-core/axe.min.js"))
         for theme in ("light", "dark"):
-            appearance.get_by_role("button", name=theme.title(), exact=True).click()
+            choose_appearance(page, theme.title())
             expect(page.locator("html")).to_have_attribute("data-theme", theme)
             brand = page.locator(".marketing-nav .brand")
             assert brand.evaluate(
