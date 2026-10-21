@@ -104,7 +104,7 @@ def main():
         expect(store_playback).to_have_attribute("data-running", "true")
         # Keep the walkthrough in view while virtual time advances through its full story.
         store.locator(".demo-playback").scroll_into_view_if_needed()
-        page.clock.fast_forward(4_100)
+        page.clock.fast_forward(1_600)
         expect(store).to_have_attribute("data-step", "1")
         page.evaluate("window.scrollTo({top:0,behavior:'instant'})")
         expect(store_playback).to_have_attribute("data-running", "false")
@@ -113,10 +113,10 @@ def main():
         store.locator(".demo-playback").scroll_into_view_if_needed()
         expect(store_playback).to_have_attribute("data-running", "true")
         for expected in (2, 3, 4, 5, 0):
-            page.clock.fast_forward(4_100)
+            page.clock.fast_forward(1_600)
             expect(store).to_have_attribute("data-step", str(expected))
         store.get_by_role("button", name="Pause store walkthrough", exact=True).click()
-        passed.append("Store auto-plays the illustrated full cycle and stops its timer off screen")
+        passed.append("Store auto-plays every 1.5 seconds and stops its timer off screen")
         page.get_by_role("button", name="Explore the collection").click()
         assert page.get_by_role("heading", name="This collection cannot be found.").is_visible()
         page.get_by_role("button", name="Back to the homepage").click()
@@ -202,7 +202,7 @@ def main():
             page.goto(args.base_url + path, wait_until="networkidle")
             brand = page.get_by_role("link", name="Your Optimiser home").first
             mark = brand.locator(".brand-mark").bounding_box()
-            image = brand.locator(".brand-mark img").bounding_box()
+            image = brand.locator(".brand-symbol").bounding_box()
             name = brand.locator(".brand-name").bounding_box()
             assert mark and image and name
             assert abs(image["x"] + image["width"] / 2 - mark["x"] - mark["width"] / 2) < 1
@@ -271,6 +271,39 @@ def main():
         passed.append("Public light/dark/system controls persist across routes and reloads")
         passed.append(
             "Dark public, policy and authentication pages pass mobile accessibility scans"
+        )
+        page.emulate_media(reduced_motion="reduce")
+        page.add_script_tag(path=str(ROOT / "frontend/node_modules/axe-core/axe.min.js"))
+        for theme in ("light", "dark"):
+            appearance.get_by_role("button", name=theme.title(), exact=True).click()
+            expect(page.locator("html")).to_have_attribute("data-theme", theme)
+            brand = page.locator(".marketing-nav .brand")
+            assert brand.evaluate(
+                "e => getComputedStyle(e).color === "
+                "getComputedStyle(e.querySelector('feFlood')).floodColor"
+            )
+            expect(page.locator(".customer-demo")).to_have_css("color-scheme", theme)
+            mark = page.locator(".demo-agent-mark").bounding_box()
+            name = page.locator(".demo-agent-heading > div").bounding_box()
+            assert mark and name
+            assert abs(mark["y"] + mark["height"] / 2 - name["y"] - name["height"] / 2) < 1
+            for selector, controls in (
+                (".hero-workflow", ".workflow-steps button"),
+                (".customer-demo", ".demo-timeline button"),
+            ):
+                container = page.locator(selector)
+                for index in range(container.locator(controls).count()):
+                    container.locator(controls).nth(index).click()
+                    audit = container.evaluate(
+                        "async e => (await axe.run(e, {runOnly:['color-contrast']})).violations"
+                    )
+                    violations.extend(
+                        {"theme": theme, "component": selector, "step": index, "id": item["id"]}
+                        for item in audit
+                    )
+        passed.append("Both demos and every step pass contrast checks in light and dark themes")
+        passed.append(
+            "Shared logo matches the brand colour and the walkthrough badge stays aligned"
         )
         static = browser.new_context(
             java_script_enabled=False, viewport={"width": 390, "height": 844}
