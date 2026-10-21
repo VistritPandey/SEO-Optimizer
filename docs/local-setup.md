@@ -1,4 +1,6 @@
-# Run Your Optimiser locally
+# Run your autonomous SEO agent locally
+
+Your Optimiser monitors relevant website changes, investigates supported SEO issues, prepares permitted source repairs and verifies the result. Local action policy controls which repairs can be published automatically.
 
 Clone/download the application, install Git, then run `./run.sh` (macOS/Linux/WSL) or
 `.\run.ps1` (Windows PowerShell). Use a terminal that accepts interactive input.
