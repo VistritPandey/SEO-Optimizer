@@ -32,7 +32,7 @@ def main():
         assert "autonomous SEO agent" in document.title
         assert "/blog" in document.links
         assert all(path not in document.links for path in ARTICLES)
-        assert "journal-home" not in homepage.text and "journal-guide" not in homepage.text
+        assert {"journal-title", "guide-title"}.isdisjoint(document.ids)
         passed.append(
             "Homepage names the autonomous SEO agent and links the separate Blog page "
             "without duplicating article or guide sections"
