@@ -28,7 +28,17 @@ export function ArticleCards() {
             <p>{article.description}</p>
             <div className="journal-card-meta">
               <span>{readingMinutes(article)} min read</span>
-              <time dateTime={article.published}>20 October 2026</time>
+              <time dateTime={article.published}>
+                {new Date(`${article.published}T12:00:00Z`).toLocaleDateString(
+                  "en-GB",
+                  {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                    timeZone: "America/Chicago",
+                  },
+                )}
+              </time>
             </div>
           </div>
         </article>
