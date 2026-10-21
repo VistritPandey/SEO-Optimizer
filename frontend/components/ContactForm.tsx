@@ -14,6 +14,8 @@ export function ContactForm() {
   const pending = useRef(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
+    const submitter = (event.nativeEvent as SubmitEvent).submitter;
+    if (submitter?.hasAttribute("data-provider-submit")) return;
     event.preventDefault();
     if (pending.current) return;
     const form = event.currentTarget;
@@ -158,9 +160,22 @@ export function ContactForm() {
           </p>
         )}
         {status === "error" && (
-          <p className="contact-error" role="alert">
-            {error}
-          </p>
+          <>
+            <p className="contact-error" role="alert">
+              {error}
+            </p>
+            <p className="contact-form-note">
+              You can also submit through Formspree to complete any extra
+              verification. Your entered details go with you.
+            </p>
+            <button
+              type="submit"
+              className="button secondary"
+              data-provider-submit
+            >
+              Continue with secure submission ↗
+            </button>
+          </>
         )}
       </div>
     </form>
