@@ -29,7 +29,7 @@ const broken = [
   ],
   [
     "A fix, ready for your review.",
-    "The agent restores the working collection link and writes a description from the existing page content. It tests the changes and prepares a pull request-your team’s reviewable update.",
+    "The agent restores the working collection link and writes a description from the existing page content. It tests the changes and prepares a pull request for your team to review.",
   ],
   [
     "Check the website after the fix goes live.",
