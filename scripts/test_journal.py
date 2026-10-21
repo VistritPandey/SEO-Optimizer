@@ -4,6 +4,7 @@ No model, account, GitHub write or contact-form submission is used by this check
 """
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -47,6 +48,7 @@ def main():
             "Journal index links exactly the published articles in its collection metadata"
         )
 
+        cover_paths, cover_hashes = set(), set()
         for path in (*ARTICLES, "/guides/continuous-seo"):
             response = client.get(path)
             assert response.status_code == 200
@@ -70,13 +72,24 @@ def main():
             assert breadcrumb["itemListElement"][-1]["item"] == CANONICAL + path
             assert page.meta["og:type"] == "article"
             image_path = article["image"].removeprefix(CANONICAL)
+            assert image_path not in cover_paths, "Published pieces reuse a cover URL"
+            cover_paths.add(image_path)
             image = client.get(image_path)
             assert image.status_code == 200
             assert image.content[:4] == b"RIFF" and image.content[8:12] == b"WEBP"
             assert len(image.content) < 250_000, "Editorial image exceeds the delivery budget"
+            cover_hashes.add(hashlib.sha256(image.content).hexdigest())
+            assert image_path in homepage.text and image_path in index.text
+            assert page.meta["og:image"] == article["image"]
+            assert page.meta["twitter:image"] == article["image"]
             assert len(page.headings) == 1
             assert 'aria-label="In this article"' in response.text
             assert "THE TAKEAWAY" in response.text
+        assert len(cover_hashes) == 4, "Different cover URLs serve identical image bytes"
+        passed.append(
+            "All three posts and the guide use distinct cover files, consistently linked "
+            "from the landing page, blog index, article schema and social previews"
+        )
         passed.append(
             "Three articles and the existing guide have matching visible facts, "
             "brand identity, authorship, dates, canonicals, article sharing metadata, "
