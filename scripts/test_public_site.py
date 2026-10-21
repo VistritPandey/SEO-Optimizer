@@ -22,6 +22,10 @@ PAGES = (
     "/contact",
     "/privacy",
     "/terms",
+    "/blog",
+    "/blog/what-is-an-autonomous-seo-agent",
+    "/blog/seo-checklist-after-a-website-update",
+    "/blog/seo-and-geo-what-to-fix-first",
 )
 
 
@@ -97,7 +101,7 @@ def check_public_site(base_url, passed=None, verify_www=True):
             )
             assert document.meta.get("twitter:card") == "summary_large_image"
         passed.append(
-            "Eight public pages: served HTML, one H1, unique titles, descriptions, "
+            f"{len(PAGES)} public pages: served HTML, one H1, unique titles, descriptions, "
             "canonical and social metadata"
         )
 
