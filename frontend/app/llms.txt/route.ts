@@ -4,7 +4,7 @@ export const dynamic = "force-static";
 export function GET() {
   const text = `# Your Optimiser
 
-> An AI agent for ongoing website SEO care. It checks relevant website changes, prepares evidence-backed fixes in GitHub pull requests and verifies the served website after deployment.
+> An autonomous SEO agent for ongoing website care. It checks relevant website changes, prepares evidence-backed fixes in GitHub pull requests and verifies the served website after deployment.
 
 Official website: ${site.url}
 
@@ -13,6 +13,12 @@ Official website: ${site.url}
 - [How it works](${site.url}/how-it-works): Connect GitHub, inspect relevant changes, review a proposed fix and verify deployment.
 - [SEO and AI search](${site.url}/seo-and-ai-search): Technical search foundations, consistent facts and visibility measurement.
 - [Continuous SEO guide](${site.url}/guides/continuous-seo): An original practical guide using the product's website-change workflow.
+
+## Journal
+- [Journal](${site.url}/blog): Original practical articles on autonomous SEO and website care.
+- [What is an autonomous SEO agent?](${site.url}/blog/what-is-an-autonomous-seo-agent): Responsibilities, controls and a real local repair example.
+- [SEO release checklist](${site.url}/blog/seo-checklist-after-a-website-update): Checks for relevant website updates.
+- [SEO and GEO priorities](${site.url}/blog/seo-and-geo-what-to-fix-first): Discovery, clear facts and separate outcome measurement.
 
 ## Trust and policies
 - [Security and control](${site.url}/security): Repository access, review boundaries and data handling.
