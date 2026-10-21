@@ -1,0 +1,86 @@
+{
+  "status": "passed",
+  "checked_at": "2026-10-21T03:36:36.455462+00:00",
+  "runtime_source": "dc23e35",
+  "cloud_run_revision": "your-optimiser-00032-44n",
+  "traffic_percent": 100,
+  "homepage": {
+    "url": "https://youroptimiser.com/",
+    "terminal_replay": "Illustrated example, not a live audit or shell",
+    "steps": [
+      "Update",
+      "Inspect",
+      "Propose",
+      "Verify"
+    ],
+    "auto_step_ms": 1500,
+    "controls": [
+      "Play and pause",
+      "Manual step selection pauses playback",
+      "Keyboard controls",
+      "Reduced-motion preference",
+      "Offscreen and background-tab pause"
+    ],
+    "new_model_requests": 0,
+    "terminal_line_wrapping": "All four steps checked on mobile in both themes"
+  },
+  "repository": {
+    "url": "https://github.com/YourOptimiser/your-optimiser",
+    "name": "your-optimiser",
+    "renamed": true,
+    "local_remote_updated": true,
+    "prior_url_redirects_to_same_repository": true,
+    "active_links_updated": true
+  },
+  "contact": {
+    "url": "https://youroptimiser.com/contact",
+    "endpoint": "https://formspree.io/f/xdoqkdpy",
+    "fields": [
+      "Name",
+      "Email",
+      "Topic",
+      "Message"
+    ],
+    "features": [
+      "Required fields and email validation",
+      "Duplicate submission prevention",
+      "Inline acknowledgment and errors",
+      "Retained fields after rejection, network failure or timeout",
+      "Honeypot",
+      "Optional native provider verification fallback",
+      "Native submission without JavaScript"
+    ],
+    "privacy_notice_updated": true,
+    "actual_provider_submissions": 0
+  },
+  "validation": {
+    "public_browser_checks": 18,
+    "contact_flow_checks": 9,
+    "accessibility_violations": 0,
+    "frontend_tests": 7,
+    "production_build": "passed",
+    "frontend_types_and_format": "passed",
+    "browser_script_lint_and_format": "passed",
+    "live_public_page_groups": 8,
+    "ci": {
+      "url": "https://github.com/YourOptimiser/your-optimiser/actions/runs/39538749208",
+      "source": "dc23e35",
+      "jobs": {
+        "frontend": "passed",
+        "verify": "passed",
+        "combined": "passed",
+        "secrets": "passed"
+      }
+    }
+  },
+  "unverified": [
+    "Real Formspree acceptance, account limits, CAPTCHA and inbox delivery",
+    "Search indexing, rankings, AI citation and field performance outcomes"
+  ],
+  "implementation_sources": [
+    "https://docs.github.com/en/repositories/creating-and-managing-repositories/renaming-a-repository",
+    "https://help.formspree.io/articles/building-your-form/submit-forms-with-javascript-ajax",
+    "https://help.formspree.io/articles/form-and-project-settings/recaptcha-settings"
+  ],
+  "commit_policy": "One file per commit; no co-author trailers."
+}
