@@ -18,6 +18,12 @@ export type Article = {
   sections: ArticleSection[];
 };
 
+export const continuousSeoGuideCover = {
+  image: "/editorial/continuous-seo-guide.webp",
+  imageAlt:
+    "An open forest-green field notebook with ivory pages unfolding into paper steps.",
+};
+
 export const articles: Article[] = [
   {
     slug: "what-is-an-autonomous-seo-agent",
@@ -95,9 +101,9 @@ export const articles: Article[] = [
       "Your Optimiser’s practical SEO checklist for website updates: inspect changed pages, links, metadata and deployed content, with evidence before edits.",
     takeaway:
       "Start with the change and its dependencies. Check the served website after deployment, then distinguish a verified technical repair from a search outcome that needs more time.",
-    image: "/editorial/continuous-care.webp",
+    image: "/editorial/release-checklist.webp",
     imageAlt:
-      "Ivory paper frames joined by a continuous green loop, representing checks that continue after a launch.",
+      "Three ivory checklist cards with forest-green paper ticks and one open sage square.",
     published: "2026-10-20",
     sections: [
       {
