@@ -1,8 +1,9 @@
 {
   "environment": "https://youroptimiser.com",
   "passed": [
-    "Homepage names the autonomous SEO agent and links all three original articles",
+    "Homepage names the autonomous SEO agent and links the separate Blog page without duplicating article or guide sections",
     "Journal index links exactly the published articles in its collection metadata",
+    "All three posts and the guide use distinct cover files, consistently linked from the separate blog index, article schema and social previews",
     "Three articles and the existing guide have matching visible facts, brand identity, authorship, dates, canonicals, article sharing metadata, breadcrumbs, contents and optimised cover images",
     "Unpublished article paths return 404",
     "Original repair evidence and engine-specific AI-search limits stay explicit",
