@@ -179,7 +179,7 @@ def main():
     class ObservedClient(ModelClient):
         def _post(self, path, payload, headers):
             report["requests"] += 1
-            event(f"MODEL {args.model} request {report['requests']} — actual inference")
+            event(f"MODEL {args.model} request {report['requests']} - actual inference")
             result = super()._post(path, payload, headers)
             usage = result.get("usageMetadata", {})
             report.setdefault("request_usage", []).append(usage)
@@ -368,7 +368,7 @@ def main():
         except Exception as error:
             report["status"] = "failed"
             report["failure"] = type(error).__name__
-            event("DEMO FAILED: " + type(error).__name__ + " — see preserved result")
+            event("DEMO FAILED: " + type(error).__name__ + " - see preserved result")
         finally:
             worker_module.ModelClient = original_client
             browser.close()
