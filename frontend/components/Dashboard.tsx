@@ -835,7 +835,7 @@ export function Dashboard() {
                     <div className="project-health">
                       <span>OBSERVED HEALTH</span>
                       <strong>
-                        {project.last_report.score ?? "—"}
+                        {project.last_report.score ?? "-"}
                         <small>/100</small>
                       </strong>
                     </div>
