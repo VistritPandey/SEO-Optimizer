@@ -1,0 +1,64 @@
+{
+  "status": "passed",
+  "checked_at": "2026-10-21T03:06:38.050207+00:00",
+  "runtime_source": "0752df1",
+  "cloud_run_revision": "your-optimiser-00031-76f",
+  "traffic_percent": 100,
+  "copy_cleanup": {
+    "tracked_text_files_normalized": 31,
+    "remaining_literal_or_encoded_em_dash_files": 0,
+    "public_pages_scanned": 8,
+    "existing_silent_website_video_caption_refreshed": true,
+    "archived_reports": "Punctuation normalized; observed decisions, timings and numerical results retained.",
+    "github": "No repository description, issues or releases containing the character were present."
+  },
+  "sitemap": {
+    "url": "https://youroptimiser.com/sitemap.xml",
+    "http_status": 200,
+    "googlebot_user_agent_http_status": 200,
+    "content_type": "application/xml",
+    "xml_urls": 8,
+    "robots_allows_fetch": true,
+    "search_console_observation": {
+      "property": "https://youroptimiser.com/",
+      "status": "Success",
+      "discovered_pages": 8,
+      "discovered_videos": 0
+    },
+    "reported_failure": {
+      "property": "http://www.youroptimiser.com/",
+      "reason": "Different URL-prefix property. The www host has no resolving DNS record.",
+      "resolution": "Use the verified canonical HTTPS property, which shows Success."
+    },
+    "videos": "The current sitemap lists page URLs, not video entries.",
+    "source": "https://support.google.com/webmasters/answer/7451001"
+  },
+  "live_checks": {
+    "environment": "https://youroptimiser.com",
+    "passed": [
+      "Eight public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
+      "Sign-in and workspace pages carry noindex in HTML and HTTP headers",
+      "Sitemap includes public canonical pages only; robots allows them and excludes API crawling",
+      "LLM product index is readable, links to public facts and states its limits",
+      "Structured data describes the real product and free offer without fabricated reviews or FAQ rich-result markup",
+      "Favicon, Apple touch icon and branded social image have correct PNG dimensions",
+      "Every internal navigation link and in-page anchor resolves",
+      "Unknown pages return 404 and workspace API access stays protected"
+    ],
+    "failed": [],
+    "model_calls": 0,
+    "unverified": [
+      "Search indexing and rankings",
+      "AI citation outcomes",
+      "Field Core Web Vitals",
+      "Real customer sign-in and GitHub lifecycle",
+      "Public www redirect: verify after alias DNS and TLS are ready"
+    ]
+  },
+  "unverified": [
+    "Search rankings and indexed-page count",
+    "AI citation outcomes",
+    "Public www alias redirect until its DNS and TLS are configured"
+  ],
+  "commit_policy": "One changed file per commit. No co-author trailers."
+}
