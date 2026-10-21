@@ -409,7 +409,7 @@ export default function Home() {
           <p>
             Updates trigger checks of the affected pages. Regular checks catch
             problems in between. The agent follows through from a confirmed
-            finding to a tested change-and keeps watching afterward.
+            finding to a tested change, and keeps watching afterward.
           </p>
           <Link className="button" href="/login?mode=register" prefetch={false}>
             Give your website a working partner ↗
