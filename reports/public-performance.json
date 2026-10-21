@@ -4,7 +4,7 @@
   "release": {
     "git_sha": "6b7a263b87cf2ffc00e14b8289d512f7065b826c",
     "revision": "your-optimiser-00029-xvq",
-    "ci_url": "https://github.com/YourOptimiser/SEO-Optimizer/actions/runs/39521367778",
+    "ci_url": "https://github.com/YourOptimiser/your-optimiser/actions/runs/39521367778",
     "ci_jobs": [
       {
         "name": "secrets",
@@ -435,7 +435,7 @@
       "git_sha": "e93907c9346c3a4e645a512c1dbb7ca23621ed4c",
       "revision": "your-optimiser-00030-nfp",
       "changes": "Theme-matched vector logo, dark demo surfaces, centred walkthrough badge and 1.5-second playback.",
-      "ci_url": "https://github.com/YourOptimiser/SEO-Optimizer/actions/runs/39524540973",
+      "ci_url": "https://github.com/YourOptimiser/your-optimiser/actions/runs/39524540973",
       "public_browser_checks": 18,
       "workspace_fixture_checks": 19,
       "live_interaction_checks": 6,
