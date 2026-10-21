@@ -280,7 +280,7 @@ def main():
             brand = page.locator(".marketing-nav .brand")
             assert brand.evaluate(
                 "e => getComputedStyle(e).color === "
-                "getComputedStyle(e.querySelector('feFlood')).floodColor"
+                "getComputedStyle(e.querySelector('.brand-symbol path')).fill"
             )
             expect(page.locator(".customer-demo")).to_have_css("color-scheme", theme)
             mark = page.locator(".demo-agent-mark").bounding_box()
