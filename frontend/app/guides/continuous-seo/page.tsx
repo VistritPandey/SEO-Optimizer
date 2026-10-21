@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { EditorialPage } from "@/components/EditorialPage";
+import { ArticleLayout } from "@/components/ArticleLayout";
 import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
@@ -10,25 +10,26 @@ export const metadata = pageMetadata(
 
 export default function Page() {
   return (
-    <EditorialPage
-      eyebrow="THE YOUR OPTIMISER FIELD GUIDE · UPDATED 19 OCTOBER 2026"
-      title={
-        <>
-          SEO doesn’t end
-          <br />
-          <em>when the audit does.</em>
-        </>
-      }
-      intro="A practical process for teams whose websites keep moving, based on the same change → evidence → fix → verification workflow used by Your Optimiser."
+    <ArticleLayout
+      title="A practical guide to continuous SEO"
+      description="A process for teams whose websites keep moving: follow the change, establish evidence, review a focused fix and verify what went live."
+      category="THE FIELD GUIDE"
+      path="/guides/continuous-seo"
+      published="2026-10-19"
+      updated="2026-10-20"
+      minutes={5}
+      image="/editorial/continuous-care.webp"
+      imageAlt="A continuous green paper loop through three ivory frames."
+      takeaway="Continuous SEO is a repeatable process. An autonomous SEO agent can carry the work from a relevant website change to a tested proposal and post-deployment verification."
+      contents={[
+        {id:"baseline",title:"Set a baseline"},
+        {id:"scope",title:"Follow the change"},
+        {id:"evidence",title:"Establish evidence"},
+        {id:"review",title:"Review a focused fix"},
+        {id:"verify",title:"Verify the live page"},
+        {id:"measure",title:"Measure the right outcome"},
+      ]}
     >
-      <nav className="article-contents" aria-label="In this guide">
-        <a href="#baseline">1. Set a baseline</a>
-        <a href="#scope">2. Follow the change</a>
-        <a href="#evidence">3. Establish evidence</a>
-        <a href="#review">4. Review a focused fix</a>
-        <a href="#verify">5. Verify the live page</a>
-        <a href="#measure">6. Measure the right outcome</a>
-      </nav>
       <section id="baseline">
         <h2>1. Set the rules before checking the pages.</h2>
         <p>
@@ -139,6 +140,6 @@ export default function Page() {
           See the process in action →
         </Link>
       </section>
-    </EditorialPage>
+    </ArticleLayout>
   );
 }
