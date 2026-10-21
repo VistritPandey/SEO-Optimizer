@@ -20,7 +20,7 @@ const serif = DM_Serif_Display({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Your Optimiser - SEO that keeps up with your website",
+    default: "Your Optimiser - Your autonomous SEO agent",
     template: "%s · Your Optimiser",
   },
   description: site.description,
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     url: site.url,
     title: "Your Optimiser",
     description:
-      "Your website evolves. Your SEO needs to keep up. Meet your AI agent for ongoing website care.",
+      "Your autonomous SEO agent. Website checks, focused GitHub fixes and verification after deployment.",
     type: "website",
     siteName: site.name,
     locale: "en_US",
