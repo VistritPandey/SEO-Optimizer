@@ -67,7 +67,7 @@ def main():
         hero.get_by_role("button", name="Check this update →").click()
         hero.get_by_text("/collections/lighting/ returns 404", exact=True).wait_for(state="visible")
         hero.get_by_role("button", name="See the proposal →").click()
-        hero.get_by_text("/shop/ · existing page", exact=True).wait_for(state="visible")
+        hero.get_by_text('+ href="/shop/"', exact=True).wait_for(state="visible")
         hero.get_by_role("button", name="Approve this example →").click()
         hero.get_by_text("/shop/ returns 200 after deployment", exact=True).wait_for(
             state="visible"
