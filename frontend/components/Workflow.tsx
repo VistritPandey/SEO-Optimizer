@@ -3,8 +3,9 @@
 import { useCallback, useState } from "react";
 import { DemoPlayback } from "./DemoPlayback";
 import { useDemoPlayback } from "./useDemoPlayback";
+import { BrandSymbol } from "./BrandSymbol";
 
-const stepDuration = 4000;
+const stepDuration = 1500;
 const stages = [
   "Website updated",
   "Checking the change",
@@ -232,7 +233,9 @@ export function Workflow() {
         </div>
         <div className="demo-agent">
           <div className="demo-agent-heading">
-            <span className="demo-agent-mark">y</span>
+            <span className="demo-agent-mark" aria-hidden="true">
+              <BrandSymbol />
+            </span>
             <div>
               <strong>Your Optimiser</strong>
               <small>
