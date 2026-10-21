@@ -29,7 +29,7 @@ export function SiteHeader() {
           </svg>
           <span>GitHub</span>
         </a>
-        <Link className="nav-signin" href="/dashboard">
+        <Link className="nav-signin" href="/dashboard" prefetch={false}>
           Your workspace ↗
         </Link>
       </nav>
