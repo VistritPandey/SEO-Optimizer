@@ -241,7 +241,9 @@ def main():
 
         shutil.copytree(WEB / "public/brand", folder / "brand")
         (folder / "style.css").write_text(
-            (WEB / "app/globals.css").read_text() + ":root{--font-sans:Arial;--font-serif:Georgia}"
+            (WEB / "app/globals.css").read_text()
+            + (WEB / "app/dashboard/workspace.css").read_text()
+            + ":root{--font-sans:Arial;--font-serif:Georgia}"
         )
         (folder / "index.html").write_text(
             '<!doctype html><html lang="en"><head><meta charset="UTF-8">'
