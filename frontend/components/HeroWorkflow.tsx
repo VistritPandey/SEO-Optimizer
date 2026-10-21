@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { m, useReducedMotion } from "motion/react";
 import { DemoPlayback } from "./DemoPlayback";
 import { useDemoPlayback } from "./useDemoPlayback";
 
@@ -22,7 +21,6 @@ const descriptions = [
 
 export function HeroWorkflow() {
   const [stage, setStage] = useState(0);
-  const reducedMotion = useReducedMotion();
   const advance = useCallback(
     () => setStage((value) => (value + 1) % stages.length),
     [],
@@ -78,16 +76,7 @@ export function HeroWorkflow() {
       >
         <h2>{titles[stage]}</h2>
         <p>{descriptions[stage]}</p>
-        <m.div
-          key={stage}
-          className="workflow-artifact"
-          initial={{
-            opacity: reducedMotion ? 1 : 0,
-            y: reducedMotion ? 0 : 6,
-          }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: reducedMotion ? 0 : 0.16 }}
-        >
+        <div key={stage} className="workflow-artifact">
           {stage === 0 && (
             <>
               <div className="artifact-bar">
@@ -193,7 +182,7 @@ export function HeroWorkflow() {
               </div>
             </div>
           )}
-        </m.div>
+        </div>
       </div>
       <div className="workflow-controls">
         <span>
