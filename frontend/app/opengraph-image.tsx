@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const alt = "Your Optimiser — Your website evolves. Your SEO keeps up.";
+export const alt = "Your Optimiser - Your website evolves. Your SEO keeps up.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
