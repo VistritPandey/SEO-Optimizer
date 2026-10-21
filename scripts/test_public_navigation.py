@@ -9,6 +9,12 @@ from playwright.sync_api import expect, sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 
 
+def open_navigation(page):
+    toggle = page.get_by_role("button", name="Open navigation menu", exact=True)
+    if toggle.is_visible():
+        toggle.click()
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:3002")
@@ -23,11 +29,13 @@ def main():
             page = context.new_page()
             page.on("pageerror", lambda error: errors.append(str(error)))
             page.goto(base, wait_until="networkidle")
+            open_navigation(page)
             navigation = page.get_by_role("navigation", name="Main navigation")
             expect(navigation.get_by_role("link", name="Blog", exact=True)).to_have_attribute(
                 "href", "/blog"
             )
             assert navigation.get_by_role("link", name="Journal", exact=True).count() == 0
+            page.keyboard.press("Escape")
             blog_link = page.get_by_role("navigation", name="Product links").get_by_role(
                 "link", name="Blog & guides", exact=True
             )
@@ -51,6 +59,7 @@ def main():
             )
             passed.append(f"{width}px: Back restores the original landing-page position")
 
+            open_navigation(page)
             navigation.get_by_role("link", name="Blog", exact=True).click()
             expect(page).to_have_url(base + "/blog")
             page.wait_for_function("scrollY === 0")
@@ -92,6 +101,7 @@ def main():
                 "() => {const r=document.querySelector('#pricing').getBoundingClientRect();"
                 "return r.top >= 0 && r.top < innerHeight / 2}",
             )
+            open_navigation(page)
             navigation.get_by_role("link", name="Blog", exact=True).click()
             expect(page).to_have_url(base + "/blog")
             page.wait_for_function("scrollY === 0")
