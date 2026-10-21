@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-export const alt = "Your Optimiser - Your website evolves. Your SEO keeps up.";
+export const alt = "Your Optimiser - Your autonomous SEO agent.";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -41,8 +41,8 @@ export default async function Image() {
           letterSpacing: -3,
         }}
       >
-        <span>Your website evolves.</span>
-        <span style={{ color: "#315443" }}>Your SEO keeps up.</span>
+        <span>Your autonomous</span>
+        <span style={{ color: "#315443" }}>SEO agent.</span>
       </div>
       <div
         style={{
