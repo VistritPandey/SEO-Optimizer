@@ -2,13 +2,24 @@
 
 <img src="frontend/public/brand/mark.png" alt="Your Optimiser" width="64" height="64" />
 
-**SEO care that keeps up with your website.**
+**Your autonomous SEO agent.**
 
 [Website](https://youroptimiser.com) · [How it works](https://youroptimiser.com/how-it-works) · [GitHub](https://github.com/YourOptimiser/your-optimiser)
 
-Your Optimiser checks website changes, identifies supported SEO issues, prepares focused
+Your Optimiser is an autonomous SEO agent that checks website changes, identifies supported SEO issues, prepares focused
 fixes and verifies the served result. Healthy updates do not need an edit. GitHub is the
 hosted repository integration; your team reviews proposed pull requests.
+
+## Watch the agent work
+
+[![Watch the autonomous SEO agent inspect files and prepare a repair](videos/releases/agent-preview.gif)](https://youroptimiser.com/how-it-works#agent-demo)
+
+[Watch the full 52-second demo](https://youroptimiser.com/how-it-works#agent-demo) · [Download the silent MP4](https://github.com/YourOptimiser/your-optimiser/releases/download/v1.0.0-beta.1/agent-at-work.mp4)
+
+A real local run on a fictional shop: four confirmed defects, two repaired source files,
+project checks and a browser before/after. A repeat audit created no new commit. Edited for
+time; this demonstration does not claim a live GitHub PR or a search-ranking improvement.
+[Inspect the recorded evidence](reports/agent-session.json).
 
 ## How it works
 
@@ -23,7 +34,7 @@ Coverage includes technical SEO, content, AI-search discovery, local business fa
 and international targeting. Checks distinguish directly observed defects from questions that
 need external data. Search rankings, citations and traffic are not guaranteed.
 
-[Try the interactive example](https://youroptimiser.com/#how) · [Watch the silent walkthrough](https://youroptimiser.com/demo.mp4)
+[Try the interactive example](https://youroptimiser.com/#how) · [Read the journal](https://youroptimiser.com/blog)
 
 ## Run locally
 
