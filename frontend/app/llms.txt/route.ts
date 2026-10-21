@@ -14,8 +14,8 @@ Official website: ${site.url}
 - [SEO and AI search](${site.url}/seo-and-ai-search): Technical search foundations, consistent facts and visibility measurement.
 - [Continuous SEO guide](${site.url}/guides/continuous-seo): An original practical guide using the product's website-change workflow.
 
-## Journal
-- [Journal](${site.url}/blog): Original practical articles on autonomous SEO and website care.
+## Blog
+- [Your Optimiser Blog](${site.url}/blog): Original practical articles on autonomous SEO and website care.
 - [What is an autonomous SEO agent?](${site.url}/blog/what-is-an-autonomous-seo-agent): Responsibilities, controls and a real local repair example.
 - [SEO release checklist](${site.url}/blog/seo-checklist-after-a-website-update): Checks for relevant website updates.
 - [SEO and GEO priorities](${site.url}/blog/seo-and-geo-what-to-fix-first): Discovery, clear facts and separate outcome measurement.
