@@ -22,12 +22,12 @@ export default function Page() {
       imageAlt="A continuous green paper loop through three ivory frames."
       takeaway="Continuous SEO is a repeatable process. An autonomous SEO agent can carry the work from a relevant website change to a tested proposal and post-deployment verification."
       contents={[
-        {id:"baseline",title:"Set a baseline"},
-        {id:"scope",title:"Follow the change"},
-        {id:"evidence",title:"Establish evidence"},
-        {id:"review",title:"Review a focused fix"},
-        {id:"verify",title:"Verify the live page"},
-        {id:"measure",title:"Measure the right outcome"},
+        { id: "baseline", title: "Set a baseline" },
+        { id: "scope", title: "Follow the change" },
+        { id: "evidence", title: "Establish evidence" },
+        { id: "review", title: "Review a focused fix" },
+        { id: "verify", title: "Verify the live page" },
+        { id: "measure", title: "Measure the right outcome" },
       ]}
     >
       <section id="baseline">
