@@ -1,4 +1,6 @@
-# Application architecture
+# Autonomous SEO agent architecture
+
+Your Optimiser is an autonomous SEO agent that follows relevant website changes through investigation, permitted repairs, project checks and deployed-page verification. Hosted source changes remain pull requests for owner review.
 
 The package separates knowledge/contracts/evaluation from the web application and worker.
 `contracts.py`, `knowledge.py`, `policy.py`, `audit.py` and `evaluation.py` work without a web
