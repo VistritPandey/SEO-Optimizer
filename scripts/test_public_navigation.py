@@ -28,15 +28,21 @@ def main():
                 "href", "/blog"
             )
             assert navigation.get_by_role("link", name="Journal", exact=True).count() == 0
-            guide = page.locator('main a[href="/guides/continuous-seo"]').first
-            guide.scroll_into_view_if_needed()
-            source_scroll = page.evaluate("scrollY")
+            blog_link = page.get_by_role("navigation", name="Product links").get_by_role(
+                "link", name="Blog & guides", exact=True
+            )
+            blog_link.scroll_into_view_if_needed()
+            blog_link.evaluate(
+                "a => a.addEventListener('click', () => {window.__departureScroll = scrollY}, "
+                "{once:true,capture:true})"
+            )
+            blog_link.click()
+            source_scroll = page.evaluate("window.__departureScroll")
             assert source_scroll > 1000
-            guide.click()
-            expect(page).to_have_url(base + "/guides/continuous-seo")
+            expect(page).to_have_url(base + "/blog")
             page.wait_for_function("scrollY === 0")
             expect(page.locator("h1")).to_be_in_viewport()
-            passed.append(f"{width}px: deep landing-page link opens the guide at the top")
+            passed.append(f"{width}px: footer link opens the separate Blog page at the top")
 
             page.go_back()
             expect(page).to_have_url(base + "/")
@@ -45,6 +51,9 @@ def main():
             )
             passed.append(f"{width}px: Back restores the original landing-page position")
 
+            navigation.get_by_role("link", name="Blog", exact=True).click()
+            expect(page).to_have_url(base + "/blog")
+            page.wait_for_function("scrollY === 0")
             card = page.locator(".journal-card h3 a").first
             card.scroll_into_view_if_needed()
             article_path = card.get_attribute("href")
