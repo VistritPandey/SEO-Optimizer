@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { ArticleLayout } from "@/components/ArticleLayout";
 import { articleMetadata } from "@/lib/site";
+import { continuousSeoGuideCover } from "@/lib/articles";
 
 export const metadata = articleMetadata({
   title: "A practical guide to continuous SEO",
   description:
     "Your Optimiser’s guide to continuous SEO: detect website regressions, review focused fixes and verify what went live, with evidence at each step.",
   path: "/guides/continuous-seo",
-  image: "/editorial/continuous-care.webp",
-  imageAlt: "A continuous green paper loop through three ivory frames.",
+  ...continuousSeoGuideCover,
   published: "2026-10-19",
   updated: "2026-10-20",
 });
@@ -23,8 +23,7 @@ export default function Page() {
       published="2026-10-19"
       updated="2026-10-20"
       minutes={5}
-      image="/editorial/continuous-care.webp"
-      imageAlt="A continuous green paper loop through three ivory frames."
+      {...continuousSeoGuideCover}
       takeaway="Continuous SEO is a repeatable process. An autonomous SEO agent can carry the work from a relevant website change to a tested proposal and post-deployment verification."
       contents={[
         { id: "baseline", title: "Set a baseline" },
