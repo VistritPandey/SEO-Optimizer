@@ -11,7 +11,7 @@ export const metadata = pageMetadata(
 export default function Page() {
   return (
     <EditorialPage
-      eyebrow="PRIVACY NOTICE · EFFECTIVE 19 OCTOBER 2026"
+      eyebrow="PRIVACY NOTICE · EFFECTIVE 20 OCTOBER 2026"
       title={
         <>
           Know what you share.
@@ -40,6 +40,13 @@ export default function Page() {
           Operational records can include request times, network addresses,
           errors and service activity. Authentication and hosting providers also
           process information needed to run their services.
+        </p>
+        <p>
+          Contact requests include the name, email address, topic and message
+          you submit. Formspree processes contact form submissions and delivers
+          them to the maintainers for support and follow-up. Its systems may
+          also process network and request information to operate the form and
+          filter abuse.
         </p>
       </section>
       <section>
@@ -81,6 +88,20 @@ export default function Page() {
           rel="noopener noreferrer"
         >
           Firebase’s privacy information ↗
+        </a>
+        <p>
+          The contact form uses Formspree separately from workspace storage.
+          Contact messages may remain in Formspree and the support mailbox while
+          needed to handle the request. Use the contact process to ask about
+          access or deletion of those messages.
+        </p>
+        <a
+          className="text-link"
+          href="https://formspree.io/legal/privacy-policy/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Formspree’s privacy information ↗
         </a>
       </section>
       <section>
