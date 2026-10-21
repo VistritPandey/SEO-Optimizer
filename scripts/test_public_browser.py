@@ -26,13 +26,24 @@ def main():
         page = context.new_page()
         page.on("pageerror", lambda error: errors.append(str(error)))
         requests = []
+        finished_requests = []
         page.on("request", lambda request: requests.append(request.url))
+        page.on("requestfinished", lambda request: finished_requests.append(request))
         page.clock.install()
         page.goto(args.base_url, wait_until="networkidle")
         assert not any(re.search(r"/(?:login|dashboard)\?[^#]*_rsc=", url) for url in requests), (
             "Public navigation must not preload authentication or workspace bundles"
         )
         passed.append("Public landing page does not prefetch authentication or workspace routes")
+        javascript_bytes = sum(
+            request.sizes()["responseBodySize"]
+            for request in finished_requests
+            if "/_next/static/chunks/" in request.url and request.url.endswith(".js")
+        )
+        assert 0 < javascript_bytes < 200_000, (
+            f"Landing JavaScript exceeds the 200 KB compressed budget: {javascript_bytes} bytes"
+        )
+        passed.append("Landing JavaScript stays within the 200 KB compressed transfer budget")
         hero = page.get_by_role("complementary", name="Interactive SEO workflow example")
         assert hero.get_by_role("heading", name="Your team ships a new homepage.").is_visible()
         playback = hero.locator(".demo-playback")
