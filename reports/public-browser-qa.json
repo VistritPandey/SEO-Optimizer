@@ -18,7 +18,7 @@
     "Dark public, policy and authentication pages pass mobile accessibility scans",
     "Both demos and every step pass contrast checks in light and dark themes",
     "Shared logo matches the brand colour and the walkthrough badge stays aligned",
-    "Headline, illustrated example and sign-up links render without JavaScript"
+    "Headline, terminal example and sign-up links render without JavaScript"
   ],
   "browser_errors": [],
   "accessibility_violations": [],
