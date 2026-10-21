@@ -75,7 +75,9 @@ def main():
             )
             passed.append(f"{width}px: cross-page video anchors retain their intended destination")
 
-            navigation.get_by_role("link", name="Pricing", exact=True).click()
+            page.get_by_role("navigation", name="Product links").get_by_role(
+                "link", name="Free plan", exact=True
+            ).click()
             expect(page).to_have_url(base + "/#pricing")
             page.wait_for_function(
                 "() => {const r=document.querySelector('#pricing').getBoundingClientRect();"
