@@ -1,0 +1,432 @@
+{
+  "generated_at": "2026-10-21T00:33:48.981898+00:00",
+  "url": "https://youroptimiser.com/",
+  "release": {
+    "git_sha": "6b7a263b87cf2ffc00e14b8289d512f7065b826c",
+    "revision": "your-optimiser-00029-xvq",
+    "ci_url": "https://github.com/YourOptimiser/SEO-Optimizer/actions/runs/39521367778",
+    "ci_jobs": [
+      {
+        "name": "secrets",
+        "conclusion": "success"
+      },
+      {
+        "name": "combined",
+        "conclusion": "success"
+      },
+      {
+        "name": "verify",
+        "conclusion": "success"
+      },
+      {
+        "name": "frontend",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "method": {
+    "tool": "Lighthouse",
+    "version": "13.5.0",
+    "form_factor": "mobile",
+    "throttling_method": "simulate",
+    "throttling": {
+      "rttMs": 150,
+      "throughputKbps": 1638.4,
+      "requestLatencyMs": 562.5,
+      "downloadThroughputKbps": 1474.5600000000002,
+      "uploadThroughputKbps": 675,
+      "cpuSlowdownMultiplier": 4
+    },
+    "screen_emulation": {
+      "mobile": true,
+      "width": 412,
+      "height": 823,
+      "deviceScaleFactor": 1.75,
+      "disabled": false
+    },
+    "browser_profiles": "Fresh isolated profile for every run; no account or browser extensions",
+    "primary_browser": "Chrome 155, before and after",
+    "secondary_browser": "Chromium 153, before and after",
+    "cold_start_scope": "New browser/cache each run; Cloud Run scale-from-zero latency was not isolated",
+    "reproduce": "CHROME_PATH=/path/to/matching/chrome npx --yes lighthouse@13.5.0 https://youroptimiser.com/ --chrome-flags=\"--headless=new --no-sandbox\" --only-categories=performance,accessibility,best-practices,seo --output=json --output=html --output-path=./mobile-audit"
+  },
+  "primary_comparison": {
+    "before": {
+      "runs": 3,
+      "performance_scores": [
+        98,
+        98,
+        98
+      ],
+      "performance_median": 98,
+      "performance_range": [
+        98,
+        98
+      ],
+      "metric_medians": {
+        "first-contentful-paint": 986.682,
+        "largest-contentful-paint": 2336.682,
+        "speed-index": 986.682,
+        "total-blocking-time": 0,
+        "cumulative-layout-shift": 7.4e-05
+      },
+      "median_script_transfer_bytes": 270142,
+      "median_total_transfer_bytes": 391009
+    },
+    "after": {
+      "runs": 3,
+      "performance_scores": [
+        99,
+        100,
+        100
+      ],
+      "performance_median": 100,
+      "performance_range": [
+        99,
+        100
+      ],
+      "metric_medians": {
+        "first-contentful-paint": 1403.6905,
+        "largest-contentful-paint": 1403.6905,
+        "speed-index": 1407.3295,
+        "total-blocking-time": 30.5,
+        "cumulative-layout-shift": 6.6e-05
+      },
+      "median_script_transfer_bytes": 151916,
+      "median_total_transfer_bytes": 290766
+    },
+    "javascript_reduction_percent": 43.76,
+    "lcp_reduction_percent": 39.93,
+    "before_runs": [
+      {
+        "fetch_time": "2026-10-21T00:12:30.153Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 98,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 998.1625,
+          "largest-contentful-paint": 2348.1625,
+          "speed-index": 1217.9097779395577,
+          "total-blocking-time": 0,
+          "cumulative-layout-shift": 7.361063309684712e-05
+        },
+        "script_transfer_bytes": 270010,
+        "total_transfer_bytes": 390823,
+        "warnings": [],
+        "runtime_error": null
+      },
+      {
+        "fetch_time": "2026-10-21T00:17:37.110Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 98,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 986.682,
+          "largest-contentful-paint": 2336.682,
+          "speed-index": 986.682,
+          "total-blocking-time": 0,
+          "cumulative-layout-shift": 7.361063309684712e-05
+        },
+        "script_transfer_bytes": 270142,
+        "total_transfer_bytes": 391009,
+        "warnings": [],
+        "runtime_error": null
+      },
+      {
+        "fetch_time": "2026-10-21T00:17:47.734Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 98,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 976.8125,
+          "largest-contentful-paint": 2326.8125,
+          "speed-index": 976.8125,
+          "total-blocking-time": 0,
+          "cumulative-layout-shift": 7.361063309684712e-05
+        },
+        "script_transfer_bytes": 270317,
+        "total_transfer_bytes": 391084,
+        "warnings": [],
+        "runtime_error": null
+      }
+    ],
+    "after_runs": [
+      {
+        "fetch_time": "2026-10-21T00:31:25.065Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 99,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1407.3295,
+          "largest-contentful-paint": 1653.3295,
+          "speed-index": 1407.3295,
+          "total-blocking-time": 38.5,
+          "cumulative-layout-shift": 7.361063309684712e-05
+        },
+        "script_transfer_bytes": 151889,
+        "total_transfer_bytes": 290664,
+        "warnings": [],
+        "runtime_error": null
+      },
+      {
+        "fetch_time": "2026-10-21T00:31:36.405Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1134.063,
+          "largest-contentful-paint": 1354.063,
+          "speed-index": 1134.063,
+          "total-blocking-time": 8,
+          "cumulative-layout-shift": 6.563115339096013e-05
+        },
+        "script_transfer_bytes": 151916,
+        "total_transfer_bytes": 290775,
+        "warnings": [],
+        "runtime_error": null
+      },
+      {
+        "fetch_time": "2026-10-21T00:31:47.453Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/155.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1403.6905,
+          "largest-contentful-paint": 1403.6905,
+          "speed-index": 2133.0933100568773,
+          "total-blocking-time": 30.5,
+          "cumulative-layout-shift": 0
+        },
+        "script_transfer_bytes": 151934,
+        "total_transfer_bytes": 290766,
+        "warnings": [],
+        "runtime_error": null
+      }
+    ]
+  },
+  "original_browser_crosscheck": {
+    "before": {
+      "runs": 2,
+      "performance_scores": [
+        91,
+        92
+      ],
+      "performance_median": 91.5,
+      "performance_range": [
+        91,
+        92
+      ],
+      "metric_medians": {
+        "first-contentful-paint": 1354.20875,
+        "largest-contentful-paint": 2960.20875,
+        "speed-index": 4397.465803,
+        "total-blocking-time": 6.0,
+        "cumulative-layout-shift": 0.0
+      },
+      "median_script_transfer_bytes": 270016.0,
+      "median_total_transfer_bytes": 390821.0
+    },
+    "after": {
+      "runs": 2,
+      "performance_scores": [
+        100,
+        96
+      ],
+      "performance_median": 98.0,
+      "performance_range": [
+        96,
+        100
+      ],
+      "metric_medians": {
+        "first-contentful-paint": 1234.387,
+        "largest-contentful-paint": 1863.387,
+        "speed-index": 2906.594224,
+        "total-blocking-time": 25.25,
+        "cumulative-layout-shift": 3.3e-05
+      },
+      "median_script_transfer_bytes": 151848.5,
+      "median_total_transfer_bytes": 290607.0
+    },
+    "before_runs": [
+      {
+        "fetch_time": "2026-10-20T23:50:58.375Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 91,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1341.5155,
+          "largest-contentful-paint": 2948.5155,
+          "speed-index": 4771.12118058005,
+          "total-blocking-time": 5,
+          "cumulative-layout-shift": 0
+        },
+        "script_transfer_bytes": 270025,
+        "total_transfer_bytes": 390819,
+        "warnings": [],
+        "runtime_error": null
+      },
+      {
+        "fetch_time": "2026-10-21T00:09:18.981Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 92,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1366.902,
+          "largest-contentful-paint": 2971.902,
+          "speed-index": 4023.8104251177356,
+          "total-blocking-time": 7,
+          "cumulative-layout-shift": 0
+        },
+        "script_transfer_bytes": 270007,
+        "total_transfer_bytes": 390823,
+        "warnings": [],
+        "runtime_error": null
+      }
+    ],
+    "after_runs": [
+      {
+        "fetch_time": "2026-10-21T00:32:09.819Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 100,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1220.8905,
+          "largest-contentful-paint": 1248.8905,
+          "speed-index": 1802.621939951134,
+          "total-blocking-time": 18.5,
+          "cumulative-layout-shift": 6.563115339096013e-05
+        },
+        "script_transfer_bytes": 151880,
+        "total_transfer_bytes": 290646,
+        "warnings": [],
+        "runtime_error": null
+      },
+      {
+        "fetch_time": "2026-10-21T00:32:21.185Z",
+        "browser": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+        "scores": {
+          "performance": 96,
+          "accessibility": 100,
+          "best-practices": 100,
+          "seo": 100
+        },
+        "metrics": {
+          "first-contentful-paint": 1247.8835,
+          "largest-contentful-paint": 2477.8835,
+          "speed-index": 4010.5665080584536,
+          "total-blocking-time": 32,
+          "cumulative-layout-shift": 0
+        },
+        "script_transfer_bytes": 151817,
+        "total_transfer_bytes": 290568,
+        "warnings": [],
+        "runtime_error": null
+      }
+    ]
+  },
+  "target": {
+    "performance_score": 100,
+    "primary_runs_at_target": 2,
+    "primary_run_count": 3,
+    "primary_median_at_target": true,
+    "all_measured_browser_runs_at_target": false,
+    "samples_below_target": 2
+  },
+  "changes": [
+    "Load the animation library only in the workspace; public demos use native transitions and visibility observers.",
+    "Disable login/workspace route prefetching from the public page.",
+    "Apply the saved theme in the document head before first paint.",
+    "Inline first-paint styles and load 26 KB of workspace CSS only on the workspace route.",
+    "Use optional self-hosted fonts with metric-adjusted fallbacks to avoid late font swaps.",
+    "Add a 200 KB compressed JavaScript regression budget and verify rendering without JavaScript."
+  ],
+  "tradeoffs": [
+    "Next.js inlineCss is experimental and increases HTML size because styles also appear in the React payload; recheck after framework upgrades.",
+    "Median first contentful paint increased from 0.99s to 1.4s; median LCP and aggregate performance improved.",
+    "On slow first visits, optional fonts may retain the readable fallback for that page view instead of swapping late.",
+    "Browser versions and run conditions produce different scores; retain all runs rather than selecting only 100s."
+  ],
+  "release_validation": {
+    "passed": {
+      "public_browser_checks": 16,
+      "workspace_browser_fixture_checks": 19,
+      "live_public_structure_groups": 9,
+      "python_tests": 565,
+      "ci_jobs": 4,
+      "dependency_audit": "No known vulnerabilities found",
+      "health_status": 200,
+      "unauthenticated_account_status": 401,
+      "font_blocking_fallback": "Readable at 390px without horizontal overflow",
+      "public_browser_environment": "https://youroptimiser.com"
+    },
+    "failed": [],
+    "skipped_locally": {
+      "firestore_emulator_tests": 12,
+      "docker_sandbox_tests": 7,
+      "note": "Docker sandbox workflows and the combined container passed release CI."
+    },
+    "unverified": [
+      "Real-user Core Web Vitals and INP",
+      "Search rankings, traffic, conversions and AI-answer citations",
+      "Worldwide regions and isolated Cloud Run cold starts",
+      "Manual assistive-technology testing",
+      "A fresh authenticated GitHub repair workflow was not part of this frontend performance change."
+    ]
+  },
+  "intermediate_release": {
+    "git_sha": "01a641c",
+    "chrome_155_scores": [
+      95,
+      98,
+      98
+    ],
+    "chrome_153_scores": [
+      96,
+      95
+    ],
+    "followup": "Reduced the inlined payload and changed font loading before the final measurements."
+  },
+  "dependency_maintenance": {
+    "package": "certifi",
+    "version": "2026.10.19",
+    "reason": "Release CI found PYSEC-2026-4320 in the previous lock; the updated lock passes the dependency audit.",
+    "upstream": "https://github.com/certifi/python-certifi/security/advisories/GHSA-6q48-6c7w-9gw2"
+  },
+  "raw_artifacts": "Full HTML/JSON reports for every run are retained under ignored .data/production-e2e/ in the testing workspace."
+}
