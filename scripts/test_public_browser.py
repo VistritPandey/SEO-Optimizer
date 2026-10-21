@@ -294,6 +294,10 @@ def main():
                 container = page.locator(selector)
                 for index in range(container.locator(controls).count()):
                     container.locator(controls).nth(index).click()
+                    if selector == ".hero-workflow":
+                        assert container.locator(".terminal-output").evaluate(
+                            "e => e.scrollHeight <= e.clientHeight + 1"
+                        ), (theme, index, "Terminal output clipped")
                     audit = container.evaluate(
                         "async e => (await axe.run(e, {runOnly:['color-contrast']})).violations"
                     )
@@ -312,9 +316,10 @@ def main():
         static_page.goto(args.base_url, wait_until="networkidle")
         expect(static_page.locator(".hero h1")).to_be_visible()
         expect(static_page.locator(".workflow-artifact")).to_be_visible()
+        expect(static_page.locator(".terminal-output")).to_contain_text("web/index.html")
         expect(static_page.locator(".demo-story")).to_have_css("opacity", "1")
         assert static_page.get_by_role("link", name="Get started free").count() >= 1
-        passed.append("Headline, illustrated example and sign-up links render without JavaScript")
+        passed.append("Headline, terminal example and sign-up links render without JavaScript")
         static.close()
         browser.close()
     report = {
