@@ -24,7 +24,7 @@ export const articles: Article[] = [
     category: "THE AGENT EXPLAINED",
     title: "What is an autonomous SEO agent?",
     description:
-      "An audit tells you what needs attention. An autonomous SEO agent follows the work through: inspect, repair, test and verify. Here is what that means in practice.",
+      "What an autonomous SEO agent does, how Your Optimiser investigates and verifies website repairs, and what our recorded local example proves.",
     takeaway:
       "Autonomy means the agent can move work forward within your rules. It does not mean every finding deserves an edit, or every proposed change should skip review.",
     image: "/editorial/continuous-care.webp",
@@ -92,7 +92,7 @@ export const articles: Article[] = [
     category: "PRACTICAL SEO",
     title: "The SEO checks to run after a website update",
     description:
-      "A launch can look perfect and still break discovery. Use this practical checklist to inspect the pages, links and search information your update actually changed.",
+      "Your Optimiser’s practical SEO checklist for website updates: inspect changed pages, links, metadata and deployed content, with evidence before edits.",
     takeaway:
       "Start with the change and its dependencies. Check the served website after deployment, then distinguish a verified technical repair from a search outcome that needs more time.",
     image: "/editorial/continuous-care.webp",
@@ -161,7 +161,7 @@ export const articles: Article[] = [
     category: "SEARCH & AI DISCOVERY",
     title: "SEO and GEO: what should you fix first?",
     description:
-      "Start with accessible pages, clear facts and useful answers. A practical approach to AI-search visibility without magic files, invented citations or misleading scores.",
+      "Your Optimiser explains which SEO and GEO foundations to fix first, how AI-search discovery differs, and how to measure visibility without invented scores.",
     takeaway:
       "Make the business easy to find and understand, then measure each search experience separately. A technical score, a citation and a conversion answer different questions.",
     image: "/editorial/clear-discovery.webp",
