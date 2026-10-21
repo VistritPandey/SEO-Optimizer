@@ -261,20 +261,20 @@
         {
           "url": "http://127.0.0.1:62878/",
           "evidence_id": "38be5e68-0db1-4850-bb6d-afa8ffb1a6e7",
-          "title": "Cedar Workshop \u2014 Thoughtful lighting",
-          "excerpt": "Cedar Workshop \u2014 Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+          "title": "Cedar Workshop - Thoughtful lighting",
+          "excerpt": "Cedar Workshop - Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
         },
         {
           "url": "http://127.0.0.1:62878/shop/",
           "evidence_id": "0de92376-d12b-4125-be39-34f2471ff8f6",
-          "title": "Lighting collection \u2014 Cedar Workshop",
-          "excerpt": "Lighting collection \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+          "title": "Lighting collection - Cedar Workshop",
+          "excerpt": "Lighting collection - Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
         },
         {
           "url": "http://127.0.0.1:62878/products/cedar-lamp/",
           "evidence_id": "9e3c70aa-d143-400c-8258-ce1e447be58d",
-          "title": "Cedar Desk Lamp \u2014 Cedar Workshop",
-          "excerpt": "Cedar Desk Lamp \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
+          "title": "Cedar Desk Lamp - Cedar Workshop",
+          "excerpt": "Cedar Desk Lamp - Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
         },
         {
           "url": "http://127.0.0.1:62878/collections/lighting/",
@@ -445,7 +445,7 @@
     },
     {
       "time": 5.717695333994925,
-      "text": "MODEL gemini-3.8-flash request 1 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 1 - actual inference"
     },
     {
       "time": 13.251552791974973,
@@ -453,7 +453,7 @@
     },
     {
       "time": 13.252479458984453,
-      "text": "DEMO FAILED: AssertionError \u2014 see preserved result"
+      "text": "DEMO FAILED: AssertionError - see preserved result"
     }
   ],
   "requests": 1,
