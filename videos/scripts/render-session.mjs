@@ -1,6 +1,7 @@
 import {bundle} from "@remotion/bundler";
 import {renderMedia, renderStill, selectComposition} from "@remotion/renderer";
 import {mkdir, writeFile} from "node:fs/promises";
+import {execFileSync} from "node:child_process";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
@@ -15,12 +16,18 @@ if (process.argv.includes("--stills")) process.exit(0);
 let last = -1;
 await renderMedia({
   serveUrl, composition, codec: "h264", muted: true, pixelFormat: "yuv420p", crf: 19,
-  concurrency: 3, outputLocation: path.join(output, "your-optimiser-agent-at-work.mp4"),
+  concurrency: 3, outputLocation: path.join(output, "session-raw.mp4"),
   onProgress: ({progress}) => {
     const bucket = Math.floor(progress * 10);
     if (bucket !== last) {last = bucket; console.log(`Render ${bucket * 10}%`);}
   },
 });
+// Browser frames arrive in full range. Export limited-range YUV with the index
+// at the start of the file for portable playback and HTTP seeking.
+execFileSync("ffmpeg", ["-v", "error", "-i", path.join(output, "session-raw.mp4"),
+  "-map", "0:v:0", "-an", "-c:v", "libx264", "-crf", "19", "-preset", "slow",
+  "-pix_fmt", "yuv420p", "-vf", "scale=in_range=full:out_range=tv", "-color_range", "tv",
+  "-movflags", "+faststart", "-y", path.join(output, "your-optimiser-agent-at-work.mp4")]);
 await writeFile(path.join(output, "render.json"), JSON.stringify({
   width: composition.width, height: composition.height, fps: composition.fps,
   frames: composition.durationInFrames, seconds: composition.durationInFrames / composition.fps,
