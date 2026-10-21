@@ -2202,7 +2202,7 @@ html {
   background: #e3f8ce;
 }
 .terminal-window {
-  height: 254px;
+  height: 271px;
   background: #0d1311;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
@@ -2238,7 +2238,7 @@ html {
   letter-spacing: 0.5px;
 }
 .terminal-output {
-  height: 183px;
+  height: 200px;
   padding: 17px 14px;
   font-size: 11px;
   line-height: 1.6;
