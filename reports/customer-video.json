@@ -25,8 +25,8 @@
       }
     ],
     "format": {
-      "duration": "69.033333",
-      "size": "5239683"
+      "duration": "69.033008",
+      "size": "4867802"
     }
   },
   "visual_review": [
@@ -43,5 +43,6 @@
   "captions": "Always-visible on-screen captions plus optional English VTT",
   "live_github_pr": "unverified",
   "production_search_uplift": "unverified",
-  "audio_streams": 0
+  "audio_streams": 0,
+  "caption_refresh": "Re-rendered the existing silent film with plain punctuation. New terminal film is a separate reviewable asset."
 }
