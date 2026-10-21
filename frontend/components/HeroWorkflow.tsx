@@ -80,51 +80,104 @@ export function HeroWorkflow() {
         <div key={stage} className="workflow-artifact terminal-window">
           <div className="terminal-chrome">
             <span className="terminal-lights" aria-hidden="true">
-              <i /><i /><i />
+              <i />
+              <i />
+              <i />
             </span>
             <span>your-optimiser / agent</span>
             <span className="terminal-session">SESSION 001</span>
           </div>
-          <div className="terminal-output" aria-label={`${stages[stage]} example output`}>
+          <div
+            className="terminal-output"
+            aria-label={`${stages[stage]} example output`}
+          >
             {stage === 0 && (
               <>
-                <div className="terminal-line terminal-muted">A website update arrives</div>
-                <div className="terminal-line"><span className="terminal-prompt">→</span> main · homepage changed</div>
-                <div className="terminal-line terminal-file">web/index.html</div>
-                <div className="terminal-line">Check the affected page and its links.</div>
-                <div className="terminal-line terminal-success">Watching the pages that matter.</div>
+                <div className="terminal-line terminal-muted">
+                  A website update arrives
+                </div>
+                <div className="terminal-line">
+                  <span className="terminal-prompt">→</span> main · homepage
+                  changed
+                </div>
+                <div className="terminal-line terminal-file">
+                  web/index.html
+                </div>
+                <div className="terminal-line">
+                  Check the affected page and its links.
+                </div>
+                <div className="terminal-line terminal-success">
+                  Watching the pages that matter.
+                </div>
               </>
             )}
             {stage === 1 && (
               <>
-                <div className="terminal-line"><span className="terminal-prompt">→</span> read_file <span className="terminal-file">web/index.html</span></div>
-                <div className="terminal-line terminal-warning">/collections/lighting/ returns 404</div>
-                <div className="terminal-line terminal-warning">Page description is missing</div>
-                <div className="terminal-line terminal-success">/shop/ · existing page</div>
-                <div className="terminal-line terminal-muted">Evidence collected. Prepare a focused fix.</div>
+                <div className="terminal-line">
+                  <span className="terminal-prompt">→</span> read_file{" "}
+                  <span className="terminal-file">web/index.html</span>
+                </div>
+                <div className="terminal-line terminal-warning">
+                  /collections/lighting/ returns 404
+                </div>
+                <div className="terminal-line terminal-warning">
+                  Page description is missing
+                </div>
+                <div className="terminal-line terminal-success">
+                  /shop/ · existing page
+                </div>
+                <div className="terminal-line terminal-muted">
+                  Evidence collected. Prepare a focused fix.
+                </div>
               </>
             )}
             {stage === 2 && (
               <>
-                <div className="terminal-line"><span className="terminal-prompt">→</span> apply_patch <span className="terminal-file">web/index.html</span></div>
-                <div className="terminal-line terminal-warning">- href=&quot;/collections/lighting/&quot;</div>
-                <div className="terminal-line terminal-success">+ href=&quot;/shop/&quot;</div>
-                <div className="terminal-line terminal-success">+ Description from existing page copy</div>
-                <div className="terminal-line terminal-muted">run_checks ✓ · Pull request ready for review</div>
+                <div className="terminal-line">
+                  <span className="terminal-prompt">→</span> apply_patch{" "}
+                  <span className="terminal-file">web/index.html</span>
+                </div>
+                <div className="terminal-line terminal-warning">
+                  - href=&quot;/collections/lighting/&quot;
+                </div>
+                <div className="terminal-line terminal-success">
+                  + href=&quot;/shop/&quot;
+                </div>
+                <div className="terminal-line terminal-success">
+                  + Description from existing page copy
+                </div>
+                <div className="terminal-line terminal-muted">
+                  run_checks ✓ · Pull request ready for review
+                </div>
               </>
             )}
             {stage === 3 && (
               <>
-                <div className="terminal-line terminal-muted">After your review, merge and deployment</div>
-                <div className="terminal-line terminal-success">/shop/ returns 200 after deployment</div>
-                <div className="terminal-line terminal-success">Page description present · verified</div>
-                <div className="terminal-line">Healthy content left unchanged.</div>
-                <div className="terminal-line terminal-prompt">Watching for the next website update<span className="terminal-cursor" aria-hidden="true">▌</span></div>
+                <div className="terminal-line terminal-muted">
+                  After your review, merge and deployment
+                </div>
+                <div className="terminal-line terminal-success">
+                  /shop/ returns 200 after deployment
+                </div>
+                <div className="terminal-line terminal-success">
+                  Page description present · verified
+                </div>
+                <div className="terminal-line">
+                  Healthy content left unchanged.
+                </div>
+                <div className="terminal-line terminal-prompt">
+                  Watching for the next website update
+                  <span className="terminal-cursor" aria-hidden="true">
+                    ▌
+                  </span>
+                </div>
               </>
             )}
           </div>
           <div className="terminal-footnote">
-            <span>{stage === 2 ? "PATCH EXCERPTS" : "EVIDENCE BEFORE ACTION"}</span>
+            <span>
+              {stage === 2 ? "PATCH EXCERPTS" : "EVIDENCE BEFORE ACTION"}
+            </span>
             <span>SEO CARE, IN THE CODE</span>
           </div>
         </div>
