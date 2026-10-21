@@ -44,6 +44,7 @@ const structuredData = {
       "@type": "Organization",
       "@id": `${site.url}/#organization`,
       name: site.name,
+      alternateName: "YourOptimiser",
       url: site.url,
       logo: {
         "@type": "ImageObject",
@@ -56,6 +57,7 @@ const structuredData = {
       "@type": "WebSite",
       "@id": `${site.url}/#website`,
       name: site.name,
+      alternateName: "YourOptimiser",
       url: site.url,
       publisher: { "@id": `${site.url}/#organization` },
       inLanguage: "en",
@@ -393,7 +395,7 @@ export default function Home() {
         >
           <div className="journal-section-heading">
             <div>
-              <span className="eyebrow">THE JOURNAL</span>
+              <span className="eyebrow">THE BLOG</span>
               <h2 id="journal-title">
                 Good SEO starts with
                 <br />
@@ -401,7 +403,7 @@ export default function Home() {
               </h2>
             </div>
             <Link href="/blog" className="text-link">
-              Explore the journal →
+              Explore the blog →
             </Link>
           </div>
           <ArticleCards />
