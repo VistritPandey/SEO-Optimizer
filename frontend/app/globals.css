@@ -2204,7 +2204,7 @@ html {
 .terminal-window {
   height: 271px;
   background: #0d1311;
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-family: "SFMono-Regular", Menlo, "DejaVu Sans Mono", Consolas, monospace;
 }
 .terminal-chrome {
   display: flex;
