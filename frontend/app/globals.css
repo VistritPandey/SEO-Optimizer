@@ -1042,9 +1042,13 @@ footer {
   border-radius: 11px;
   background: #cce89a;
   color: #173529;
-  font:
-    italic 34px Georgia,
-    serif;
+  flex: 0 0 38px;
+  line-height: 1;
+}
+.demo-agent-mark .brand-symbol {
+  width: 42px;
+  height: 42px;
+  transform: translateY(-2px);
 }
 .demo-agent-heading strong {
   display: block;
@@ -1411,7 +1415,7 @@ html {
   flex: 0 0 30px;
   overflow: hidden;
 }
-.brand .brand-mark img {
+.brand .brand-symbol {
   display: block;
   width: 48px;
   height: 48px;
@@ -1830,7 +1834,7 @@ html {
     height: 30px;
     flex-basis: 26px;
   }
-  .brand .brand-mark img {
+  .brand .brand-symbol {
     width: 44px;
     height: 44px;
   }
@@ -2465,10 +2469,6 @@ html[data-theme="dark"] .workspace-tour {
   justify-content: space-between;
   gap: 16px;
 }
-html[data-theme="dark"] .brand-mark img {
-  filter: invert(1) hue-rotate(180deg);
-  mix-blend-mode: screen;
-}
 html[data-theme="dark"]
   :is(.auth-card, .price-card, .hero-sheet, .review-receipt) {
   background: var(--white);
@@ -2500,19 +2500,69 @@ html[data-theme="dark"] .button.secondary {
 html[data-theme="dark"] .button.secondary:hover {
   background: #324936;
 }
-/* The fictional website previews retain their own light palette, like a page
-   being inspected inside a dark application. Their text stays readable. */
 html[data-theme="dark"] :is(.customer-demo, .hero-workflow) {
-  --paper: #f7f7f0;
-  --ink: #242d25;
-  --muted: #5d685f;
-  --green: #315443;
-  --line: #dbe0d6;
-  --white: #fff;
-  --soft: #ecf0e6;
   color: var(--ink);
-  background: #fff;
-  color-scheme: light;
+  background: var(--white);
+  border-color: var(--line);
+  color-scheme: dark;
+}
+html[data-theme="dark"] .demo-website {
+  background: var(--white);
+}
+html[data-theme="dark"]
+  :is(
+    .demo-toolbar,
+    .demo-browser,
+    .demo-search-card,
+    .demo-product,
+    .workflow-artifact,
+    .demo-playback button
+  ) {
+  background: var(--soft);
+  border-color: var(--line);
+}
+html[data-theme="dark"] :is(.demo-browser, .demo-scenarios button) {
+  color: var(--muted);
+}
+html[data-theme="dark"] :is(.demo-scenarios, .customer-demo > .demo-playback) {
+  background: #18211b;
+}
+html[data-theme="dark"] .demo-scenarios button[aria-pressed="true"] {
+  background: var(--soft);
+  color: var(--green);
+}
+html[data-theme="dark"] .demo-search-card strong {
+  color: var(--green);
+}
+html[data-theme="dark"]
+  :is(.demo-search-card .demo-missing, .demo-error-code, .proposal-line del) {
+  color: #f0b991;
+}
+html[data-theme="dark"] :is(.demo-shop-button, .workflow-next, .artifact-shop) {
+  background: var(--green);
+  color: #17251b;
+}
+html[data-theme="dark"] :is(.workflow-next, .demo-playback button):hover {
+  background: #bedac0;
+  color: #17251b;
+}
+html[data-theme="dark"] .demo-playback-track > span {
+  background: var(--line);
+}
+html[data-theme="dark"] .demo-playback-track .done {
+  background: var(--green);
+}
+html[data-theme="dark"]
+  :is(.check-good, .customer-demo .pill, .hero-workflow .pill) {
+  background: #2b4530;
+  color: #c0e3bc;
+}
+html[data-theme="dark"] :is(.check-warn, .hero-workflow .pill.warn) {
+  background: #493723;
+  color: #efd49e;
+}
+html[data-theme="dark"] .demo-agent {
+  background: #152d23;
 }
 @media (max-width: 760px) {
   .marketing-nav {
