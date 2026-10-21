@@ -4,7 +4,7 @@ export const site = {
   name: "Your Optimiser",
   url: "https://youroptimiser.com",
   description:
-    "Ongoing SEO care for a website that keeps changing. Your AI agent checks updates, prepares focused fixes in GitHub and verifies them after deployment.",
+    "Your autonomous SEO agent. Monitor website changes, investigate supported issues, prepare tested GitHub fixes and verify the deployed result.",
   repository: "https://github.com/YourOptimiser/your-optimiser",
   supportEmail: "support@youroptimiser.com",
 };
@@ -18,6 +18,10 @@ export const publicPages = [
   "/contact",
   "/privacy",
   "/terms",
+  "/blog",
+  "/blog/what-is-an-autonomous-seo-agent",
+  "/blog/seo-checklist-after-a-website-update",
+  "/blog/seo-and-geo-what-to-fix-first",
 ];
 
 export function pageMetadata(
