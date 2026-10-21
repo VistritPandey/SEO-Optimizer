@@ -1615,6 +1615,106 @@ html {
   font-size: 12px;
   line-height: 1.7;
 }
+
+/* One row on desktop; a disclosure menu before navigation labels get crowded. */
+.marketing-nav.public-header {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 24px;
+}
+.marketing-nav.public-header .public-navigation {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  width: auto;
+  margin-left: auto;
+}
+.marketing-nav.public-header .public-navigation > a {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.marketing-nav.public-header .nav-github span {
+  display: inline;
+}
+.marketing-nav.public-header .nav-signin::after {
+  content: none;
+}
+.public-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex: 0 0 44px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--soft);
+  color: var(--ink);
+}
+.public-menu-toggle:hover {
+  background: var(--white);
+}
+@media (max-width: 1100px) {
+  .marketing-nav.public-header {
+    min-height: 76px;
+    padding: 14px 5%;
+    justify-content: space-between;
+  }
+  .marketing-nav.public-header .public-menu-toggle {
+    display: inline-flex;
+  }
+  .marketing-nav.public-header .public-navigation {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+    padding: 14px 5% 24px;
+    max-height: calc(100dvh - 76px);
+    overflow-y: auto;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: 0 18px 24px #00000012;
+  }
+  .marketing-nav.public-header .public-navigation[data-open="true"] {
+    display: flex;
+  }
+  .marketing-nav.public-header .public-navigation > a {
+    min-height: 48px;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line);
+    font-size: 15px;
+  }
+  .marketing-nav.public-header .public-navigation .theme-control {
+    margin-top: 20px;
+    align-self: flex-start;
+  }
+  .marketing-nav.public-header .theme-compact legend {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    padding-bottom: 9px;
+  }
+  .marketing-nav.public-header .theme-compact .theme-label {
+    display: inline;
+    font-size: 12px;
+  }
+  .marketing-nav.public-header .theme-compact button {
+    width: auto;
+    height: 36px;
+    padding-inline: 10px;
+  }
+}
 .journal-heading {
   max-width: 880px;
   padding: 12px 0 60px;
