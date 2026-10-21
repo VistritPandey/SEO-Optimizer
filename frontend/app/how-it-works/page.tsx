@@ -65,6 +65,46 @@ export default function Page() {
           </Reveal>
         ))}
       </div>
+      <section
+        id="agent-demo"
+        className="recorded-agent-demo"
+        aria-labelledby="recorded-agent-title"
+      >
+        <span className="eyebrow">WATCH THE AUTONOMOUS SEO AGENT WORK</span>
+        <h2 id="recorded-agent-title">
+          Real files. A focused patch. Checks that run.
+        </h2>
+        <p>
+          A fresh local repair on a fictional shop, condensed into 52 silent
+          seconds. See the actual file reads, patch excerpts, project checks and
+          browser before and after.
+        </p>
+        <video
+          controls
+          muted
+          playsInline
+          preload="none"
+          poster="/agent-at-work-poster.webp"
+          aria-label="Recorded autonomous SEO agent repair"
+        >
+          <source src="/agent-at-work.mp4" type="video/mp4" />
+          <track
+            kind="captions"
+            src="/agent-at-work.vtt"
+            srcLang="en"
+            label="English"
+          />
+          <a href="/agent-at-work.mp4">Download the silent agent demo</a>
+        </video>
+        <p className="recorded-agent-note">
+          Recorded local demonstration, edited for time. Four confirmed defects
+          resolved in this run. No live GitHub publication or search-ranking
+          uplift is claimed.
+        </p>
+        <a className="text-link" href="/agent-at-work.mp4">
+          Open the full video ↗
+        </a>
+      </section>
       <section className="editorial-demo" aria-labelledby="demo-title">
         <span className="eyebrow">TAKE IT FOR A SPIN</span>
         <h2 id="demo-title">One update. Two possible outcomes.</h2>
