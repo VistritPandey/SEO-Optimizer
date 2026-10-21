@@ -1,0 +1,177 @@
+{
+  "verified_at": "2026-10-21T06:08:24.401705+00:00",
+  "environment": "https://youroptimiser.com",
+  "application_commit": "23c9719954f815ed96eab3d090fb3765bd96a6f6",
+  "revision": "your-optimiser-00037-2jc",
+  "traffic_percent": 100,
+  "build": {
+    "id": "b66c330c-aa80-4d74-a0aa-5da1dea34b30",
+    "status": "SUCCESS",
+    "image": "us-central1-docker.pkg.dev/meetext-business/your-optimiser/app:clean-23c9719"
+  },
+  "ci": {
+    "url": "https://github.com/YourOptimiser/your-optimiser/actions/runs/39552802917",
+    "passed": [
+      "combined",
+      "verify",
+      "frontend",
+      "secrets"
+    ]
+  },
+  "local": {
+    "header": {
+      "environment": "http://127.0.0.1:3002",
+      "passed": [
+        "1440px: all desktop links stay on one aligned row",
+        "1280px: all desktop links stay on one aligned row",
+        "1101px: all desktop links stay on one aligned row",
+        "1100px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "1024px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "768px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "640px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "390px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "320px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "Open light menu passes automated A/AA accessibility checks",
+        "Open dark menu passes automated A/AA accessibility checks",
+        "Resizing between desktop and compact layouts resets the menu safely",
+        "Tab can leave the disclosure; navigation never traps keyboard focus",
+        "All navigation destinations remain available without JavaScript"
+      ],
+      "browser_errors": [],
+      "failed": []
+    },
+    "public_browser": {
+      "environment": "http://127.0.0.1:3002",
+      "passed": [
+        "Public landing page does not prefetch authentication or workspace routes",
+        "Landing JavaScript stays within the 200 KB compressed transfer budget",
+        "Hero auto-plays and loops with stable height; pause and manual takeover work",
+        "Hero workflow: update, findings, review, verification, replay and keyboard controls",
+        "Silent captioned video mounts only on request and unloads when closed",
+        "Store auto-plays every 1.5 seconds and stops its timer off screen",
+        "Broken update: missing destination, before/after review and repaired destination",
+        "Healthy update: working collection and no proposed fix or approval",
+        "FAQ answers expand with native accessible controls",
+        "Reduced-motion visitors start paused and can explicitly play the example",
+        "12 public pages fit a 390px viewport without horizontal overflow",
+        "Reduced-motion preference is active during responsive accessibility checks",
+        "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks",
+        "Public light/dark/system controls persist across routes and reloads",
+        "Dark public, policy and authentication pages pass mobile accessibility scans",
+        "Both demos and every step pass contrast checks in light and dark themes",
+        "Shared logo matches the brand colour and the walkthrough badge stays aligned",
+        "Headline, terminal example and sign-up links render without JavaScript"
+      ],
+      "browser_errors": [],
+      "accessibility_violations": [],
+      "screenshots": "reports/public-site",
+      "model_calls": 0,
+      "unverified": [
+        "Manual assistive-technology audit",
+        "Authenticated customer workflow"
+      ]
+    },
+    "build": "passed",
+    "format": "passed",
+    "typecheck": "passed",
+    "frontend_unit_tests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "ruff": "passed"
+  },
+  "production": {
+    "header": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "1440px: all desktop links stay on one aligned row",
+        "1280px: all desktop links stay on one aligned row",
+        "1101px: all desktop links stay on one aligned row",
+        "1100px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "1024px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "768px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "640px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "390px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "320px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "Open light menu passes automated A/AA accessibility checks",
+        "Open dark menu passes automated A/AA accessibility checks",
+        "Resizing between desktop and compact layouts resets the menu safely",
+        "Tab can leave the disclosure; navigation never traps keyboard focus",
+        "All navigation destinations remain available without JavaScript"
+      ],
+      "browser_errors": [],
+      "failed": []
+    },
+    "navigation": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "1440px: footer link opens the separate Blog page at the top",
+        "1440px: Back restores the original landing-page position",
+        "1440px: article links open at their heading",
+        "1440px: article contents links reach sections below the header",
+        "1440px: cross-page video anchors retain their intended destination",
+        "1440px: pricing anchors work and Blog navigation starts at the top",
+        "390px: footer link opens the separate Blog page at the top",
+        "390px: Back restores the original landing-page position",
+        "390px: article links open at their heading",
+        "390px: article contents links reach sections below the header",
+        "390px: cross-page video anchors retain their intended destination",
+        "390px: pricing anchors work and Blog navigation starts at the top"
+      ],
+      "browser_errors": [],
+      "failed": []
+    },
+    "blog": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "Homepage names the autonomous SEO agent and links the separate Blog page without duplicating article or guide sections",
+        "Journal index links exactly the published articles in its collection metadata",
+        "All three posts and the guide use distinct cover files, consistently linked from the separate blog index, article schema and social previews",
+        "Three articles and the existing guide have matching visible facts, brand identity, authorship, dates, canonicals, article sharing metadata, breadcrumbs, contents and optimised cover images",
+        "Unpublished article paths return 404",
+        "Original repair evidence and engine-specific AI-search limits stay explicit",
+        "Recorded silent demo and captions resolve from the how-it-works page"
+      ],
+      "failed": [],
+      "unverified": [
+        "Search indexing, rankings, traffic and AI citations"
+      ]
+    },
+    "public_site": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "12 public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
+        "Sign-in and workspace pages carry noindex in HTML and HTTP headers",
+        "Sitemap includes public canonical pages only; robots allows them and excludes API crawling",
+        "LLM product index is readable, links to public facts and states its limits",
+        "Structured data describes the real product and free offer without fabricated reviews or FAQ rich-result markup",
+        "Favicon, Apple touch icon and branded social image have correct PNG dimensions",
+        "Every internal navigation link and in-page anchor resolves",
+        "Unknown pages return 404 and workspace API access stays protected"
+      ],
+      "failed": [],
+      "model_calls": 0,
+      "unverified": [
+        "Search indexing and rankings",
+        "AI citation outcomes",
+        "Field Core Web Vitals",
+        "Real customer sign-in and GitHub lifecycle",
+        "Public www redirect: verify after alias DNS and TLS are ready"
+      ]
+    }
+  },
+  "screenshots": [
+    "reports/public-site/header-menu-light.png",
+    "reports/public-site/header-menu-dark.png"
+  ],
+  "failed": [],
+  "skipped": [],
+  "unverified": [
+    "Manual assistive-technology audit",
+    "Search indexing, rankings and AI citations",
+    "Field performance",
+    "Authenticated customer lifecycle was not repeated for this header change",
+    "Public www alias redirect"
+  ],
+  "model_calls": 0
+}
