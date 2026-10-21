@@ -112,6 +112,11 @@ def check_public_site(base_url, passed=None, verify_www=True):
 
         sitemap = client.get("/sitemap.xml")
         assert sitemap.status_code == 200
+        assert "application/xml" in sitemap.headers.get("content-type", "")
+        assert "noindex" not in sitemap.headers.get("x-robots-tag", "")
+        bot_sitemap = client.get("/sitemap.xml", headers={"User-Agent": "Googlebot"})
+        assert bot_sitemap.status_code == 200
+        assert bot_sitemap.content == sitemap.content
         root = ElementTree.fromstring(sitemap.content)
         locations = {element.text.rstrip("/") for element in root.findall("{*}url/{*}loc")}
         assert locations == {(CANONICAL + path).rstrip("/") for path in PAGES}
@@ -119,6 +124,7 @@ def check_public_site(base_url, passed=None, verify_www=True):
         assert robots.status_code == 200 and f"Sitemap: {CANONICAL}/sitemap.xml" in robots.text
         policy = RobotFileParser()
         policy.parse(robots.text.splitlines())
+        assert policy.can_fetch("Googlebot", CANONICAL + "/sitemap.xml")
         assert all(policy.can_fetch("Googlebot", CANONICAL + path) for path in PAGES)
         assert not policy.can_fetch("Googlebot", CANONICAL + "/api/v1/projects")
         passed.append(
