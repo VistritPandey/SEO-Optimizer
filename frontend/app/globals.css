@@ -2164,6 +2164,254 @@ html {
   margin: 13px 0 0;
   color: var(--muted);
 }
+
+/* A readable replay of the agent's workflow, not a live shell or audit. */
+.hero-terminal {
+  --ink: #e9ece3;
+  --muted: #a9b3ad;
+  --green: #d4f4b4;
+  --line: #3a483f;
+  --white: #19221d;
+  --soft: #101813;
+  background: var(--white);
+  border-color: #3a483f;
+  color: var(--ink);
+  box-shadow: 0 20px 55px #19221d22;
+}
+.hero-terminal .workflow-scene > p {
+  color: var(--muted);
+}
+.hero-terminal .workflow-steps {
+  margin-bottom: 18px;
+}
+.hero-terminal .demo-playback button {
+  background: #26352b;
+}
+.hero-terminal .demo-playback button:hover {
+  background: #35473a;
+  color: var(--ink);
+}
+.hero-terminal .demo-playback-track > span {
+  background: var(--line);
+}
+.hero-terminal .workflow-next {
+  background: var(--green);
+  color: #19221d;
+}
+.hero-terminal .workflow-next:hover {
+  background: #e3f8ce;
+}
+.terminal-window {
+  height: 254px;
+  background: #0d1311;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+.terminal-chrome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 10px;
+}
+.terminal-lights {
+  display: inline-flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.terminal-lights i {
+  width: 6px;
+  height: 6px;
+  background: #b8877a;
+  border-radius: 50%;
+}
+.terminal-lights i:nth-child(2) {
+  background: #bdac7d;
+}
+.terminal-lights i:nth-child(3) {
+  background: #8eac8c;
+}
+.terminal-session {
+  margin-left: auto;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+}
+.terminal-output {
+  height: 183px;
+  padding: 17px 14px;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.terminal-line {
+  padding-block: 4px;
+  overflow-wrap: anywhere;
+}
+.terminal-muted,
+.terminal-file {
+  color: var(--muted);
+}
+.terminal-prompt,
+.terminal-success {
+  color: #d4f4b4;
+}
+.terminal-warning {
+  color: #f2a89a;
+}
+.terminal-footnote {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 13px;
+  border-top: 1px solid var(--line);
+  font-size: 7px;
+  letter-spacing: 0.6px;
+  color: var(--muted);
+}
+.hero-terminal[data-running="true"] .terminal-line {
+  animation: terminal-line-enter 0.18s ease-out both;
+}
+.hero-terminal[data-running="true"] .terminal-line:nth-child(2) {
+  animation-delay: 50ms;
+}
+.hero-terminal[data-running="true"] .terminal-line:nth-child(3) {
+  animation-delay: 100ms;
+}
+.hero-terminal[data-running="true"] .terminal-line:nth-child(4) {
+  animation-delay: 150ms;
+}
+.hero-terminal[data-running="true"] .terminal-line:nth-child(5) {
+  animation-delay: 200ms;
+}
+.hero-terminal[data-running="true"] .terminal-cursor {
+  animation: terminal-cursor-blink 0.8s steps(2, jump-none) infinite;
+}
+@keyframes terminal-line-enter {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes terminal-cursor-blink {
+  to {
+    opacity: 0;
+  }
+}
+@media (max-width: 420px) {
+  .terminal-output {
+    font-size: 10px;
+    padding-inline: 11px;
+  }
+  .terminal-session {
+    display: none;
+  }
+  .terminal-footnote {
+    font-size: 6px;
+    padding-inline: 11px;
+    gap: 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-terminal[data-running="true"] :is(.terminal-line, .terminal-cursor) {
+    animation: none;
+  }
+}
+
+.contact-form {
+  padding: clamp(22px, 4vw, 40px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--white);
+  position: relative;
+}
+.contact-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 23px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.contact-form :is(input, select, textarea) {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 400;
+}
+.contact-form :is(input, select, textarea):focus {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+.contact-form textarea {
+  resize: vertical;
+  min-height: 160px;
+}
+.contact-form textarea::placeholder {
+  color: var(--muted);
+}
+.contact-form .contact-form-note {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+.contact-form-note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.contact-form-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.contact-honeypot {
+  display: none;
+}
+.contact-feedback:empty {
+  display: none;
+}
+.contact-feedback p {
+  margin: 24px 0 0;
+  padding: 16px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.contact-success {
+  color: var(--green);
+  background: var(--soft);
+  border: 1px solid var(--line);
+}
+.contact-error {
+  color: #80382a;
+  background: #fbefe9;
+  border: 1px solid #dcbeb5;
+}
+html[data-theme="dark"] .contact-error {
+  color: #f2bdb1;
+  background: #39251f;
+  border-color: #775246;
+}
+@media (max-width: 600px) {
+  .contact-fields {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
 @media (max-width: 1100px) {
   .hero-workflow {
     padding: 20px;
