@@ -1,0 +1,19 @@
+{
+  "environment": "https://youroptimiser.com",
+  "passed": [
+    "1440px: deep landing-page link opens the guide at the top",
+    "1440px: Back restores the original landing-page position",
+    "1440px: article links open at their heading",
+    "1440px: article contents links reach sections below the header",
+    "1440px: cross-page video anchors retain their intended destination",
+    "1440px: pricing anchors work and Blog navigation starts at the top",
+    "390px: deep landing-page link opens the guide at the top",
+    "390px: Back restores the original landing-page position",
+    "390px: article links open at their heading",
+    "390px: article contents links reach sections below the header",
+    "390px: cross-page video anchors retain their intended destination",
+    "390px: pricing anchors work and Blog navigation starts at the top"
+  ],
+  "browser_errors": [],
+  "failed": []
+}
