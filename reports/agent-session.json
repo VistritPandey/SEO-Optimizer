@@ -1,0 +1,75 @@
+{
+  "status": "passed",
+  "generated_at": "2026-10-21T03:03:08.521542+00:00",
+  "video": "videos/releases/agent-at-work.mp4",
+  "captions": "videos/releases/agent-at-work.vtt",
+  "video_sha256": "47208f722cde7244be16b97fea221cf67051a7ed10175a89465a8d7def7e3351",
+  "recording_sha256": "71c1e56413416ff403011a1e86fcf552ee6d09f5d7dab776cb19de74d0b10dfd",
+  "recorded_at": "2026-10-21T02:45:57.536665+00:00",
+  "scope": "Fresh real model repair on a fictional local shop. Edited evidence replay, not a live GitHub or search-ranking experiment.",
+  "real_run": {
+    "seconds": 142.42,
+    "confirmed_defects_before": 4,
+    "confirmed_defects_after": 0,
+    "regressions": 0,
+    "model_tool_calls": 5,
+    "source_files_changed": 2,
+    "sandbox_checks": "passed",
+    "private_preview_and_crawler_policy": "preserved",
+    "repeat_created_commit": false,
+    "docs_only_merge_inference_requests": 0
+  },
+  "media": {
+    "width": 1920,
+    "height": 1080,
+    "duration": 52,
+    "error": null,
+    "seek_and_play_to_end": "passed",
+    "audio_streams": 0,
+    "pixel_format": "yuv420p",
+    "bytes": 2199795
+  },
+  "visual_review": [
+    "Problem and actual 404",
+    "Actual file reads",
+    "Exact patch excerpts",
+    "Staged checks and worker verification",
+    "Browser before and after",
+    "Repeat audit and docs-only merge",
+    "Closing frame"
+  ],
+  "verification": {
+    "export_safety_tests": {
+      "passed": 5,
+      "failed": 0
+    },
+    "python_suite": {
+      "passed": 570,
+      "skipped": 19,
+      "failed": 0
+    },
+    "skip_reasons": [
+      "Firestore emulator not running: 12",
+      "Docker workflow opt-in disabled: 7; fresh filmed repair used real Docker checks"
+    ],
+    "frontend_tests": 7,
+    "public_browser_checks": 18,
+    "accessibility_violations": 0,
+    "frontend_build": "passed",
+    "frontend_format_and_types": "passed",
+    "python_lint_and_types": "passed",
+    "remotion_types": "passed",
+    "knowledge_package": "39 checks and 31 sources validated"
+  },
+  "playback_harness_notes": [
+    "Initial built-in browser media-document load did not preload.",
+    "Initial temporary HTTP fixture lacked byte ranges and failed seeking.",
+    "Explicit video player with byte-range HTTP delivery passed every chapter seek and playback to the end."
+  ],
+  "unverified": [
+    "Live GitHub publication from this fictional fixture",
+    "Search ranking or AI citation uplift",
+    "Broad model quality from one demonstration"
+  ],
+  "website_embedding": "New film saved separately for review; existing website walkthrough retained with punctuation refreshed."
+}
