@@ -86,7 +86,7 @@ def main():
         github = page.get_by_role("navigation", name="Main navigation").get_by_role(
             "link", name="Your Optimiser on GitHub (opens in a new tab)"
         )
-        assert github.get_attribute("href") == "https://github.com/YourOptimiser/SEO-Optimizer"
+        assert github.get_attribute("href") == "https://github.com/YourOptimiser/your-optimiser"
         assert page.locator("video").count() == 0
         assert not any("demo-poster" in url or url.endswith("/demo.mp4") for url in requests)
         summary = page.get_by_text("▷ Prefer to watch? See the customer walkthrough", exact=True)
