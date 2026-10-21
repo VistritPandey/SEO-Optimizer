@@ -1,6 +1,7 @@
 {
   "environment": "http://127.0.0.1:3002",
   "passed": [
+    "Public landing page does not prefetch authentication or workspace routes",
     "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
     "Silent captioned video mounts only on request and unloads when closed",
@@ -13,7 +14,8 @@
     "Reduced-motion preference is active during responsive accessibility checks",
     "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks",
     "Public light/dark/system controls persist across routes and reloads",
-    "Dark public, policy and authentication pages pass mobile accessibility scans"
+    "Dark public, policy and authentication pages pass mobile accessibility scans",
+    "Headline, illustrated example and sign-up links render without JavaScript"
   ],
   "browser_errors": [],
   "accessibility_violations": [],
