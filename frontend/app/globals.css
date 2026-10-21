@@ -2299,6 +2299,44 @@ html {
 }
 
 /* Reserve room so automatic slides do not move the surrounding page. */
+.workflow-artifact {
+  animation: demo-enter 0.16s ease-out;
+}
+.demo-story {
+  animation: demo-enter 0.22s ease-out;
+}
+@keyframes demo-enter {
+  from {
+    opacity: 0.65;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@supports (animation-timeline: view()) {
+  .content-reveal {
+    animation: content-enter linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 25%;
+  }
+}
+@keyframes content-enter {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workflow-artifact,
+  .demo-story,
+  .content-reveal {
+    animation: none;
+  }
+}
 .workflow-scene h2 {
   min-height: 58px;
 }
