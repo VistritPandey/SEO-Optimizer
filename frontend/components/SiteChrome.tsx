@@ -11,7 +11,7 @@ export function SiteHeader() {
         <Link href="/how-it-works">How it works</Link>
         <Link href="/seo-and-ai-search">What we look after</Link>
         <Link href="/#pricing">Pricing</Link>
-        <Link href="/blog">Journal</Link>
+        <Link href="/blog">Blog</Link>
         <a
           className="nav-github"
           href={site.repository}
@@ -56,7 +56,7 @@ export function SiteFooter() {
           <Link href="/how-it-works">How it works</Link>
           <Link href="/seo-and-ai-search">SEO & AI search</Link>
           <Link href="/#pricing">Free plan</Link>
-          <Link href="/blog">Journal & guides</Link>
+          <Link href="/blog">Blog & guides</Link>
           <Link href="/guides/continuous-seo">The ongoing SEO guide</Link>
         </nav>
         <nav aria-label="Company and policies">
