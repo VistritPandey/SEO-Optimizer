@@ -215,7 +215,7 @@ def main():
         }
         report["cases"].append(record)
         save()
-        print(f"{label}: {job.status} — {job.result.get('summary', '')}", flush=True)
+        print(f"{label}: {job.status} - {job.result.get('summary', '')}", flush=True)
         return job
 
     baseline = run("baseline", False)
