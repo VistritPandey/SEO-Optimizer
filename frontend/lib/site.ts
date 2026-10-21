@@ -5,7 +5,7 @@ export const site = {
   url: "https://youroptimiser.com",
   description:
     "Ongoing SEO care for a website that keeps changing. Your AI agent checks updates, prepares focused fixes in GitHub and verifies them after deployment.",
-  repository: "https://github.com/YourOptimiser/SEO-Optimizer",
+  repository: "https://github.com/YourOptimiser/your-optimiser",
   supportEmail: "support@youroptimiser.com",
 };
 
