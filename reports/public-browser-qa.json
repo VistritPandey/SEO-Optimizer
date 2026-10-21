@@ -1,5 +1,5 @@
 {
-  "environment": "https://youroptimiser.com",
+  "environment": "http://127.0.0.1:3002",
   "passed": [
     "Public landing page does not prefetch authentication or workspace routes",
     "Landing JavaScript stays within the 200 KB compressed transfer budget",
@@ -11,7 +11,7 @@
     "Healthy update: working collection and no proposed fix or approval",
     "FAQ answers expand with native accessible controls",
     "Reduced-motion visitors start paused and can explicitly play the example",
-    "Eight public pages fit a 390px mobile viewport without horizontal overflow",
+    "12 public pages fit a 390px viewport without horizontal overflow",
     "Reduced-motion preference is active during responsive accessibility checks",
     "Shared logo aligns on mobile home, sign-in and sign-up; authentication pages pass automated A/AA checks",
     "Public light/dark/system controls persist across routes and reloads",
