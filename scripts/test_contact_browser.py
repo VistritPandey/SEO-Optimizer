@@ -25,9 +25,22 @@ def main():
         context = browser.new_context(viewport={"width": 390, "height": 844})
         page = context.new_page()
         pending = []
+        native_posts = []
         errors = []
         page.on("pageerror", lambda error: errors.append(str(error)))
-        page.route(ENDPOINT, lambda route: pending.append(route))
+
+        def intercept(route):
+            if route.request.is_navigation_request():
+                native_posts.append(route.request)
+                route.fulfill(
+                    status=200,
+                    content_type="text/html",
+                    body="<h1>Secure verification fixture</h1>",
+                )
+            else:
+                pending.append(route)
+
+        page.route(ENDPOINT, intercept)
         page.clock.install()
         page.goto(args.base_url + "/contact", wait_until="networkidle")
         form = page.get_by_role("form", name="Contact Your Optimiser")
@@ -123,14 +136,11 @@ def main():
         assert not pending
         passed.append("Honeypot submissions do not contact the provider")
         page.locator('[name="_gotcha"]').evaluate("e => { e.value = ''; }")
-        form.get_by_role("button", name="Continue with secure submission").click(no_wait_after=True)
-        assert len(pending) == 1
-        fallback = pending.pop()
-        assert fallback.request.method == "POST"
-        assert fallback.request.is_navigation_request()
-        assert "demo%40example.invalid" in fallback.request.post_data
-        respond(fallback, 200, "<h1>Secure verification fixture</h1>", "text/html")
+        form.get_by_role("button", name="Continue with secure submission").click()
         expect(page.get_by_role("heading", name="Secure verification fixture")).to_be_visible()
+        assert len(native_posts) == 1
+        assert native_posts[0].method == "POST"
+        assert "demo%40example.invalid" in native_posts[0].post_data
         passed.append("Optional native submission preserves fields for provider verification")
         assert not errors, errors
         context.close()
