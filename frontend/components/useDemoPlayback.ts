@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type SyntheticEvent } from "react";
-import { useInView, useReducedMotion } from "motion/react";
 
 export function useDemoPlayback<T extends HTMLElement>(
   step: number,
@@ -9,17 +8,31 @@ export function useDemoPlayback<T extends HTMLElement>(
   advance: () => void,
 ) {
   const ref = useRef<T>(null);
-  const inView = useInView(ref, { amount: 0.3 });
-  const reducedMotion = useReducedMotion();
+  const [inView, setInView] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(true);
   const [ready, setReady] = useState(false);
   const [visible, setVisible] = useState(false);
   const [choice, setChoice] = useState<boolean | null>(null);
   useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => setReducedMotion(media.matches);
+    updateMotion();
+    media.addEventListener("change", updateMotion);
+    const observer = new IntersectionObserver(
+      ([entry]) =>
+        setInView(entry.isIntersecting && entry.intersectionRatio >= 0.3),
+      { threshold: 0.3 },
+    );
+    if (ref.current) observer.observe(ref.current);
     setReady(true);
     const update = () => setVisible(document.visibilityState === "visible");
     update();
     document.addEventListener("visibilitychange", update);
-    return () => document.removeEventListener("visibilitychange", update);
+    return () => {
+      document.removeEventListener("visibilitychange", update);
+      media.removeEventListener("change", updateMotion);
+      observer.disconnect();
+    };
   }, []);
   const playing = choice ?? (ready && reducedMotion === false);
   const running = playing && inView && visible;
