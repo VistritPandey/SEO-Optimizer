@@ -3,7 +3,7 @@ import { Workflow } from "@/components/Workflow";
 import { HeroWorkflow } from "@/components/HeroWorkflow";
 import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
-import { Reveal } from "@/components/Motion";
+import { Reveal } from "@/components/Reveal";
 import { site } from "@/lib/site";
 
 export const metadata = { alternates: { canonical: "/" } };
@@ -107,7 +107,11 @@ export default function Home() {
               <a className="button" href="#how">
                 Try the interactive demo ↓
               </a>
-              <Link className="text-link" href="/login?mode=register">
+              <Link
+                className="text-link"
+                href="/login?mode=register"
+                prefetch={false}
+              >
                 Get started free ↗
               </Link>
             </div>
@@ -345,7 +349,11 @@ export default function Home() {
               <li>Findings, proposed fixes and activity history</li>
               <li>Choose the websites the agent can access</li>
             </ul>
-            <Link className="button" href="/login?mode=register">
+            <Link
+              className="button"
+              href="/login?mode=register"
+              prefetch={false}
+            >
               Get started free ↗
             </Link>
             <p>No payment required.</p>
@@ -403,7 +411,7 @@ export default function Home() {
             problems in between. The agent follows through from a confirmed
             finding to a tested change—and keeps watching afterward.
           </p>
-          <Link className="button" href="/login?mode=register">
+          <Link className="button" href="/login?mode=register" prefetch={false}>
             Give your website a working partner ↗
           </Link>
         </section>
