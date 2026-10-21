@@ -1,0 +1,142 @@
+{
+  "version": 1,
+  "recorded_at": "2026-10-21T02:45:57.536665+00:00",
+  "source_sha256": "71c1e56413416ff403011a1e86fcf552ee6d09f5d7dab776cb19de74d0b10dfd",
+  "site": "Cedar Workshop",
+  "scope": "Real local agent run on a fictional shop. No GitHub write or ranking experiment.",
+  "editing": "Actual recorded output and exact patch excerpts; waits shortened. Excerpts omit surrounding HTML.",
+  "runtime_seconds": 142.42,
+  "before_defects": 4,
+  "after_defects": 0,
+  "regressions": 0,
+  "changed_paths": [
+    "web/index.html",
+    "web/products/cedar-lamp/index.html"
+  ],
+  "inspected": [
+    {
+      "tool": "read_file",
+      "path": "web/index.html",
+      "success": true
+    },
+    {
+      "tool": "read_file",
+      "path": "web/products/cedar-lamp/index.html",
+      "success": true
+    }
+  ],
+  "patch_excerpts": [
+    {
+      "kind": "file",
+      "text": "web/index.html"
+    },
+    {
+      "kind": "add",
+      "text": "<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">"
+    },
+    {
+      "kind": "remove",
+      "text": "href=\"/collections/lighting/\""
+    },
+    {
+      "kind": "add",
+      "text": "href=\"/shop/\""
+    },
+    {
+      "kind": "file",
+      "text": "web/products/cedar-lamp/index.html"
+    },
+    {
+      "kind": "remove",
+      "text": "\"price\":\"129.00\""
+    },
+    {
+      "kind": "add",
+      "text": "\"price\":\"89.00\""
+    }
+  ],
+  "check_stdout": "PASS: description, shopping link, canonical, factual product schema, private page and crawler policy",
+  "checks": [
+    {
+      "name": "HTML metadata",
+      "passed": true
+    },
+    {
+      "name": "HTML metadata",
+      "passed": true
+    },
+    {
+      "name": "python",
+      "passed": true
+    }
+  ],
+  "repeat_created_commit": false,
+  "irrelevant_change_inference_requests": 0,
+  "protected_files_unchanged": true,
+  "events": [
+    {
+      "recorded_seconds": 6.03,
+      "text": "START: autonomous model repair on a synthetic local Git repository"
+    },
+    {
+      "recorded_seconds": 12.16,
+      "text": "TOOL read_file web/index.html"
+    },
+    {
+      "recorded_seconds": 12.17,
+      "text": "TOOL read_file web/products/cedar-lamp/index.html"
+    },
+    {
+      "recorded_seconds": 36.31,
+      "text": "TOOL apply_patch web/index.html"
+    },
+    {
+      "recorded_seconds": 44.49,
+      "text": "TOOL apply_patch web/products/cedar-lamp/index.html"
+    },
+    {
+      "recorded_seconds": 46.54,
+      "text": "TOOL run_checks "
+    },
+    {
+      "recorded_seconds": 74.6,
+      "text": "TOOL read_file web/index.html"
+    },
+    {
+      "recorded_seconds": 74.6,
+      "text": "TOOL read_file web/shop/index.html"
+    },
+    {
+      "recorded_seconds": 74.6,
+      "text": "TOOL read_file web/products/cedar-lamp/index.html"
+    },
+    {
+      "recorded_seconds": 74.61,
+      "text": "TOOL read_file web/preview/index.html"
+    },
+    {
+      "recorded_seconds": 80.84,
+      "text": "TOOL read_file robots.txt"
+    },
+    {
+      "recorded_seconds": 80.85,
+      "text": "TOOL read_file web/robots.txt"
+    },
+    {
+      "recorded_seconds": 85.39,
+      "text": "TOOL run_checks "
+    },
+    {
+      "recorded_seconds": 142.23,
+      "text": "REPEAT: model audit completed; no new edit or commit"
+    },
+    {
+      "recorded_seconds": 142.42,
+      "text": "MERGED DOCS BRANCH: no affected routes; zero inference requests"
+    },
+    {
+      "recorded_seconds": 142.42,
+      "text": "DEFECTS: 4 → 0; 5 real model tool calls"
+    }
+  ]
+}
