@@ -261,20 +261,20 @@
         {
           "url": "http://127.0.0.1:62484/",
           "evidence_id": "6a06b574-aaea-4771-b715-b45fa2cd6e8a",
-          "title": "Cedar Workshop \u2014 Thoughtful lighting",
-          "excerpt": "Cedar Workshop \u2014 Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+          "title": "Cedar Workshop - Thoughtful lighting",
+          "excerpt": "Cedar Workshop - Thoughtful lighting Cedar Workshop Collection Cedar Lamp Quiet objects. Warm spaces. Light that feels like home. Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light. Explore the collection \u2197 Solid cedar base Linen shade USD 89.00 Cedar Workshop / fictional demonstration store Considered lighting, every day."
         },
         {
           "url": "http://127.0.0.1:62484/shop/",
           "evidence_id": "c1bd29be-cde6-45ca-be40-bec2bd5418d4",
-          "title": "Lighting collection \u2014 Cedar Workshop",
-          "excerpt": "Lighting collection \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
+          "title": "Lighting collection - Cedar Workshop",
+          "excerpt": "Lighting collection - Cedar Workshop Cedar Workshop Collection Cedar Lamp The collection A warmer corner. Cedar Desk Lamp Solid cedar. Linen shade. Warm 2700K light. USD 89.00 VIEW THE LAMP \u2197 Cedar Workshop / fictional demonstration store Considered lighting, every day."
         },
         {
           "url": "http://127.0.0.1:62484/products/cedar-lamp/",
           "evidence_id": "930ef789-4d88-4357-9f38-f13dea157f94",
-          "title": "Cedar Desk Lamp \u2014 Cedar Workshop",
-          "excerpt": "Cedar Desk Lamp \u2014 Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
+          "title": "Cedar Desk Lamp - Cedar Workshop",
+          "excerpt": "Cedar Desk Lamp - Cedar Workshop Cedar Workshop Collection Cedar Lamp Collection / Cedar Desk Lamp A small pool of warmth Cedar Desk Lamp. A solid cedar base and linen shade, paired with warm 2700K light. Built for desks, bedside tables, and quiet evenings. USD 89.00 \u25cf In stock Back to the collection \u2197 Demo product facts: solid cedar base \u00b7 linen shade \u00b7 2700K light. No checkout, delivery or review claims are supplied. Cedar Workshop / fictional demonstration store Considered lighting, every day."
         },
         {
           "url": "http://127.0.0.1:62484/collections/lighting/",
@@ -654,7 +654,7 @@
     },
     {
       "time": 7.1931126670097,
-      "text": "MODEL gemini-3.8-flash request 1 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 1 - actual inference"
     },
     {
       "time": 12.456995584012475,
@@ -666,7 +666,7 @@
     },
     {
       "time": 12.457781959034037,
-      "text": "MODEL gemini-3.8-flash request 2 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 2 - actual inference"
     },
     {
       "time": 14.12041075003799,
@@ -678,7 +678,7 @@
     },
     {
       "time": 14.121937291987706,
-      "text": "MODEL gemini-3.8-flash request 3 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 3 - actual inference"
     },
     {
       "time": 15.809801499999594,
@@ -690,7 +690,7 @@
     },
     {
       "time": 15.811325124988798,
-      "text": "MODEL gemini-3.8-flash request 4 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 4 - actual inference"
     },
     {
       "time": 17.600854584015906,
@@ -702,7 +702,7 @@
     },
     {
       "time": 17.602186709002126,
-      "text": "MODEL gemini-3.8-flash request 5 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 5 - actual inference"
     },
     {
       "time": 19.16021645901492,
@@ -714,7 +714,7 @@
     },
     {
       "time": 19.16173816699302,
-      "text": "MODEL gemini-3.8-flash request 6 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 6 - actual inference"
     },
     {
       "time": 30.055787084042095,
@@ -726,7 +726,7 @@
     },
     {
       "time": 30.056933125015348,
-      "text": "MODEL gemini-3.8-flash request 7 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 7 - actual inference"
     },
     {
       "time": 31.696667167008854,
@@ -738,7 +738,7 @@
     },
     {
       "time": 33.849639250023756,
-      "text": "MODEL gemini-3.8-flash request 8 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 8 - actual inference"
     },
     {
       "time": 45.53514225000981,
@@ -750,7 +750,7 @@
     },
     {
       "time": 45.535752375028096,
-      "text": "MODEL gemini-3.8-flash request 9 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 9 - actual inference"
     },
     {
       "time": 61.19180187501479,
@@ -758,7 +758,7 @@
     },
     {
       "time": 61.192115125013515,
-      "text": "--- before/web/index.html\n+++ after/web/index.html\n@@ -1,9 +1,10 @@\n <!doctype html><html lang=\"en\"><head>\n <meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n <title>Cedar Workshop \u2014 Thoughtful lighting</title>\n+<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">\n <link rel=\"stylesheet\" href=\"/style.css\">\n </head><body>\n <header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n-<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n+<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n <footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n </body></html>"
+      "text": "--- before/web/index.html\n+++ after/web/index.html\n@@ -1,9 +1,10 @@\n <!doctype html><html lang=\"en\"><head>\n <meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n <title>Cedar Workshop - Thoughtful lighting</title>\n+<meta name=\"description\" content=\"Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.\">\n <link rel=\"stylesheet\" href=\"/style.css\">\n </head><body>\n <header><a class=\"brand\" href=\"/\">Cedar Workshop</a><nav><a href=\"/shop/\">Collection</a><a href=\"/products/cedar-lamp/\">Cedar Lamp</a></nav></header>\n-<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/collections/lighting/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n+<main><section class=\"hero\"><div><div class=\"eyebrow\">Quiet objects. Warm spaces.</div><h1>Light that feels<br>like home.</h1><p>Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light.</p><a class=\"button\" href=\"/shop/\">Explore the collection \u2197</a><div class=\"details\"><span>Solid cedar base</span><span>Linen shade</span><span>USD 89.00</span></div></div><div class=\"art\"><img src=\"/lamp.svg\" alt=\"Cedar Desk Lamp with linen shade\"></div></section></main>\n <footer><span>Cedar Workshop / fictional demonstration store</span><span>Considered lighting, every day.</span></footer>\n </body></html>"
     },
     {
       "time": 61.194452500029,
@@ -766,7 +766,7 @@
     },
     {
       "time": 61.19456829200499,
-      "text": "MODEL gemini-3.8-flash request 10 \u2014 actual inference"
+      "text": "MODEL gemini-3.8-flash request 10 - actual inference"
     },
     {
       "time": 78.51220662501873,
@@ -774,7 +774,7 @@
     },
     {
       "time": 78.5137581670424,
-      "text": "DEMO FAILED: AssertionError \u2014 see preserved result"
+      "text": "DEMO FAILED: AssertionError - see preserved result"
     }
   ],
   "requests": 10,
