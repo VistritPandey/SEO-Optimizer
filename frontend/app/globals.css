@@ -2240,7 +2240,7 @@ html {
 .terminal-output {
   height: 200px;
   padding: 17px 14px;
-  font-size: 11px;
+  font-size: 13px;
   line-height: 1.6;
 }
 .terminal-line {
@@ -2303,7 +2303,7 @@ html {
 }
 @media (max-width: 420px) {
   .terminal-output {
-    font-size: 10px;
+    font-size: 11px;
     padding-inline: 11px;
   }
   .terminal-session {
@@ -2350,6 +2350,7 @@ html {
   background: var(--paper);
   color: var(--ink);
   font-size: 15px;
+  font-family: inherit;
   font-weight: 400;
 }
 .contact-form :is(input, select, textarea):focus {
