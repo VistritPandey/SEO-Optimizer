@@ -30,9 +30,12 @@ def main():
         assert homepage.status_code == 200
         document = Document(homepage.text)
         assert "autonomous SEO agent" in document.title
-        assert all(path in document.links for path in ARTICLES)
+        assert "/blog" in document.links
+        assert all(path not in document.links for path in ARTICLES)
+        assert "journal-home" not in homepage.text and "journal-guide" not in homepage.text
         passed.append(
-            "Homepage names the autonomous SEO agent and links all three original articles"
+            "Homepage names the autonomous SEO agent and links the separate Blog page "
+            "without duplicating article or guide sections"
         )
         index = client.get("/blog")
         assert index.status_code == 200
@@ -79,7 +82,7 @@ def main():
             assert image.content[:4] == b"RIFF" and image.content[8:12] == b"WEBP"
             assert len(image.content) < 250_000, "Editorial image exceeds the delivery budget"
             cover_hashes.add(hashlib.sha256(image.content).hexdigest())
-            assert image_path in homepage.text and image_path in index.text
+            assert image_path in index.text
             assert page.meta["og:image"] == article["image"]
             assert page.meta["twitter:image"] == article["image"]
             assert len(page.headings) == 1
@@ -88,7 +91,7 @@ def main():
         assert len(cover_hashes) == 4, "Different cover URLs serve identical image bytes"
         passed.append(
             "All three posts and the guide use distinct cover files, consistently linked "
-            "from the landing page, blog index, article schema and social previews"
+            "from the separate blog index, article schema and social previews"
         )
         passed.append(
             "Three articles and the existing guide have matching visible facts, "
