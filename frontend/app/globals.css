@@ -1597,6 +1597,24 @@ html {
   width: min(88%, 1180px);
   margin: 62px auto 100px;
 }
+.recorded-agent-demo {
+  scroll-margin-top: 125px;
+}
+.recorded-agent-demo video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #19221d;
+  margin-top: 28px;
+}
+.recorded-agent-demo .recorded-agent-note {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.7;
+}
 .journal-heading {
   max-width: 880px;
   padding: 12px 0 60px;
