@@ -1,13 +1,10 @@
 import Link from "next/link";
-import Image from "next/image";
-import { ArticleCards } from "@/components/ArticleCards";
 import { Workflow } from "@/components/Workflow";
 import { HeroWorkflow } from "@/components/HeroWorkflow";
 import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/lib/site";
-import { continuousSeoGuideCover } from "@/lib/articles";
 
 export const metadata = { alternates: { canonical: "/" } };
 
@@ -388,51 +385,6 @@ export default function Home() {
                 <p>{answer}</p>
               </details>
             ))}
-          </div>
-        </section>
-        <section
-          className="journal-home marketing-section"
-          aria-labelledby="journal-title"
-        >
-          <div className="journal-section-heading">
-            <div>
-              <span className="eyebrow">THE BLOG</span>
-              <h2 id="journal-title">
-                Good SEO starts with
-                <br />
-                <em>understanding the work.</em>
-              </h2>
-            </div>
-            <Link href="/blog" className="text-link">
-              Explore the blog →
-            </Link>
-          </div>
-          <ArticleCards />
-        </section>
-        <section
-          className="journal-guide marketing-section"
-          aria-labelledby="guide-title"
-        >
-          <Image
-            src={continuousSeoGuideCover.image}
-            alt={continuousSeoGuideCover.imageAlt}
-            width={1440}
-            height={960}
-            sizes="(max-width: 760px) 88vw, 40vw"
-          />
-          <div>
-            <span className="eyebrow">A PRACTICAL GUIDE FOR YOUR TEAM</span>
-            <h2 id="guide-title">
-              An SEO habit that survives the next launch.
-            </h2>
-            <p>
-              Follow a website change, establish the evidence, review a fix and
-              measure what happened. A useful process whether you use an agent
-              or do the work yourself.
-            </p>
-            <Link href="/guides/continuous-seo" className="text-link">
-              Read the ongoing SEO guide →
-            </Link>
           </div>
         </section>
         <section className="closing marketing-section">
