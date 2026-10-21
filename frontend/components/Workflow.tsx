@@ -29,7 +29,7 @@ const broken = [
   ],
   [
     "A fix, ready for your review.",
-    "The agent restores the working collection link and writes a description from the existing page content. It tests the changes and prepares a pull request—your team’s reviewable update.",
+    "The agent restores the working collection link and writes a description from the existing page content. It tests the changes and prepares a pull request-your team’s reviewable update.",
   ],
   [
     "Check the website after the fix goes live.",
@@ -219,7 +219,7 @@ export function Workflow() {
           )}
           <div className="demo-search-card">
             <span className="eyebrow">PAGE INFORMATION FOR SEARCH</span>
-            <strong>Cedar Workshop — Thoughtful lighting</strong>
+            <strong>Cedar Workshop - Thoughtful lighting</strong>
             <p className={!fixed ? "demo-missing" : ""}>
               {fixed
                 ? "Thoughtful lighting for everyday spaces. Meet the Cedar Desk Lamp: a solid cedar base, linen shade, and warm 2700K light."
