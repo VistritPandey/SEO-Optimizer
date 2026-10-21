@@ -31,12 +31,13 @@ export function HeroWorkflow() {
       ref={playback.ref}
       {...playback.interaction}
       data-stage={stage}
-      className="hero-workflow"
+      className="hero-workflow hero-terminal"
+      data-running={playback.running}
       aria-label="Interactive SEO workflow example"
     >
       <div className="hero-workflow-label">
-        <span>ONE UPDATE, FOLLOWED THROUGH</span>
-        <span className="workflow-example">Illustrated example</span>
+        <span>YOUR AGENT, AT WORK</span>
+        <span className="workflow-example">Interactive example</span>
       </div>
       <DemoPlayback
         name="hero example"
@@ -76,112 +77,56 @@ export function HeroWorkflow() {
       >
         <h2>{titles[stage]}</h2>
         <p>{descriptions[stage]}</p>
-        <div key={stage} className="workflow-artifact">
-          {stage === 0 && (
-            <>
-              <div className="artifact-bar">
-                <span className="artifact-dots" aria-hidden="true">
-                  ● ● ●
-                </span>
-                <span>store.example /</span>
-                <span>Homepage</span>
-              </div>
-              <div className="artifact-page">
-                <span className="eyebrow">THE NEW COLLECTION</span>
-                <strong>
-                  A little light.
-                  <br />
-                  <em>A fresh start.</em>
-                </strong>
-                <span className="artifact-shop">Shop the collection ↗</span>
-              </div>
-              <div className="artifact-foot">
-                <span className="dot" /> New homepage deployed{" "}
-                <span>Ready to check</span>
-              </div>
-            </>
-          )}
-          {stage === 1 && (
-            <div className="artifact-checks">
-              <div>
-                <span className="check-warn" aria-hidden="true">
-                  !
-                </span>
-                <section>
-                  <strong>Shopping link leads nowhere</strong>
-                  <small>/collections/lighting/ returns 404</small>
-                </section>
-                <span className="check-label">Finding</span>
-              </div>
-              <div>
-                <span className="check-warn" aria-hidden="true">
-                  !
-                </span>
-                <section>
-                  <strong>Page description is missing</strong>
-                  <small>Confirmed in the served homepage</small>
-                </section>
-                <span className="check-label">Finding</span>
-              </div>
-              <div>
-                <span className="check-good" aria-hidden="true">
-                  ✓
-                </span>
-                <section>
-                  <strong>The rest stays as it is</strong>
-                  <small>Healthy content needs no rewrite</small>
-                </section>
-                <span className="check-label">Keep</span>
-              </div>
-            </div>
-          )}
-          {stage === 2 && (
-            <div className="artifact-proposal">
-              <div className="artifact-bar">
-                <strong>Homepage repair</strong>
-                <span>Awaiting your review</span>
-              </div>
-              <div className="proposal-line">
-                <span>Destination</span>
-                <del>/collections/lighting/</del>
-                <ins>/shop/ · existing page</ins>
-              </div>
-              <div className="proposal-line">
-                <span>Description</span>
-                <del>Missing</del>
-                <ins>Restored from existing page copy</ins>
-              </div>
-              <p>No new product claims. No unrelated redesign.</p>
-            </div>
-          )}
-          {stage === 3 && (
-            <div className="artifact-checks">
-              <div>
-                <span className="check-good" aria-hidden="true">
-                  ✓
-                </span>
-                <section>
-                  <strong>The collection opens</strong>
-                  <small>/shop/ returns 200 after deployment</small>
-                </section>
-                <span className="check-label">Verified</span>
-              </div>
-              <div>
-                <span className="check-good" aria-hidden="true">
-                  ✓
-                </span>
-                <section>
-                  <strong>The description is present</strong>
-                  <small>Confirmed on the live homepage</small>
-                </section>
-                <span className="check-label">Verified</span>
-              </div>
-              <div className="watching-next">
-                <span className="dot" />
-                <strong>Watching for the next website update</strong>
-              </div>
-            </div>
-          )}
+        <div key={stage} className="workflow-artifact terminal-window">
+          <div className="terminal-chrome">
+            <span className="terminal-lights" aria-hidden="true">
+              <i /><i /><i />
+            </span>
+            <span>your-optimiser / agent</span>
+            <span className="terminal-session">SESSION 001</span>
+          </div>
+          <div className="terminal-output" aria-label={`${stages[stage]} example output`}>
+            {stage === 0 && (
+              <>
+                <div className="terminal-line terminal-muted">A website update arrives</div>
+                <div className="terminal-line"><span className="terminal-prompt">→</span> main · homepage changed</div>
+                <div className="terminal-line terminal-file">web/index.html</div>
+                <div className="terminal-line">Check the affected page and its links.</div>
+                <div className="terminal-line terminal-success">Watching the pages that matter.</div>
+              </>
+            )}
+            {stage === 1 && (
+              <>
+                <div className="terminal-line"><span className="terminal-prompt">→</span> read_file <span className="terminal-file">web/index.html</span></div>
+                <div className="terminal-line terminal-warning">/collections/lighting/ returns 404</div>
+                <div className="terminal-line terminal-warning">Page description is missing</div>
+                <div className="terminal-line terminal-success">/shop/ · existing page</div>
+                <div className="terminal-line terminal-muted">Evidence collected. Prepare a focused fix.</div>
+              </>
+            )}
+            {stage === 2 && (
+              <>
+                <div className="terminal-line"><span className="terminal-prompt">→</span> apply_patch <span className="terminal-file">web/index.html</span></div>
+                <div className="terminal-line terminal-warning">- href=&quot;/collections/lighting/&quot;</div>
+                <div className="terminal-line terminal-success">+ href=&quot;/shop/&quot;</div>
+                <div className="terminal-line terminal-success">+ Description from existing page copy</div>
+                <div className="terminal-line terminal-muted">run_checks ✓ · Pull request ready for review</div>
+              </>
+            )}
+            {stage === 3 && (
+              <>
+                <div className="terminal-line terminal-muted">After your review, merge and deployment</div>
+                <div className="terminal-line terminal-success">/shop/ returns 200 after deployment</div>
+                <div className="terminal-line terminal-success">Page description present · verified</div>
+                <div className="terminal-line">Healthy content left unchanged.</div>
+                <div className="terminal-line terminal-prompt">Watching for the next website update<span className="terminal-cursor" aria-hidden="true">▌</span></div>
+              </>
+            )}
+          </div>
+          <div className="terminal-footnote">
+            <span>{stage === 2 ? "PATCH EXCERPTS" : "EVIDENCE BEFORE ACTION"}</span>
+            <span>SEO CARE, IN THE CODE</span>
+          </div>
         </div>
       </div>
       <div className="workflow-controls">
