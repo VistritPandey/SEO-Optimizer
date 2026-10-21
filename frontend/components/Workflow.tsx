@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { m } from "motion/react";
 import { DemoPlayback } from "./DemoPlayback";
 import { useDemoPlayback } from "./useDemoPlayback";
 
@@ -265,20 +264,17 @@ export function Workflow() {
               </li>
             ))}
           </ol>
-          <m.div
+          <div
             className="demo-story"
             key={`${scenario}-${step}`}
             aria-live={playback.playing ? "off" : "polite"}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.22 }}
           >
             <span className="eyebrow">
               {String(step + 1).padStart(2, "0")} / 06
             </span>
             <h3>{story[step][0]}</h3>
             <p>{story[step][1]}</p>
-          </m.div>
+          </div>
           <div className="demo-detail-slot">
             {step < 2 && (
               <div className="demo-observation">
