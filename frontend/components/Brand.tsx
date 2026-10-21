@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { BrandSymbol } from "./BrandSymbol";
 
 export function Brand({
   compact = false,
@@ -15,7 +15,7 @@ export function Brand({
   return (
     <Link className="brand" href={href} aria-label={label} onClick={onClick}>
       <span className="brand-mark" aria-hidden="true">
-        <Image src="/brand/mark.png" width={48} height={48} alt="" preload />
+        <BrandSymbol />
       </span>
       {!compact && <span className="brand-name">Your Optimiser</span>}
     </Link>
