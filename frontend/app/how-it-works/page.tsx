@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { EditorialPage } from "@/components/EditorialPage";
-import { Reveal } from "@/components/Motion";
+import { Reveal } from "@/components/Reveal";
 import { Workflow } from "@/components/Workflow";
 import { pageMetadata } from "@/lib/site";
 
