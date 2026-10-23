@@ -127,6 +127,20 @@
           "order": "ASCENDING"
         }
       ]
+    },
+    {
+      "collectionGroup": "optimizer_connector_clocks",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "tenant_id",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "next_due",
+          "order": "ASCENDING"
+        }
+      ]
     }
   ],
   "fieldOverrides": [
