@@ -11,7 +11,7 @@ export const metadata = pageMetadata(
 export default function Page() {
   return (
     <EditorialPage
-      eyebrow="TERMS OF SERVICE · EFFECTIVE 19 OCTOBER 2026"
+      eyebrow="TERMS OF SERVICE · EFFECTIVE 23 OCTOBER 2026"
       title={
         <>
           Useful work.
@@ -38,7 +38,15 @@ export default function Page() {
           information and relevant repository and website content needed to
           perform configured audits, prepare changes and verify results.
           Installing the GitHub App grants the access described by GitHub’s
-          installation screen.
+          installation screen. Other platform connections use the permissions
+          granted by their account authorization or credentials.
+        </p>
+        <p>
+          Enabling connector writes permits supported field changes within
+          project policy. Automatic application is a separate option. Some
+          platforms save drafts or staged changes; you remain responsible for
+          their publication. Verification of a saved field does not establish
+          that a website is deployed, indexed or ranking.
         </p>
         <p>
           Your team remains responsible for reviewing proposed changes,
@@ -79,6 +87,13 @@ export default function Page() {
           require separate pricing information and affirmative purchase
           acceptance. Using the current free service does not authorise an
           automatic charge.
+        </p>
+        <p>
+          Optional keyword-data and AI-answer experiments can consume paid
+          third-party API usage using the credentials you connect. These
+          experiments run on explicit collection, not periodic monitoring.
+          Review the provider’s pricing and your own account limits; a missing
+          returned cost does not mean that the request was free.
         </p>
       </section>
       <section>
