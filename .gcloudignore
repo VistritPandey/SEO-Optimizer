@@ -28,3 +28,5 @@ __pycache__
 .firebase
 dist
 frontend/*.tsbuildinfo
+
+integrations/**/node_modules
