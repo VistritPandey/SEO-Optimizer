@@ -12,6 +12,7 @@ import { firebaseAuth } from "@/lib/firebase";
 import { api, type Activity, type Project } from "@/lib/api";
 import { AuditWorkspace } from "./AuditWorkspace";
 import { AgentPreferences } from "./AgentPreferences";
+import { Connectors } from "./Connectors";
 import { WorkspaceSidebar } from "./WorkspaceSidebar";
 import { WorkspaceTour } from "./WorkspaceTour";
 import { m } from "motion/react";
@@ -39,6 +40,7 @@ export function Dashboard() {
     findings: [],
   });
   const [newProject, setNewProject] = useState(false);
+  const [publishingPlatform, setPublishingPlatform] = useState("github");
   const [tab, setTab] = useState("overview");
   const [tourOpen, setTourOpen] = useState(false);
   const [tourSeen, setTourSeen] = useState(true);
@@ -236,20 +238,24 @@ export function Dashboard() {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     await action(async () => {
-      const verified = await api<{ repositories: Repository[] }>(
-        "github/repositories",
-      );
-      setRepos(verified.repositories);
-      const repo = verified.repositories.find(
-        (item) => item.repository === data.get("repository"),
-      );
-      if (!repo) throw new Error("Choose a verified repository.");
+      let repo: Repository | undefined;
+      if (publishingPlatform === "github") {
+        const verified = await api<{ repositories: Repository[] }>(
+          "github/repositories",
+        );
+        setRepos(verified.repositories);
+        repo = verified.repositories.find(
+          (item) => item.repository === data.get("repository"),
+        );
+        if (!repo) throw new Error("Choose a verified repository.");
+      }
       const value = await api<Project>("projects", "POST", {
         spec: {
           name: data.get("name"),
           website_url: data.get("url"),
-          repository: repo.repository,
-          branch: repo.branch,
+          repository: repo?.repository || "",
+          publishing_platform: publishingPlatform,
+          branch: repo?.branch || "main",
           website_types: [data.get("type")],
           goals: [String(data.get("goal"))].filter(Boolean),
           allowed_paths: String(data.get("paths"))
@@ -458,46 +464,86 @@ export function Dashboard() {
                 <em>a working partner.</em>
               </h1>
               <p>
-                Connect only the repositories you want this workspace to access.
+                Connect your website first, then grant access to its publishing
+                platform and search evidence.
               </p>
             </section>
             <section className="panel">
-              <h2>01 · Repository access</h2>
-              <div className="actions">
-                {account.github_install_url && (
-                  <button
-                    className="button secondary"
-                    disabled={busy}
-                    onClick={install}
-                  >
-                    Install GitHub App ↗
-                  </button>
-                )}
-                <button
-                  className="button secondary"
-                  disabled={busy}
-                  onClick={connect}
+              <label>
+                Website platform
+                <select
+                  value={publishingPlatform}
+                  onChange={(event) =>
+                    setPublishingPlatform(event.target.value)
+                  }
                 >
-                  {account.github_connection?.status === "connected"
-                    ? "Refresh GitHub authorisation ↗"
-                    : "Connect GitHub account ↗"}
-                </button>
-                <button
-                  className="text-link"
-                  disabled={busy}
-                  onClick={loadRepos}
-                >
-                  Refresh repositories ↻
-                </button>
-              </div>
-              <p>
-                Installation limits access to selected repositories. Account
-                authorization verifies which repositories you can manage.
-              </p>
-              {account.github_connection?.status === "connected" && (
-                <p className="audit-policy-strip">
-                  GitHub connected. Choose a granted repository below, or
-                  install the app on another repository.
+                  {[
+                    ["github", "GitHub"],
+                    ["wordpress", "WordPress"],
+                    ["woocommerce", "WooCommerce"],
+                    ["shopify", "Shopify"],
+                    ["webflow", "Webflow"],
+                    ["gitlab", "GitLab"],
+                    ["bitbucket", "Bitbucket"],
+                    ["wix", "Wix"],
+                    ["squarespace", "Squarespace"],
+                    ["framer", "Framer"],
+                    ["sanity", "Sanity"],
+                    ["contentful", "Contentful"],
+                    ["website", "Other website"],
+                  ].map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              {publishingPlatform === "github" && (
+                <>
+                  <h2>01 · Repository access</h2>
+                  <div className="actions">
+                    {account.github_install_url && (
+                      <button
+                        className="button secondary"
+                        disabled={busy}
+                        onClick={install}
+                      >
+                        Install GitHub App ↗
+                      </button>
+                    )}
+                    <button
+                      className="button secondary"
+                      disabled={busy}
+                      onClick={connect}
+                    >
+                      {account.github_connection?.status === "connected"
+                        ? "Refresh GitHub authorisation ↗"
+                        : "Connect GitHub account ↗"}
+                    </button>
+                    <button
+                      className="text-link"
+                      disabled={busy}
+                      onClick={loadRepos}
+                    >
+                      Refresh repositories ↻
+                    </button>
+                  </div>
+                  <p>
+                    Installation limits access to selected repositories. Account
+                    authorization verifies which repositories you can manage.
+                  </p>
+                  {account.github_connection?.status === "connected" && (
+                    <p className="audit-policy-strip">
+                      GitHub connected. Choose a granted repository below, or
+                      install the app on another repository.
+                    </p>
+                  )}
+                </>
+              )}
+              {publishingPlatform !== "github" && (
+                <p>
+                  Your first audit checks the live website. Configure publishing
+                  access in Connectors after creating the project.
                 </p>
               )}
             </section>
@@ -517,15 +563,17 @@ export function Dashboard() {
                     placeholder="https://example.com"
                   />
                 </label>
-                <label>
-                  Verified repository
-                  <select name="repository" required>
-                    <option value="">Select repository</option>
-                    {repos.map((repo) => (
-                      <option key={repo.repository}>{repo.repository}</option>
-                    ))}
-                  </select>
-                </label>
+                {publishingPlatform === "github" && (
+                  <label>
+                    Verified repository
+                    <select name="repository" required>
+                      <option value="">Select repository</option>
+                      {repos.map((repo) => (
+                        <option key={repo.repository}>{repo.repository}</option>
+                      ))}
+                    </select>
+                  </label>
+                )}
                 <label>
                   Website type
                   <select name="type">
@@ -556,14 +604,19 @@ export function Dashboard() {
               </div>
               <label className="checkbox">
                 <input name="auto_fix" type="checkbox" />
-                Open PRs for supported, verified repairs
+                Allow supported repairs within connection permissions
               </label>
               <p>
                 Content publication starts off. Reviewed facts and original
                 source material are required before enabling content refreshes.
                 You review and merge hosted PRs.
               </p>
-              <button className="button" disabled={busy || !repos.length}>
+              <button
+                className="button"
+                disabled={
+                  busy || (publishingPlatform === "github" && !repos.length)
+                }
+              >
                 Connect & start audit ↗
               </button>
             </form>
@@ -634,6 +687,12 @@ export function Dashboard() {
                 activity={activity}
                 tab={tab}
                 onTab={setTab}
+              />
+            )}
+            {tab === "connectors" && (
+              <Connectors
+                key={"connectors:" + selected.id}
+                project={selected}
               />
             )}
             {tab === "research" && (
