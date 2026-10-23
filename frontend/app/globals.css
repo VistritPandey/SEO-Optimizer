@@ -3407,3 +3407,131 @@ html[data-theme="light"] .demo-agent .demo-status {
 .button {
   transition: transform 0.15s ease;
 }
+
+/* Project-scoped connection management uses the workspace appearance tokens. */
+.connector-layout {
+  display: grid;
+  grid-template-columns: minmax(190px, 260px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.connector-directory {
+  padding: 22px 14px;
+}
+.connector-directory h3 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 20px 10px 8px;
+}
+.connector-directory h3:first-child {
+  margin-top: 4px;
+}
+.connector-directory button {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 4px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 6px;
+  text-align: left;
+}
+.connector-directory button[aria-pressed="true"] {
+  background: var(--soft);
+  border-color: var(--line);
+}
+.connector-directory button small {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: capitalize;
+}
+.connector-detail {
+  min-width: 0;
+  display: grid;
+  gap: 20px;
+}
+.connector-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.connector-title h2,
+.connector-title h4 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.connector-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.connector-workspace details {
+  margin: 18px 0;
+  padding: 14px 0;
+  border-block: 1px solid var(--line);
+}
+.connector-workspace summary {
+  cursor: pointer;
+  font-size: 14px;
+}
+.connector-workspace pre {
+  padding: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 360px;
+  overflow: auto;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font-size: 12px;
+}
+.connector-before {
+  border-left: 3px solid #ae6969 !important;
+}
+.connector-after {
+  border-left: 3px solid var(--green) !important;
+}
+.connector-proposal {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.connector-workspace textarea {
+  min-height: 160px;
+  font-family: var(--font-mono), monospace;
+}
+@media (max-width: 1000px) {
+  .connector-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .connector-directory {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+  }
+  .connector-directory > div {
+    flex: 0 0 200px;
+  }
+}
+
+.connector-mobile-picker {
+  display: none;
+}
+@media (max-width: 1000px) {
+  .connector-mobile-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .connector-directory {
+    display: none;
+  }
+}
