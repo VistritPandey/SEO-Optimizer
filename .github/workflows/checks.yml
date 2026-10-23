@@ -52,6 +52,11 @@ jobs:
         working-directory: frontend
       - run: npm audit --audit-level=low
         working-directory: frontend
+      - name: Verify optional Framer SDK bridge
+        run: |
+          npm ci --prefix integrations/framer --ignore-scripts --no-audit --no-fund
+          npm audit --prefix integrations/framer --audit-level=low
+          node --test integrations/framer/bridge.test.mjs
       - run: npm run format:check && npm run typecheck && npm test && npm run build
         working-directory: frontend
       - uses: astral-sh/setup-uv@v10.3.0
