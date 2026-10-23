@@ -1,0 +1,36 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "enum": [
+        "crawler",
+        "consumer_observation"
+      ],
+      "title": "Kind",
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "additionalProperties": true,
+        "type": "object"
+      },
+      "maxItems": 100,
+      "minItems": 1,
+      "title": "Records",
+      "type": "array"
+    },
+    "source": {
+      "maxLength": 500,
+      "minLength": 5,
+      "title": "Source",
+      "type": "string"
+    }
+  },
+  "required": [
+    "kind",
+    "records",
+    "source"
+  ],
+  "title": "ImportRequest",
+  "type": "object"
+}
