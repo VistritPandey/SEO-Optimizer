@@ -122,6 +122,15 @@ class PrivateState(Base):
     version: Mapped[int] = mapped_column(Integer)
 
 
+class ConnectorClock(Base):
+    __tablename__ = "connector_clocks"
+    key: Mapped[str] = mapped_column(String(200), primary_key=True)
+    tenant_id: Mapped[str] = mapped_column(String(36), index=True)
+    project_id: Mapped[str] = mapped_column(String(36), index=True)
+    platform: Mapped[str] = mapped_column(String(30))
+    next_due: Mapped[float] = mapped_column(Float, index=True)
+
+
 class ResearchWorkspace(Base):
     __tablename__ = "research_workspaces"
     __table_args__ = (UniqueConstraint("tenant_id", "project_id"),)
@@ -181,15 +190,37 @@ class Store:
             with self.sessions.begin() as session:
                 if expected == 0:
                     session.add(PrivateState(key=key, body=encoded, version=1))
+                    self._connector_clock(session, key, value)
                     return True
                 result = session.execute(
                     update(PrivateState)
                     .where(PrivateState.key == key, PrivateState.version == expected)
                     .values(body=encoded, version=expected + 1)
                 )
-                return cast(CursorResult[Any], result).rowcount == 1
+                saved = cast(CursorResult[Any], result).rowcount == 1
+                if saved:
+                    self._connector_clock(session, key, value)
+                return saved
         except IntegrityError:
             return False
+
+    def _connector_clock(self, session: Any, key: str, value: dict[str, Any]) -> None:
+        from seo_optimizer.connectors.clock import record
+
+        clock = record(key, value)
+        if clock is None:
+            return
+        if clock.pop("enabled"):
+            session.merge(ConnectorClock(**clock))
+        else:
+            session.execute(delete(ConnectorClock).where(ConnectorClock.key == key))
+
+    def connector_due(self, tenant: str | None = None) -> list[tuple[str, str, str]]:
+        with self.sessions() as session:
+            query = select(ConnectorClock).where(ConnectorClock.next_due <= time.time()).limit(100)
+            if tenant:
+                query = query.where(ConnectorClock.tenant_id == tenant)
+            return [(row.tenant_id, row.project_id, row.platform) for row in session.scalars(query)]
 
     def reserve_job(self, tenant: str, key: str) -> None:
         if not self.settings.hosted:
@@ -694,7 +725,9 @@ class Store:
             )
 
     def reconcile(self, tenant: str | None = None) -> int:
-        now, scheduled = time.time(), 0
+        from seo_optimizer.connectors.jobs import reconcile as reconcile_connectors
+
+        now, scheduled = time.time(), reconcile_connectors(self, tenant)
         with self.sessions() as session:
             query = select(Project).where(Project.next_audit <= now)
             if tenant:
