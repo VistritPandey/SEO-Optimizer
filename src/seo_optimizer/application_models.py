@@ -60,6 +60,21 @@ class GitConventions(Contract):
 class ProjectSpec(Contract):
     name: str = Field(min_length=1, max_length=100)
     website_url: HttpUrl
+    publishing_platform: Literal[
+        "github",
+        "wordpress",
+        "woocommerce",
+        "shopify",
+        "webflow",
+        "gitlab",
+        "bitbucket",
+        "wix",
+        "squarespace",
+        "framer",
+        "sanity",
+        "contentful",
+        "website",
+    ] = "github"
     repository: str = ""
     local_path: str | None = None
     branch: str = "main"
