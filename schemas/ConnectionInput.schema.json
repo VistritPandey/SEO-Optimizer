@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "Platform": {
+      "enum": [
+        "search_console",
+        "wordpress",
+        "woocommerce",
+        "shopify",
+        "webflow",
+        "ga4",
+        "vercel",
+        "netlify",
+        "deployment",
+        "gitlab",
+        "bitbucket",
+        "bing",
+        "business_profile",
+        "cloudflare",
+        "server_logs",
+        "wix",
+        "squarespace",
+        "framer",
+        "sanity",
+        "contentful",
+        "dataforseo",
+        "ai_visibility"
+      ],
+      "title": "Platform",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "platform": {
+      "$ref": "#/$defs/Platform"
+    },
+    "label": {
+      "default": "",
+      "maxLength": 100,
+      "title": "Label",
+      "type": "string"
+    },
+    "resource": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Resource",
+      "type": "string"
+    },
+    "options": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 20,
+      "title": "Options",
+      "type": "object"
+    },
+    "credentials": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 12,
+      "title": "Credentials",
+      "type": "object",
+      "writeOnly": true
+    },
+    "allow_writes": {
+      "default": false,
+      "title": "Allow Writes",
+      "type": "boolean"
+    },
+    "auto_apply": {
+      "default": false,
+      "title": "Auto Apply",
+      "type": "boolean"
+    },
+    "interval_seconds": {
+      "default": 86400,
+      "maximum": 604800,
+      "minimum": 3600,
+      "title": "Interval Seconds",
+      "type": "integer"
+    },
+    "enabled": {
+      "default": true,
+      "title": "Enabled",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "platform"
+  ],
+  "title": "ConnectionInput",
+  "type": "object"
+}
