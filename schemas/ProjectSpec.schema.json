@@ -278,6 +278,26 @@
       "title": "Website Url",
       "type": "string"
     },
+    "publishing_platform": {
+      "default": "github",
+      "enum": [
+        "github",
+        "wordpress",
+        "woocommerce",
+        "shopify",
+        "webflow",
+        "gitlab",
+        "bitbucket",
+        "wix",
+        "squarespace",
+        "framer",
+        "sanity",
+        "contentful",
+        "website"
+      ],
+      "title": "Publishing Platform",
+      "type": "string"
+    },
     "repository": {
       "default": "",
       "title": "Repository",
