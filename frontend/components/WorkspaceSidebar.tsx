@@ -11,6 +11,7 @@ const sections = [
   ["activity", "AI audits & logs", "activity"],
   ["pages", "Pages inspected", "pages"],
   ["research", "Content & research", "research"],
+  ["connectors", "Connectors", "connection"],
   ["policy", "Project settings", "settings"],
 ];
 function Icon({ name }: { name: string }) {
