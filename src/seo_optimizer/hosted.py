@@ -81,7 +81,7 @@ def firebase_user(token: str, settings: Settings, store: Store) -> User | None:
 
 def managed_spec(spec: ProjectSpec, settings: Settings) -> ProjectSpec:
     """Server-side defaults are authoritative, including non-UI API clients."""
-    if not spec.repository or spec.local_path:
+    if spec.local_path or (spec.publishing_platform == "github" and not spec.repository):
         raise HTTPException(400, "Connect a GitHub repository for the hosted workspace")
     if not settings.managed_key:
         raise HTTPException(503, "Managed inference has not been configured")
@@ -183,6 +183,10 @@ def connected_create(
     value: ProjectCreate, tenant: str, store: Store, settings: Settings
 ) -> ProjectCreate:
     spec = managed_spec(value.spec, settings)
+    if spec.publishing_platform != "github":
+        if spec.repository:
+            raise HTTPException(400, "Choose one publishing platform per project")
+        return ProjectCreate(spec=spec)
     grant_token(store, tenant, settings)  # A cached repository cannot revive a disconnected grant.
     connection, _ = store.state("github-repo:" + tenant + ":" + spec.repository)
     if not connection or connection.get("until", 0) < time.time():
