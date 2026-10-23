@@ -1,0 +1,132 @@
+{
+  "$defs": {
+    "Platform": {
+      "enum": [
+        "search_console",
+        "wordpress",
+        "woocommerce",
+        "shopify",
+        "webflow",
+        "ga4",
+        "vercel",
+        "netlify",
+        "deployment",
+        "gitlab",
+        "bitbucket",
+        "bing",
+        "business_profile",
+        "cloudflare",
+        "server_logs",
+        "wix",
+        "squarespace",
+        "framer",
+        "sanity",
+        "contentful",
+        "dataforseo",
+        "ai_visibility"
+      ],
+      "title": "Platform",
+      "type": "string"
+    },
+    "Resource": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "maxLength": 1000,
+          "minLength": 1,
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": true,
+          "title": "Fields",
+          "type": "object"
+        },
+        "revision": {
+          "default": "",
+          "title": "Revision",
+          "type": "string"
+        },
+        "url": {
+          "default": "",
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "fields"
+      ],
+      "title": "Resource",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "platform": {
+      "$ref": "#/$defs/Platform"
+    },
+    "collected_at": {
+      "format": "date-time",
+      "title": "Collected At",
+      "type": "string"
+    },
+    "records": {
+      "items": {
+        "$ref": "#/$defs/Resource"
+      },
+      "maxItems": 100,
+      "title": "Records",
+      "type": "array"
+    },
+    "complete": {
+      "default": false,
+      "title": "Complete",
+      "type": "boolean"
+    },
+    "warnings": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Warnings",
+      "type": "array"
+    },
+    "cost_usd": {
+      "anyOf": [
+        {
+          "minimum": 0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Cost Usd"
+    },
+    "measurement": {
+      "default": "content",
+      "enum": [
+        "content",
+        "search",
+        "analytics",
+        "deployment",
+        "crawler",
+        "api_experiment",
+        "consumer_observation"
+      ],
+      "title": "Measurement",
+      "type": "string"
+    }
+  },
+  "required": [
+    "platform"
+  ],
+  "title": "Collection",
+  "type": "object"
+}
