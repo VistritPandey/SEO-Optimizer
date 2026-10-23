@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 const steps = [
   {
     title: "Connect the website you want to protect.",
-    text: "Choose repositories in the GitHub App, then connect a deployed website. Your goals and monitored directories define where the agent works.",
+    text: "Connect a deployed website and choose its publishing platform. Use Connectors to grant scoped access to content, search evidence and deployment events.",
     target: "connect",
     action: "Connect a website",
     label: "YOUR PERMISSION, YOUR SCOPE",
@@ -25,8 +25,8 @@ const steps = [
     label: "A RECORD OF THE WORK",
   },
   {
-    title: "A pull request needs a justified repair.",
-    text: "Supported changes must pass evidence, scope and configured checks before publication. You review and merge hosted PRs. A healthy result or missing evidence can correctly mean no PR.",
+    title: "Every repair needs a clear reason.",
+    text: "Review supported changes and their evidence. Repository repairs become pull requests; CMS repairs become field proposals. Provider readback and live-page verification are separate steps.",
     target: "findings",
     action: "Review findings",
     label: "REPAIR WITH A REASON",
