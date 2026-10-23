@@ -4,14 +4,14 @@ import { pageMetadata } from "@/lib/site";
 
 export const metadata = pageMetadata(
   "Privacy notice",
-  "How Your Optimiser handles account information, repository access, website evidence, AI processing and service logs.",
+  "How Your Optimiser handles accounts, platform connections, website and search evidence, AI processing and service logs.",
   "/privacy",
 );
 
 export default function Page() {
   return (
     <EditorialPage
-      eyebrow="PRIVACY NOTICE · EFFECTIVE 20 OCTOBER 2026"
+      eyebrow="PRIVACY NOTICE · EFFECTIVE 23 OCTOBER 2026"
       title={
         <>
           Know what you share.
@@ -47,6 +47,33 @@ export default function Page() {
           them to the maintainers for support and follow-up. Its systems may
           also process network and request information to operate the form and
           filter abuse.
+        </p>
+      </section>
+      <section>
+        <h2>Optional platform connections.</h2>
+        <p>
+          Connecting a publishing, analytics, search or hosting account adds the
+          resource identifiers, access tokens or credentials, permissions and
+          field mappings you configure. Collection may include page and product
+          content, business hours, search queries, landing-page analytics,
+          deployment events and request observations, depending on the selected
+          connection. Use scoped test accounts when trying a new integration.
+        </p>
+        <p>
+          The service sends authorized requests to the platform you connect and
+          stores bounded evidence, proposed changes, verification results and
+          activity. Imported request logs exclude IP addresses, cookies and
+          query strings. Search-enabled AI experiments send the query and
+          relevant task inputs to the selected API provider; their answers and
+          citation observations are stored as experiment evidence.
+        </p>
+        <p>
+          Connection credentials are encrypted by the backend and saved values
+          are not returned to the dashboard. Disconnecting a platform clears its
+          active connector record and credentials. Separately stored audit,
+          analytics and job records may remain, as may changes already made on
+          the platform. Revoke the grant or token with that provider as well if
+          you want to invalidate its access outside this workspace.
         </p>
       </section>
       <section>
