@@ -139,14 +139,39 @@ class FirestoreStore(Store):
             if version != expected:
                 return False
             transaction.set(ref, packed)
+            from seo_optimizer.connectors.clock import record
+
+            clock = record(key, value)
+            if clock is not None:
+                clock_ref = self.db.collection("optimizer_connector_clocks").document(
+                    token_hash(key)
+                )
+                if clock.pop("enabled"):
+                    transaction.set(clock_ref, clock)
+                else:
+                    transaction.delete(clock_ref)
             return True
 
         try:
             return bool(save(self.db.transaction()))
+        except Aborted:
+            return False
         except ValueError as error:
             if isinstance(error.__cause__, Aborted):
                 return False
             raise
+
+    def connector_due(self, tenant: str | None = None) -> list[tuple[str, str, str]]:
+        query = self.db.collection("optimizer_connector_clocks").where(
+            filter=FieldFilter("next_due", "<=", time.time())
+        )
+        if tenant:
+            query = query.where(filter=FieldFilter("tenant_id", "==", tenant))
+        return [
+            (row["tenant_id"], row["project_id"], row["platform"])
+            for snapshot in query.limit(100).stream()
+            for row in [snapshot.to_dict()]
+        ]
 
     def create_user(self, email: str, password_hash: str) -> tuple[User, str]:
         token, id = secrets.token_urlsafe(40), identifier()
@@ -407,6 +432,8 @@ class FirestoreStore(Store):
 
             try:
                 body = claim_one(self.db.transaction())
+            except Aborted:
+                continue  # A transaction lock timeout must not crash the worker loop.
             except ValueError as error:
                 if isinstance(error.__cause__, Aborted):
                     continue  # Another worker won; contention is not a failed SEO job.
@@ -569,7 +596,9 @@ class FirestoreStore(Store):
         )
         if tenant:
             query = query.where(filter=FieldFilter("tenant_id", "==", tenant))
-        scheduled = 0
+        from seo_optimizer.connectors.jobs import reconcile as reconcile_connectors
+
+        scheduled = reconcile_connectors(self, tenant)
         for snapshot in query.stream():
             project = cast(Project, self._record(Project, snapshot))
             spec = ProjectSpec.model_validate(project.spec)
