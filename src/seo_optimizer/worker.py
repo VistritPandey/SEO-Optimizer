@@ -263,6 +263,10 @@ class Worker:
         spec = ProjectSpec.model_validate(project.spec)
         if not spec.enabled:
             return "canceled", {"summary": "Project is paused"}, 0
+        if job.kind == "connector":
+            from seo_optimizer.connectors.jobs import process
+
+            return process(self.store, project, job, self.id)
         if self.settings.hosted:
             from seo_optimizer.hosted import managed_spec
 
