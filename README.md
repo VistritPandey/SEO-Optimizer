@@ -95,3 +95,19 @@ private keys, credentials or personal-site test data.
 To request a private reporting channel, use [the contact page](https://youroptimiser.com/contact)
 without posting sensitive details publicly. The hosted [privacy notice](https://youroptimiser.com/privacy)
 and [terms](https://youroptimiser.com/terms) describe service data handling and limits.
+
+## Connect publishing platforms and search evidence
+
+The workspace now includes project-scoped connectors for WordPress, WooCommerce,
+Shopify, Webflow, GitLab, Bitbucket, Wix, Squarespace, Framer, Sanity and Contentful.
+Search Console, GA4, Bing, Business Profile, Cloudflare, server logs, deployment
+notifications, keyword/SERP data and AI-answer experiments add evidence around repairs.
+
+Each connector declares what it can read or change. CMS updates use reviewable field
+proposals, provider readback and a separate live-page check; platform limits remain
+explicit. New-host Git adapters currently support guarded metadata PRs. Credentials
+are encrypted and writes follow project policy. Paid experiments run only on request.
+
+Local fixture and controlled-provider tests exercise these workflows. Live accounts
+and search outcomes still require a production pilot. See the [connector guide](docs/connectors.md)
+for the support matrix, account setup, OAuth callback, webhook contract and test commands.
