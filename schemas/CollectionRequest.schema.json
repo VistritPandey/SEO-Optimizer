@@ -1,0 +1,66 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "start": {
+      "format": "date",
+      "title": "Start",
+      "type": "string"
+    },
+    "end": {
+      "format": "date",
+      "title": "End",
+      "type": "string"
+    },
+    "limit": {
+      "default": 50,
+      "maximum": 100,
+      "minimum": 1,
+      "title": "Limit",
+      "type": "integer"
+    },
+    "resource_id": {
+      "default": "",
+      "maxLength": 300,
+      "title": "Resource Id",
+      "type": "string"
+    },
+    "query": {
+      "default": "",
+      "maxLength": 500,
+      "title": "Query",
+      "type": "string"
+    },
+    "market": {
+      "default": "United States",
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Market",
+      "type": "string"
+    },
+    "model": {
+      "default": "",
+      "maxLength": 100,
+      "title": "Model",
+      "type": "string"
+    },
+    "engine": {
+      "default": "google",
+      "enum": [
+        "openai",
+        "anthropic",
+        "google",
+        "perplexity"
+      ],
+      "title": "Engine",
+      "type": "string"
+    },
+    "experiment": {
+      "default": "visibility",
+      "maxLength": 100,
+      "title": "Experiment",
+      "type": "string"
+    }
+  },
+  "title": "CollectionRequest",
+  "type": "object"
+}
