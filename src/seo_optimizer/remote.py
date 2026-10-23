@@ -99,3 +99,35 @@ class RemoteStore(Store):
         )
         response.raise_for_status()
         return Job(**response.json())
+
+    def state(self, key: str) -> tuple[dict[str, Any], int]:
+        project_id, platform = self._connector_key(key)
+        response = self.client.get(f"/api/v1/worker/connectors/{project_id}/{platform}/state")
+        response.raise_for_status()
+        value = response.json()
+        return value["value"], int(value["version"])
+
+    def save_state(self, key: str, value: dict[str, Any], expected: int) -> bool:
+        project_id, platform = self._connector_key(key)
+        response = self.client.put(
+            f"/api/v1/worker/connectors/{project_id}/{platform}/state",
+            json={"value": value, "expected": expected},
+        )
+        response.raise_for_status()
+        return bool(response.json()["saved"])
+
+    def _connector_key(self, key: str) -> tuple[str, str]:
+        from seo_optimizer.connectors.models import Platform
+
+        parts = key.split(":")
+        if len(parts) != 4 or parts[0] != "connector" or (parts[1], parts[2]) not in self._projects:
+            raise ValueError("Remote state access is confined to the claimed project's connectors")
+        return parts[2], Platform(parts[3]).value
+
+    def save_workspace(self, tenant: str, project_id: str, value: Workspace) -> None:
+        if self.project(tenant, project_id) is None:
+            raise ValueError("Project not found")
+        response = self.client.put(
+            f"/api/v1/projects/{project_id}/workspace", json=value.model_dump(mode="json")
+        )
+        response.raise_for_status()
