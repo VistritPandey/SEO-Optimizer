@@ -1,0 +1,540 @@
+{
+  "verified_at": "2026-10-23T20:39:22.226990+00:00",
+  "release": "Additional publishing, search-evidence, deployment and AI-visibility connections",
+  "application_source_commit": "a6c6ef5",
+  "additional_connection_types": 22,
+  "existing_integration": "GitHub",
+  "summary": {
+    "implemented": true,
+    "offline_and_controlled_workflows": "passed",
+    "production_account_certification": "unverified",
+    "ranking_or_growth_improvement": "unverified",
+    "known_test_failures": []
+  },
+  "python_suite": {
+    "status": "passed",
+    "passed": 626,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 21,
+    "runtime_seconds": 22.166
+  },
+  "firestore_and_firebase_emulators": {
+    "status": "passed",
+    "passed": 14,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "runtime_seconds": 5.127,
+    "scope": "Actual Auth and Firestore emulators, default and named databases. Covers account identity, isolation, CAS, quota and encrypted connector state.",
+    "overlaps_skips_in_main_suite": 14
+  },
+  "new_connector_cases": {
+    "status": "passed",
+    "passed": 56,
+    "failed": 0,
+    "scope": "Provider wire fixtures, encrypted project-scoped service, OAuth/refresh, event signatures, durable jobs, local HTTP CMS and GitLab/Bitbucket repository workflows. Included in the main Python suite."
+  },
+  "frontend": {
+    "status": "passed",
+    "typescript": "passed",
+    "formatting": "passed",
+    "unit_tests": 7,
+    "unit_failures": 0,
+    "production_build": "passed",
+    "next_version": "16.4.3",
+    "npm_audit_vulnerabilities": 0
+  },
+  "framer_bridge": {
+    "status": "passed",
+    "tests": 1,
+    "failures": 0,
+    "sdk_version": "5.1.0",
+    "scope": "Controlled official SDK object, not a live Framer project",
+    "npm_audit_vulnerabilities": 0
+  },
+  "python_static_checks": {
+    "ruff": "passed",
+    "formatting": "passed",
+    "mypy": "passed",
+    "mypy_source_files": 57
+  },
+  "workspace_browser": {
+    "status": "passed",
+    "fixtures_only": true,
+    "passed": [
+      "HTML gateway read recovers; normal loading never shows retry",
+      "Tutorial navigation, Escape and remembered dismissal without audit writes",
+      "Sidebar sections, replayable tour and saved monitoring responses",
+      "Latest repair PR is directly visible on the website overview",
+      "Coverage exposes per-check reasons, dependencies and collected URLs",
+      "Light/dark/system appearance, reload persistence and OS changes",
+      "Dashboard logo returns to workspace home without leaving the app",
+      "Live progress and repair links stay visible; duplicate events count one repair",
+      "Partial repairs show unresolved proof without claiming full verification",
+      "Findings filter and search; independent strength, dependencies and evidence",
+      "Reused assessments and no-PR outcomes explain model and publication decisions",
+      "Audit history, failed checks, job filters and PR destination",
+      "Page observations and single audit submission",
+      "22 connector choices, scoped setup, cleared secret inputs, collection, proposal, write permissions, disconnect, mobile layout and both-theme accessibility",
+      "390px viewport without horizontal overflow",
+      "Tutorial dialog accessibility and focus trapping",
+      "Workspace overview accessibility checks",
+      "Dark workspace and tour accessibility checks",
+      "Coding instructions and Git conventions save, reload, preview and remain accessible in both themes",
+      "Persistent connection failure has actionable recovery",
+      "First-time CMS setup succeeds without a GitHub repository or GitHub authorization request"
+    ],
+    "screenshots": [
+      "connectors/connectors-desktop.png",
+      "connectors/connectors-mobile-dark.png"
+    ],
+    "notes": "Real application components with fictional identity and controlled API routes; not live customer account authorization."
+  },
+  "end_to_end": [
+    {
+      "name": "CMS repair and restoration",
+      "status": "passed",
+      "scope": "Actual local HTTP fixture, authenticated API, encrypted SQLite, durable worker queue, provider readback and served HTML.",
+      "steps": [
+        "Create WordPress project without GitHub",
+        "Save scoped credentials without returning their values",
+        "Crawl the local site",
+        "Collect provider content",
+        "Derive a missing-title proposal from an observed title",
+        "Queue and apply only the selected metadata field",
+        "Verify provider readback",
+        "Verify the served HTML title",
+        "Restore the previous value",
+        "Accept a valid signed deployment event",
+        "Reject replay and invalid signature"
+      ],
+      "before": {
+        "seo_title": ""
+      },
+      "after": {
+        "seo_title": "Desk lamps"
+      },
+      "restored": {
+        "seo_title": ""
+      },
+      "external_customer_site_modified": false
+    },
+    {
+      "name": "GitLab and Bitbucket source repairs",
+      "status": "passed",
+      "cases": 2,
+      "scope": "Real temporary Git repositories with controlled provider HTTP responses. API commits create actual branches and commits; PR endpoints are simulated.",
+      "steps": [
+        "Read a missing-title HTML source",
+        "Derive the title from its observed H1",
+        "Validate the metadata-only edit",
+        "Create a separate branch and commit",
+        "Open one simulated provider PR",
+        "Verify the default branch is unchanged",
+        "Repeat without duplicating the PR"
+      ],
+      "live_gitlab_or_bitbucket_account": false
+    }
+  ],
+  "live_search_api_experiment": {
+    "scope": "Single search-enabled API experiment; not consumer visibility or agent repair quality",
+    "paid_provider_calls": 1,
+    "cost_usd": null,
+    "status": "passed",
+    "search_execution_observed": true,
+    "answer_received": true,
+    "citation_count": 0,
+    "consumer_product_measurement": false,
+    "runtime_seconds": 11.53,
+    "unresolved_citation_count": 2,
+    "target_citation_verified": false,
+    "usage": {
+      "grounding_tool_count": [
+        {
+          "count": 3,
+          "type": "google_search"
+        }
+      ],
+      "input_tokens_by_modality": [
+        {
+          "modality": "text",
+          "tokens": 175
+        }
+      ],
+      "total_cached_tokens": 0,
+      "total_input_tokens": 175,
+      "total_output_tokens": 477,
+      "total_thought_tokens": 484,
+      "total_tokens": 1136,
+      "total_tool_use_tokens": 0
+    }
+  },
+  "ci": {
+    "application_run": "https://github.com/YourOptimiser/your-optimiser/actions/runs/40019583846",
+    "application_status": "success",
+    "checks": [
+      "verify",
+      "frontend",
+      "secrets",
+      "combined"
+    ],
+    "includes": [
+      "Docker sandbox source-repair checks",
+      "Combined container startup and recovery",
+      "Production frontend browser checks",
+      "Repository secret scan"
+    ],
+    "first_time_setup_test_commit": "60dc652",
+    "first_time_setup_run": "https://github.com/YourOptimiser/your-optimiser/actions/runs/40020305093",
+    "first_time_setup_status": "success"
+  },
+  "skipped": [
+    {
+      "scope": "Main-suite Firebase emulator tests",
+      "count": 14,
+      "reason": "Opt-in emulator environment absent in the general test invocation. All 14 passed separately against real local emulators."
+    },
+    {
+      "scope": "Local Docker repair checks",
+      "count": 7,
+      "reason": "Docker daemon unavailable locally. The Docker checks ran successfully in the linked GitHub verify job."
+    }
+  ],
+  "unverified": [
+    "Live OAuth approval, distribution, account permission and API-plan behavior for the new platforms",
+    "Live CMS publication on each supported platform, including plugin-specific REST field exposure",
+    "Native webhook delivery from real deployment and source-host accounts",
+    "Real GitLab/Bitbucket PR delivery, framework build/CI completion and live deployment",
+    "Live paid SERP collection and competitor data completeness",
+    "Live search API engines other than the single recorded experiment",
+    "Resolved target citations and actual consumer ChatGPT, Claude, Gemini or Perplexity visibility",
+    "Improved search rankings, indexed coverage, traffic, conversions and revenue",
+    "Long-running production scheduling and concurrent multi-tenant load"
+  ],
+  "important_scope_limits": [
+    "Wix is read-only. Squarespace publication supports commerce products, not general pages or blogs.",
+    "GitLab and Bitbucket patches are restricted to HTML/JSON metadata; they do not merge or claim completed framework CI.",
+    "Webflow and Contentful save unpublished or staged changes. Sanity edits existing drafts. Framer does not publish.",
+    "WordPress and WooCommerce lack atomic provider revision preconditions; a narrow read/write race remains despite preflight checks.",
+    "Business-hour changes require matching unexpired trusted facts. Prices, inventory, reviews, crawler directives and publication status are protected.",
+    "A provider readback is distinct from deployed-page verification. Neither proves indexing or ranking.",
+    "Paid model and SERP experiments require explicit collection. They are not periodic tasks.",
+    "API experiments, consumer observations, crawler requests and rankings are distinct evidence types."
+  ],
+  "platforms": [
+    {
+      "id": "search_console",
+      "name": "Google Search Console",
+      "write_supported_within_scope": false,
+      "scope": "Search analytics, sitemap status and indexed-URL inspection. Average position is not a fixed rank; top-row coverage is bounded.",
+      "primary_source": "https://developers.google.com/webmaster-tools/v1/api_reference_index",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "wordpress",
+      "name": "WordPress",
+      "write_supported_within_scope": true,
+      "scope": "Pages and posts; registered REST meta fields only. Configure SEO plugin field mappings explicitly. Published content keeps its status.",
+      "primary_source": "https://developer.wordpress.org/rest-api/reference/pages/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "woocommerce",
+      "name": "WooCommerce",
+      "write_supported_within_scope": true,
+      "scope": "Product names, descriptions and short descriptions. Prices, inventory and reviews are never changed.",
+      "primary_source": "https://woocommerce.github.io/woocommerce-rest-api-docs/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "shopify",
+      "name": "Shopify",
+      "write_supported_within_scope": true,
+      "scope": "Product SEO title and description via versioned GraphQL. Theme edits and theme publication are not part of this connector.",
+      "primary_source": "https://shopify.dev/docs/api/admin-graphql/latest/mutations/productUpdate",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "webflow",
+      "name": "Webflow",
+      "write_supported_within_scope": true,
+      "scope": "Static-page SEO metadata and mapped CMS fields. Changes are staged; publishing the whole site is not automatic.",
+      "primary_source": "https://developers.webflow.com/data/reference/pages-and-components/pages/update-page-settings",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "ga4",
+      "name": "Google Analytics 4",
+      "write_supported_within_scope": false,
+      "scope": "Landing-page sessions, engagement, key events and revenue. Attribution depends on the property's tracking setup.",
+      "primary_source": "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "vercel",
+      "name": "Vercel",
+      "write_supported_within_scope": false,
+      "scope": "Deployment status and signed events. Only the configured production origin and environment can trigger verification.",
+      "primary_source": "https://vercel.com/docs/webhooks/webhooks-api",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "netlify",
+      "name": "Netlify",
+      "write_supported_within_scope": false,
+      "scope": "Deployment status. Use the signed generic deployment event from CI for a consistent verification payload.",
+      "primary_source": "https://docs.netlify.com/deploy/deploy-notifications/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "deployment",
+      "name": "Other hosting / CI",
+      "write_supported_within_scope": false,
+      "scope": "Signed deployment events from any host; replay, origin, freshness and environment checks enforced.",
+      "primary_source": "https://youroptimiser.com/how-it-works",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "gitlab",
+      "name": "GitLab",
+      "write_supported_within_scope": true,
+      "scope": "File reads, guarded branch commits and merge requests on GitLab.com. Self-hosted endpoints require a separately reviewed host configuration.",
+      "primary_source": "https://docs.gitlab.com/api/merge_requests/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "bitbucket",
+      "name": "Bitbucket",
+      "write_supported_within_scope": true,
+      "scope": "File reads, guarded branch commits and pull requests on Bitbucket Cloud. Existing PR lifecycle must be completed in Bitbucket.",
+      "primary_source": "https://developer.atlassian.com/cloud/bitbucket/rest/api-group-pullrequests/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "bing",
+      "name": "Bing Webmaster Tools",
+      "write_supported_within_scope": false,
+      "scope": "Query statistics and crawl statistics. AI citation dashboard ingestion is not claimed without a documented accessible API.",
+      "primary_source": "https://learn.microsoft.com/en-us/bingwebmaster/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "business_profile",
+      "name": "Google Business Profile",
+      "write_supported_within_scope": true,
+      "scope": "Read business details and update regular hours from unexpired trusted project facts. Google API approval is required.",
+      "primary_source": "https://developers.google.com/my-business/reference/businessinformation/rest/v1/locations/patch",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare",
+      "write_supported_within_scope": false,
+      "scope": "Sampled request analytics, paths and response statuses. Dataset availability depends on plan; visits do not establish citations or bot identity.",
+      "primary_source": "https://developers.cloudflare.com/analytics/graphql-api/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "server_logs",
+      "name": "Server logs",
+      "write_supported_within_scope": false,
+      "scope": "Import bounded structured request records. User agents are self-reported; no user IPs or cookies are stored.",
+      "primary_source": "https://www.cloudflare.com/en-gb/learning/ai/how-to-detect-which-ai-bots-crawl/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "wix",
+      "name": "Wix",
+      "write_supported_within_scope": false,
+      "scope": "Read site SEO tags plus live-page audits. Page-level writes are withheld until the relevant Wix page/app API can be validated; proposals can be exported.",
+      "primary_source": "https://dev.wix.com/docs/api-reference/business-management/seo/site-seo-tags-v1/site-seo-tags-object",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "squarespace",
+      "name": "Squarespace",
+      "write_supported_within_scope": true,
+      "scope": "Commerce product SEO metadata. General pages and blogs use live-page audits and exported recommendations; no general page-edit API is assumed.",
+      "primary_source": "https://developers.squarespace.com/commerce-apis/products",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "framer",
+      "name": "Framer",
+      "write_supported_within_scope": true,
+      "scope": "Official Server API bridge for CMS reads and mapped CMS-field changes. Requires Node and the bundled framer-api bridge; no automatic production deployment.",
+      "primary_source": "https://www.framer.com/developers/server-api-quick-start",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "sanity",
+      "name": "Sanity",
+      "write_supported_within_scope": true,
+      "scope": "Mapped document fields with revision preconditions. Only existing draft documents are writable; publish through the customer's normal review flow.",
+      "primary_source": "https://www.sanity.io/docs/http-reference/mutation",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "contentful",
+      "name": "Contentful",
+      "write_supported_within_scope": true,
+      "scope": "Mapped entry fields with version preconditions. Updates stay unpublished; publication is managed through Contentful.",
+      "primary_source": "https://www.contentful.com/developers/docs/references/content-management-api/overview/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "dataforseo",
+      "name": "Keyword & competitor rankings",
+      "write_supported_within_scope": false,
+      "scope": "Paid Google organic SERP observations by query, location and language. One bounded live task per explicit collection; charges are recorded when returned.",
+      "primary_source": "https://docs.dataforseo.com/v3/serp-google-organic-overview/",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    },
+    {
+      "id": "ai_visibility",
+      "name": "AI answer visibility",
+      "write_supported_within_scope": false,
+      "scope": "Search-enabled API experiments and separately labelled imports of consumer observations. Never presented as universal rankings or consumer-product coverage.",
+      "primary_source": "https://youroptimiser.com/seo-and-ai-search",
+      "controlled_validation": "passed",
+      "live_account_validation": "unverified"
+    }
+  ],
+  "deployment": {
+    "status": "passed",
+    "url": "https://youroptimiser.com",
+    "clean_base_build": "31930dfb-9a16-47f1-af98-125a017f1fad",
+    "final_build": "5e85ee3e-ea18-40f4-9673-482699866919",
+    "database_index": "READY",
+    "revision": "your-optimiser-00038-k9p",
+    "traffic_percent": 100,
+    "image": "us-central1-docker.pkg.dev/meetext-business/your-optimiser/app:release-a6c6ef5",
+    "runtime_configuration": "Existing service identity, encrypted secrets, named database and worker configuration preserved"
+  },
+  "next_pilot_access": "See docs/connectors.md for platform-specific test-account grants and optional operator OAuth configuration. No customer credentials are needed for offline tests.",
+  "live_public_checks": {
+    "header": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "1440px: all desktop links stay on one aligned row",
+        "1280px: all desktop links stay on one aligned row",
+        "1101px: all desktop links stay on one aligned row",
+        "1100px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "1024px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "768px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "640px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "390px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "320px: complete menu, keyboard, Escape, outside click and link dismissal",
+        "Open light menu passes automated A/AA accessibility checks",
+        "Open dark menu passes automated A/AA accessibility checks",
+        "Resizing between desktop and compact layouts resets the menu safely",
+        "Tab can leave the disclosure; navigation never traps keyboard focus",
+        "All navigation destinations remain available without JavaScript"
+      ],
+      "browser_errors": [],
+      "failed": []
+    },
+    "navigation": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "1440px: footer link opens the separate Blog page at the top",
+        "1440px: Back restores the original landing-page position",
+        "1440px: article links open at their heading",
+        "1440px: article contents links reach sections below the header",
+        "1440px: cross-page video anchors retain their intended destination",
+        "1440px: pricing anchors work and Blog navigation starts at the top",
+        "390px: footer link opens the separate Blog page at the top",
+        "390px: Back restores the original landing-page position",
+        "390px: article links open at their heading",
+        "390px: article contents links reach sections below the header",
+        "390px: cross-page video anchors retain their intended destination",
+        "390px: pricing anchors work and Blog navigation starts at the top"
+      ],
+      "browser_errors": [],
+      "failed": []
+    },
+    "blog": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "Homepage names the autonomous SEO agent and links the separate Blog page without duplicating article or guide sections",
+        "Journal index links exactly the published articles in its collection metadata",
+        "All three posts and the guide use distinct cover files, consistently linked from the separate blog index, article schema and social previews",
+        "Three articles and the existing guide have matching visible facts, brand identity, authorship, dates, canonicals, article sharing metadata, breadcrumbs, contents and optimised cover images",
+        "Unpublished article paths return 404",
+        "Original repair evidence and engine-specific AI-search limits stay explicit",
+        "Recorded silent demo and captions resolve from the how-it-works page"
+      ],
+      "failed": [],
+      "unverified": [
+        "Search indexing, rankings, traffic and AI citations"
+      ]
+    },
+    "site": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        "12 public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
+        "Sign-in and workspace pages carry noindex in HTML and HTTP headers",
+        "Sitemap includes public canonical pages only; robots allows them and excludes API crawling",
+        "LLM product index is readable, links to public facts and states its limits",
+        "Structured data describes the real product and free offer without fabricated reviews or FAQ rich-result markup",
+        "Favicon, Apple touch icon and branded social image have correct PNG dimensions",
+        "Every internal navigation link and in-page anchor resolves",
+        "www host normalises to the canonical apex domain with a permanent redirect",
+        "Unknown pages return 404 and workspace API access stays protected"
+      ],
+      "failed": [],
+      "model_calls": 0,
+      "unverified": [
+        "Search indexing and rankings",
+        "AI citation outcomes",
+        "Field Core Web Vitals",
+        "Real customer sign-in and GitHub lifecycle"
+      ]
+    },
+    "api": {
+      "environment": "https://youroptimiser.com",
+      "passed": [
+        {
+          "check": "Combined frontend/backend health",
+          "status": "passed"
+        },
+        {
+          "check": "Deployed connector API contracts and hook routes",
+          "status": "passed"
+        },
+        {
+          "check": "Unauthenticated project and worker-state access denied",
+          "status": "passed"
+        },
+        {
+          "check": "Unauthenticated unsigned hook rejected",
+          "status": "passed"
+        }
+      ],
+      "failed": [],
+      "customer_mutations": 0
+    }
+  }
+}
