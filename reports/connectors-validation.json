@@ -1,7 +1,7 @@
 {
-  "verified_at": "2026-10-23T20:39:22.226990+00:00",
+  "verified_at": "2026-10-23T20:50:10.065342+00:00",
   "release": "Additional publishing, search-evidence, deployment and AI-visibility connections",
-  "application_source_commit": "a6c6ef5",
+  "application_source_commit": "6eb2ce5",
   "additional_connection_types": 22,
   "existing_integration": "GitHub",
   "summary": {
@@ -171,7 +171,7 @@
     }
   },
   "ci": {
-    "application_run": "https://github.com/YourOptimiser/your-optimiser/actions/runs/40019583846",
+    "application_run": "https://github.com/YourOptimiser/your-optimiser/actions/runs/40021183355",
     "application_status": "success",
     "checks": [
       "verify",
@@ -187,7 +187,10 @@
     ],
     "first_time_setup_test_commit": "60dc652",
     "first_time_setup_run": "https://github.com/YourOptimiser/your-optimiser/actions/runs/40020305093",
-    "first_time_setup_status": "success"
+    "first_time_setup_status": "success",
+    "application_source_commit": "6eb2ce5",
+    "run_attempt": 2,
+    "setup_retry": "First runner stalled during browser dependency installation; only its cancelled job was rerun successfully on a fresh runner."
   },
   "skipped": [
     {
@@ -426,11 +429,11 @@
     "status": "passed",
     "url": "https://youroptimiser.com",
     "clean_base_build": "31930dfb-9a16-47f1-af98-125a017f1fad",
-    "final_build": "5e85ee3e-ea18-40f4-9673-482699866919",
+    "final_build": "3b44214b-0b70-4609-85f5-ed19996db500",
     "database_index": "READY",
-    "revision": "your-optimiser-00038-k9p",
+    "revision": "your-optimiser-00039-w4z",
     "traffic_percent": 100,
-    "image": "us-central1-docker.pkg.dev/meetext-business/your-optimiser/app:release-a6c6ef5",
+    "image": "us-central1-docker.pkg.dev/meetext-business/your-optimiser/app:release-6eb2ce5",
     "runtime_configuration": "Existing service identity, encrypted secrets, named database and worker configuration preserved"
   },
   "next_pilot_access": "See docs/connectors.md for platform-specific test-account grants and optional operator OAuth configuration. No customer credentials are needed for offline tests.",
@@ -535,6 +538,10 @@
       ],
       "failed": [],
       "customer_mutations": 0
+    },
+    "connection_notices": {
+      "status": "passed",
+      "scope": "Final deployed privacy and service notices describe optional platform data, disconnect behavior, separate write permissions and explicit paid API collection."
     }
   }
 }
