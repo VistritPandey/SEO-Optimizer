@@ -38,3 +38,6 @@ frontend/next-env.d.ts
 *.pfx
 *-credentials.json
 service-account*.json
+
+# Optional provider SDK bridges
+integrations/**/node_modules/
