@@ -666,7 +666,8 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
             spec = managed_spec(spec, configuration)
             credentials = storage.secrets(project)
             if spec.enabled and (
-                not project.spec.get("enabled") or not credentials.github_installation_id
+                spec.publishing_platform == "github"
+                and (not project.spec.get("enabled") or not credentials.github_installation_id)
             ):
                 from seo_optimizer.followups import register_project
                 from seo_optimizer.hosted import connected_create
@@ -851,6 +852,9 @@ def create_app(settings: Settings | None = None, store: Store | None = None) -> 
     from seo_optimizer.task_dispatch import install as install_tasks
 
     install_tasks(app, storage, configuration)
+    from seo_optimizer.connectors.routes import install as install_connectors
+
+    install_connectors(app, storage, owned, csrf, job_json)
     return app
 
 
