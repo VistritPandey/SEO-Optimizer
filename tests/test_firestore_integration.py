@@ -191,3 +191,28 @@ def test_firestore_retains_nested_command_arrays(store):
     job = store.claim("worker", tenant.id)
     store.finish(tenant.id, job.id, "worker", "complete", {"tool": {"matrix": [[1, 2], [3, 4]]}})
     assert store.job(tenant.id, job.id).result["tool"]["matrix"] == [[1, 2], [3, 4]]
+
+
+def test_connector_state_keeps_credentials_private_and_cas_scoped(store):
+    from seo_optimizer.connectors.models import ConnectionInput, Platform
+    from seo_optimizer.connectors.service import ConnectorService
+
+    owner, _ = store.create_user(f"connector-{uuid4()}@example.test", "fixture-hash")
+    site = project(store, owner.id)
+    service = ConnectorService(store, site)
+    service.configure(
+        ConnectionInput(
+            platform="ga4",
+            resource="1234",
+            credentials={"access_token": "fixture-private-connector-token"},
+        )
+    )
+    record, version = service.state(Platform.GA4)
+    assert record["config"]["credentials"]["access_token"] == "fixture-private-connector-token"
+    import json
+
+    assert "fixture-private-connector-token" not in json.dumps(service.public(Platform.GA4))
+    assert store.save_state(service.key(Platform.GA4), record, version)
+    assert not store.save_state(service.key(Platform.GA4), record, version)
+    service.disconnect(Platform.GA4)
+    assert not service.state(Platform.GA4)[0]
