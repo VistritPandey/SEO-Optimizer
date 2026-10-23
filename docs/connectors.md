@@ -129,7 +129,8 @@ For a local Framer worker, run `npm ci --prefix integrations/framer --ignore-scr
 ## Reproducible validation
 
 ```sh
-uv run pytest tests/test_connector_adapters.py tests/test_connector_service.py tests/test_connector_e2e.py
+uv run pytest tests/test_connector_adapters.py tests/test_connector_service.py \
+  tests/test_connector_e2e.py tests/test_connector_repositories.py
 uv run python scripts/test_workspace_browser.py
 node --test integrations/framer/bridge.test.mjs
 uv run mypy
@@ -147,3 +148,5 @@ uv run pytest tests/test_firestore_integration.py --allow-hosts=127.0.0.1
 ```
 
 The release report separates local passes, skipped Docker checks, live-account verification and actual search/AI outcomes. Real account authorization, platform plan restrictions, end-to-end native delivery, live model quality, commercial impact and search visibility require a separate production pilot.
+
+The [connector validation report](../reports/connectors-validation.json) records the release checks and their limits. Screenshots show the [desktop workspace](../reports/connectors/connectors-desktop.png) and [mobile dark theme](../reports/connectors/connectors-mobile-dark.png), using fictional accounts.
