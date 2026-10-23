@@ -1,0 +1,6 @@
+{
+  "name": "your-optimiser-framer-bridge",
+  "private": true,
+  "type": "module",
+  "dependencies": { "framer-api": "5.1.0" }
+}
