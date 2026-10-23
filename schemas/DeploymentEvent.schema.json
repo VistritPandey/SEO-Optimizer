@@ -1,0 +1,67 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {
+      "maxLength": 120,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "title": "Event Id",
+      "type": "string"
+    },
+    "resource": {
+      "maxLength": 500,
+      "minLength": 1,
+      "title": "Resource",
+      "type": "string"
+    },
+    "environment": {
+      "default": "production",
+      "maxLength": 100,
+      "title": "Environment",
+      "type": "string"
+    },
+    "revision": {
+      "maxLength": 100,
+      "minLength": 1,
+      "title": "Revision",
+      "type": "string"
+    },
+    "url": {
+      "maxLength": 2000,
+      "minLength": 1,
+      "title": "Url",
+      "type": "string"
+    },
+    "occurred_at": {
+      "format": "date-time",
+      "title": "Occurred At",
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "succeeded",
+        "failed"
+      ],
+      "title": "Status",
+      "type": "string"
+    },
+    "changed_paths": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Changed Paths",
+      "type": "array"
+    }
+  },
+  "required": [
+    "event_id",
+    "resource",
+    "revision",
+    "url",
+    "occurred_at",
+    "status"
+  ],
+  "title": "DeploymentEvent",
+  "type": "object"
+}
