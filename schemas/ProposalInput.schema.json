@@ -1,0 +1,57 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "resource_id": {
+      "maxLength": 300,
+      "minLength": 1,
+      "title": "Resource Id",
+      "type": "string"
+    },
+    "verification_url": {
+      "default": "",
+      "maxLength": 2000,
+      "title": "Verification Url",
+      "type": "string"
+    },
+    "changes": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "maxProperties": 8,
+      "minProperties": 1,
+      "title": "Changes",
+      "type": "object"
+    },
+    "reason": {
+      "maxLength": 2000,
+      "minLength": 10,
+      "title": "Reason",
+      "type": "string"
+    },
+    "evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "minItems": 1,
+      "title": "Evidence Ids",
+      "type": "array"
+    },
+    "fact_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 20,
+      "title": "Fact Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "resource_id",
+    "changes",
+    "reason",
+    "evidence_ids"
+  ],
+  "title": "ProposalInput",
+  "type": "object"
+}
