@@ -175,6 +175,25 @@ def fixtures():
 
 def main():
     project, activity = fixtures()
+    from seo_optimizer.connectors.catalog import catalog
+
+    connections = []
+    for definition in catalog():
+        connections.append(
+            {
+                "platform": definition["platform"],
+                "definition": definition,
+                "connected": False,
+                "status": "not_connected",
+                "config": {},
+                "credential_fields": [],
+                "last_sync": None,
+                "last_error": None,
+                "evidence": [],
+                "proposals": [],
+                "history": [],
+            }
+        )
     results = []
     output = ROOT / ".data/workspace-qa"
     output.mkdir(parents=True, exist_ok=True)
@@ -291,6 +310,75 @@ def main():
                         if route.request.method == "PATCH":
                             project["spec"].update(route.request.post_data_json)
                         data = project
+                    elif path == "projects/site/connectors":
+                        data = {"connections": connections}
+                    elif path.startswith("projects/site/connectors/"):
+                        pieces = path.split("/")
+                        item = next(c for c in connections if c["platform"] == pieces[3])
+                        if len(pieces) == 4 and route.request.method == "PUT":
+                            body = route.request.post_data_json
+                            assert body["resource"] == "https://example.test"
+                            item.update(
+                                connected=True,
+                                status="configured",
+                                config={k: v for k, v in body.items() if k != "credentials"},
+                                credential_fields=list(body["credentials"]),
+                            )
+                            data = item
+                        elif len(pieces) == 4 and route.request.method == "DELETE":
+                            item.update(
+                                connected=False,
+                                status="not_connected",
+                                config={},
+                                credential_fields=[],
+                            )
+                            data = {"disconnected": True}
+                        elif path.endswith("/collect"):
+                            data = {"id": "connector-fixture", "status": "queued"}
+                            item["status"] = "connected"
+                            item["proposals"] = [
+                                {
+                                    "id": "abc123",
+                                    "status": "proposed",
+                                    "resource_id": "1",
+                                    "reason": "Use the observed title for missing metadata.",
+                                    "diff": {"seo_title": {"before": "", "after": "Desk lamps"}},
+                                }
+                            ]
+                            item["evidence"] = [
+                                {
+                                    "id": "fixture-evidence",
+                                    "collection": {
+                                        "collected_at": "2026-10-23T10:00:00Z",
+                                        "complete": False,
+                                        "cost_usd": None,
+                                        "warnings": [
+                                            "Controlled browser fixture; "
+                                            "live provider access is unverified."
+                                        ],
+                                        "measurement": "content",
+                                        "records": [
+                                            {
+                                                "id": "1",
+                                                "kind": "page",
+                                                "fields": {"title": "Desk lamps", "seo_title": ""},
+                                            }
+                                        ],
+                                    },
+                                }
+                            ]
+                        elif path.endswith("/apply"):
+                            item["proposals"][0].update(
+                                status="verified",
+                                verification={
+                                    "provider_readback": True,
+                                    "deployed_site": "unverified",
+                                },
+                            )
+                            data = {"id": "apply-fixture", "status": "queued"}
+                        else:
+                            route.fulfill(status=404, json={"detail": "Fixture operation absent"})
+                            return
                     elif path.endswith("/workspace"):
                         data = {}
                     elif path.endswith("/strategy"):
@@ -509,6 +597,67 @@ def main():
                 expect(page.get_by_text("Audit queued.", exact=True)).to_be_visible()
                 assert state["mutations"] == 1
                 results.append("Page observations and single audit submission")
+                sidebar.get_by_role("button", name="Connectors", exact=True).click()
+                connectors = page.get_by_role("region", name="Website connectors")
+                expect(
+                    connectors.get_by_role("heading", name="Give your agent the right access.")
+                ).to_be_visible()
+                directory = connectors.get_by_role("navigation", name="Connector platforms")
+                expect(directory.get_by_role("button")).to_have_count(22)
+                directory.get_by_role("button", name="WordPress Not connected", exact=True).click()
+                connectors.get_by_label("Account or resource", exact=True).fill(
+                    "https://example.test"
+                )
+                connectors.get_by_label("seo title field", exact=True).fill("seo_title")
+                connectors.get_by_text("Credentials and access", exact=True).click()
+                connectors.get_by_label("username", exact=True).fill("fixture-user")
+                connectors.get_by_label("application password", exact=True).fill(
+                    "fixture-browser-secret"
+                )
+                connectors.get_by_label("Allow supported writes", exact=True).check()
+                connectors.get_by_role("button", name="Save connection", exact=True).click()
+                expect(connectors.get_by_text("Connection saved.", exact=False)).to_be_visible()
+                expect(connectors.get_by_label("application password", exact=False)).to_have_value(
+                    ""
+                )
+                assert "fixture-browser-secret" not in connectors.inner_text()
+                connectors.get_by_role("button", name="Collect evidence", exact=True).click()
+                expect(
+                    connectors.get_by_role("heading", name="Reviewable repairs", exact=True)
+                ).to_be_visible()
+                expect(connectors.get_by_text("Desk lamps", exact=True)).to_be_visible()
+                connectors.get_by_role("button", name="Apply supported change", exact=True).click()
+                expect(connectors.locator(".connector-proposal")).to_contain_text(
+                    '"deployed_site": "unverified"'
+                )
+                page.screenshot(path=str(output / "connectors-desktop.png"), full_page=True)
+                page.add_script_tag(path=str(WEB / "node_modules/axe-core/axe.min.js"))
+                for name in ("Light", "Dark"):
+                    theme.get_by_role("button", name=name, exact=True).click()
+                    violations = page.evaluate(
+                        "async () => (await axe.run(document, "
+                        "{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21a','wcag21aa']}}))"
+                        ".violations"
+                    )
+                    assert not violations, [
+                        {"id": item["id"], "nodes": [n["target"] for n in item["nodes"]]}
+                        for item in violations
+                    ]
+                page.set_viewport_size({"width": 390, "height": 844})
+                assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
+                connectors.screenshot(path=str(output / "connectors-mobile-dark.png"))
+                page.set_viewport_size({"width": 1440, "height": 1080})
+                theme.get_by_role("button", name="Light", exact=True).click()
+                connectors.get_by_role("button", name="Disconnect", exact=True).click()
+                expect(
+                    connectors.get_by_text("Stored connection credentials removed.", exact=False)
+                ).to_be_visible()
+                sidebar.get_by_role("button", name="Pages inspected", exact=True).click()
+                results.append(
+                    "22 connector choices, scoped setup, cleared secret inputs, "
+                    "collection, proposal, "
+                    "write permissions, disconnect, mobile layout and both-theme accessibility"
+                )
                 page.set_viewport_size({"width": 390, "height": 844})
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
                 menu = page.get_by_role("button", name="Workspace menu", exact=True)
@@ -524,6 +673,7 @@ def main():
                 page.screenshot(path=str(output / "mobile.png"), full_page=True)
                 results.append("390px viewport without horizontal overflow")
                 page.set_viewport_size({"width": 1440, "height": 1080})
+                expect(page.get_by_role("tab", name="Overview", exact=True)).to_have_count(1)
                 page.get_by_role("tab", name="Overview", exact=True).click()
                 page.add_script_tag(path=str(WEB / "node_modules/axe-core/axe.min.js"))
                 page.get_by_role("button", name="How it works A quick guided tour").click()
