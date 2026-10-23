@@ -387,6 +387,7 @@ export function Connectors({ project }: { project: Project }) {
                 {selected.connected &&
                   [
                     "search_console",
+                    "shopify",
                     "ga4",
                     "business_profile",
                     "webflow",
