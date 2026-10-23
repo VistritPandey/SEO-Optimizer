@@ -392,6 +392,15 @@ def schema_models() -> dict[str, type[BaseModel]]:
         ProviderConfig,
         Registration,
     )
+    from seo_optimizer.connectors.models import (
+        Collection,
+        CollectionRequest,
+        ConnectionInput,
+        DeploymentEvent,
+        ImportRequest,
+        ProposalInput,
+        Resource,
+    )
     from seo_optimizer.growth import (
         Brief,
         CitationObservation,
@@ -435,6 +444,13 @@ def schema_models() -> dict[str, type[BaseModel]]:
             SearchObservation,
             StrategyReport,
             Workspace,
+            Collection,
+            CollectionRequest,
+            ConnectionInput,
+            DeploymentEvent,
+            ImportRequest,
+            ProposalInput,
+            Resource,
         )
     }
 
