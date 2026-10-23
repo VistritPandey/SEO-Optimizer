@@ -303,7 +303,14 @@ def main():
                             "github_connection": {"status": "connected", "login": "fictional"},
                         }
                     elif path == "projects":
-                        data = [project]
+                        if route.request.method == "POST":
+                            incoming = route.request.post_data_json["spec"]
+                            assert incoming["publishing_platform"] == "wordpress"
+                            assert incoming["repository"] == ""
+                            project["spec"].update(incoming)
+                            data = project
+                        else:
+                            data = [project]
                     elif path == "projects/site/activity":
                         data = activity
                     elif path == "projects/site":
@@ -765,6 +772,24 @@ def main():
                 page.get_by_role("button", name="Reload workspace").click()
                 page.get_by_role("heading", name="Your search visibility,").wait_for()
                 results.append("Persistent connection failure has actionable recovery")
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Connect website", exact=True
+                ).click()
+                page.get_by_label("Website platform", exact=False).select_option("wordpress")
+                page.get_by_label("Project name", exact=True).fill("Fixture CMS website")
+                page.get_by_label("Deployed website URL", exact=True).fill("https://example.test")
+                expect(page.get_by_label("Verified repository", exact=True)).to_have_count(0)
+                page.get_by_role("button", name="Connect & start audit", exact=False).click()
+                expect(
+                    page.get_by_text(
+                        "Website connected. Follow its audit progress below.", exact=True
+                    )
+                ).to_be_visible()
+                assert project["spec"]["publishing_platform"] == "wordpress"
+                results.append(
+                    "First-time CMS setup succeeds without a GitHub repository "
+                    "or GitHub authorization request"
+                )
                 assert not errors, errors
                 browser.close()
         finally:
