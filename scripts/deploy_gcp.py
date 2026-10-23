@@ -134,6 +134,13 @@ def secret_specs(c: dict[str, str]) -> list[tuple[str, str, str]]:
             c.get("GITHUB_WEBHOOK_SECRET", ""),
         ),
     ]
+    for provider in ("GOOGLE", "SHOPIFY", "WEBFLOW", "GITLAB", "BITBUCKET"):
+        client_key = f"OPT_CONNECTOR_{provider}_CLIENT_ID"
+        secret_key = f"OPT_CONNECTOR_{provider}_CLIENT_SECRET"
+        if bool(c.get(client_key)) != bool(c.get(secret_key)):
+            raise DeployError(f"Supply both {client_key} and {secret_key} for connector OAuth")
+        if c.get(secret_key):
+            specs.append((secret_key, prefix + "-connector-" + provider.lower(), c[secret_key]))
     for _, resource, _ in specs:
         if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,254}", resource):
             raise DeployError("Invalid Secret Manager resource name")
@@ -444,6 +451,10 @@ def deploy(c: dict[str, str], cloud: Cloud) -> str:
         "OPT_BUILD_REGION": region,
         "OPT_BUILD_MAX_PER_JOB": "3",
     }
+    for provider in ("GOOGLE", "SHOPIFY", "WEBFLOW", "GITLAB", "BITBUCKET"):
+        key = f"OPT_CONNECTOR_{provider}_CLIENT_ID"
+        if c.get(key):
+            env[key] = c[key]
     image = f"{region}-docker.pkg.dev/{project}/{name}/app:{secrets.token_hex(6)}"
     with tempfile.TemporaryDirectory(prefix="optimiser-deploy-") as folder:
         build = Path(folder) / "build.json"
