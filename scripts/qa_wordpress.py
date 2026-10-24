@@ -192,15 +192,6 @@ def main() -> int:
         "dependencies": [],
         "versions": {},
     }
-    report["versions"]["images"] = {
-        image: json.loads(
-            subprocess.check_output(
-                ["docker", "image", "inspect", image, "--format", "{{json .RepoDigests}}"],
-                text=True,
-            )
-        )[0]
-        for image in ["wordpress:php8.3-apache", "wordpress:cli", "mariadb:11.8"]
-    }
     server = None
     old_ca = os.environ.get("SSL_CERT_FILE")
     try:
@@ -312,6 +303,15 @@ def main() -> int:
             wp("post", "meta", "update", identity, "yo_seo_description", "Handmade desk lamps.")
         wp("post", "meta", "update", healthy, "yo_title_fallback", "1")
         report["versions"]["wordpress"] = wp("core", "version")
+        report["versions"]["images"] = {
+            image: json.loads(
+                subprocess.check_output(
+                    ["docker", "image", "inspect", image, "--format", "{{json .RepoDigests}}"],
+                    text=True,
+                )
+            )[0]
+            for image in ["wordpress:php8.3-apache", "wordpress:cli", "mariadb:11.8"]
+        }
         private_file(
             RUNTIME / ".env.qa",
             f"QA_WORDPRESS_URL={base}\nQA_WORDPRESS_USERNAME=qa-editor\n"
