@@ -18,6 +18,12 @@ import { WorkspaceTour } from "./WorkspaceTour";
 import { ConnectorBrands } from "./ConnectorShowcase";
 import { PlatformLogo } from "./PlatformLogo";
 import { m } from "motion/react";
+import {
+  rememberWebsite,
+  rememberedWebsite,
+  selectWebsite,
+  websitePath,
+} from "@/lib/website-navigation.mjs";
 import connectionCatalog from "@/lib/connection-catalog.json";
 type Account = {
   email: string;
@@ -35,9 +41,11 @@ type Repository = { repository: string; branch: string; private: boolean };
 export function Dashboard({
   initialProjectId = "",
   initialConnect = "",
+  initialTab = "",
 }: {
   initialProjectId?: string;
   initialConnect?: string;
+  initialTab?: string;
 }) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
@@ -51,7 +59,7 @@ export function Dashboard({
   const [newProject, setNewProject] = useState(false);
   const [publishingPlatform, setPublishingPlatform] = useState("github");
   const [connectorPlatform, setConnectorPlatform] = useState("");
-  const [tab, setTab] = useState("overview");
+  const [tab, setTab] = useState(initialTab || "overview");
   const [tourOpen, setTourOpen] = useState(false);
   const [tourSeen, setTourSeen] = useState(true);
   const [homeAnchor, setHomeAnchor] = useState("");
@@ -83,6 +91,10 @@ export function Dashboard({
       router.push("/dashboard/connections");
       return;
     }
+    if (initialTab || initialProjectId || initialConnect) {
+      router.push("/dashboard");
+      return;
+    }
     selectedId.current = null;
     setSelected(null);
     setNewProject(false);
@@ -92,12 +104,14 @@ export function Dashboard({
     setNotice("");
   }
   async function tourNavigate(target: string) {
-    if (target === "connect" || (!selected && !projects.length)) {
-      beginProject();
+    if (target === "connect") {
+      router.push("/dashboard?connect=website");
       return;
     }
-    if (!selected && projects[0]) await choose(projects[0]);
-    setTab(target);
+    const project =
+      selected ||
+      selectWebsite(projects, "", rememberedWebsite(user?.uid || ""));
+    router.push(websitePath(target, project?.id || ""));
   }
   const [workspace, setWorkspace] = useState("{}");
   const [spec, setSpec] = useState("{}");
@@ -220,9 +234,10 @@ export function Dashboard({
   }
   async function choose(project: Project, connection = "") {
     setSelected(project);
+    rememberWebsite(user?.uid || "", project.id);
     setNewProject(false);
     setConnectorPlatform(connection);
-    setTab(connection ? "connectors" : "overview");
+    setTab(connection ? "connectors" : initialTab || "overview");
     if (selected?.id !== project.id) {
       setActivity({ jobs: [], findings: [] });
       setActivityReady(false);
@@ -250,12 +265,24 @@ export function Dashboard({
     if (!account || initialRouteOpened.current) return;
     initialRouteOpened.current = true;
     if (initialConnect) beginProject(initialConnect);
-    else if (initialProjectId) {
-      const project = projects.find((item) => item.id === initialProjectId);
+    else if (initialProjectId || initialTab) {
+      const project = selectWebsite(
+        projects,
+        initialProjectId,
+        rememberedWebsite(user?.uid || ""),
+      );
       if (project) void choose(project);
-      else setError("This website is unavailable in your workspace.");
+      else if (projects.length || initialProjectId)
+        setError("This website is unavailable in your workspace.");
     }
-  }, [account, projects, initialProjectId, initialConnect]);
+  }, [
+    account,
+    projects,
+    initialProjectId,
+    initialConnect,
+    initialTab,
+    user?.uid,
+  ]);
   async function connect() {
     await action(async () => {
       const value = await api<{ url: string }>("github/connect", "POST");
@@ -324,7 +351,8 @@ export function Dashboard({
         );
         return;
       }
-      await choose(value, connection);
+      rememberWebsite(user?.uid || "", value.id);
+      router.push(websitePath("overview", value.id));
       setNewProject(false);
       setNotice(
         connection
@@ -342,17 +370,16 @@ export function Dashboard({
         email={account?.email || user?.email || ""}
         findings={activity.findings.filter((item) => item.active).length}
         onHome={home}
-        onConnect={() => beginProject()}
+        onConnect={() => router.push("/dashboard?connect=website")}
         connectionsOpen={
           !selected && !newProject && homeAnchor === "platform-connections"
         }
         onSelect={(project) => {
-          void choose(project);
+          rememberWebsite(user?.uid || "", project.id);
+          router.push(websitePath(initialTab || "overview", project.id));
         }}
         onTab={(value) => {
-          if (value === "connectors")
-            router.push(`/dashboard/connections?project=${selected?.id || ""}`);
-          else setTab(value);
+          router.push(websitePath(value, selected?.id || ""));
         }}
         onTour={() => setTourOpen(true)}
         onSignOut={() => {
@@ -685,6 +712,26 @@ export function Dashboard({
               </button>
             </form>
           </>
+        ) : initialTab && !selected ? (
+          <section className="panel">
+            <h1>
+              {projects.length
+                ? error
+                  ? "Website unavailable"
+                  : "Opening your website…"
+                : "No website to show"}
+            </h1>
+            <p>
+              {projects.length
+                ? "Loading the selected website and its saved results."
+                : "Connect a website first to see its overview, findings and activity."}
+            </p>
+            {!projects.length && (
+              <Link className="button" href="/dashboard?connect=website">
+                Connect website ↗
+              </Link>
+            )}
+          </section>
         ) : selected ? (
           <>
             <section className="page-heading">
@@ -759,11 +806,7 @@ export function Dashboard({
                 activity={activity}
                 tab={tab}
                 onTab={(value) => {
-                  if (value === "connectors")
-                    router.push(
-                      `/dashboard/connections?project=${selected?.id || ""}`,
-                    );
-                  else setTab(value);
+                  router.push(websitePath(value, selected?.id || ""));
                 }}
               />
             )}
@@ -966,7 +1009,10 @@ export function Dashboard({
                   <button
                     className="project-card"
                     key={project.id}
-                    onClick={() => choose(project)}
+                    onClick={() => {
+                      rememberWebsite(user?.uid || "", project.id);
+                      router.push(websitePath("overview", project.id));
+                    }}
                   >
                     <span className="pill">
                       {project.spec.enabled ? "Monitoring" : "Paused"}
