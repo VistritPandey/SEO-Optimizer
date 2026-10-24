@@ -3643,10 +3643,13 @@ html[data-theme="light"] .demo-agent .demo-status {
     padding: 22px 16px;
   }
   .connector-showcase-grid .platform-lockup {
-    gap: 8px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
   .connector-showcase-grid h3 {
-    font-size: 15px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
   }
   .connector-showcase-footnote {
     flex-direction: column;
