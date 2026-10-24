@@ -93,6 +93,10 @@ also exercises real isolated checks, temporary Git publication and served-page v
 The [workflow report](reports/workflow-validation.json) separates scripted decision tests from
 actual model quality and live search outcomes. The [real repair run](reports/repair-workflow-verification.json)
 records four verified repairs, healthy controls, and earlier failed attempts.
+The [live autonomous GitHub test](reports/autonomous-github-qa.json) records a real
+push-triggered investigation, model tool calls, a tested one-line pull request and
+post-deployment verification. The operator reviewed and merged the PR; the agent
+found and prepared the repair without being supplied its solution.
 See [architecture](docs/architecture.md), [benchmark protocol](docs/benchmark.md)
 and [supported content workflows](docs/research-workspace.md) for engineering details.
 
