@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Project } from "@/lib/api";
 import { ThemeControl } from "./ThemeControl";
 import { Brand } from "./Brand";
+import { PlatformLogo } from "./PlatformLogo";
 
 const sections = [
   ["overview", "Website overview", "overview"],
@@ -123,7 +124,7 @@ export function WorkspaceSidebar({
             className="nav-item"
             onClick={() => navigate(() => onHome(true))}
           >
-            <Icon name="connection" />
+            <PlatformLogo platform="github" size={17} />
             GitHub connection
             <span
               role="img"
@@ -156,9 +157,23 @@ export function WorkspaceSidebar({
               className={`nav-item ${selected?.id === project.id ? "active" : ""}`}
               onClick={() => navigate(() => onSelect(project))}
             >
-              <span
-                className={`project-status-dot ${project.spec.enabled ? "enabled" : ""}`}
-              />
+              <span className="sidebar-platform">
+                <PlatformLogo
+                  platform={String(
+                    project.spec.publishing_platform || "github",
+                  )}
+                  size={19}
+                />
+                <span
+                  className={`project-status-dot ${project.spec.enabled ? "enabled" : ""}`}
+                  role="img"
+                  aria-label={
+                    project.spec.enabled
+                      ? "Monitoring enabled"
+                      : "Monitoring paused"
+                  }
+                />
+              </span>
               <span className="sidebar-website-name">
                 {project.spec.name}
                 <small>{new URL(project.spec.website_url).hostname}</small>
