@@ -122,8 +122,27 @@ export default function Page() {
         <p>
           Access may be restricted or suspended for abuse, security reasons,
           lack of required permissions or service operation. Where practical, an
-          explanation can be provided. The open-source repository’s software
-          licence is separate from these hosted-service terms.
+          explanation can be provided. The repository’s software licence is
+          separate from these hosted-service terms.
+        </p>
+      </section>
+      <section>
+        <h2>Local software and commercial licensing.</h2>
+        <p>
+          The source-available repository permits free personal, non-commercial
+          local use under the Your Optimiser Personal Local Use License. Business
+          use, redistribution, reuse in other products and operating your own
+          hosted service require separate written permission from the team.
+          These restrictions concern copies of the repository software; use of
+          the official hosted service is governed by these service terms.
+        </p>
+        <p>
+          <a href="https://github.com/YourOptimiser/your-optimiser/blob/main/LICENSE">
+            Read the software licence
+          </a>{" "}
+          or <Link href="/contact">contact the team about commercial licensing</Link>.
+          Earlier MIT-licensed versions and third-party dependencies retain their
+          applicable licence terms.
         </p>
       </section>
       <section>
