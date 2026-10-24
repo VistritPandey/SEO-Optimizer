@@ -60,6 +60,9 @@ export function WorkspaceSidebar({
   onTab,
   onTour,
   onSignOut,
+  services = [],
+  activeService,
+  onService,
 }: {
   projects: Project[];
   selected: Project | null;
@@ -73,6 +76,14 @@ export function WorkspaceSidebar({
   onTab: (tab: string) => void;
   onTour: () => void;
   onSignOut: () => void;
+  services?: {
+    platform: string;
+    name: string;
+    projectId: string;
+    website: string;
+  }[];
+  activeService?: string;
+  onService?: (platform: string, projectId: string) => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
   function navigate(action: () => void) {
@@ -128,6 +139,28 @@ export function WorkspaceSidebar({
             Connections
           </button>
         </nav>
+        {services.length > 0 && (
+          <nav aria-label="Connected services" className="sidebar-section">
+            <span className="eyebrow">YOUR TOOLS</span>
+            {services.map((service) => (
+              <button
+                key={`${service.projectId}:${service.platform}`}
+                className={`nav-item ${activeService === service.platform ? "active" : ""}`}
+                onClick={() =>
+                  navigate(() =>
+                    onService?.(service.platform, service.projectId),
+                  )
+                }
+              >
+                <PlatformLogo platform={service.platform} size={19} />
+                <span className="sidebar-website-name">
+                  <strong>{service.name}</strong>
+                  <small>{service.website}</small>
+                </span>
+              </button>
+            ))}
+          </nav>
+        )}
         <nav
           aria-label="Your websites"
           className="sidebar-section sidebar-websites"
