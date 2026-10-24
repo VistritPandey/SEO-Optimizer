@@ -1,0 +1,34 @@
+{
+  "verified_at": "2026-10-24T12:35:19.670360+00:00",
+  "scope": "Customer-facing connector branding and logo slider",
+  "logical_platforms": [
+    "GitHub",
+    "Shopify",
+    "Sanity",
+    "Contentful",
+    "Framer",
+    "WordPress",
+    "WooCommerce",
+    "Vercel",
+    "Netlify"
+  ],
+  "passed": [
+    "Nine named platform marks render from locally bundled SVG paths",
+    "Desktop layout fits a 1710px viewport without page overflow",
+    "Phone layout fits a 390px viewport without page overflow",
+    "Carousel transform changes automatically while running",
+    "Pause control stops the animation; play resumes it",
+    "Paused carousel supports native horizontal keyboard scrolling",
+    "Duplicate visual group is hidden from the accessibility tree",
+    "Internal test-status badges are absent from the connector showcase and dashboard panels",
+    "Platform icons inherit the active light/dark theme",
+    "TypeScript checking, formatting and seven frontend request/proxy tests pass"
+  ],
+  "failed": [],
+  "limits": [
+    "Phone checks use browser viewport emulation, not a physical device",
+    "Connector workflow validation is recorded separately; visual logos do not expand integration capabilities",
+    "Reduced-motion preference is respected by the component subscription; an explicit play action can start it"
+  ],
+  "related_workflow_report": "reports/autonomous-github-qa.json"
+}
