@@ -1,0 +1,82 @@
+{
+  "verified_at": "2026-10-24T12:28:10.677417+00:00",
+  "client_date": "2026-10-24",
+  "status": "passed_scoped_autonomous_github_workflow",
+  "application_revision": "e5c9ac2",
+  "scope": "One deliberately introduced broken homepage link in an authorized dummy project, using the actual hosted agent and managed inference.",
+  "trigger": {
+    "native_github_push": true,
+    "manual_audit_or_worker_trigger": false,
+    "repair_supplied_to_model_by_operator": false,
+    "waited_for_matching_production_deployment": true
+  },
+  "before": {
+    "homepage_http": 200,
+    "introduced_target_http": 404,
+    "broken_link_present_in_agent_evidence": true,
+    "path": "/about-community-qa"
+  },
+  "autonomous_steps": [
+    "Detected the confirmed broken internal link after the real push and deployment",
+    "Requested source through read_file",
+    "Proposed a patch through apply_patch",
+    "Received a local navigation-policy rejection and revised the patch without operator instructions",
+    "Ran configured project checks in the isolated hosted executor",
+    "Published a one-file, one-line repair as the GitHub App",
+    "Followed the actual merged deployment and independently verified the served result"
+  ],
+  "tool_trace": [
+    {
+      "name": "read_file",
+      "success": true
+    },
+    {
+      "name": "apply_patch",
+      "success": false
+    },
+    {
+      "name": "apply_patch",
+      "success": true
+    },
+    {
+      "name": "run_checks",
+      "success": true
+    }
+  ],
+  "source_validation_rejection": "Navigation repair requires static same-site root-relative hrefs",
+  "publication": {
+    "pr_number": 8,
+    "opened_by_github_app": true,
+    "files_changed": 1,
+    "additions": 1,
+    "deletions": 1,
+    "configured_project_checks_passed": true,
+    "required_vercel_status_passed": true,
+    "operator_reviewed_and_merged": true,
+    "automatic_merge_enabled": false
+  },
+  "after": {
+    "homepage_http": 200,
+    "restored_target_http": 200,
+    "path": "/about",
+    "broken_link_removed": true,
+    "verified_fixes": 1,
+    "regressions": 0,
+    "agent_stage": "verified",
+    "source_restored_to_original": true
+  },
+  "model_measurements": {
+    "input_tokens": 68677,
+    "output_tokens": 13383,
+    "runtime_ms": 196601.168745,
+    "api_cost_usd": null,
+    "note": "One inference-stage total; the verification job copies earlier measurements and is not counted again. Unknown costs are not zero."
+  },
+  "limits": [
+    "One autonomous GitHub navigation repair is evidence for this workflow, not every SEO check or arbitrary repository.",
+    "The operator deliberately introduced the fixture and reviewed/merged the PR; the model did not receive the solution or a manual audit trigger.",
+    "This does not establish autonomous LLM reasoning for the CMS connectors; earlier CMS tests separately cover supported rule-based or manual draft repairs.",
+    "No search indexing, rankings, consumer AI citations, traffic, conversions or comparison with other products was measured."
+  ],
+  "privacy": "Target owner identity, domain, tenant identifiers and full traces remain in ignored private QA artifacts."
+}
