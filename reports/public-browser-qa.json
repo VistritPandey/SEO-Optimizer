@@ -1,8 +1,9 @@
 {
-  "environment": "http://127.0.0.1:3002",
+  "environment": "http://127.0.0.1:3006",
   "passed": [
     "Public landing page does not prefetch authentication or workspace routes",
     "Landing JavaScript stays within the 200 KB compressed transfer budget",
+    "Original artwork loads, one platform section remains, and hero tilt resets",
     "Hero auto-plays and loops with stable height; pause and manual takeover work",
     "Hero workflow: update, findings, review, verification, replay and keyboard controls",
     "Silent captioned video mounts only on request and unloads when closed",
