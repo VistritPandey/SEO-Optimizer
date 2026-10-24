@@ -1,0 +1,286 @@
+{
+  "verified_at": "2026-10-24T03:00:03.562808+00:00",
+  "local_date": "2026-10-23",
+  "timezone": "America/Chicago",
+  "overall_status": "partial_production_validation",
+  "deployment": {
+    "origin": "https://youroptimiser.com",
+    "revision": "your-optimiser-00040-d82",
+    "application_source_revision": "e5c9ac2",
+    "runner_source_revision": "3874205",
+    "traffic_percent": 100,
+    "runtime_environment_preserved": true,
+    "secret_references_preserved": true,
+    "runtime_identity_preserved": true,
+    "health_endpoint": "/api/v1/health",
+    "health_http": 200,
+    "homepage_http": 200,
+    "terms_http": 200,
+    "sitemap_http": 200,
+    "robots_http": 200
+  },
+  "methodology": [
+    "Actual customer Google sign-in, first website setup, Shopify credential save, queued collection, displayed observation and disconnect through Chrome on the public production domain.",
+    "Separate disposable Firebase QA identities were administratively provisioned, then signed in normally. This does not test email verification delivery or ordinary password registration.",
+    "Connector edits used normal authenticated HTTPS production API endpoints, durable Firestore records and real Cloud Tasks worker jobs. No local Store, TestClient, mocked provider response or manual worker claim was used.",
+    "Independent provider API or official SDK reads established before, after and restored states on existing fictional unpublished QA fixtures.",
+    "No search-rank, consumer AI citation, traffic, conversion or model-quality claim follows from successful connector operations."
+  ],
+  "customer_ui": {
+    "status": "passed_for_tested_path",
+    "passed": [
+      "Google sign-in and QA workspace creation",
+      "First non-GitHub website setup",
+      "Initial website audit delivered by Cloud Tasks",
+      "Shopify token save clears password input and displays saved status",
+      "Specific-product collection job completes and observation appears",
+      "Disconnect removes stored credentials",
+      "QA monitoring paused after testing"
+    ],
+    "limits": [
+      "QA storefront is password protected; its partial check-health score does not assess public product SEO or establish search visibility.",
+      "Customer OAuth consent and onboarding for other providers were not completed in this pass."
+    ]
+  },
+  "security": {
+    "passed": [
+      {
+        "check": "anonymous project access",
+        "expected_http": 401,
+        "observed_http": 401
+      },
+      {
+        "check": "cross-tenant project access",
+        "expected_http": 404,
+        "observed_http": 404
+      },
+      {
+        "check": "cross-tenant connectors access",
+        "expected_http": 404,
+        "observed_http": 404
+      },
+      {
+        "check": "unverified identity access",
+        "expected_http": 401,
+        "observed_http": 401
+      },
+      {
+        "check": "hosted worker credentials isolation",
+        "expected_http": 403,
+        "observed_http": 403
+      },
+      {
+        "check": "internal queue endpoint isolation",
+        "expected_http": 403,
+        "observed_http": 403
+      },
+      {
+        "check": "hosted project credential policy",
+        "expected_http": 403,
+        "observed_http": 403
+      }
+    ],
+    "failed": []
+  },
+  "connectors": {
+    "sanity": {
+      "status": "passed_draft_workflow",
+      "passed": [
+        "Encrypted save, real queued collection, grounded proposal, evidence rejection, hosted write and independent provider readback",
+        "Hosted rollback restores original fields",
+        "Disconnect removes stored QA credentials"
+      ],
+      "failed": [],
+      "automatic_proposal": true,
+      "manual_grounded_proposal": false,
+      "public_rendering_verified": false,
+      "oauth_onboarding_verified": false
+    },
+    "contentful": {
+      "status": "passed_draft_workflow",
+      "passed": [
+        "Encrypted save, real queued collection, grounded proposal, evidence rejection, hosted write and independent provider readback",
+        "Hosted rollback restores original fields",
+        "Disconnect removes stored QA credentials"
+      ],
+      "failed": [],
+      "automatic_proposal": true,
+      "manual_grounded_proposal": false,
+      "public_rendering_verified": false,
+      "oauth_onboarding_verified": false
+    },
+    "framer": {
+      "status": "passed_draft_workflow",
+      "passed": [
+        "Encrypted save, real queued collection, grounded proposal, evidence rejection, hosted write and independent provider readback",
+        "Hosted rollback restores original fields",
+        "Disconnect removes stored QA credentials"
+      ],
+      "failed": [],
+      "automatic_proposal": false,
+      "manual_grounded_proposal": true,
+      "public_rendering_verified": false,
+      "oauth_onboarding_verified": false
+    },
+    "shopify": {
+      "status": "passed_draft_workflow",
+      "passed": [
+        "Encrypted save, real queued collection, grounded proposal, evidence rejection, hosted write and independent provider readback",
+        "Hosted rollback restores original fields",
+        "Disconnect removes stored QA credentials"
+      ],
+      "failed": [],
+      "automatic_proposal": false,
+      "manual_grounded_proposal": true,
+      "public_rendering_verified": false,
+      "oauth_onboarding_verified": false
+    }
+  },
+  "before_after": {
+    "sanity": {
+      "before_title": "",
+      "after_title": "Cedar workshop",
+      "restored_title": ""
+    },
+    "contentful": {
+      "before_title": "",
+      "after_title": "Cedar workshop",
+      "restored_title": ""
+    },
+    "framer": {
+      "before_title": "",
+      "after_title": "Cedar workshop",
+      "restored_title": ""
+    },
+    "shopify": {
+      "before_title": "QA lamp",
+      "after_effective_title": "Cedar workshop lamp",
+      "restored_title": "QA lamp",
+      "price_inventory_and_description_unchanged": true,
+      "status": "DRAFT"
+    }
+  },
+  "credential_failure_recovery": {
+    "passed": [
+      "Invalid provider token blocks collection without proposals or source edits",
+      "Replacing failed credentials restores real hosted collection without editing the draft"
+    ],
+    "failed": []
+  },
+  "cleanup": {
+    "api_project_paused": true,
+    "api_connections_removed": true,
+    "disabled_qa_identities": 3,
+    "disabled_tokens_rejected": true,
+    "customer_ui_project_paused": true,
+    "customer_ui_credentials_removed": true,
+    "customer_google_account_preserved": true
+  },
+  "automated_checks": {
+    "python_passed": 632,
+    "python_skipped": 21,
+    "skip_reasons": [
+      "14 Firestore emulator cases require the local emulator",
+      "7 opt-in Docker repair checks require explicit enablement"
+    ],
+    "ruff": "passed",
+    "mypy": "passed, 57 source files",
+    "deployment_script_tests": "21 passed, included in the full suite",
+    "wheel_build": "passed with both licence notices",
+    "frontend_typecheck": "passed for licence edits"
+  },
+  "remaining_coverage": [
+    {
+      "platform": "github",
+      "status": "previous_production_test_not_repeated",
+      "reason": "Earlier production PR workflow is separate evidence; the newly created Google QA workspace has no GitHub installation connected."
+    },
+    {
+      "platform": "wordpress_woocommerce",
+      "status": "partial_local_live_api_only",
+      "reason": "Real local CMS write/readback/restore tests passed earlier. A hosted reachable QA site was not supplied; WooCommerce summary live-page criterion remains a dependency."
+    },
+    {
+      "platform": "vercel_netlify",
+      "status": "partial_provider_api_only",
+      "reason": "Real deployment and local collection tests passed earlier. Provider-protected pages remain protected; hosted native webhook delivery is unverified."
+    },
+    {
+      "platform": "search_console",
+      "status": "blocked",
+      "reason": "Authorized QA identity has no verified property."
+    },
+    {
+      "platform": "ga4",
+      "status": "partial_setup_only",
+      "reason": "QA property created; no data stream, traffic or API authorization."
+    },
+    {
+      "platform": "bing",
+      "status": "blocked",
+      "reason": "Verified property and API access unconfirmed."
+    },
+    {
+      "platform": "cloudflare",
+      "status": "partial_setup_only",
+      "reason": "Account access confirmed; no zone, token or analytics data."
+    },
+    {
+      "platform": "webflow",
+      "status": "blocked",
+      "reason": "Signup human-verification challenge did not complete reliably."
+    },
+    {
+      "platform": "wix",
+      "status": "skipped_at_user_request",
+      "reason": "Signup reached CAPTCHA; user asked to skip."
+    },
+    {
+      "platform": "gitlab",
+      "status": "blocked",
+      "reason": "Provider identity verification not completed; user withdrew verification update."
+    },
+    {
+      "platform": "bitbucket",
+      "status": "paused",
+      "reason": "Unexpected existing-account identity change during sign-in; no repository or API grant created."
+    },
+    {
+      "platform": "squarespace",
+      "status": "blocked",
+      "reason": "Official signup returned HTTP 403."
+    },
+    {
+      "platform": "business_profile",
+      "status": "blocked",
+      "reason": "Requires authorized verified location and approved API access; no fictional public business created."
+    },
+    {
+      "platform": "dataforseo",
+      "status": "not_tested_live",
+      "reason": "No funded account or paid tasks authorized for this pass."
+    },
+    {
+      "platform": "ai_visibility",
+      "status": "not_tested_live_in_this_pass",
+      "reason": "Consumer-platform citation monitoring and comparative inference quality remain separate experiments."
+    },
+    {
+      "platform": "generic_deployments_and_server_logs",
+      "status": "controlled_tests_only",
+      "reason": "Production data imports and external native event delivery were not exercised in this pass."
+    }
+  ],
+  "unverified": [
+    "Provider OAuth onboarding and credential renewal",
+    "Production publication, deployed rendering, indexing and rankings",
+    "Model generation quality; these repairs use observed facts",
+    "Provider OAuth operator configuration and renewal flows",
+    "Hosted coverage of the remaining connectors",
+    "Load, cost at scale, queue latency distribution and disaster recovery"
+  ],
+  "cost_measurement": "Actual GCP and provider costs were not measured; no cost-per-verified-fix result is claimed.",
+  "failed": [],
+  "related_report": "reports/live-connector-qa.json",
+  "privacy": "Credentials, identities, provider resource IDs, project IDs and screenshots remain in ignored private QA files; this report contains only sanitized observations."
+}
