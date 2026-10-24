@@ -1,0 +1,156 @@
+[
+  {
+    "platform": "search_console",
+    "name": "Google Search Console",
+    "group": "Search evidence",
+    "write": false,
+    "note": "Search analytics, sitemap status and indexed-URL inspection. Average position is not a fixed rank; top-row coverage is bounded."
+  },
+  {
+    "platform": "wordpress",
+    "name": "WordPress",
+    "group": "Publishing",
+    "write": true,
+    "note": "Pages and posts; registered REST meta fields only. Configure SEO plugin field mappings explicitly. Published content keeps its status."
+  },
+  {
+    "platform": "woocommerce",
+    "name": "WooCommerce",
+    "group": "Publishing",
+    "write": true,
+    "note": "Product names, descriptions and short descriptions. Prices, inventory and reviews are never changed."
+  },
+  {
+    "platform": "shopify",
+    "name": "Shopify",
+    "group": "Publishing",
+    "write": true,
+    "note": "Product SEO title and description via versioned GraphQL. Theme edits and theme publication are not part of this connector."
+  },
+  {
+    "platform": "webflow",
+    "name": "Webflow",
+    "group": "Publishing",
+    "write": true,
+    "note": "Static-page SEO metadata and mapped CMS fields. Changes are staged; publishing the whole site is not automatic."
+  },
+  {
+    "platform": "ga4",
+    "name": "Google Analytics 4",
+    "group": "Search evidence",
+    "write": false,
+    "note": "Landing-page sessions, engagement, key events and revenue. Attribution depends on the property's tracking setup."
+  },
+  {
+    "platform": "vercel",
+    "name": "Vercel",
+    "group": "Deployments",
+    "write": false,
+    "note": "Deployment status and signed events. Only the configured production origin and environment can trigger verification."
+  },
+  {
+    "platform": "netlify",
+    "name": "Netlify",
+    "group": "Deployments",
+    "write": false,
+    "note": "Deployment status. Use the signed generic deployment event from CI for a consistent verification payload."
+  },
+  {
+    "platform": "deployment",
+    "name": "Other hosting / CI",
+    "group": "Deployments",
+    "write": false,
+    "note": "Signed deployment events from any host; replay, origin, freshness and environment checks enforced."
+  },
+  {
+    "platform": "gitlab",
+    "name": "GitLab",
+    "group": "Repositories",
+    "write": true,
+    "note": "File reads, guarded branch commits and merge requests on GitLab.com. Self-hosted endpoints require a separately reviewed host configuration."
+  },
+  {
+    "platform": "bitbucket",
+    "name": "Bitbucket",
+    "group": "Repositories",
+    "write": true,
+    "note": "File reads, guarded branch commits and pull requests on Bitbucket Cloud. Existing PR lifecycle must be completed in Bitbucket."
+  },
+  {
+    "platform": "bing",
+    "name": "Bing Webmaster Tools",
+    "group": "Search evidence",
+    "write": false,
+    "note": "Query statistics and crawl statistics. AI citation dashboard ingestion is not claimed without a documented accessible API."
+  },
+  {
+    "platform": "business_profile",
+    "name": "Google Business Profile",
+    "group": "Local search",
+    "write": true,
+    "note": "Read business details and update regular hours from unexpired trusted project facts. Google API approval is required."
+  },
+  {
+    "platform": "cloudflare",
+    "name": "Cloudflare",
+    "group": "Crawler evidence",
+    "write": false,
+    "note": "Sampled request analytics, paths and response statuses. Dataset availability depends on plan; visits do not establish citations or bot identity."
+  },
+  {
+    "platform": "server_logs",
+    "name": "Server logs",
+    "group": "Crawler evidence",
+    "write": false,
+    "note": "Import bounded structured request records. User agents are self-reported; no user IPs or cookies are stored."
+  },
+  {
+    "platform": "wix",
+    "name": "Wix",
+    "group": "Publishing",
+    "write": false,
+    "note": "Read site SEO tags plus live-page audits. Page-level writes are withheld until the relevant Wix page/app API can be validated; proposals can be exported."
+  },
+  {
+    "platform": "squarespace",
+    "name": "Squarespace",
+    "group": "Publishing",
+    "write": true,
+    "note": "Commerce product SEO metadata. General pages and blogs use live-page audits and exported recommendations; no general page-edit API is assumed."
+  },
+  {
+    "platform": "framer",
+    "name": "Framer",
+    "group": "Publishing",
+    "write": true,
+    "note": "Official Server API bridge for CMS reads and mapped CMS-field changes. Requires Node and the bundled framer-api bridge; no automatic production deployment."
+  },
+  {
+    "platform": "sanity",
+    "name": "Sanity",
+    "group": "Publishing",
+    "write": true,
+    "note": "Mapped document fields with revision preconditions. Only existing draft documents are writable; publish through the customer's normal review flow."
+  },
+  {
+    "platform": "contentful",
+    "name": "Contentful",
+    "group": "Publishing",
+    "write": true,
+    "note": "Mapped entry fields with version preconditions. Updates stay unpublished; publication is managed through Contentful."
+  },
+  {
+    "platform": "dataforseo",
+    "name": "Keyword & competitor rankings",
+    "group": "Search evidence",
+    "write": false,
+    "note": "Paid Google organic SERP observations by query, location and language. One bounded live task per explicit collection; charges are recorded when returned."
+  },
+  {
+    "platform": "ai_visibility",
+    "name": "AI answer visibility",
+    "group": "AI visibility",
+    "write": false,
+    "note": "Search-enabled API experiments and separately labelled imports of consumer observations. Never presented as universal rankings or consumer-product coverage."
+  }
+]
