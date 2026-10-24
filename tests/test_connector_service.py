@@ -745,3 +745,41 @@ def test_customer_platform_directory_matches_supported_catalog():
         for item in catalog()
     ]
     assert json.loads(path.read_text()) == expected
+
+
+def test_oauth_callback_returns_to_its_exact_project_service_page(workspace, monkeypatch):
+    store, settings, owner, _, _, _, project = workspace
+    monkeypatch.setenv("OPT_CONNECTOR_GOOGLE_CLIENT_ID", "fixture-client")
+    monkeypatch.setenv("OPT_CONNECTOR_GOOGLE_CLIENT_SECRET", "fixture-secret")
+    service = ConnectorService(store, project)
+    service.configure(ConnectionInput(platform="ga4", resource="123"))
+    url = oauth.begin(store, owner.id, project.id, Platform.GA4)
+    state = parse_qs(urlparse(url).query)["state"][0]
+
+    def token_exchange(self, method, url, **kwargs):
+        assert method == "POST"
+        assert url == "https://oauth2.googleapis.com/token"
+        assert kwargs["form"]["code"] == "fixture-code"
+        return {"access_token": "fixture-grant"}
+
+    monkeypatch.setattr(oauth.Transport, "request", token_exchange)
+    with TestClient(create_app(settings, store)) as client:
+        callback = "/api/v1/connectors/oauth/callback"
+        response = client.get(
+            callback, params={"state": state, "code": "fixture-code"}, follow_redirects=False
+        )
+        assert response.status_code == 303
+        assert (
+            response.headers["location"]
+            == settings.frontend_url.rstrip("/")
+            + "/dashboard/connections/ga4?project="
+            + project.id
+        )
+        assert (
+            service.state(Platform.GA4)[0]["config"]["credentials"]["access_token"]
+            == "fixture-grant"
+        )
+        replay = client.get(
+            callback, params={"state": state, "code": "fixture-code"}, follow_redirects=False
+        )
+        assert replay.status_code == 422
