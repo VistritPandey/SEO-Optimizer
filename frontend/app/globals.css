@@ -3850,3 +3850,17 @@ html[data-theme="light"] .demo-agent .demo-status {
     border-top: 0;
   }
 }
+
+/* Shared paper-and-sage surfaces across public pages and the workspace. */
+:where(.panel, .audit-panel, .project-card, .workspace-connection-card) {
+  background: color-mix(in srgb, var(--paper) 96%, var(--soft));
+}
+.workspace-v2 .workspace-sidebar {
+  background: color-mix(in srgb, var(--soft) 88%, var(--paper));
+}
+.workspace-v2 .topbar {
+  border-bottom-color: color-mix(in srgb, var(--line) 85%, transparent);
+}
+.workspace-v2 .nav-item.active {
+  background: color-mix(in srgb, var(--green) 10%, var(--paper));
+}
