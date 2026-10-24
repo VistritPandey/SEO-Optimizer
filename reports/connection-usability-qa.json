@@ -12,10 +12,10 @@
   ],
   "automated": {
     "python": {
-      "passed": 636,
-      "skipped": 21,
+      "passed": 643,
+      "skipped": 14,
       "failed": 0,
-      "skips": "Optional real-provider, Firestore-emulator and Docker integration environments were not enabled; see pytest output for individual reasons"
+      "scope": "Full workflow harness with real Docker repair checks enabled; Firestore emulator remains optional and was not running"
     },
     "frontend": {
       "passed": 10,
@@ -54,7 +54,8 @@
     "last_selection_overrides_first_website": "passed through real browser website switching",
     "saved_settings_restored": "passed; all five non-secret Sanity fields match the saved configuration after navigating away",
     "oauth_return_route": "passed deterministic API test; completed one-use state returns to the exact project/platform page and rejects replay",
-    "unknown_routes": "passed; unknown website section and unknown platform return HTTP 404"
+    "unknown_routes": "passed; unknown website section and unknown platform return HTTP 404",
+    "empty_website_pages": "passed in isolated authenticated fixture: all six pages show No website to show and a connect-first link"
   },
   "unverified": [
     "An actual installed writing extension was not exercised. A private development proxy did not establish client hydration, so its empty console is not counted as validation. Normal authenticated cold reload and interactions passed.",
@@ -63,7 +64,7 @@
     "The no-website selection and inaccessible-website rules pass deterministic tests. This run did not create another empty production identity to exercise that empty state live."
   ],
   "deployment": {
-    "status": "pending",
+    "status": "awaiting successful GitHub Actions run",
     "build_id": "80c1aa69-3b48-4de3-baad-9a8ce80c14a6",
     "source_commit": "bb95272",
     "previous_ready_revision": "your-optimiser-00042-2ct"
@@ -124,5 +125,19 @@
     "existing_github_connection": "retained",
     "other_platforms": "Listed for setup. No usable credentials or required property/site authorization were available for the remaining platforms; no fake configured connections were created. Local-only CMS fixtures were not exposed to the hosted service.",
     "claim_limit": "This run verifies authenticated setup, real provider collection, stored evidence and UI readback. It does not repeat autonomous AI repair, publication, deployment verification, indexing or rankings for every connector."
+  },
+  "release_checks": {
+    "public_browser": "passed; original artwork, one integrations section, hero tilt reset, reduced motion, all light/dark pages, zero browser errors and automated accessibility violations",
+    "workspace_browser": "passed; separate routes, connection setup/readback, repair controls, mobile, both themes and all six empty website states",
+    "public_metadata": "passed",
+    "contact": "passed with synthetic intercepted requests; no external support messages sent",
+    "blog": "passed",
+    "navigation": "passed",
+    "responsive_header": "passed",
+    "combined_container": "passed; non-root ingress, metadata, protected API, Chromium and child-process recovery",
+    "dependencies": "npm frontend and Framer audits, pinned pip-audit all-extras: no known vulnerabilities",
+    "secret_scan": "tracked history and uploadable source clean; ignored env/build/dependency content excluded from source scan",
+    "build": "Node 24.12 production frontend and combined Docker image passed locally",
+    "failed_workflow_diagnosis": "Repeated frontend job failures began at a stale FAQ assertion before subsequent browser steps. Updated assertion and routing fixture exercise actual current behavior without skipping checks."
   }
 }
