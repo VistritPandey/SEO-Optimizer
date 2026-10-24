@@ -385,6 +385,19 @@ def main() -> int:
                 result = queue("/collect", {"resource_id": defect})
                 assert len(result["proposals"]) == 1
                 proposal = result["proposals"][0]
+                repeated = queue("/collect", {"resource_id": defect})
+                if [p["id"] for p in repeated["proposals"]] != [proposal["id"]]:
+                    report["failed"].append(
+                        {
+                            "id": "cms-proposal-deduplication",
+                            "severity": "medium",
+                            "observed": "An unchanged real defect created a duplicate proposal",
+                        }
+                    )
+                else:
+                    report["passed"].append(
+                        "Repeated real defect collection reuses the pending proposal"
+                    )
                 result = queue(f"/proposals/{proposal['id']}/apply")
                 assert result["proposal"]["verification"]["provider_readback"]
                 result = queue(f"/proposals/{proposal['id']}/verify")
@@ -431,22 +444,6 @@ def main() -> int:
                     report["passed"].append(
                         "Healthy theme title fallback produces no unnecessary proposal"
                     )
-                repeated = queue("/collect", {"resource_id": healthy})
-                original_ids = {row["id"] for row in result["proposals"]}
-                repeated_ids = {row["id"] for row in repeated["proposals"]}
-                if original_ids and repeated_ids and original_ids != repeated_ids:
-                    report["failed"].append(
-                        {
-                            "id": "cms-proposal-deduplication",
-                            "severity": "medium",
-                            "expected": "Repeat collection of unchanged content reuses the "
-                            "same pending proposal",
-                            "observed": "A fresh evidence ID caused a second pending proposal "
-                            "for the same unchanged resource and change",
-                            "writes_performed": 0,
-                        }
-                    )
-
                 print("Installing WooCommerce from the official plugin registry", flush=True)
                 wp("plugin", "install", "woocommerce", "--activate")
                 report["versions"]["woocommerce"] = wp(
