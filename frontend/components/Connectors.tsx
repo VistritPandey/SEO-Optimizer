@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { api, type Project } from "@/lib/api";
 import { PlatformLogo } from "./PlatformLogo";
-import { testedPlatform, coverageLabels } from "@/lib/platforms";
 
 type Definition = {
   name: string;
@@ -267,12 +266,6 @@ export function Connectors({ project }: { project: Project }) {
                 </h2>
                 <span className="audit-badge">{label(selected.status)}</span>
               </div>
-              {testedPlatform(platform) && (
-                <p className="platform-coverage">
-                  {coverageLabels[testedPlatform(platform)!.coverage]} ·
-                  Connected does not mean a check has passed.
-                </p>
-              )}
               <p>{selected.definition.note}</p>
               <p>
                 <a
