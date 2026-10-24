@@ -144,9 +144,15 @@ def install(app: FastAPI, store: Store, owned: Any, csrf: Any, job_json: Any) ->
             )
         if len(list(request.query_params.multi_items())) != len(dict(request.query_params)):
             raise ConnectorError("oauth_state", "Duplicate OAuth callback parameters are invalid")
-        _, _, platform = oauth.complete(store, state, code, query=dict(request.query_params))
+        _, project_id, platform = oauth.complete(
+            store, state, code, query=dict(request.query_params)
+        )
         return RedirectResponse(
-            store.settings.frontend_url.rstrip("/") + "/dashboard?connector=" + platform.value,
+            store.settings.frontend_url.rstrip("/")
+            + "/dashboard/connections/"
+            + platform.value
+            + "?project="
+            + project_id,
             status_code=303,
         )
 
