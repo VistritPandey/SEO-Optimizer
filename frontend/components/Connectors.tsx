@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { api, type Project } from "@/lib/api";
+import { PlatformLogo } from "./PlatformLogo";
+import { testedPlatform, coverageLabels } from "@/lib/platforms";
 
 type Definition = {
   name: string;
@@ -222,7 +224,10 @@ export function Connectors({ project }: { project: Project }) {
                     aria-pressed={item.platform === platform}
                     onClick={() => choose(item)}
                   >
-                    <span>{item.definition.name}</span>
+                    <span className="platform-lockup">
+                      <PlatformLogo platform={item.platform} size={20} />
+                      {item.definition.name}
+                    </span>
                     <small>
                       {item.connected ? label(item.status) : "Not connected"}
                     </small>
@@ -256,9 +261,18 @@ export function Connectors({ project }: { project: Project }) {
               }}
             >
               <div className="connector-title">
-                <h2>{selected.definition.name}</h2>
+                <h2 className="platform-lockup">
+                  <PlatformLogo platform={platform} size={28} />
+                  {selected.definition.name}
+                </h2>
                 <span className="audit-badge">{label(selected.status)}</span>
               </div>
+              {testedPlatform(platform) && (
+                <p className="platform-coverage">
+                  {coverageLabels[testedPlatform(platform)!.coverage]} ·
+                  Connected does not mean a check has passed.
+                </p>
+              )}
               <p>{selected.definition.note}</p>
               <p>
                 <a
