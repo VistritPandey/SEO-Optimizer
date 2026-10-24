@@ -1,21 +1,84 @@
-MIT License
+Your Optimiser Personal Local Use License 1.0
 
-Copyright (c) 2026 Your Optimiser contributors
+Copyright (c) 2026 Your Optimiser contributors.
+All rights reserved except as expressly granted below.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+SPDX-License-Identifier: LicenseRef-Your-Optimiser-Personal-Local-1.0
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Scope
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+This license applies to Your Optimiser source code, documentation and project
+assets distributed with this notice, to the extent the copyright holders have
+the right to license that material. It is a source-available license with
+restricted permissions, not an open-source license.
+
+2. Free personal local use
+
+An individual may download, make private copies of, install and run the Software
+without a license fee solely for that individual's personal, non-commercial use
+on devices they own or control. Private modifications necessary to install,
+configure or maintain that local installation are permitted for the same purpose.
+Keep this license and applicable copyright notices with those copies.
+
+The local installation must serve only that individual. Making it available as
+a hosted service, shared workspace or service for another person is not covered
+by this grant, whether or not anyone is charged. Using an external inference
+API from an otherwise permitted local installation is allowed; the API's own
+terms and fees remain separate.
+
+3. Uses requiring separate written permission
+
+Without separate written permission from the applicable copyright holders, you
+may not:
+
+(a) use the Software for commercial, business, professional, employer, client or
+    revenue-generating purposes, including internal business use;
+(b) sell, rent, sublicense, redistribute, repackage or otherwise supply the
+    Software or modified versions to others;
+(c) offer the Software as a hosted, cloud, SaaS, managed, agency or shared
+    service, including a service offered free of charge;
+(d) incorporate or reuse the Software, its code or its assets in another
+    product, project or service, or distribute derivative works; or
+(e) use the Your Optimiser name, logos or other branding to market another
+    product or imply endorsement.
+
+To discuss commercial licensing, business use, hosting, redistribution or other
+permissions, contact the Your Optimiser team at:
+
+https://youroptimiser.com/contact
+
+Contacting the team does not itself grant permission. Permission must be
+expressly given in writing by a person authorized to grant the relevant rights.
+The copyright holders may separately operate or license hosted and commercial
+editions of the Software.
+
+4. Earlier versions, platform rights and third-party material
+
+This license does not revoke permissions already granted for earlier versions
+distributed under the MIT License. The earlier MIT notice is retained in
+LICENSES/Legacy-MIT.txt for those versions and any material that remains subject
+to that license. This notice does not offer later restricted material under MIT.
+
+Third-party libraries, dependencies and separately licensed material remain
+subject to their respective licenses. No ownership or additional restriction of
+those third-party rights is claimed here. Rights to view or fork a public
+repository under the hosting platform's terms, and rights that applicable law
+does not permit a license to restrict, are not removed by this license.
+
+5. Termination
+
+The permissions granted by this license terminate if you fail to comply with
+its conditions. Upon termination, stop using and remove copies of material
+licensed solely under this license. Termination does not revoke independently
+granted rights under another applicable license or written agreement.
+
+6. Disclaimer
+
+TO THE EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED "AS IS",
+WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. THE
+AUTHORS AND COPYRIGHT HOLDERS SHALL NOT BE LIABLE FOR CLAIMS, DAMAGES OR OTHER
+LIABILITY ARISING FROM OR IN CONNECTION WITH THE SOFTWARE OR ITS USE, WHETHER
+IN CONTRACT, TORT OR OTHERWISE, ARISING FROM OR IN CONNECTION WITH THE SOFTWARE
+OR ITS USE. NOTHING HERE EXCLUDES RIGHTS OR LIABILITY THAT APPLICABLE LAW DOES
+NOT ALLOW TO BE EXCLUDED.
