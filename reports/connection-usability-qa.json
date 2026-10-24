@@ -1,0 +1,54 @@
+{
+  "verified_on": "2026-10-24",
+  "scope": "Dashboard connection discovery, setup selection, OAuth configuration visibility and extension body-attribute tolerance",
+  "changes": [
+    "Workspace Connections entry and nine platform setup tiles",
+    "Platform tiles open the selected website and platform directly",
+    "Saved configuration initializes the setup form once, without polling replacing edits",
+    "Scoped credential fields open for new manual connections",
+    "OAuth controls require both operator client credentials; capability response contains only booleans",
+    "Only body-level hydration attributes are tolerated; descendant checks remain enabled"
+  ],
+  "automated": {
+    "python": {
+      "passed": 634,
+      "skipped": 21,
+      "failed": 0,
+      "skips": "Optional real-provider, Firestore-emulator and Docker integration environments were not enabled; see pytest output for individual reasons"
+    },
+    "frontend": {
+      "passed": 7,
+      "failed": 0
+    },
+    "python_types": {
+      "source_files": 57,
+      "result": "passed"
+    },
+    "frontend_types": "passed",
+    "ruff": "passed",
+    "python_format": "passed",
+    "frontend_format": "passed"
+  },
+  "browser": {
+    "normal_dashboard_reload": "passed; no captured console errors, authenticated workspace and interactions loaded",
+    "global_navigation": "passed; Connections opens the platform chooser",
+    "platform_cards": 9,
+    "shopify_setup": "passed; requested platform selected and access fields expanded",
+    "sanity_setup": "passed; platform switching shows its mapped fields",
+    "contentful_setup": "passed; direct tile selects Contentful and expands access fields",
+    "unconfigured_oauth_buttons": "absent, as required",
+    "observed_layout_width": 565,
+    "layout": "Two-column connection cards observed without page overflow at the measured width",
+    "mutations": "No provider credentials entered, connections saved, audits triggered or project policies changed during these UI checks"
+  },
+  "unverified": [
+    "A real installed writing extension was not exercised. The reported attributes identify extension DOM changes; body-level handling is implemented. A private development proxy did not establish client hydration, so its empty console is not counted as validation.",
+    "Requested 390px browser viewport override did not change the measured native tab width. No 390px pass is claimed.",
+    "OAuth availability reflects configured client credentials, not completed provider app review or a successful grant. New provider OAuth grants were not created."
+  ],
+  "deployment": {
+    "status": "pending",
+    "build_id": "ab4cc7b8-7b3a-4cc9-a190-5d07a378a31d",
+    "source_commit": "b7924a0"
+  }
+}
