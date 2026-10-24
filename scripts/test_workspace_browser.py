@@ -210,11 +210,16 @@ def main():
             'import {user} from "./auth.mjs"; export const firebaseAuth=()=>({currentUser:user});'
         )
         (folder / "navigation.mjs").write_text(
-            "const router={replace:()=>{},push:()=>{}};export const useRouter=()=>router;"
+            "const go=p=>{history.pushState({},'',p);"
+            "window.dispatchEvent(new PopStateEvent('popstate'))};"
+            "const router={replace:go,push:go};export const useRouter=()=>router;"
         )
         (folder / "link.jsx").write_text(
-            'import React from "react";export default function '
-            "Link({children,...props}){return <a {...props}>{children}</a>}"
+            'import React from "react";import {useRouter} from "./navigation.mjs";'
+            "export default function Link({children,prefetch,onClick,href,...props}){"
+            "const router=useRouter();return <a {...props} href={href} onClick={e=>{"
+            'onClick?.(e);if(!e.defaultPrevented&&href.startsWith("/")){'
+            "e.preventDefault();router.push(href)}}}>{children}</a>}"
         )
         (folder / "image.jsx").write_text(
             'import React from "react";export default function '
@@ -222,16 +227,37 @@ def main():
         )
         (folder / "motion.mjs").write_text(
             'import React from "react";export const '
-            'm={main:({initial,animate,transition,children,...props})=>React.createElement("main",props,children)};'
+            "m={main:({initial,animate,transition,children,...props})=>React.createElement("
+            '"main",props,children)};'
         )
         (folder / "entry.jsx").write_text(
-            'import React from "react";import {createRoot} from "react-dom/client";import '
-            "{Dashboard} from "
-            + json.dumps(str(WEB / "components/Dashboard.tsx"))
-            + ";import {ThemeProvider} from "
+            'import React,{useSyncExternalStore} from "react";import {createRoot} from '
+            '"react-dom/client";'
+            "import {Dashboard} from " + json.dumps(str(WEB / "components/Dashboard.tsx")) + ";"
+            "import {ConnectionsWorkspace} from "
+            + json.dumps(str(WEB / "components/ConnectionsWorkspace.tsx"))
+            + ";"
+            "import {ThemeProvider} from "
             + json.dumps(str(WEB / "components/ThemeProvider.tsx"))
-            + ';createRoot(document.getElementById("root")).render('
-            + "<ThemeProvider><Dashboard/></ThemeProvider>);"
+            + ";"
+            "import {websiteSections} from "
+            + json.dumps(str(WEB / "lib/website-navigation.mjs"))
+            + ";"
+            'const listen=f=>{window.addEventListener("popstate",f);'
+            'return()=>window.removeEventListener("popstate",f)};'
+            "function App(){const "
+            "path=useSyncExternalStore(listen,()=>location.pathname+location.search);"
+            'const parts=location.pathname.split("/");const query=new '
+            "URLSearchParams(location.search);"
+            'const tab=Object.entries(websiteSections).find(([,slug])=>slug===parts[2])?.[0]||"";'
+            'return parts[2]==="connections"?'
+            '<ConnectionsWorkspace key={path} platform={parts[3]||""} '
+            'projectId={query.get("project")||""}/>:'
+            "<Dashboard key={path} initialTab={tab} "
+            'initialProjectId={query.get("project")||""} '
+            'initialConnect={query.get("connect")||""}/>};'
+            'createRoot(document.getElementById("root")).render(<ThemeProvider><App/></Them'
+            "eProvider>);"
         )
         args = [
             "npx",
@@ -271,9 +297,14 @@ def main():
             'rel="stylesheet" href="/style.css"></head><body><div id="root"></div><script '
             'src="/app.js"></script></body></html>'
         )
-        server = ThreadingHTTPServer(
-            ("127.0.0.1", 0), partial(SimpleHTTPRequestHandler, directory=str(folder))
-        )
+
+        class RouteHandler(SimpleHTTPRequestHandler):
+            def do_GET(self):
+                if self.path.split("?", 1)[0].startswith("/dashboard"):
+                    self.path = "/index.html"
+                super().do_GET()
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), partial(RouteHandler, directory=str(folder)))
         threading.Thread(target=server.serve_forever, daemon=True).start()
         try:
             with sync_playwright() as runtime:
@@ -310,7 +341,7 @@ def main():
                             project["spec"].update(incoming)
                             data = project
                         else:
-                            data = [project]
+                            data = [] if state["mode"] == "empty" else [project]
                     elif path == "projects/site/activity":
                         data = activity
                     elif path == "projects/site":
@@ -400,7 +431,7 @@ def main():
 
                 page.route("**/api/backend/**", respond)
                 page.goto(f"http://127.0.0.1:{server.server_port}")
-                page.get_by_role("heading", name="Your search visibility,").wait_for()
+                page.get_by_role("heading", name="Your search visibility,", exact=False).wait_for()
                 assert state["account_calls"] == 2
                 assert page.get_by_text("Retry connection", exact=True).count() == 0
                 results.append("HTML gateway read recovers; normal loading never shows retry")
@@ -423,7 +454,9 @@ def main():
                 results.append(
                     "Tutorial navigation, Escape and remembered dismissal without audit writes"
                 )
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 page.get_by_role("heading", name="Health over time").wait_for()
                 assert page.get_by_role("img", name="out of 100").count() == 1
                 sidebar = page.get_by_role("navigation", name="Selected website navigation")
@@ -474,7 +507,9 @@ def main():
                 expect(page.locator("html")).to_have_attribute("data-theme", "dark")
                 page.screenshot(path=str(output / "overview-dark.png"), full_page=True)
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 expect(page.locator("html")).to_have_attribute("data-theme", "dark")
                 expect(theme.get_by_role("button", name="Dark", exact=True)).to_have_attribute(
                     "aria-pressed", "true"
@@ -492,8 +527,12 @@ def main():
                 logo = page.get_by_role("link", name="Your Optimiser workspace home")
                 assert logo.get_attribute("href") == "/dashboard"
                 logo.click()
-                expect(page.get_by_role("heading", name="Your search visibility,")).to_be_visible()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                expect(
+                    page.get_by_role("heading", name="Your search visibility,", exact=False)
+                ).to_be_visible()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 results.append("Dashboard logo returns to workspace home without leaving the app")
 
                 current_job = activity["jobs"][0]
@@ -503,14 +542,18 @@ def main():
                     {"time": 1792503512, "message": "Agent tool requested: apply_patch"}
                 ]
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 expect(page.locator(".audit-live-events")).to_contain_text("Stage proposed repair")
                 expect(page.locator(".audit-next").first).to_contain_text("Stage proposed repair")
                 current_job["status"] = "blocked"
                 current_job["events"] = original_events
                 activity["jobs"][1]["result"]["verified_fixes"] = 1
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 expect(page.locator(".audit-repair-link")).to_contain_text(
                     "View verified repair #1"
                 )
@@ -520,12 +563,16 @@ def main():
                 }
                 activity["jobs"].append(duplicate)
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 metric = page.locator(".audit-metrics article").filter(has_text="Verified fixes")
                 expect(metric.locator("strong")).to_have_text("1")
                 activity["jobs"].pop()
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 results.append(
                     "Live progress and repair links stay visible; duplicate events count one repair"
                 )
@@ -537,26 +584,30 @@ def main():
                     }
                 ]
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 expect(page.locator(".audit-repair-link")).to_contain_text(
                     "VERIFICATION NEEDS EVIDENCE"
                 )
                 expect(page.locator(".audit-repair-link")).to_contain_text(
                     "1 confirmed; 1 awaiting evidence"
                 )
-                page.get_by_role("tab", name="AI audits & logs").click()
+                sidebar.get_by_role("button", name="AI audits & logs", exact=False).click()
                 page.get_by_text("Audited 4 pages; 2 new findings", exact=True).click()
                 expect(
                     page.get_by_text("Obtain a fresh factual assessment", exact=True)
                 ).to_be_visible()
                 activity["jobs"][1]["result"].pop("unverified_targets")
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 results.append(
                     "Partial repairs show unresolved proof without claiming full verification"
                 )
 
-                page.get_by_role("tab", name="Findings").click()
+                sidebar.get_by_role("button", name="Findings", exact=False).click()
                 page.get_by_label("Filter findings").select_option("unresolved")
                 page.get_by_text("Confirm account page visibility", exact=True).click()
                 expect(page.get_by_text("Owner-confirmed page intent", exact=True)).to_be_visible()
@@ -571,7 +622,7 @@ def main():
                 results.append(
                     "Findings filter and search; independent strength, dependencies and evidence"
                 )
-                page.get_by_role("tab", name="AI audits & logs").click()
+                sidebar.get_by_role("button", name="AI audits & logs", exact=False).click()
                 page.get_by_text("Audited 4 pages; 2 new findings", exact=True).click()
                 expect(page.get_by_text("Read source file", exact=False).first).to_be_visible()
                 expect(
@@ -598,25 +649,27 @@ def main():
                 ).to_be_visible()
                 assert page.get_by_text("Audited 4 pages; 2 new findings", exact=True).count() == 0
                 results.append("Audit history, failed checks, job filters and PR destination")
-                page.get_by_role("tab", name="Pages", exact=True).click()
+                sidebar.get_by_role("button", name="Pages inspected", exact=False).click()
                 expect(page.get_by_role("heading", name="Workshop lighting")).to_be_visible()
                 page.get_by_role("button", name="Run audit").click()
                 expect(page.get_by_text("Audit queued.", exact=True)).to_be_visible()
                 assert state["mutations"] == 1
                 results.append("Page observations and single audit submission")
                 sidebar.get_by_role("button", name="Connectors", exact=True).click()
+                expect(page.get_by_role("heading", name="Connections", exact=True)).to_be_visible()
+                expect(
+                    page.locator('a.workspace-connection-card[href*="/dashboard/connections/"]')
+                ).to_have_count(24)
+                page.get_by_role("link", name="WordPress", exact=False).last.click()
                 connectors = page.get_by_role("region", name="Website connectors")
                 expect(
-                    connectors.get_by_role("heading", name="Give your agent the right access.")
+                    connectors.get_by_role("heading", name="WordPress", exact=True)
                 ).to_be_visible()
-                directory = connectors.get_by_role("navigation", name="Connector platforms")
-                expect(directory.get_by_role("button")).to_have_count(22)
-                directory.get_by_role("button", name="WordPress Not connected", exact=True).click()
                 connectors.get_by_label("Account or resource", exact=True).fill(
                     "https://example.test"
                 )
                 connectors.get_by_label("seo title field", exact=True).fill("seo_title")
-                connectors.get_by_text("Credentials and access", exact=True).click()
+                expect(connectors.get_by_label("username", exact=True)).to_be_visible()
                 connectors.get_by_label("username", exact=True).fill("fixture-user")
                 connectors.get_by_label("application password", exact=True).fill(
                     "fixture-browser-secret"
@@ -680,8 +733,8 @@ def main():
                 page.screenshot(path=str(output / "mobile.png"), full_page=True)
                 results.append("390px viewport without horizontal overflow")
                 page.set_viewport_size({"width": 1440, "height": 1080})
-                expect(page.get_by_role("tab", name="Overview", exact=True)).to_have_count(1)
-                page.get_by_role("tab", name="Overview", exact=True).click()
+                expect(page.get_by_role("tablist")).to_have_count(0)
+                sidebar.get_by_role("button", name="Website overview", exact=True).click()
                 page.add_script_tag(path=str(WEB / "node_modules/axe-core/axe.min.js"))
                 page.get_by_role("button", name="How it works A quick guided tour").click()
                 tour_violations = page.evaluate(
@@ -697,7 +750,8 @@ def main():
                 results.append("Tutorial dialog accessibility and focus trapping")
                 violations = page.evaluate(
                     "async()=> (await "
-                    "axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}})).violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.length}))"
+                    "axe.run(document,{runOnly:{type:'tag',values:['wcag2a','wcag2aa','wcag21aa']}}"
+                    ")).violations.map(v=>({id:v.id,impact:v.impact,nodes:v.nodes.length}))"
                 )
                 assert not violations, violations
                 results.append("Workspace overview accessibility checks")
@@ -742,7 +796,9 @@ def main():
                 assert project["spec"]["git_conventions"]["branch_suffix"] == "seo"
                 assert project["spec"]["repository"] == "fictional/site"
                 page.reload()
-                page.get_by_role("button", name="Monitoring Cedar Workshop").click()
+                page.locator(".workspace-sidebar").get_by_role(
+                    "button", name="Cedar Workshop"
+                ).click()
                 page.get_by_role("button", name="Project settings", exact=True).click()
                 expect(page.get_by_label("Commit scope (optional)")).to_have_value("search")
                 for theme in ("Dark", "Light"):
@@ -765,12 +821,12 @@ def main():
                 )
 
                 state["mode"] = "fail"
-                page.reload()
+                page.goto(f"http://127.0.0.1:{server.server_port}/dashboard")
                 page.get_by_role("heading", name="Your workspace couldn’t be loaded").wait_for()
                 expect(page.get_by_role("button", name="Reload workspace")).to_be_visible()
                 state["mode"] = "normal"
                 page.get_by_role("button", name="Reload workspace").click()
-                page.get_by_role("heading", name="Your search visibility,").wait_for()
+                page.get_by_role("heading", name="Your search visibility,", exact=False).wait_for()
                 results.append("Persistent connection failure has actionable recovery")
                 page.locator(".workspace-sidebar").get_by_role(
                     "button", name="Connect website", exact=True
@@ -781,14 +837,24 @@ def main():
                 expect(page.get_by_label("Verified repository", exact=True)).to_have_count(0)
                 page.get_by_role("button", name="Connect & start audit", exact=False).click()
                 expect(
-                    page.get_by_text(
-                        "Website connected. Follow its audit progress below.", exact=True
-                    )
+                    page.get_by_role("heading", name="WordPress", exact=True, level=1)
                 ).to_be_visible()
+                assert "/dashboard/connections/wordpress" in page.url
                 assert project["spec"]["publishing_platform"] == "wordpress"
                 results.append(
                     "First-time CMS setup succeeds without a GitHub repository "
                     "or GitHub authorization request"
+                )
+                state["mode"] = "empty"
+                for section in ("overview", "findings", "audits", "pages", "research", "settings"):
+                    page.goto(f"http://127.0.0.1:{server.server_port}/dashboard/{section}")
+                    expect(page.get_by_role("heading", name="No website to show")).to_be_visible()
+                    expect(
+                        page.get_by_role("link", name="Connect website", exact=False)
+                    ).to_be_visible()
+                    expect(page.get_by_role("tablist")).to_have_count(0)
+                results.append(
+                    "Every website page has a connect-first empty state without a website"
                 )
                 assert not errors, errors
                 browser.close()
