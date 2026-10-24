@@ -59,6 +59,20 @@ def main():
             f"Landing JavaScript exceeds the 200 KB compressed budget: {javascript_bytes} bytes"
         )
         passed.append("Landing JavaScript stays within the 200 KB compressed transfer budget")
+        artwork = page.locator(".home-art img")
+        expect(artwork).to_be_visible()
+        assert artwork.evaluate("e => e.complete && e.naturalWidth > 0")
+        assert page.locator(".hero-platforms").count() == 0
+        assert page.locator(".connector-showcase").count() == 1
+        assert page.locator(".hero h1 em").count() == 2
+        action = page.locator(".hero-action")
+        bounds = action.bounding_box()
+        assert bounds
+        page.mouse.move(bounds["x"] + bounds["width"] * 0.75, bounds["y"] + bounds["height"] * 0.35)
+        assert action.evaluate("e => e.style.getPropertyValue('--tilt-y')")
+        page.mouse.move(0, 0)
+        assert action.evaluate("e => e.style.getPropertyValue('--tilt-y')") == ""
+        passed.append("Original artwork loads, one platform section remains, and hero tilt resets")
         hero = page.get_by_role("complementary", name="Interactive SEO workflow example")
         assert hero.get_by_role("heading", name="Your team ships a new homepage.").is_visible()
         playback = hero.locator(".demo-playback")
@@ -157,7 +171,7 @@ def main():
         page.get_by_text("What is free, and what comes next?", exact=True).click()
         assert (
             page.locator(".faq-section")
-            .get_by_text(re.compile("Personal, non-commercial local use is free"))
+            .get_by_text(re.compile("Hosted early access includes up to three connected websites"))
             .is_visible()
         )
         page.evaluate(
@@ -174,6 +188,8 @@ def main():
         page.on("pageerror", lambda error: errors.append(str(error)))
         page.clock.install()
         page.goto(args.base_url, wait_until="networkidle")
+        expect(page.locator(".home-art img")).to_have_css("animation-name", "none")
+        expect(page.locator(".hero-action")).to_have_css("transform", "none")
         reduced_hero = page.locator(".hero-workflow")
         expect(reduced_hero.locator(".demo-playback")).to_have_attribute("data-playing", "false")
         page.clock.fast_forward(12_000)
@@ -303,9 +319,13 @@ def main():
             expect(page.locator(".hero-terminal")).to_have_css("color-scheme", theme)
             for selector in (".hero-terminal", ".terminal-window", ".demo-agent"):
                 surface = page.locator(selector).evaluate(
-                    "e => getComputedStyle(e).backgroundColor"
+                    "e => {const c=document.createElement('canvas');c.width=c.height=1;"
+                    "const ctx=c.getContext('2d');"
+                    "ctx.fillStyle=getComputedStyle(document.body).backgroundColor;"
+                    "ctx.fillRect(0,0,1,1);ctx.fillStyle=getComputedStyle(e).backgroundColor;"
+                    "ctx.fillRect(0,0,1,1);return Array.from(ctx.getImageData(0,0,1,1).data)}"
                 )
-                channels = [int(c) for c in re.findall(r"\d+", surface)[:3]]
+                channels = surface[:3]
                 assert all(c > 200 if theme == "light" else c < 80 for c in channels), (
                     theme,
                     selector,
