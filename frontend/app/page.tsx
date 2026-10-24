@@ -35,7 +35,7 @@ const questions = [
   ],
   [
     "Which website platforms can I connect?",
-    "Live hosted repair workflows have been tested with GitHub, Shopify, Sanity, Contentful and Framer. WordPress and WooCommerce have real local CMS tests; Vercel and Netlify have deployment API tests. Capabilities differ by platform, and a connection does not guarantee indexing or rankings.",
+    "Connect GitHub for code fixes through pull requests, Shopify for product search details, and Sanity, Contentful or Framer for content fields. WordPress and WooCommerce support page and product content; Vercel and Netlify add deployment information. Available actions and publication steps depend on the platform you connect.",
   ],
 ];
 
