@@ -206,6 +206,7 @@ def collect(t: Transport, q: CollectionRequest) -> Collection:
         query = "*[_id == $id][0]" if single else "*[_type == $type][0..." + str(q.limit) + "]"
         params = {
             "query": query,
+            "perspective": "raw",
             **(
                 {"$id": json.dumps(single)}
                 if single
