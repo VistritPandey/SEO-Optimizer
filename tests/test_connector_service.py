@@ -99,6 +99,29 @@ def publisher(workspace, monkeypatch):
     client.close()
 
 
+@pytest.mark.parametrize("configured", [False, True])
+def test_authorization_availability_is_honest_and_keeps_operator_secrets_private(
+    workspace, monkeypatch, configured
+):
+    monkeypatch.delenv("OPT_CONNECTOR_GOOGLE_CLIENT_ID", raising=False)
+    monkeypatch.delenv("OPT_CONNECTOR_GOOGLE_CLIENT_SECRET", raising=False)
+    if configured:
+        monkeypatch.setenv("OPT_CONNECTOR_GOOGLE_CLIENT_ID", "fixture-operator-client")
+        monkeypatch.setenv("OPT_CONNECTOR_GOOGLE_CLIENT_SECRET", "fixture-operator-secret")
+    service = ConnectorService(workspace[0], workspace[-1])
+    record = service.public(Platform.GA4)
+    assert record["authorization"] == {
+        "oauth_supported": True,
+        "oauth_available": configured,
+    }
+    assert "fixture-operator-client" not in json.dumps(record)
+    assert "fixture-operator-secret" not in json.dumps(record)
+    assert service.public(Platform.SANITY)["authorization"] == {
+        "oauth_supported": False,
+        "oauth_available": False,
+    }
+
+
 def proposal_for(service):
     result = service.collect(Platform.WORDPRESS, CollectionRequest())
     return service.propose(
