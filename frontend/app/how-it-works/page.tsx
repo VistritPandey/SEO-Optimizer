@@ -3,6 +3,7 @@ import { EditorialPage } from "@/components/EditorialPage";
 import { Reveal } from "@/components/Reveal";
 import { Workflow } from "@/components/Workflow";
 import { pageMetadata } from "@/lib/site";
+import { ConnectorShowcase } from "@/components/ConnectorShowcase";
 
 export const metadata = pageMetadata(
   "How the autonomous SEO agent works",
@@ -135,6 +136,7 @@ export default function Page() {
           </Link>
         </div>
       </section>
+      <ConnectorShowcase />
       <div className="editorial-cta">
         <h2>Your next update can have backup.</h2>
         <Link className="button" href="/login?mode=register">
