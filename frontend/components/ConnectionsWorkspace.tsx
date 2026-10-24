@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from "react";
 import { firebaseAuth } from "@/lib/firebase";
 import { api, type Project } from "@/lib/api";
 import catalog from "@/lib/connection-catalog.json";
+import { testedPlatform } from "@/lib/platforms";
 import {
   rememberWebsite,
   rememberedWebsite,
@@ -200,7 +201,7 @@ export function ConnectionsWorkspace({
           </span>
           <Link href="/dashboard">Website overview ↗</Link>
         </header>
-        <section className="project-heading">
+        <section className="connections-heading">
           <span className="eyebrow">YOUR CONNECTED WORKSPACE</span>
           <h1 className="platform-lockup">
             {platform && <PlatformLogo platform={platform} size={32} />}
@@ -212,7 +213,8 @@ export function ConnectionsWorkspace({
           </h1>
           <p>
             {platform
-              ? definition?.note ||
+              ? testedPlatform(platform)?.summary ||
+                definition?.note ||
                 "Repository access, reviewed fixes and deployment follow-through."
               : "See what is connected, what it can do, and where your agent needs access."}
           </p>
@@ -312,7 +314,7 @@ export function ConnectionsWorkspace({
             </label>
             {project ? (
               <>
-                <div className="workspace-metrics">
+                <div className="connection-metrics">
                   <article>
                     <span>CONNECTION</span>
                     <strong className="connection-status-value">
