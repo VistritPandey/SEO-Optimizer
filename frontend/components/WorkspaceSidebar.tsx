@@ -219,7 +219,7 @@ export function WorkspaceSidebar({
             className="sidebar-section sidebar-project-sections"
             aria-label="Selected website navigation"
           >
-            <span className="eyebrow">THIS WEBSITE</span>
+            <span className="eyebrow">WEBSITE PAGES</span>
             {sections.map(([id, label, icon]) => (
               <button
                 key={id}
