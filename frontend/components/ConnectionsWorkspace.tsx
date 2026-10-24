@@ -7,6 +7,12 @@ import { useCallback, useEffect, useState } from "react";
 import { firebaseAuth } from "@/lib/firebase";
 import { api, type Project } from "@/lib/api";
 import catalog from "@/lib/connection-catalog.json";
+import {
+  rememberWebsite,
+  rememberedWebsite,
+  selectWebsite,
+  websitePath,
+} from "@/lib/website-navigation.mjs";
 import { Connectors, type Connection } from "./Connectors";
 import { PlatformLogo } from "./PlatformLogo";
 import { WorkspaceSidebar } from "./WorkspaceSidebar";
@@ -33,9 +39,8 @@ export function ConnectionsWorkspace({
   const [busy, setBusy] = useState(false);
   const [ready, setReady] = useState(false);
   const [tour, setTour] = useState(false);
-  const project =
-    projects.find((item) => item.id === projectId) ||
-    (!projectId ? projects[0] : undefined);
+  const [preferredId, setPreferredId] = useState("");
+  const project = selectWebsite(projects, projectId, preferredId);
   const definition = catalog.find((item) => item.platform === platform);
   const current = snapshots
     .find((item) => item.project.id === project?.id)
@@ -64,12 +69,18 @@ export function ConnectionsWorkspace({
         }
       }),
     );
+    const uid = firebaseAuth().currentUser?.uid || "";
+    const chosen = selectWebsite(list, projectId, rememberedWebsite(uid));
+    if (chosen) {
+      setPreferredId(chosen.id);
+      rememberWebsite(uid, chosen.id);
+    }
     setAccount(profile);
     setProjects(list);
     setSnapshots(records);
     setReady(true);
     setError("");
-  }, []);
+  }, [projectId]);
   useEffect(() => {
     let alive = true;
     let timer: ReturnType<typeof setInterval> | undefined;
@@ -143,7 +154,7 @@ export function ConnectionsWorkspace({
           projectId: item.id,
           website: item.spec.name,
         }))}
-        activeService={platform}
+        activeService={`${project?.id || ""}:${platform}`}
         onService={(name, id) => router.push(path(name, id))}
         projects={projects}
         selected={null}
@@ -155,10 +166,11 @@ export function ConnectionsWorkspace({
           router.push(connections ? "/dashboard/connections" : "/dashboard")
         }
         onConnect={() => router.push("/dashboard?connect=website")}
-        onSelect={(item) =>
-          router.push(`/dashboard?project=${encodeURIComponent(item.id)}`)
-        }
-        onTab={() => router.push("/dashboard/connections")}
+        onSelect={(item) => {
+          rememberWebsite(firebaseAuth().currentUser?.uid || "", item.id);
+          router.push(websitePath("overview", item.id));
+        }}
+        onTab={(tab) => router.push(websitePath(tab, project?.id || ""))}
         onTour={() => setTour(true)}
         onSignOut={() => {
           void signOut(firebaseAuth())
@@ -169,9 +181,13 @@ export function ConnectionsWorkspace({
       <WorkspaceTour
         open={tour}
         onClose={() => setTour(false)}
-        onNavigate={() => {
+        onNavigate={(target) => {
           setTour(false);
-          router.push("/dashboard");
+          router.push(
+            target === "connect"
+              ? "/dashboard?connect=website"
+              : websitePath(target, project?.id || ""),
+          );
         }}
       />
       <main id="main-content" className="dashboard-main">
