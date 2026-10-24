@@ -139,7 +139,7 @@ def collect(t: Transport, q: CollectionRequest) -> Collection:
                     fields={
                         "title": row["title"],
                         "content": row.get("descriptionHtml", ""),
-                        "seo_title": (row.get("seo") or {}).get("title") or "",
+                        "seo_title": (row.get("seo") or {}).get("title") or row["title"],
                         "seo_description": (row.get("seo") or {}).get("description") or "",
                     },
                     revision=row.get("updatedAt", ""),
@@ -354,6 +354,13 @@ def write(t: Transport, current: Resource, changes: dict[str, str]) -> None:
             dynamic=True,
         )
     elif p == Platform.SHOPIFY:
+        # Shopify replaces the SEO input pair; sending only a title can clear
+        # an existing description. Preserve both observed values explicitly.
+        seo = {
+            "title": current.fields.get("seo_title", ""),
+            "description": current.fields.get("seo_description", ""),
+            **{key.removeprefix("seo_"): value for key, value in changes.items()},
+        }
         data = t.request(
             "POST",
             f"https://{r}/admin/api/2026-10/graphql.json",
@@ -361,12 +368,12 @@ def write(t: Transport, current: Resource, changes: dict[str, str]) -> None:
             body={
                 "query": (
                     "mutation($product:ProductUpdateInput!) { productUpdate(product:$product) { "
-                    "product { id } userErrors { field message } } }"
+                    "product { id seo { title description } } userErrors { field message } } }"
                 ),
                 "variables": {
                     "product": {
                         "id": current.id,
-                        "seo": {key.removeprefix("seo_"): value for key, value in changes.items()},
+                        "seo": seo,
                     }
                 },
             },
