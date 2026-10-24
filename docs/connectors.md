@@ -2,7 +2,7 @@
 
 Your Optimiser can collect evidence from 22 additional connection types alongside its existing GitHub integration. Open a project and select **Connectors**. Accounts, credentials, policies, evidence and proposals belong to that project and tenant.
 
-The adapters are implemented and exercised with controlled provider responses. A local CMS test exercises the actual HTTP, API, database, worker, publication, live-page verification and restoration path. **Live provider accounts remain unverified until their owners grant access.** A green offline test is not a certification by any platform.
+The adapters are implemented and exercised with controlled provider responses. Real QA now also covers WordPress/WooCommerce installations, Sanity, Contentful, Framer and Shopify draft updates, and Vercel/Netlify deployment collection. The [live QA report](../reports/live-connector-qa.json) records exact passes, discovered defects, local fixes and remaining dependencies. **This is partial provider validation, not certification of every connection or the hosted production workflow.** A green offline test is not a certification by any platform.
 
 ## Coverage
 
@@ -42,7 +42,9 @@ The machine-readable definitions and primary-source links are in `src/seo_optimi
 5. Review supported proposals. Allowing writes and enabling automatic application are separate settings; the project must also allow repairs. Changing account/resource mappings invalidates old proposals.
 6. Apply a proposal, inspect provider readback, publish staged changes through the platform's normal workflow when needed, and verify the exact canonical page. A successful API response does not prove indexing, rankings or growth.
 
-Automatic title proposals reuse an observed title or HTML H1. They do not invent descriptions, reviews or commercial claims. Preview/private pages and configured non-indexable routes are excluded from automatic proposals. SEO mappings cannot target crawler directives, publication state, inventory, pricing or review fields.
+Automatic title proposals reuse an observed title or HTML H1. They do not invent descriptions, reviews or commercial claims. WordPress also requires a successful same-origin HTML observation confirming a missing title: an empty plugin override does not override a healthy theme title. Failed observations and live noindex directives stop that automatic proposal. Unchanged pending proposals reuse their action identity and refresh their evidence references. Preview/private pages and configured non-indexable routes are excluded from automatic proposals. SEO mappings cannot target crawler directives, publication state, inventory, pricing or review fields.
+
+Shopify's unset SEO title can represent the product-title fallback. Provider verification compares that effective title. SEO updates preserve the other observed SEO field because the API input replaces the pair. Sanity explicitly requests the raw query perspective to see authorized existing drafts; that does not grant publication permission.
 
 Repository checks enforce configured source paths and metadata-only changes. Their new-host adapter checks source locally and opens a PR; **build/CI and live deployment remain separate verification steps**. The existing GitHub worker retains its fuller build and PR lifecycle.
 
@@ -138,6 +140,10 @@ uv run ruff check src tests scripts api deploy/combined-entrypoint.py
 ```
 
 The HTTP CMS fixture is local and fictional. Provider wire tests use `httpx.MockTransport`; Framer tests use a controlled SDK object. No production repository, business listing, paid model, SERP budget or customer CMS is modified by these tests.
+
+The opt-in `scripts/qa_wordpress.py` starts actual disposable WordPress, MariaDB and WooCommerce containers, verifies served HTML over HTTPS with a process-local trusted CA, and removes only its own container project. It requires Docker and access to the official image/plugin registries. `scripts/qa_sanity.py`, `scripts/qa_contentful.py`, `scripts/qa_framer.py`, `scripts/qa_shopify.py` and `scripts/qa_hosting.py` use approved credentials from ignored `.env.qa` and real provider APIs. These runners deliberately target dedicated QA projects; they are not production onboarding scripts. They create fictional fixtures and can consume provider free quotas. They do not publish CMS content, import customer repositories or change DNS. Hosting QA creates tiny non-indexable static deployments and leaves provider authentication enabled. Private reports and fixture identifiers stay under `.data/live-connectors/`.
+
+Creating an account is separate from granting API access. The Contentful management token needed organization authorization; its default account-wide scope warrants a dedicated identity for production. Framer keys are project-bound. New GA4 properties without tracking streams do not supply traffic evidence. Search Console/Bing need a verified property, Cloudflare needs an eligible zone dataset, and Business Profile needs a real authorized location. These dependencies cannot be replaced by fabricated test accounts or empty responses marked as successful reporting.
 
 For the default and named Firestore databases, start the documented Firebase emulators with project `demo-your-optimiser`, then run:
 
