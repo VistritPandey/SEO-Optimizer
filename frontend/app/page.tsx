@@ -5,17 +5,21 @@ import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/lib/site";
+import {
+  ConnectorBrands,
+  ConnectorShowcase,
+} from "@/components/ConnectorShowcase";
 
 export const metadata = { alternates: { canonical: "/" } };
 
 const questions = [
   [
     "What happens after I connect my website?",
-    "Connect a GitHub repository and your deployed website, choose the branch and pages that matter, and add trusted business facts. The agent starts an audit and checks relevant website changes afterward.",
+    "Create a free workspace, add your deployed website and connect its publishing platform. Choose what the agent can change and add trusted business facts. GitHub changes trigger relevant audits; CMS connections can collect content on a schedule.",
   ],
   [
     "Does it change my website without asking?",
-    "Hosted fixes are proposed as GitHub pull requests. Your team reviews and merges them. The agent then checks the configured deployment and served page to verify the result.",
+    "GitHub code fixes are proposed as pull requests for your team to review and merge. Supported CMS edits require connector write permission; automatic application is a separate setting. Drafts still follow your publication process, and saved fields are verified separately from the live website.",
   ],
   [
     "What if my update hasn’t broken anything?",
@@ -27,11 +31,11 @@ const questions = [
   ],
   [
     "What is free, and what comes next?",
-    "Personal, non-commercial local use is free under the repository’s restricted licence. Business use, redistribution, reuse in other products and operating your own hosted service require written permission from Your Optimiser through our contact page. Official hosted early access currently includes up to three connected websites and 100 audit and follow-up jobs per month. Paid hosted plans may follow; using the current free service does not sign you up for a charge.",
+    "Create a free account on this website. Hosted early access includes up to three connected websites and 100 audit and follow-up jobs per month. We plan to offer paid tiers based on usage and available features. Using the current free service does not sign you up for a charge or require payment details.",
   ],
   [
     "Which website platforms can I connect?",
-    "The hosted integration is GitHub. Your website’s source must be in a repository you can authorise, with a deployed URL the agent can inspect. We do not currently offer direct CMS or other source-control integrations.",
+    "Live hosted repair workflows have been tested with GitHub, Shopify, Sanity, Contentful and Framer. WordPress and WooCommerce have real local CMS tests; Vercel and Netlify have deployment API tests. Capabilities differ by platform, and a connection does not guarantee indexing or rankings.",
   ],
 ];
 
@@ -120,8 +124,9 @@ export default function Home() {
               </Link>
             </div>
             <small>
-              Connect GitHub once. Review useful fixes. Keep your team moving.
+              Start with a free workspace. Connect only the access you choose.
             </small>
+            <ConnectorBrands />
           </div>
           <HeroWorkflow />
         </section>
@@ -131,6 +136,7 @@ export default function Home() {
           <span>FIX WHAT’S CONFIRMED</span>
           <span>KEEP WATCHING</span>
         </section>
+        <ConnectorShowcase />
         <section
           className="care-story marketing-section"
           aria-labelledby="care-title"
@@ -332,14 +338,9 @@ export default function Home() {
               one workspace. Hosted early access is free; paid hosted plans will
               follow as the service grows.
             </p>
-            <a
-              className="text-link"
-              href={`${site.repository}/blob/main/LICENSE`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Free personal local use. View the licence ↗
-            </a>
+            <Link className="text-link" href="/terms">
+              Clear limits. No payment details required. ↗
+            </Link>
           </div>
           <article className="price-card">
             <span className="pill">FREE PLAN</span>
