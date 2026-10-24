@@ -1,7 +1,7 @@
 {
-  "environment": "http://127.0.0.1:3002",
+  "environment": "http://127.0.0.1:3006",
   "passed": [
-    "Eight public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
+    "12 public pages: served HTML, one H1, unique titles, descriptions, canonical and social metadata",
     "Sign-in and workspace pages carry noindex in HTML and HTTP headers",
     "Sitemap includes public canonical pages only; robots allows them and excludes API crawling",
     "LLM product index is readable, links to public facts and states its limits",
