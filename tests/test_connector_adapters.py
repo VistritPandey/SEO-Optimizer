@@ -106,6 +106,12 @@ def cms(monkeypatch):
                 assert payload["mutations"][0]["patch"]["ifRevisionID"] == "revision"
                 fields.update(payload["mutations"][0]["patch"]["set"])
                 return httpx.Response(200, json={"results": []})
+            # This API version defaults to published content, even with an
+            # authorized token. Existing drafts require an explicit perspective.
+            if request.url.params.get("perspective") != "raw":
+                return httpx.Response(
+                    200, json={"result": None if "$id" in request.url.params else []}
+                )
             row = {"_id": "drafts.page1", "_rev": "revision", "title": "Desk lamps", **fields}
             return httpx.Response(
                 200, json={"result": row if "$id" in request.url.params else [row]}
