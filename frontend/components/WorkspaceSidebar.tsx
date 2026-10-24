@@ -145,7 +145,7 @@ export function WorkspaceSidebar({
             {services.map((service) => (
               <button
                 key={`${service.projectId}:${service.platform}`}
-                className={`nav-item ${activeService === service.platform ? "active" : ""}`}
+                className={`nav-item ${activeService === `${service.projectId}:${service.platform}` ? "active" : ""}`}
                 onClick={() =>
                   navigate(() =>
                     onService?.(service.platform, service.projectId),
@@ -214,7 +214,7 @@ export function WorkspaceSidebar({
             </button>
           )}
         </nav>
-        {selected && (
+        {
           <nav
             className="sidebar-section sidebar-project-sections"
             aria-label="Selected website navigation"
@@ -223,8 +223,12 @@ export function WorkspaceSidebar({
             {sections.map(([id, label, icon]) => (
               <button
                 key={id}
-                className={`nav-item ${tab === id ? "active" : ""}`}
-                aria-current={tab === id ? "page" : undefined}
+                className={`nav-item ${selected && tab === id && !connectionsOpen ? "active" : ""}`}
+                aria-current={
+                  selected && tab === id && !connectionsOpen
+                    ? "page"
+                    : undefined
+                }
                 onClick={() => navigate(() => onTab(id))}
               >
                 <Icon name={icon} />
@@ -235,7 +239,7 @@ export function WorkspaceSidebar({
               </button>
             ))}
           </nav>
-        )}
+        }
       </div>
       <div className={`sidebar-bottom ${menuOpen ? "is-open" : ""}`}>
         <ThemeControl />
