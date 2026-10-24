@@ -17,6 +17,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends nginx git ca-certificates libstdc++6 libatomic1 tini && rm -rf /var/lib/apt/lists/*
 COPY --from=web /usr/local/bin/node /usr/local/bin/node
 COPY pyproject.toml README.md uv.lock LICENSE ./
+COPY LICENSES/ ./LICENSES/
 COPY --from=ghcr.io/astral-sh/uv:0.13.0 /uv /usr/local/bin/uv
 COPY src/ ./src/
 COPY integrations/framer/bridge.mjs /app/integrations/framer/bridge.mjs
