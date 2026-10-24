@@ -386,7 +386,9 @@ export function ConnectionsWorkspace({
                     (account?.github_connection?.status === "connected"
                       ? 1
                       : 0)}{" "}
-                  configured
+                  {snapshots.some((item) => item.error)
+                    ? "shown; some status unavailable"
+                    : "configured"}
                 </span>
               </div>
               <div className="workspace-connection-grid">
@@ -428,7 +430,8 @@ export function ConnectionsWorkspace({
                 ))}
               </div>
               {!configured.length &&
-                account?.github_connection?.status !== "connected" && (
+                account?.github_connection?.status !== "connected" &&
+                !snapshots.some((item) => item.error) && (
                   <p>
                     No connections configured yet. Choose a platform below to
                     get started.
