@@ -334,7 +334,7 @@ export default function Home() {
             </p>
             <a
               className="text-link"
-              href={site.repository}
+              href={`${site.repository}/blob/main/LICENSE`}
               target="_blank"
               rel="noopener noreferrer"
             >
