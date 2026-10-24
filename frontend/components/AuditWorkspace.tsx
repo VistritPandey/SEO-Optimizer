@@ -179,28 +179,6 @@ export function AuditWorkspace({
           }
         />
       </div>
-      <div className="audit-tabs" role="tablist" aria-label="Audit workspace">
-        {[
-          ["overview", "Overview"],
-          ["findings", "Findings"],
-          ["activity", "AI audits & logs"],
-          ["pages", "Pages"],
-          ["research", "Research"],
-          ["policy", "Settings"],
-        ].map(([id, label]) => (
-          <button
-            key={id}
-            role="tab"
-            aria-selected={tab === id}
-            onClick={() => onTab(id)}
-          >
-            {label}
-            {id === "findings" && active.length > 0 && (
-              <span>{active.length}</span>
-            )}
-          </button>
-        ))}
-      </div>
       {tab === "overview" && (
         <>
           <div className="audit-columns">
