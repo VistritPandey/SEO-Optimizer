@@ -1,6 +1,6 @@
 # Website connectors
 
-Your Optimiser can collect evidence from 22 additional connection types alongside its existing GitHub integration. Open a project and select **Connectors**. Accounts, credentials, policies, evidence and proposals belong to that project and tenant.
+Your Optimiser can collect evidence from 22 additional connection types alongside its existing GitHub integration. Open **Connections** in the workspace navigation, choose a website, then select a platform. You can also open a project and select **Connectors**. Accounts, credentials, policies, evidence and proposals belong to that project and tenant.
 
 The adapters are implemented and exercised with controlled provider responses. Real QA now also covers WordPress/WooCommerce installations, Sanity, Contentful, Framer and Shopify draft updates, and Vercel/Netlify deployment collection. The [live QA report](../reports/live-connector-qa.json) records exact passes, discovered defects, local fixes and remaining dependencies. **This is partial provider validation, not certification of every connection or the hosted production workflow.** A green offline test is not a certification by any platform.
 
@@ -36,8 +36,8 @@ The machine-readable definitions and primary-source links are in `src/seo_optimi
 ## First connection
 
 1. Create a project with its canonical deployed URL and platform. A CMS project does not require GitHub access. The first website audit is read-only unless a supported publishing connection is configured.
-2. Open **Connectors**, choose the platform, and enter its account/resource identifier.
-3. Save scoped credentials or use **Authorize account** when the service operator has registered that platform's OAuth app. Secrets are encrypted with the existing application encryption key and never returned to the dashboard.
+2. Open **Connections** from the workspace navigation, choose the website, and select a platform. Its setup form opens directly. Enter its account/resource identifier.
+3. Save scoped credentials or use **Continue with [platform]** when the service operator has configured both credentials for that platform's OAuth app. The dashboard exposes scoped access fields when account sign-in is unavailable; it does not offer an authorization button that cannot work. Saved resource and policy settings load when the form opens. Secrets are encrypted with the existing application encryption key and never returned to the dashboard.
 4. Collect evidence. Observe job progress under **AI audits & logs** and expand collected records for provenance and coverage limitations.
 5. Review supported proposals. Allowing writes and enabling automatic application are separate settings; the project must also allow repairs. Changing account/resource mappings invalidates old proposals.
 6. Apply a proposal, inspect provider readback, publish staged changes through the platform's normal workflow when needed, and verify the exact canonical page. A successful API response does not prove indexing, rankings or growth.
