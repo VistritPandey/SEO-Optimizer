@@ -1,6 +1,6 @@
 # Website connectors
 
-Your Optimiser can collect evidence from 22 additional connection types alongside its existing GitHub integration. Open **Connections** in the workspace navigation, choose a website, then select a platform. You can also open a project and select **Connectors**. Accounts, credentials, policies, evidence and proposals belong to that project and tenant.
+Your Optimiser can collect evidence from 22 additional connection types alongside its existing GitHub integration. Open **Connections** in the workspace navigation. This is a separate page at `/dashboard/connections`, with configured services and the full platform directory. Each service opens its own page, such as `/dashboard/connections/ga4`. Choose the website on that service page; credentials, evidence and permissions stay project-scoped. Accounts, credentials, policies, evidence and proposals belong to that project and tenant.
 
 The adapters are implemented and exercised with controlled provider responses. Real QA now also covers WordPress/WooCommerce installations, Sanity, Contentful, Framer and Shopify draft updates, and Vercel/Netlify deployment collection. The [live QA report](../reports/live-connector-qa.json) records exact passes, discovered defects, local fixes and remaining dependencies. **This is partial provider validation, not certification of every connection or the hosted production workflow.** A green offline test is not a certification by any platform.
 
@@ -36,7 +36,7 @@ The machine-readable definitions and primary-source links are in `src/seo_optimi
 ## First connection
 
 1. Create a project with its canonical deployed URL and platform. A CMS project does not require GitHub access. The first website audit is read-only unless a supported publishing connection is configured.
-2. Open **Connections** from the workspace navigation, choose the website, and select a platform. Its setup form opens directly. Enter its account/resource identifier.
+2. Open **Connections** from the workspace navigation and select a platform. Its page uses your last accessible website selection, falling back to the first website; use the website selector to change it. Its setup form opens directly. Enter its account/resource identifier.
 3. Save scoped credentials or use **Continue with [platform]** when the service operator has configured both credentials for that platform's OAuth app. The dashboard exposes scoped access fields when account sign-in is unavailable; it does not offer an authorization button that cannot work. Saved resource and policy settings load when the form opens. Secrets are encrypted with the existing application encryption key and never returned to the dashboard.
 4. Collect evidence. Observe job progress under **AI audits & logs** and expand collected records for provenance and coverage limitations.
 5. Review supported proposals. Allowing writes and enabling automatic application are separate settings; the project must also allow repairs. Changing account/resource mappings invalidates old proposals.
@@ -156,3 +156,7 @@ uv run pytest tests/test_firestore_integration.py --allow-hosts=127.0.0.1
 The release report separates local passes, skipped Docker checks, live-account verification and actual search/AI outcomes. Real account authorization, platform plan restrictions, end-to-end native delivery, live model quality, commercial impact and search visibility require a separate production pilot.
 
 The [connector validation report](../reports/connectors-validation.json) records the release checks and their limits. Screenshots show the [desktop workspace](../reports/connectors/connectors-desktop.png) and [mobile dark theme](../reports/connectors/connectors-mobile-dark.png), using fictional accounts.
+
+## Website workspace pages
+
+Overview, Findings, Audits, Pages, Research and Settings have separate routes under `/dashboard/`. The sidebar is their shared navigation; there is no duplicate tab bar. The selected website is remembered for the signed-in identity in browser storage. Removed or inaccessible remembered websites fall back to the first available website; an explicit inaccessible website does not silently open a different one. Without a website, these pages show a connect-first empty state. Browser-storage restrictions do not prevent navigation.
