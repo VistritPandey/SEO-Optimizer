@@ -119,6 +119,10 @@ proposals, provider readback and a separate live-page check; platform limits rem
 explicit. New-host Git adapters currently support guarded metadata PRs. Credentials
 are encrypted and writes follow project policy. Paid experiments run only on request.
 
-Local fixture and controlled-provider tests exercise these workflows. Live accounts
-and search outcomes still require a production pilot. See the [connector guide](docs/connectors.md)
+Real production draft workflows passed for Sanity, Contentful, Framer and Shopify:
+authenticated collection, grounded edits, independent provider readback, rollback and
+credential removal. The [production QA report](reports/production-connector-qa.json)
+separates those results from blocked platforms, OAuth onboarding and unverified search
+outcomes. Other connectors have varying levels of local and live coverage; see the
+[earlier provider report](reports/live-connector-qa.json) and [connector guide](docs/connectors.md)
 for the support matrix, account setup, OAuth callback, webhook contract and test commands.
