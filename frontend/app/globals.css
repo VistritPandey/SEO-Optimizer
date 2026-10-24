@@ -3572,46 +3572,91 @@ html[data-theme="light"] .demo-agent .demo-status {
 .editorial-content .connector-showcase {
   padding-inline: 0;
 }
-.connector-showcase-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  padding: 0;
-  margin: 36px 0 24px;
-  list-style: none;
-  border-top: 1px solid var(--line);
-  border-left: 1px solid var(--line);
+/* Two identical groups make the logo loop continuous without layout jumps. */
+.connector-slider-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 28px 0 16px;
+  color: var(--muted);
+  font-size: 12px;
 }
-.connector-showcase-grid > li {
+.connector-slider-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--ink);
+  font-size: 12px;
+}
+.connector-slider {
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin: 0 0 24px;
+  scrollbar-width: thin;
+}
+.connector-slider[data-playing="true"] {
+  overflow-x: hidden;
+}
+.connector-slider-track {
+  display: flex;
+  width: max-content;
+  animation: platform-drift 40s linear infinite;
+  animation-play-state: paused;
+}
+.connector-slider[data-playing="true"] .connector-slider-track {
+  animation-play-state: running;
+}
+.connector-slider:hover .connector-slider-track,
+.connector-slider:focus-within .connector-slider-track {
+  animation-play-state: paused;
+}
+.connector-slider-group {
+  display: flex;
+  flex-shrink: 0;
+  gap: 16px;
+  margin: 0;
+  padding: 0 16px 0 0;
+  list-style: none;
+}
+.connector-slider-group > li {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 14px;
-  padding: 28px;
-  border-right: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
+  justify-content: center;
+  gap: 16px;
+  width: 230px;
+  min-height: 194px;
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   background: var(--white);
 }
-.connector-showcase-grid h3 {
+.connector-slider-group h3 {
   margin: 0;
   font-family: var(--font-sans), sans-serif;
   font-size: 18px;
   font-weight: 600;
 }
-.connector-showcase-grid p {
+.connector-slider-group p {
   margin: 0;
+  max-width: 180px;
+  font-size: 13px;
   color: var(--muted);
-  font-size: 14px;
 }
-.platform-coverage {
-  color: var(--muted);
-  font-size: 11px;
+@keyframes platform-drift {
+  to {
+    transform: translateX(-50%);
+  }
 }
-.connector-showcase-grid .platform-coverage {
-  margin-top: auto;
-  padding-top: 10px;
-}
-.platform-coverage[data-coverage="hosted"] {
-  color: var(--green);
+@media (prefers-reduced-motion: reduce) {
+  .connector-slider-track {
+    animation-duration: 80s;
+  }
 }
 .connector-showcase-footnote {
   display: flex;
@@ -3636,29 +3681,14 @@ html[data-theme="light"] .demo-agent .demo-status {
   .connector-showcase {
     padding-block: 48px;
   }
-  .connector-showcase-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .connector-showcase-grid > li {
-    padding: 22px 16px;
-  }
-  .connector-showcase-grid .platform-lockup {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-  .connector-showcase-grid h3 {
-    font-size: 14px;
-    overflow-wrap: anywhere;
+  .connector-slider-group > li {
+    width: 200px;
+    min-height: 180px;
+    padding: 22px;
   }
   .connector-showcase-footnote {
     flex-direction: column;
     gap: 16px;
-  }
-}
-@media (max-width: 360px) {
-  .connector-showcase-grid {
-    grid-template-columns: 1fr;
   }
 }
 .sidebar-platform {
