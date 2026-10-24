@@ -64,7 +64,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           }}
         />
       </head>
-      <body>
+      {/* Writing extensions may attach data-gr-* attributes before hydration.
+          Tolerate body attributes only; descendants keep React's checks. */}
+      <body suppressHydrationWarning>
         <a href="#main-content" className="skip-link">
           Skip to content
         </a>
