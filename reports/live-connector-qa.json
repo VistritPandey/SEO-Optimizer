@@ -3,7 +3,7 @@
   "timezone": "America/Chicago",
   "scope": "Live account provisioning and real provider/CMS API tests. Local application services use isolated SQLite stores; this is not a hosted production tenant certification.",
   "overall_status": "partial_live_validation",
-  "credentials": "Actual QA credentials are saved only in ignored local .env.qa, not frontend, source control or production configuration.",
+  "credentials": "During this initial local run, QA credentials were stored only in ignored files. In the subsequent explicitly approved production run, four QA credentials were temporarily stored through encrypted project connections and disconnected afterward.",
   "results": {
     "sanity": {
       "verified_at": "2026-10-24T02:01:58.154128+00:00",
@@ -352,5 +352,6 @@
       "network_required": true,
       "private_output": ".data/live-connectors/hosting/report.json"
     }
-  ]
+  ],
+  "snapshot_note": "Historical local-service run before hosted testing; see reports/production-connector-qa.json for the later deployed workflow results and current limitations."
 }
