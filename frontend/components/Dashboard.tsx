@@ -17,6 +17,7 @@ import { WorkspaceSidebar } from "./WorkspaceSidebar";
 import { WorkspaceTour } from "./WorkspaceTour";
 import { ConnectorBrands } from "./ConnectorShowcase";
 import { PlatformLogo } from "./PlatformLogo";
+import { WorkspaceConnections } from "./WorkspaceConnections";
 import { m } from "motion/react";
 type Account = {
   email: string;
@@ -43,6 +44,7 @@ export function Dashboard() {
   });
   const [newProject, setNewProject] = useState(false);
   const [publishingPlatform, setPublishingPlatform] = useState("github");
+  const [connectorPlatform, setConnectorPlatform] = useState("");
   const [tab, setTab] = useState("overview");
   const [tourOpen, setTourOpen] = useState(false);
   const [tourSeen, setTourSeen] = useState(true);
@@ -74,14 +76,14 @@ export function Dashboard() {
     selectedId.current = null;
     setSelected(null);
     setNewProject(false);
-    setHomeAnchor(connections ? "github-connection" : "main-content");
+    setConnectorPlatform("");
+    setHomeAnchor(connections ? "platform-connections" : "main-content");
     setError("");
     setNotice("");
   }
   async function tourNavigate(target: string) {
     if (target === "connect" || (!selected && !projects.length)) {
-      setSelected(null);
-      setNewProject(true);
+      beginProject();
       return;
     }
     if (!selected && projects[0]) await choose(projects[0]);
@@ -186,10 +188,24 @@ export function Dashboard() {
       setBusy(false);
     }
   }
-  async function choose(project: Project) {
+  function beginProject(platform = "github") {
+    selectedId.current = null;
+    setSelected(null);
+    setNewProject(true);
+    setPublishingPlatform(
+      ["vercel", "netlify"].includes(platform) ? "website" : platform,
+    );
+    setConnectorPlatform(
+      platform === "github" || platform === "website" ? "" : platform,
+    );
+    setError("");
+    setNotice("");
+  }
+  async function choose(project: Project, connection = "") {
     setSelected(project);
     setNewProject(false);
-    setTab("overview");
+    setConnectorPlatform(connection);
+    setTab(connection ? "connectors" : "overview");
     if (selected?.id !== project.id) {
       setActivity({ jobs: [], findings: [] });
       setActivityReady(false);
@@ -269,9 +285,18 @@ export function Dashboard() {
         },
       });
       await refresh();
-      await choose(value);
+      const connection =
+        connectorPlatform ||
+        (publishingPlatform !== "github" && publishingPlatform !== "website"
+          ? publishingPlatform
+          : "");
+      await choose(value, connection);
       setNewProject(false);
-      setNotice("Website connected. Follow its audit progress below.");
+      setNotice(
+        connection
+          ? "Website added. Complete the platform connection below; your initial website audit runs separately."
+          : "Website connected. Follow its audit progress below.",
+      );
     });
   }
   return (
@@ -281,15 +306,12 @@ export function Dashboard() {
         selected={selected}
         tab={tab}
         email={account?.email || user?.email || ""}
-        connection={account?.github_connection?.status}
         findings={activity.findings.filter((item) => item.active).length}
         onHome={home}
-        onConnect={() => {
-          setSelected(null);
-          setNewProject(true);
-          setError("");
-          setNotice("");
-        }}
+        onConnect={() => beginProject()}
+        connectionsOpen={
+          !selected && !newProject && homeAnchor === "platform-connections"
+        }
         onSelect={(project) => {
           void choose(project);
         }}
@@ -476,9 +498,10 @@ export function Dashboard() {
                 Website platform
                 <select
                   value={publishingPlatform}
-                  onChange={(event) =>
-                    setPublishingPlatform(event.target.value)
-                  }
+                  onChange={(event) => {
+                    setPublishingPlatform(event.target.value);
+                    setConnectorPlatform("");
+                  }}
                 >
                   {[
                     ["github", "GitHub"],
@@ -702,8 +725,12 @@ export function Dashboard() {
             )}
             {tab === "connectors" && (
               <Connectors
-                key={"connectors:" + selected.id}
+                key={"connectors:" + selected.id + ":" + connectorPlatform}
                 project={selected}
+                initialPlatform={
+                  connectorPlatform ||
+                  String(selected.spec.publishing_platform || "search_console")
+                }
               />
             )}
             {tab === "research" && (
@@ -886,7 +913,7 @@ export function Dashboard() {
             <section className="section">
               <div className="section-heading">
                 <h2>Your projects</h2>
-                <button className="button" onClick={() => setNewProject(true)}>
+                <button className="button" onClick={() => beginProject()}>
                   Connect website ＋
                 </button>
               </div>
@@ -930,15 +957,23 @@ export function Dashboard() {
                     Connect your website and publishing platform. Your first
                     audit will start automatically.
                   </p>
-                  <button
-                    className="button"
-                    onClick={() => setNewProject(true)}
-                  >
+                  <button className="button" onClick={() => beginProject()}>
                     Connect your first website ↗
                   </button>
                 </div>
               )}
             </section>
+            <WorkspaceConnections
+              projects={projects}
+              onOpen={(project, platform) => {
+                void choose(project, platform);
+              }}
+              onCreate={beginProject}
+              onGitHub={() => {
+                home();
+                setHomeAnchor("github-connection");
+              }}
+            />
             <section className="panel">
               <h2 id="github-connection">GitHub connection</h2>
               {account.github_connection?.status === "connected" ? (
@@ -951,10 +986,7 @@ export function Dashboard() {
                     . Only repositories selected in the GitHub App installation
                     are available.
                   </p>
-                  <button
-                    className="text-link"
-                    onClick={() => setNewProject(true)}
-                  >
+                  <button className="text-link" onClick={() => beginProject()}>
                     Connect another website ↗
                   </button>
                 </>
