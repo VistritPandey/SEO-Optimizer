@@ -1,0 +1,356 @@
+{
+  "verified_on_local_date": "2026-10-23",
+  "timezone": "America/Chicago",
+  "scope": "Live account provisioning and real provider/CMS API tests. Local application services use isolated SQLite stores; this is not a hosted production tenant certification.",
+  "overall_status": "partial_live_validation",
+  "credentials": "Actual QA credentials are saved only in ignored local .env.qa, not frontend, source control or production configuration.",
+  "results": {
+    "sanity": {
+      "verified_at": "2026-10-24T02:01:58.154128+00:00",
+      "scope": "Real Sanity API and local application service, fictional unpublished draft",
+      "passed": [
+        "Authorized draft creation and explicit raw-perspective read",
+        "Encrypted connection, draft collection, grounded title proposal, revision-guarded write and actual provider readback",
+        "Draft restoration preserves unrelated content",
+        "A real intervening draft edit blocks stale application and preserves the concurrent editor's value",
+        "No published counterpart created"
+      ],
+      "failed": [],
+      "unverified": [
+        "Hosted OAuth, public rendering, indexing and ranking"
+      ]
+    },
+    "contentful": {
+      "verified_at": "2026-10-24T02:03:21.663277+00:00",
+      "scope": "Real Contentful API and local application service, fictional unpublished entry",
+      "passed": [
+        "Real management authentication, QA schema and unpublished entry",
+        "Encrypted connection, real entry collection, grounded proposal, version-guarded write and provider readback; entry stays unpublished",
+        "Restoration preserves all original fixture fields"
+      ],
+      "failed": [],
+      "dependencies": [],
+      "unverified": [
+        "Hosted authorization, public rendering, indexing and rankings"
+      ]
+    },
+    "framer": {
+      "verified_at": "2026-10-24T02:18:09.963388+00:00",
+      "scope": "Real Framer SDK and local service; grounded manual proposal, no publishing",
+      "passed": [
+        "Official SDK authentication and fictional CMS fixture creation",
+        "Real SDK bridge collection, fact-grounded proposal, revision check, field update and readback preserve the unrelated marker",
+        "Restoration preserves the original mapped fields"
+      ],
+      "failed": [],
+      "unverified": [
+        "Hosted tenant flow, model inference, publication, indexing and rankings"
+      ]
+    },
+    "hosting": {
+      "verified_at": "2026-10-24T02:13:34.950218+00:00",
+      "scope": "Real provider deployment APIs and local connector service",
+      "passed": [
+        "vercel: encrypted connection and real deployment collection",
+        "netlify: encrypted connection and real deployment collection"
+      ],
+      "failed": [],
+      "dependencies": [
+        "Vercel public page redirects to provider SSO authentication; protected deployment remains protected.",
+        "Netlify public page returns HTTP 401 with its edge-access login redirect; site protection remains enabled."
+      ],
+      "unverified": [
+        "Native webhook delivery, hosted tenant UI and search outcomes"
+      ]
+    },
+    "wordpress": {
+      "verified_at": "2026-10-24T02:23:46.912350+00:00",
+      "scope": "Real local WordPress/WooCommerce, not a hosted account or plugin certification",
+      "passed": [
+        "Repeated real defect collection reuses the pending proposal",
+        "Real REST authentication, durable worker collection, missing-title proposal, field write, provider readback and live HTTPS verification",
+        "Restoration remains available after deployed verification and restores the actual HTML",
+        "Healthy theme title fallback produces no unnecessary proposal",
+        "Real WooCommerce authentication and product-summary write preserve price and inventory",
+        "Real WooCommerce rollback restores the summary and preserves inventory"
+      ],
+      "failed": [],
+      "dependencies": [
+        "WooCommerce summary edits have provider readback, but the agent has no product-summary live verification criterion"
+      ],
+      "versions": {
+        "wordpress": "7.1.3",
+        "images": {
+          "wordpress:php8.3-apache": "wordpress@sha256:d42f63cb89ad0eab272c4b393164e63830d0df270009907919f7dcce52b1a20b",
+          "wordpress:cli": "wordpress@sha256:661db880e953da051abcac6c0a769767b995a82cd52101c003ca7438dd427d7d",
+          "mariadb:11.8": "mariadb@sha256:f16d7a344413e519dff518f27bdb221388f84b0d274c97c4fb5f2cb0dc1b34fa"
+        },
+        "woocommerce": "11.2.1"
+      },
+      "before_after": {
+        "before_title": null,
+        "after_title": "Desk lamps",
+        "restored_title": null,
+        "provider_readback": true,
+        "live_https_verification": true,
+        "tls_verification_disabled": false
+      },
+      "runtime_credentials": "Private .data environment file; ephemeral target removed after QA",
+      "customer_site_modified": false
+    },
+    "shopify": {
+      "verified_at": "2026-10-24T02:29:17.713063+00:00",
+      "scope": "Real Shopify GraphQL 2026-10 and local service, fictional draft product",
+      "passed": [
+        "Scoped GraphQL authentication and fictional draft product setup",
+        "Encrypted connection, product collection, grounded proposal, SEO-only write and real readback preserve price, stock and draft status",
+        "Restoration preserves product business fields"
+      ],
+      "failed": [],
+      "unverified": [
+        "Merchant OAuth, deployed rendering, indexing and rankings"
+      ]
+    }
+  },
+  "issues_found": [
+    {
+      "id": "sanity-existing-draft-collection",
+      "severity": "high",
+      "status": "fixed_locally_and_live_retested",
+      "before": "Default API perspective hid authorized existing drafts.",
+      "fix": "Explicit raw perspective with regression coverage.",
+      "production_deployed": false
+    },
+    {
+      "id": "cms-fallback-title",
+      "severity": "high",
+      "status": "fixed_locally_and_live_retested",
+      "before": "An empty SEO override generated a proposal despite a healthy theme-rendered title.",
+      "fix": "Require a successful same-origin HTML observation with a missing title and no noindex directive. Preserve theme fallbacks.",
+      "production_deployed": false
+    },
+    {
+      "id": "cms-proposal-deduplication",
+      "severity": "medium",
+      "status": "fixed_locally_and_live_retested",
+      "before": "Fresh evidence identifiers created duplicate pending actions for unchanged content.",
+      "fix": "Action identity excludes transient evidence IDs; pending actions retain fresh evidence.",
+      "production_deployed": false
+    },
+    {
+      "id": "woocommerce-live-summary-proof",
+      "severity": "medium",
+      "status": "open_dependency",
+      "detail": "Product summary writes and restoration have actual provider readback, but the agent has no built-in project-specific product-summary live criterion."
+    },
+    {
+      "id": "shopify-seo-pair-replacement",
+      "severity": "high",
+      "status": "fixed_locally_and_live_retested",
+      "before": "A title-only SEO input cleared the existing description in the real development store.",
+      "fix": "Preserve the other observed SEO field explicitly when submitting the input pair.",
+      "production_deployed": false
+    },
+    {
+      "id": "shopify-title-fallback-verification",
+      "severity": "medium",
+      "status": "fixed_locally_and_live_retested",
+      "before": "A requested SEO title equal to the product title was returned as null, causing a false failed-write report.",
+      "fix": "Compare the effective product-title fallback and verify provider readback separately from deployed HTML.",
+      "production_deployed": false
+    }
+  ],
+  "account_provisioning": [
+    {
+      "platform": "ga4",
+      "status": "created",
+      "remaining": "New QA property has no data stream, traffic or OAuth API grant. Account creation is not reporting validation."
+    },
+    {
+      "platform": "search_console",
+      "status": "blocked",
+      "remaining": "Authorized identity has no verified properties. Needs owner-provided property access."
+    },
+    {
+      "platform": "shopify",
+      "status": "development_store_app_installed_and_api_tested",
+      "remaining": "Real product metadata edit/readback/restore passed. Merchant OAuth and deployed storefront proof remain unverified."
+    },
+    {
+      "platform": "sanity",
+      "status": "created_and_api_tested",
+      "remaining": "Provider automatically enabled a temporary Growth feature trial. No card or paid purchase. Long-term plan compatibility remains unverified."
+    },
+    {
+      "platform": "contentful",
+      "status": "created_and_api_tested",
+      "remaining": "Token organization authorization was required and completed. No entry published."
+    },
+    {
+      "platform": "framer",
+      "status": "created_and_api_tested",
+      "remaining": "Key is project-bound. Provider displayed expiry in 2031. Public rendering and auto-inference remain unverified."
+    },
+    {
+      "platform": "vercel",
+      "status": "created_and_api_tested",
+      "remaining": "Token limited to the disposable QA project with one-day expiry. Public page requires provider authentication."
+    },
+    {
+      "platform": "netlify",
+      "status": "created_and_api_tested",
+      "remaining": "Seven-day token. Deployed test site requires provider authentication."
+    },
+    {
+      "platform": "cloudflare",
+      "status": "account_access_confirmed",
+      "remaining": "No zone or zone analytics dataset. No DNS changes, token or live analytics certification."
+    },
+    {
+      "platform": "webflow",
+      "status": "blocked",
+      "remaining": "Signup human-verification challenge failed to render reliably. Account creation unconfirmed."
+    },
+    {
+      "platform": "wix",
+      "status": "skipped_at_user_request",
+      "remaining": "Signup reached CAPTCHA. Account creation unconfirmed."
+    },
+    {
+      "platform": "gitlab",
+      "status": "blocked",
+      "remaining": "Signup stopped at provider identity verification. Private repo and merge-request API not tested."
+    },
+    {
+      "platform": "bitbucket",
+      "status": "paused",
+      "remaining": "Existing identity was matched during Google login and an account email change was reported. User notified privately. No repository or API token created."
+    },
+    {
+      "platform": "squarespace",
+      "status": "blocked",
+      "remaining": "Official signup endpoint returned HTTP 403; no account or commerce API test."
+    },
+    {
+      "platform": "bing",
+      "status": "sign_in_started",
+      "remaining": "Verified property and API credential remain unconfirmed."
+    },
+    {
+      "platform": "business_profile",
+      "status": "not_tested",
+      "remaining": "Needs an authorized verified real location and approved API access. No fictional public business listing created."
+    },
+    {
+      "platform": "dataforseo",
+      "status": "not_tested",
+      "remaining": "Registration inspected only. No funded account or paid task executed."
+    },
+    {
+      "platform": "ai_visibility",
+      "status": "not_tested_in_this_run",
+      "remaining": "API engine experiments and consumer citations remain separate from account provisioning."
+    },
+    {
+      "platform": "server_logs",
+      "status": "no_external_account_required",
+      "remaining": "Controlled import tests only; no new real server log sample supplied."
+    },
+    {
+      "platform": "deployment",
+      "status": "no_external_account_required",
+      "remaining": "Controlled signed event tests only; native provider event delivery remains unverified."
+    }
+  ],
+  "limits": [
+    "No production customer content, repository, DNS, payment configuration or live tracking was changed.",
+    "Draft fixture setup uses provider APIs; adapter tests exercise collect/propose/apply/readback/restore through the actual local application service.",
+    "The tests establish connector behavior, not SEO improvement, model intelligence, indexing, rankings or commercial outcomes.",
+    "No paid plan, card, advertising purchase or API budget was added.",
+    "Native OAuth onboarding, refresh, webhook delivery, hosted workers and dashboard authorization need a separate production-tenant pass."
+  ],
+  "application_source_commit": "dc91151",
+  "production_release": "Local fixes are not deployed by this QA task.",
+  "validation": {
+    "python": {
+      "passed": 632,
+      "failed": 0,
+      "skipped": 21,
+      "notes": "Fourteen Firestore-emulator cases and seven Docker repair cases require their opt-in environments. These are not counted as passes in this run."
+    },
+    "ruff": "passed",
+    "mypy": "passed",
+    "production_frontend": "not_retested_no_frontend_changes",
+    "native_webhooks": "unverified"
+  },
+  "before_after": {
+    "wordpress": {
+      "before_title": null,
+      "after_title": "Desk lamps",
+      "restored_title": null,
+      "actual_https_html_checked": true
+    },
+    "shopify": {
+      "before_seo_title": "QA lamp",
+      "after_effective_seo_title": "Cedar workshop lamp",
+      "restored_seo_title": "QA lamp",
+      "description_preserved": true,
+      "price_and_stock_preserved": true,
+      "product_stayed_draft": true
+    },
+    "contentful": {
+      "before_seo_title": "",
+      "after_seo_title": "Cedar workshop",
+      "restored_seo_title": "",
+      "unrelated_marker_preserved": true,
+      "entry_stayed_unpublished": true
+    },
+    "sanity": {
+      "before_seo_title": "",
+      "after_seo_title": "Cedar workshop",
+      "restored_seo_title": "",
+      "concurrent_edit_blocked": true,
+      "published_counterpart_created": false
+    },
+    "framer": {
+      "before_seo_title": "",
+      "after_seo_title": "Cedar workshop",
+      "restored_seo_title": "",
+      "unrelated_marker_preserved": true,
+      "proposal_type": "Manual, supported by an explicit fictional trusted fact",
+      "published": false
+    }
+  },
+  "reproduce": [
+    {
+      "command": "uv run python scripts/qa_wordpress.py",
+      "network_required": true,
+      "private_output": ".data/live-connectors/wordpress/report.json"
+    },
+    {
+      "command": "uv run python scripts/qa_sanity.py",
+      "network_required": true,
+      "private_output": ".data/live-connectors/sanity/report.json"
+    },
+    {
+      "command": "uv run python scripts/qa_contentful.py",
+      "network_required": true,
+      "private_output": ".data/live-connectors/contentful/report.json"
+    },
+    {
+      "command": "uv run python scripts/qa_framer.py",
+      "network_required": true,
+      "private_output": ".data/live-connectors/framer/report.json"
+    },
+    {
+      "command": "uv run python scripts/qa_shopify.py",
+      "network_required": true,
+      "private_output": ".data/live-connectors/shopify/report.json"
+    },
+    {
+      "command": "uv run python scripts/qa_hosting.py",
+      "network_required": true,
+      "private_output": ".data/live-connectors/hosting/report.json"
+    }
+  ]
+}
