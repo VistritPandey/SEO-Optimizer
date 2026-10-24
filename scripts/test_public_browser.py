@@ -157,7 +157,7 @@ def main():
         page.get_by_text("What is free, and what comes next?", exact=True).click()
         assert (
             page.locator(".faq-section")
-            .get_by_text(re.compile("The open-source version is free"))
+            .get_by_text(re.compile("Personal, non-commercial local use is free"))
             .is_visible()
         )
         page.evaluate(
