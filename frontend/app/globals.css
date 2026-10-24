@@ -3793,3 +3793,60 @@ html[data-theme="light"] .demo-agent .demo-status {
   text-decoration: none;
   overflow-wrap: anywhere;
 }
+
+.connections-heading {
+  margin: 30px 0;
+}
+.connections-heading > .eyebrow {
+  display: block;
+}
+.connections-heading h1 {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 12px 0 16px;
+  font-size: clamp(32px, 5vw, 48px);
+}
+.connections-heading p {
+  max-width: 780px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.connection-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin: 28px 0;
+}
+.connection-metrics article {
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+.connection-metrics article > span {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+}
+.connection-metrics article > strong {
+  display: block;
+  margin: 10px 0;
+  line-height: 1.5;
+}
+.connection-metrics article > p {
+  margin: 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  color: var(--muted);
+}
+@media (max-width: 800px) {
+  .connection-metrics {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .connection-metrics article + article {
+    border-top: 0;
+  }
+}
