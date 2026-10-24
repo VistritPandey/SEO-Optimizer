@@ -12,7 +12,7 @@
   ],
   "automated": {
     "python": {
-      "passed": 635,
+      "passed": 636,
       "skipped": 21,
       "failed": 0,
       "skips": "Optional real-provider, Firestore-emulator and Docker integration environments were not enabled; see pytest output for individual reasons"
@@ -52,7 +52,9 @@
       "settings": "passed; last selected website restored and zero tablists"
     },
     "last_selection_overrides_first_website": "passed through real browser website switching",
-    "saved_settings_restored": "passed; all five non-secret Sanity fields match the saved configuration after navigating away"
+    "saved_settings_restored": "passed; all five non-secret Sanity fields match the saved configuration after navigating away",
+    "oauth_return_route": "passed deterministic API test; completed one-use state returns to the exact project/platform page and rejects replay",
+    "unknown_routes": "passed; unknown website section and unknown platform return HTTP 404"
   },
   "unverified": [
     "An actual installed writing extension was not exercised. A private development proxy did not establish client hydration, so its empty console is not counted as validation. Normal authenticated cold reload and interactions passed.",
@@ -62,8 +64,8 @@
   ],
   "deployment": {
     "status": "pending",
-    "build_id": "eaf6101d-04d8-4826-b892-1ab3af3cc665",
-    "source_commit": "a5c458b",
+    "build_id": "80c1aa69-3b48-4de3-baad-9a8ce80c14a6",
+    "source_commit": "bb95272",
     "previous_ready_revision": "your-optimiser-00042-2ct"
   },
   "hosted_account_qa": {
