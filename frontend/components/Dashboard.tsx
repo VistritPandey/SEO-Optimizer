@@ -17,8 +17,8 @@ import { WorkspaceSidebar } from "./WorkspaceSidebar";
 import { WorkspaceTour } from "./WorkspaceTour";
 import { ConnectorBrands } from "./ConnectorShowcase";
 import { PlatformLogo } from "./PlatformLogo";
-import { WorkspaceConnections } from "./WorkspaceConnections";
 import { m } from "motion/react";
+import connectionCatalog from "@/lib/connection-catalog.json";
 type Account = {
   email: string;
   tier: string;
@@ -32,7 +32,13 @@ type Account = {
   };
 };
 type Repository = { repository: string; branch: string; private: boolean };
-export function Dashboard() {
+export function Dashboard({
+  initialProjectId = "",
+  initialConnect = "",
+}: {
+  initialProjectId?: string;
+  initialConnect?: string;
+}) {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [account, setAccount] = useState<Account | null>(null);
@@ -73,6 +79,10 @@ export function Dashboard() {
     }
   }
   function home(connections = false) {
+    if (connections) {
+      router.push("/dashboard/connections");
+      return;
+    }
     selectedId.current = null;
     setSelected(null);
     setNewProject(false);
@@ -193,7 +203,14 @@ export function Dashboard() {
     setSelected(null);
     setNewProject(true);
     setPublishingPlatform(
-      ["vercel", "netlify"].includes(platform) ? "website" : platform,
+      platform === "github" ||
+        connectionCatalog.some(
+          (item) =>
+            item.platform === platform &&
+            ["Publishing", "Repositories"].includes(item.group),
+        )
+        ? platform
+        : "website",
     );
     setConnectorPlatform(
       platform === "github" || platform === "website" ? "" : platform,
@@ -228,6 +245,17 @@ export function Dashboard() {
       }
     });
   }
+  const initialRouteOpened = useRef(false);
+  useEffect(() => {
+    if (!account || initialRouteOpened.current) return;
+    initialRouteOpened.current = true;
+    if (initialConnect) beginProject(initialConnect);
+    else if (initialProjectId) {
+      const project = projects.find((item) => item.id === initialProjectId);
+      if (project) void choose(project);
+      else setError("This website is unavailable in your workspace.");
+    }
+  }, [account, projects, initialProjectId, initialConnect]);
   async function connect() {
     await action(async () => {
       const value = await api<{ url: string }>("github/connect", "POST");
@@ -290,6 +318,12 @@ export function Dashboard() {
         (publishingPlatform !== "github" && publishingPlatform !== "website"
           ? publishingPlatform
           : "");
+      if (connection) {
+        router.push(
+          `/dashboard/connections/${connection}?project=${encodeURIComponent(value.id)}`,
+        );
+        return;
+      }
       await choose(value, connection);
       setNewProject(false);
       setNotice(
@@ -315,7 +349,11 @@ export function Dashboard() {
         onSelect={(project) => {
           void choose(project);
         }}
-        onTab={setTab}
+        onTab={(value) => {
+          if (value === "connectors")
+            router.push(`/dashboard/connections?project=${selected?.id || ""}`);
+          else setTab(value);
+        }}
         onTour={() => setTourOpen(true)}
         onSignOut={() => {
           void action(async () => {
@@ -720,7 +758,13 @@ export function Dashboard() {
                 project={selected}
                 activity={activity}
                 tab={tab}
-                onTab={setTab}
+                onTab={(value) => {
+                  if (value === "connectors")
+                    router.push(
+                      `/dashboard/connections?project=${selected?.id || ""}`,
+                    );
+                  else setTab(value);
+                }}
               />
             )}
             {tab === "connectors" && (
@@ -963,79 +1007,15 @@ export function Dashboard() {
                 </div>
               )}
             </section>
-            <WorkspaceConnections
-              projects={projects}
-              onOpen={(project, platform) => {
-                void choose(project, platform);
-              }}
-              onCreate={beginProject}
-              onGitHub={() => {
-                home();
-                setHomeAnchor("github-connection");
-              }}
-            />
             <section className="panel">
-              <h2 id="github-connection">GitHub connection</h2>
-              {account.github_connection?.status === "connected" ? (
-                <>
-                  <p>
-                    Connected
-                    {account.github_connection.login
-                      ? ` as ${account.github_connection.login}`
-                      : ""}
-                    . Only repositories selected in the GitHub App installation
-                    are available.
-                  </p>
-                  <button className="text-link" onClick={() => beginProject()}>
-                    Connect another website ↗
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p>
-                    {account.github_connection?.status === "reconnect_required"
-                      ? "Your GitHub authorisation has expired. Reconnect before the agent can access your repositories."
-                      : "No GitHub account is connected yet. Connect your account and choose the repositories this workspace can access."}
-                  </p>
-                  <button
-                    className="button secondary"
-                    disabled={busy}
-                    onClick={connect}
-                  >
-                    {account.github_connection?.status === "reconnect_required"
-                      ? "Reconnect GitHub ↗"
-                      : "Connect GitHub account ↗"}
-                  </button>
-                </>
-              )}
-              {account.github_connection &&
-                account.github_connection.status !== "not_connected" && (
-                  <details>
-                    <summary>Disconnect GitHub</summary>
-                    <p>
-                      This pauses connected projects and removes their active
-                      installation credentials from this workspace. Existing
-                      findings and pull requests remain. You can reconnect
-                      later.
-                    </p>
-                    <button
-                      className="text-link"
-                      disabled={busy}
-                      onClick={() =>
-                        action(async () => {
-                          await api("github/connect", "DELETE");
-                          setRepos([]);
-                          await refresh();
-                          setNotice(
-                            "GitHub disconnected; repository projects paused.",
-                          );
-                        })
-                      }
-                    >
-                      Disconnect and pause projects
-                    </button>
-                  </details>
-                )}
+              <h2>Your connected tools</h2>
+              <p>
+                Manage your publishing platforms, search data and repository
+                access from a dedicated workspace.
+              </p>
+              <Link className="button secondary" href="/dashboard/connections">
+                View connections ↗
+              </Link>
             </section>
           </>
         )}
