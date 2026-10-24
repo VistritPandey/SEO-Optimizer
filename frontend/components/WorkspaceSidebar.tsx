@@ -52,7 +52,7 @@ export function WorkspaceSidebar({
   selected,
   tab,
   email,
-  connection,
+  connectionsOpen = false,
   findings,
   onHome,
   onConnect,
@@ -65,7 +65,7 @@ export function WorkspaceSidebar({
   selected: Project | null;
   tab: string;
   email: string;
-  connection?: string;
+  connectionsOpen?: boolean;
   findings: number;
   onHome: (connections?: boolean) => void;
   onConnect: () => void;
@@ -114,25 +114,18 @@ export function WorkspaceSidebar({
         <nav aria-label="Workspace navigation" className="sidebar-section">
           <span className="eyebrow">WORKSPACE</span>
           <button
-            className={`nav-item ${!selected ? "active" : ""}`}
+            className={`nav-item ${!selected && !connectionsOpen ? "active" : ""}`}
             onClick={() => navigate(() => onHome())}
           >
             <Icon name="overview" />
             All websites
           </button>
           <button
-            className="nav-item"
+            className={`nav-item ${connectionsOpen ? "active" : ""}`}
             onClick={() => navigate(() => onHome(true))}
           >
-            <PlatformLogo platform="github" size={17} />
-            GitHub connection
-            <span
-              role="img"
-              className={`sidebar-connection-dot ${connection === "connected" ? "connected" : ""}`}
-              aria-label={
-                connection === "connected" ? "Connected" : "Not connected"
-              }
-            />
+            <Icon name="connection" />
+            Connections
           </button>
         </nav>
         <nav
