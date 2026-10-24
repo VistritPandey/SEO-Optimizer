@@ -57,6 +57,18 @@ def credentials(name: str) -> tuple[str, str]:
     return client, secret
 
 
+def availability(platform: Platform) -> dict[str, bool]:
+    """Expose connection capabilities without exposing operator credentials."""
+    name = "google" if platform in GOOGLE_SCOPES else platform.value
+    supported = name in OAUTH
+    prefix = "OPT_CONNECTOR_" + name.upper()
+    return {
+        "oauth_supported": supported,
+        "oauth_available": supported
+        and bool(os.getenv(prefix + "_CLIENT_ID") and os.getenv(prefix + "_CLIENT_SECRET")),
+    }
+
+
 def begin(store: Store, tenant: str, project: str, platform: Platform) -> str:
     name = provider(platform)
     client, _ = credentials(name)
