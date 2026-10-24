@@ -27,7 +27,7 @@ const questions = [
   ],
   [
     "What is free, and what comes next?",
-    "The open-source version is free to run with your own setup. Hosted early access currently includes up to three connected websites and 100 audit and follow-up jobs per month. Paid hosted plans may follow; using the current free service does not sign you up for a charge.",
+    "Personal, non-commercial local use is free under the repository’s restricted licence. Business use, redistribution, reuse in other products and operating your own hosted service require written permission from Your Optimiser through our contact page. Official hosted early access currently includes up to three connected websites and 100 audit and follow-up jobs per month. Paid hosted plans may follow; using the current free service does not sign you up for a charge.",
   ],
   [
     "Which website platforms can I connect?",
@@ -338,7 +338,7 @@ export default function Home() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Prefer your own setup? The open-source version is free ↗
+              Free personal local use. View the licence ↗
             </a>
           </div>
           <article className="price-card">
