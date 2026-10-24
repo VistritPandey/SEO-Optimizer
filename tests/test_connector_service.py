@@ -542,6 +542,54 @@ def test_private_pages_and_previews_never_receive_automatic_title_proposals(publ
     assert service.auto_propose(Platform.WORDPRESS, result["evidence_id"]) == []
 
 
+def test_repeat_collection_reuses_pending_proposal_and_refreshes_evidence(publisher):
+    service, native, _, _ = publisher
+    first = proposal_for(service)
+    first_evidence = first["evidence_ids"]
+    for _ in range(7):
+        repeated = proposal_for(service)
+        assert repeated["id"] == first["id"]
+    assert repeated["evidence_ids"] != first_evidence
+    state, _ = service.state(Platform.WORDPRESS)
+    assert len(state["proposals"]) == 1
+    assert set(repeated["evidence_ids"]) <= {e["id"] for e in state["evidence"]}
+    applied = service.publish(Platform.WORDPRESS, repeated["id"])
+    assert applied["verification"]["provider_readback"]
+    assert native["meta"]["seo_title"] == "Desk lamps"
+
+
+@pytest.mark.parametrize(
+    "html,status,headers,expected",
+    [
+        ("<title>Theme title</title><h1>Desk lamps</h1>", 200, {}, False),
+        ('<meta name="robots" content="noindex"><h1>Desk lamps</h1>', 200, {}, False),
+        ("<h1>Desk lamps</h1>", 200, {"X-Robots-Tag": "noindex"}, False),
+        ("<h1>Desk lamps</h1>", 503, {}, False),
+        ("<h1>Desk lamps</h1>", 200, {}, True),
+    ],
+)
+def test_wordpress_automatic_title_requires_live_defect_proof(
+    publisher, monkeypatch, html, status, headers, expected
+):
+    service, _, _, _ = publisher
+    monkeypatch.setattr(
+        "seo_optimizer.crawler.Crawler.fetch",
+        lambda self, url: httpx.Response(
+            status,
+            text=html,
+            headers={"Content-Type": "text/html", **headers},
+            request=httpx.Request("GET", url),
+        ),
+    )
+    result = service.collect(Platform.WORDPRESS, CollectionRequest())
+    proposals = service.auto_propose(Platform.WORDPRESS, result["evidence_id"])
+    assert bool(proposals) is expected
+    state, _ = service.state(Platform.WORDPRESS)
+    proof = state["evidence"][-1]["live_observations"][0]
+    assert proof["status_code"] == status
+    assert proof["missing_title_confirmed"] is expected
+
+
 def test_google_business_hours_require_facts_and_restore_structured_values(workspace):
     from seo_optimizer.contracts import TrustedFact
 
