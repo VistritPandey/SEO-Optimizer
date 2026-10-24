@@ -34,7 +34,7 @@ type Evidence = {
     records: { id: string; kind: string; fields: Record<string, unknown> }[];
   };
 };
-type Connection = {
+export type Connection = {
   platform: string;
   definition: Definition;
   connected: boolean;
@@ -73,9 +73,11 @@ function external(value?: string) {
 export function Connectors({
   project,
   initialPlatform = "search_console",
+  lockedPlatform = false,
 }: {
   project: Project;
   initialPlatform?: string;
+  lockedPlatform?: boolean;
 }) {
   const [data, setData] = useState<Connections | null>(null);
   const [platform, setPlatform] = useState(initialPlatform);
@@ -216,7 +218,7 @@ export function Connectors({
         </p>
       )}
       {!data && <p role="status">Loading available platforms…</p>}
-      {data && (
+      {data && !lockedPlatform && (
         <label className="panel connector-mobile-picker">
           Choose a platform
           <select
@@ -242,35 +244,37 @@ export function Connectors({
           </select>
         </label>
       )}
-      <div className="connector-layout">
-        <nav
-          className="panel connector-directory"
-          aria-label="Connector platforms"
-        >
-          {groups.map((group) => (
-            <div key={group}>
-              <h3>{group}</h3>
-              {data?.connections
-                .filter((item) => item.definition.group === group)
-                .map((item) => (
-                  <button
-                    key={item.platform}
-                    type="button"
-                    aria-pressed={item.platform === platform}
-                    onClick={() => choose(item)}
-                  >
-                    <span className="platform-lockup">
-                      <PlatformLogo platform={item.platform} size={20} />
-                      {item.definition.name}
-                    </span>
-                    <small>
-                      {item.connected ? label(item.status) : "Not connected"}
-                    </small>
-                  </button>
-                ))}
-            </div>
-          ))}
-        </nav>
+      <div className={`connector-layout ${lockedPlatform ? "is-focused" : ""}`}>
+        {!lockedPlatform && (
+          <nav
+            className="panel connector-directory"
+            aria-label="Connector platforms"
+          >
+            {groups.map((group) => (
+              <div key={group}>
+                <h3>{group}</h3>
+                {data?.connections
+                  .filter((item) => item.definition.group === group)
+                  .map((item) => (
+                    <button
+                      key={item.platform}
+                      type="button"
+                      aria-pressed={item.platform === platform}
+                      onClick={() => choose(item)}
+                    >
+                      <span className="platform-lockup">
+                        <PlatformLogo platform={item.platform} size={20} />
+                        {item.definition.name}
+                      </span>
+                      <small>
+                        {item.connected ? label(item.status) : "Not connected"}
+                      </small>
+                    </button>
+                  ))}
+              </div>
+            ))}
+          </nav>
+        )}
         {selected && (
           <div className="connector-detail">
             <form
