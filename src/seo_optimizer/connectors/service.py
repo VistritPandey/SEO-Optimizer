@@ -442,9 +442,18 @@ class ConnectorService:
             for k, v in value.changes.items()
         ):
             raise ConnectorError("no_change", "No change is needed")
-        identity = digest([value.model_dump(), current.model_dump()])[:32]
+        identity = digest(
+            [value.model_dump(exclude={"evidence_ids", "reason"}), current.model_dump()]
+        )[:32]
         existing = next((x for x in state.get("proposals", []) if x["id"] == identity), None)
         if existing:
+            if existing["status"] == "proposed":
+                # Collection IDs identify observations, not different actions.
+                # Keep an unchanged pending action attached to fresh evidence,
+                # including after older observations leave the bounded history.
+                existing["evidence_ids"] = value.evidence_ids
+                existing["created_at"] = time.time()
+                self.save(p, state, version)
             return {k: v for k, v in existing.items() if k not in {"before", "after"}}
         proposal = {
             "id": identity,
@@ -676,6 +685,10 @@ class ConnectorService:
                 continue
             title = plain(fields.get("title", ""))
             if "seo_title" in fields and not fields["seo_title"] and title and len(title) <= 160:
+                if p == Platform.WORDPRESS and not self.wordpress_title_missing(
+                    p, evidence_id, row
+                ):
+                    continue
                 created.append(
                     self.propose(
                         p,
@@ -691,6 +704,55 @@ class ConnectorService:
             if state["config"].get("auto_apply") and self.spec.auto_fix:
                 self.publish(p, proposal["id"])
         return created
+
+    def wordpress_title_missing(self, p: Platform, evidence_id: str, row: dict[str, Any]) -> bool:
+        """An empty plugin override alone is not a missing rendered title."""
+        from seo_optimizer.audit import PageParser
+        from seo_optimizer.crawler import Crawler, CrawlError
+
+        observation: dict[str, Any] = {
+            "url": row.get("url", ""),
+            "collected_at": utc_now().isoformat(),
+            "missing_title_confirmed": False,
+        }
+        crawler = Crawler(
+            str(self.spec.website_url), self.store.settings.allow_private_network, self.client
+        )
+        try:
+            if not observation["url"]:
+                raise CrawlError("A canonical page URL is required")
+            response = crawler.fetch(observation["url"])
+            parser = PageParser()
+            parser.feed(response.text)
+            directives = [*parser.robots, *response.headers.get_list("x-robots-tag")]
+            title = "".join(parser.title).strip()
+            html = "text/html" in response.headers.get("content-type", "").lower()
+            missing = (
+                response.status_code == 200
+                and html
+                and not title
+                and not any(
+                    re.search(r"\b(?:noindex|none)\b", directive, re.I) for directive in directives
+                )
+            )
+            observation.update(
+                status_code=response.status_code,
+                title=title[:1000],
+                robots=directives[:20],
+                missing_title_confirmed=missing,
+                content_sha256=hashlib.sha256(response.content).hexdigest(),
+            )
+        except (CrawlError, httpx.HTTPError):
+            observation["dependency"] = "Live title evidence could not be collected safely"
+        finally:
+            crawler.close()
+        state, version = self.state(p)
+        evidence = next(e for e in state["evidence"] if e["id"] == evidence_id)
+        observations = evidence.setdefault("live_observations", [])
+        observations.append(observation)
+        del observations[: -self.spec.max_files_changed]
+        self.save(p, state, version)
+        return bool(observation["missing_title_confirmed"])
 
     def import_records(self, p: Platform, value: ImportRequest) -> dict[str, Any]:
         from seo_optimizer.connectors.imports import normalize_import
