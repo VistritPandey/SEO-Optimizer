@@ -15,6 +15,8 @@ import { AgentPreferences } from "./AgentPreferences";
 import { Connectors } from "./Connectors";
 import { WorkspaceSidebar } from "./WorkspaceSidebar";
 import { WorkspaceTour } from "./WorkspaceTour";
+import { ConnectorBrands } from "./ConnectorShowcase";
+import { PlatformLogo } from "./PlatformLogo";
 import { m } from "motion/react";
 type Account = {
   email: string;
@@ -467,6 +469,7 @@ export function Dashboard() {
                 Connect your website first, then grant access to its publishing
                 platform and search evidence.
               </p>
+              <ConnectorBrands />
             </section>
             <section className="panel">
               <label>
@@ -632,7 +635,15 @@ export function Dashboard() {
                     : "Monitoring paused"}
                 </span>
               </div>
-              <h1>{selected.spec.name}</h1>
+              <h1 className="platform-lockup">
+                <PlatformLogo
+                  platform={String(
+                    selected.spec.publishing_platform || "github",
+                  )}
+                  size={32}
+                />
+                {selected.spec.name}
+              </h1>
               <p className="project-origin">{selected.spec.website_url}</p>
               <p className="project-repository">
                 {selected.spec.repository} <span>·</span>{" "}
@@ -889,7 +900,15 @@ export function Dashboard() {
                     <span className="pill">
                       {project.spec.enabled ? "Monitoring" : "Paused"}
                     </span>
-                    <h3>{project.spec.name}</h3>
+                    <h3 className="platform-lockup">
+                      <PlatformLogo
+                        platform={String(
+                          project.spec.publishing_platform || "github",
+                        )}
+                        size={23}
+                      />
+                      {project.spec.name}
+                    </h3>
                     <p>{project.spec.website_url}</p>
                     <div className="project-health">
                       <span>OBSERVED HEALTH</span>
@@ -908,8 +927,8 @@ export function Dashboard() {
                 <div className="empty">
                   <h3>A good place to start.</h3>
                   <p>
-                    Connect a website and repository. Your first audit will
-                    start automatically.
+                    Connect your website and publishing platform. Your first
+                    audit will start automatically.
                   </p>
                   <button
                     className="button"
