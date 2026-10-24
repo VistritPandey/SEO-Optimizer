@@ -133,6 +133,38 @@ def main() -> int:
                     restored = service.publish(Platform.SANITY, proposals[0]["id"], rollback=True)
                     assert restored["status"] == "rolled_back" and native()["seoTitle"] == ""
                     report["passed"].append("Draft restoration preserves unrelated content")
+                    fresh = service.collect(
+                        Platform.SANITY, CollectionRequest(resource_id=document_id)
+                    )
+                    stale_proposal = service.auto_propose(Platform.SANITY, fresh["evidence_id"])[0]
+                    edited = client.post(
+                        base + "/mutate/" + dataset,
+                        json={
+                            "mutations": [
+                                {
+                                    "patch": {
+                                        "id": document_id,
+                                        "ifRevisionID": native()["_rev"],
+                                        "set": {"qaMarker": "concurrent-editor-change"},
+                                    }
+                                }
+                            ]
+                        },
+                    )
+                    assert edited.status_code == 200
+                    try:
+                        service.publish(Platform.SANITY, stale_proposal["id"])
+                    except ConnectorError as conflict:
+                        assert conflict.code == "conflict"
+                    else:
+                        raise AssertionError("A stale draft proposal was applied")
+                    concurrent = native()
+                    assert concurrent["seoTitle"] == ""
+                    assert concurrent["qaMarker"] == "concurrent-editor-change"
+                    report["passed"].append(
+                        "A real intervening draft edit blocks stale application "
+                        "and preserves the concurrent editor's value"
+                    )
                 except ConnectorError as error:
                     report["failed"].append(
                         {
