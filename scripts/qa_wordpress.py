@@ -192,6 +192,15 @@ def main() -> int:
         "dependencies": [],
         "versions": {},
     }
+    report["versions"]["images"] = {
+        image: json.loads(
+            subprocess.check_output(
+                ["docker", "image", "inspect", image, "--format", "{{json .RepoDigests}}"],
+                text=True,
+            )
+        )[0]
+        for image in ["wordpress:php8.3-apache", "wordpress:cli", "mariadb:11.8"]
+    }
     server = None
     old_ca = os.environ.get("SSL_CERT_FILE")
     try:
@@ -381,7 +390,16 @@ def main() -> int:
                 result = queue(f"/proposals/{proposal['id']}/verify")
                 assert result["proposal"]["status"] == "deployed_verified"
                 after = live.get(base + "/desk-lamps/")
+                private_file(RUNTIME / "after.html", after.text)
                 assert "<title>Desk lamps</title>" in after.text
+                report["before_after"] = {
+                    "before_title": None,
+                    "after_title": "Desk lamps",
+                    "restored_title": None,
+                    "provider_readback": True,
+                    "live_https_verification": True,
+                    "tls_verification_disabled": False,
+                }
                 report["passed"].append(
                     "Real REST authentication, durable worker collection, missing-title proposal, "
                     "field write, provider readback and live HTTPS verification"
@@ -412,6 +430,21 @@ def main() -> int:
                 else:
                     report["passed"].append(
                         "Healthy theme title fallback produces no unnecessary proposal"
+                    )
+                repeated = queue("/collect", {"resource_id": healthy})
+                original_ids = {row["id"] for row in result["proposals"]}
+                repeated_ids = {row["id"] for row in repeated["proposals"]}
+                if original_ids and repeated_ids and original_ids != repeated_ids:
+                    report["failed"].append(
+                        {
+                            "id": "cms-proposal-deduplication",
+                            "severity": "medium",
+                            "expected": "Repeat collection of unchanged content reuses the "
+                            "same pending proposal",
+                            "observed": "A fresh evidence ID caused a second pending proposal "
+                            "for the same unchanged resource and change",
+                            "writes_performed": 0,
+                        }
                     )
 
                 print("Installing WooCommerce from the official plugin registry", flush=True)
