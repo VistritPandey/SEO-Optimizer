@@ -71,12 +71,15 @@ class ConnectorService:
             raise ConnectorError("conflict", "Connection changed; reload and retry")
 
     def public(self, platform: Platform) -> dict[str, Any]:
+        from seo_optimizer.connectors.oauth import availability
+
         state, _ = self.state(platform)
         config = state.get("config", {})
         public = {k: v for k, v in config.items() if k != "credentials"}
         return {
             "platform": platform.value,
             "definition": DEFINITIONS[platform.value],
+            "authorization": availability(platform),
             "connected": bool(config),
             "config": public,
             "credential_fields": list(config.get("credentials", {})),
