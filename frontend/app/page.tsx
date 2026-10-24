@@ -1,14 +1,13 @@
 import Link from "next/link";
+import "./home.css";
 import { Workflow } from "@/components/Workflow";
-import { HeroWorkflow } from "@/components/HeroWorkflow";
+import { ProductShowcase } from "@/components/ProductShowcase";
+import { HeroAction } from "@/components/HeroAction";
 import { WalkthroughVideo } from "@/components/WalkthroughVideo";
 import { SiteHeader, SiteFooter } from "@/components/SiteChrome";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/lib/site";
-import {
-  ConnectorBrands,
-  ConnectorShowcase,
-} from "@/components/ConnectorShowcase";
+import { ConnectorShowcase } from "@/components/ConnectorShowcase";
 
 export const metadata = { alternates: { canonical: "/" } };
 
@@ -88,7 +87,22 @@ const structuredData = {
 export default function Home() {
   return (
     <>
-      <SiteHeader />
+      <div className="home-art" aria-hidden="true">
+        <picture>
+          <source srcSet="/art/search-garden.avif" type="image/avif" />
+          <img
+            src="/art/search-garden.webp"
+            alt=""
+            width={1536}
+            height={1024}
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
+      </div>
+      <div className="home-header">
+        <SiteHeader />
+      </div>
       <main id="main-content">
         <script
           type="application/ld+json"
@@ -96,15 +110,15 @@ export default function Home() {
             __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
           }}
         />
-        <section className="hero">
-          <div>
+        <section className="hero home-hero">
+          <div className="home-hero-copy">
             <span className="eyebrow">
-              CONTINUOUS CARE. EVIDENCE BEFORE ACTION.
+              A LITTLE CARE. A LOT MORE POSSIBILITY.
             </span>
             <h1>
-              Your autonomous
+              Your <em>autonomous</em>
               <br />
-              <em>SEO agent.</em>
+              <em>SEO</em> agent.
             </h1>
             <p>
               Your website keeps changing. Your Optimiser watches the updates,
@@ -112,9 +126,7 @@ export default function Home() {
               checks the result after deployment.
             </p>
             <div className="actions">
-              <a className="button" href="#how">
-                Try the interactive demo ↓
-              </a>
+              <HeroAction />
               <Link
                 className="text-link"
                 href="/login?mode=register"
@@ -126,15 +138,8 @@ export default function Home() {
             <small>
               Start with a free workspace. Connect only the access you choose.
             </small>
-            <ConnectorBrands />
           </div>
-          <HeroWorkflow />
-        </section>
-        <section className="promise" aria-label="The ongoing process">
-          <span>NOTICE THE CHANGE</span>
-          <span>CHECK WHAT MATTERS</span>
-          <span>FIX WHAT’S CONFIRMED</span>
-          <span>KEEP WATCHING</span>
+          <ProductShowcase />
         </section>
         <ConnectorShowcase />
         <section
