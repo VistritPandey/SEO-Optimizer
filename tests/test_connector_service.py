@@ -728,3 +728,20 @@ def test_portable_worker_state_is_project_scoped_and_not_a_frontend_endpoint(wor
             ).status_code
             == 404
         )
+
+
+def test_customer_platform_directory_matches_supported_catalog():
+    from pathlib import Path
+
+    from seo_optimizer.connectors.catalog import catalog
+
+    path = Path(__file__).resolve().parents[1] / "frontend/lib/connection-catalog.json"
+    expected = [
+        {
+            key: value
+            for key, value in item.items()
+            if key in {"platform", "name", "group", "note", "write"}
+        }
+        for item in catalog()
+    ]
+    assert json.loads(path.read_text()) == expected
