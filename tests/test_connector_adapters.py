@@ -56,8 +56,16 @@ def cms(monkeypatch):
             return httpx.Response(200, json=row if path.endswith("/1") else [row])
         if host.endswith("myshopify.com"):
             if "mutation" in payload.get("query", ""):
+                # Real 2026-10 API QA: SEO input replaces the pair, rather
+                # than merging an omitted description. Select the SEO result
+                # as well as the ID before performing independent readback.
+                seo = payload["variables"]["product"]["seo"]
+                resolved = "seo { title description }" in payload["query"]
                 fields.update(
-                    {"seo_" + k: v for k, v in payload["variables"]["product"]["seo"].items()}
+                    {
+                        "seo_" + key: seo.get(key, "") if resolved else ""
+                        for key in ["title", "description"]
+                    }
                 )
                 return httpx.Response(
                     200,
