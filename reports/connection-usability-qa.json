@@ -2,22 +2,23 @@
   "verified_on": "2026-10-24",
   "scope": "Dashboard connection discovery, setup selection, OAuth configuration visibility and extension body-attribute tolerance",
   "changes": [
-    "Workspace Connections entry and nine platform setup tiles",
-    "Platform tiles open the selected website and platform directly",
+    "Dedicated /dashboard/connections directory with configured accounts and all 22 non-GitHub platform scopes",
+    "Individual /dashboard/connections/[platform] pages with website selection, access setup, collection status, evidence and repair controls",
+    "Standalone Overview, Findings, Audits, Pages, Research and Settings routes; shared sidebar replaces duplicate tab bar",
+    "Last accessible website selection is stored per Firebase identity; first website is the fallback; empty and explicit-unavailable states are distinct",
     "Saved configuration initializes the setup form once, without polling replacing edits",
-    "Scoped credential fields open for new manual connections",
     "OAuth controls require both operator client credentials; capability response contains only booleans",
-    "Only body-level hydration attributes are tolerated; descendant checks remain enabled"
+    "Body-level extension attribute mismatches are tolerated; descendant hydration checks remain enabled"
   ],
   "automated": {
     "python": {
-      "passed": 634,
+      "passed": 635,
       "skipped": 21,
       "failed": 0,
       "skips": "Optional real-provider, Firestore-emulator and Docker integration environments were not enabled; see pytest output for individual reasons"
     },
     "frontend": {
-      "passed": 7,
+      "passed": 10,
       "failed": 0
     },
     "python_types": {
@@ -30,25 +31,96 @@
     "frontend_format": "passed"
   },
   "browser": {
-    "normal_dashboard_reload": "passed; no captured console errors, authenticated workspace and interactions loaded",
-    "global_navigation": "passed; Connections opens the platform chooser",
+    "normal_dashboard_reload": "passed; zero new console errors after a timestamped cold reload; older transient development edit errors excluded",
+    "global_navigation": "passed; Connections opens a separate route",
     "platform_cards": 9,
     "shopify_setup": "passed; requested platform selected and access fields expanded",
     "sanity_setup": "passed; platform switching shows its mapped fields",
     "contentful_setup": "passed; direct tile selects Contentful and expands access fields",
     "unconfigured_oauth_buttons": "absent, as required",
     "observed_layout_width": 565,
-    "layout": "Two-column connection cards observed without page overflow at the measured width",
-    "mutations": "No provider credentials entered, connections saved, audits triggered or project policies changed during these UI checks"
+    "layout": "Connections directory and focused service metrics inspected at the measured 565px width without horizontal overflow",
+    "mutations": "Created a dedicated audit-only QA website in the user-designated production workspace. Saved six existing QA credential sets through authenticated UI and normal hosted HTTPS API; queued real worker collection jobs. Credentials are retained as requested. No provider content writes, publication, price/inventory changes or existing project-policy changes.",
+    "platform_directory_links": 22,
+    "configured_services_shown": 7,
+    "standalone_website_pages": {
+      "overview": "passed; last selected website restored and zero tablists",
+      "findings": "passed; last selected website restored and zero tablists",
+      "audits": "passed; last selected website restored and zero tablists",
+      "pages": "passed; last selected website restored and zero tablists",
+      "research": "passed; last selected website restored and zero tablists",
+      "settings": "passed; last selected website restored and zero tablists"
+    },
+    "last_selection_overrides_first_website": "passed through real browser website switching",
+    "saved_settings_restored": "passed; all five non-secret Sanity fields match the saved configuration after navigating away"
   },
   "unverified": [
-    "A real installed writing extension was not exercised. The reported attributes identify extension DOM changes; body-level handling is implemented. A private development proxy did not establish client hydration, so its empty console is not counted as validation.",
-    "Requested 390px browser viewport override did not change the measured native tab width. No 390px pass is claimed.",
-    "OAuth availability reflects configured client credentials, not completed provider app review or a successful grant. New provider OAuth grants were not created."
+    "An actual installed writing extension was not exercised. A private development proxy did not establish client hydration, so its empty console is not counted as validation. Normal authenticated cold reload and interactions passed.",
+    "The requested 390px viewport override did not change the measured native tab width; no 390px pass is claimed.",
+    "Provider OAuth registration/review and new grants remain unverified. Configuration booleans indicate only the presence of both client credentials.",
+    "The no-website selection and inaccessible-website rules pass deterministic tests. This run did not create another empty production identity to exercise that empty state live."
   ],
   "deployment": {
     "status": "pending",
-    "build_id": "ab4cc7b8-7b3a-4cc9-a190-5d07a378a31d",
-    "source_commit": "b7924a0"
+    "build_id": "eaf6101d-04d8-4826-b892-1ab3af3cc665",
+    "source_commit": "a5c458b",
+    "previous_ready_revision": "your-optimiser-00042-2ct"
+  },
+  "hosted_account_qa": {
+    "scope": "Designated production test workspace, accessed through the local frontend and production API/worker",
+    "website": "Connector QA",
+    "connections": [
+      {
+        "platform": "shopify",
+        "status": "connected",
+        "collection_timestamp_visible": true,
+        "saved_evidence_present": true,
+        "secrets_returned_in_form": false,
+        "writes": "disabled"
+      },
+      {
+        "platform": "sanity",
+        "status": "connected",
+        "collection_timestamp_visible": true,
+        "saved_evidence_present": true,
+        "secrets_returned_in_form": false,
+        "writes": "disabled"
+      },
+      {
+        "platform": "contentful",
+        "status": "connected",
+        "collection_timestamp_visible": true,
+        "saved_evidence_present": true,
+        "secrets_returned_in_form": false,
+        "writes": "disabled"
+      },
+      {
+        "platform": "framer",
+        "status": "connected",
+        "collection_timestamp_visible": true,
+        "saved_evidence_present": true,
+        "secrets_returned_in_form": false,
+        "writes": "disabled"
+      },
+      {
+        "platform": "vercel",
+        "status": "connected",
+        "collection_timestamp_visible": true,
+        "saved_evidence_present": true,
+        "secrets_returned_in_form": false,
+        "writes": "read-only connector"
+      },
+      {
+        "platform": "netlify",
+        "status": "connected",
+        "collection_timestamp_visible": true,
+        "saved_evidence_present": true,
+        "secrets_returned_in_form": false,
+        "writes": "read-only connector"
+      }
+    ],
+    "existing_github_connection": "retained",
+    "other_platforms": "Listed for setup. No usable credentials or required property/site authorization were available for the remaining platforms; no fake configured connections were created. Local-only CMS fixtures were not exposed to the hosted service.",
+    "claim_limit": "This run verifies authenticated setup, real provider collection, stored evidence and UI readback. It does not repeat autonomous AI repair, publication, deployment verification, indexing or rankings for every connector."
   }
 }
