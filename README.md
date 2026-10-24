@@ -6,6 +6,11 @@
 
 [Website](https://youroptimiser.com) · [How it works](https://youroptimiser.com/how-it-works) · [GitHub](https://github.com/YourOptimiser/your-optimiser)
 
+**Free for personal, non-commercial local use only.** Commercial or business use,
+hosting a service, redistribution and reuse in other products require separate written
+permission from Your Optimiser. [Read the licence](LICENSE) or
+[contact the team about licensing](https://youroptimiser.com/contact).
+
 Your Optimiser is an autonomous SEO agent that checks website changes, identifies supported SEO issues, prepares focused
 fixes and verifies the served result. Healthy updates do not need an edit. GitHub is the
 hosted repository integration; your team reviews proposed pull requests.
@@ -54,9 +59,15 @@ The launcher installs the Python runtime and dependencies, then guides you throu
 a local project, choosing an inference endpoint and scheduling checks. Automatic edits start
 disabled. Your credentials stay in your installation; they do not belong in Git.
 
-The open-source version can run locally with your own configuration. The hosted application
-has its own account, usage limits and service terms. Future paid hosted plans will be offered
-separately; they do not change the repository's software licence.
+The source-available local version uses the [Your Optimiser Personal Local Use License](LICENSE).
+It permits an individual's personal, non-commercial local installation and private configuration
+changes. It does not permit business use, resale, redistribution, reuse in other projects or
+operating a hosted service without written permission. The official hosted application has its
+own account, usage limits and [service terms](https://youroptimiser.com/terms).
+
+Earlier versions distributed under MIT retain their previously granted permissions;
+the [historical MIT notice](LICENSES/Legacy-MIT.txt) is preserved. Third-party dependencies
+remain under their own licences.
 
 [Local setup](docs/local-setup.md) · [Single-service Cloud Run deployment](docs/single-service-deploy.md) · [Hosted configuration](docs/hosted-setup.md)
 
