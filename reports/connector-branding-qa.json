@@ -22,7 +22,9 @@
     "Duplicate visual group is hidden from the accessibility tree",
     "Internal test-status badges are absent from the connector showcase and dashboard panels",
     "Platform icons inherit the active light/dark theme",
-    "TypeScript checking, formatting and seven frontend request/proxy tests pass"
+    "TypeScript checking, formatting and seven frontend request/proxy tests pass",
+    "Production dashboard renders platform marks without internal testing labels",
+    "Production walkthrough runs the nine-brand slider automatically"
   ],
   "failed": [],
   "limits": [
@@ -30,5 +32,14 @@
     "Connector workflow validation is recorded separately; visual logos do not expand integration capabilities",
     "Reduced-motion preference is respected by the component subscription; an explicit play action can start it"
   ],
-  "related_workflow_report": "reports/autonomous-github-qa.json"
+  "related_workflow_report": "reports/autonomous-github-qa.json",
+  "deployment": {
+    "url": "https://youroptimiser.com",
+    "revision": "your-optimiser-00041-mjm",
+    "source_revision": "87ef0d1",
+    "traffic_percent": 100,
+    "runtime_environment_preserved": true,
+    "secret_references_preserved": true,
+    "repository_public": true
+  }
 }
