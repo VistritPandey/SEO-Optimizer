@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { api, type Project } from "@/lib/api";
 import { PlatformLogo } from "./PlatformLogo";
 
@@ -49,6 +49,7 @@ type Connection = {
     interval_seconds?: number;
   };
   credential_fields: string[];
+  authorization?: { oauth_supported: boolean; oauth_available: boolean };
   webhook_url?: string | null;
   last_sync: number | null;
   last_error: string | null;
@@ -69,9 +70,16 @@ function external(value?: string) {
   }
 }
 
-export function Connectors({ project }: { project: Project }) {
+export function Connectors({
+  project,
+  initialPlatform = "search_console",
+}: {
+  project: Project;
+  initialPlatform?: string;
+}) {
   const [data, setData] = useState<Connections | null>(null);
-  const [platform, setPlatform] = useState("search_console");
+  const [platform, setPlatform] = useState(initialPlatform);
+  const initialized = useRef(false);
   const [resource, setResource] = useState("");
   const [options, setOptions] = useState<Record<string, string>>({});
   const [credentials, setCredentials] = useState<Record<string, string>>({});
@@ -117,7 +125,7 @@ export function Connectors({ project }: { project: Project }) {
       window.clearInterval(timer);
     };
   }, [project.id]);
-  function choose(item: Connection) {
+  const choose = useCallback((item: Connection) => {
     setPlatform(item.platform);
     setResource(item.config.resource || "");
     setOptions(item.config.options || {});
@@ -129,6 +137,34 @@ export function Connectors({ project }: { project: Project }) {
     setProposal("");
     setNotice("");
     setError("");
+  }, []);
+  useEffect(() => {
+    if (!data || initialized.current) return;
+    const item =
+      data.connections.find((entry) => entry.platform === initialPlatform) ||
+      data.connections.find((entry) => entry.platform === "search_console");
+    if (item) {
+      initialized.current = true;
+      choose(item);
+    }
+  }, [data, initialPlatform, choose]);
+  async function saveConnection() {
+    if (!resource.trim())
+      throw new Error("Enter the account or resource you want to connect.");
+    await api(path + "/" + platform, "PUT", {
+      platform,
+      resource: resource.trim(),
+      options,
+      credentials,
+      allow_writes: writes,
+      auto_apply: writes && automatic,
+      enabled,
+      interval_seconds: interval * 3600,
+    });
+    setCredentials({});
+    setNotice(
+      "Connection saved. Collect evidence to check access and see supported proposals.",
+    );
   }
   async function action(work: () => Promise<void>) {
     setBusy(true);
@@ -241,22 +277,7 @@ export function Connectors({ project }: { project: Project }) {
               className="panel"
               onSubmit={(event) => {
                 event.preventDefault();
-                action(async () => {
-                  await api(path + "/" + platform, "PUT", {
-                    platform,
-                    resource,
-                    options,
-                    credentials,
-                    allow_writes: writes,
-                    auto_apply: writes && automatic,
-                    enabled,
-                    interval_seconds: interval * 3600,
-                  });
-                  setCredentials({});
-                  setNotice(
-                    "Connection saved. Collect evidence to check access and see supported proposals.",
-                  );
-                });
+                action(saveConnection);
               }}
             >
               <div className="connector-title">
@@ -267,6 +288,16 @@ export function Connectors({ project }: { project: Project }) {
                 <span className="audit-badge">{label(selected.status)}</span>
               </div>
               <p>{selected.definition.note}</p>
+              {!selected.authorization?.oauth_available &&
+                selected.definition.secrets.length > 0 && (
+                  <p className="connection-method">
+                    Connect using scoped access details from{" "}
+                    {selected.definition.name}.{" "}
+                    {selected.authorization?.oauth_supported
+                      ? "Account sign-in is not available for this platform yet; use the access fields below."
+                      : "Add the access fields below, then save the connection."}
+                  </p>
+                )}
               <p>
                 <a
                   href={external(selected.definition.source)}
@@ -304,7 +335,13 @@ export function Connectors({ project }: { project: Project }) {
                 ))}
               </div>
               {selected.definition.secrets.length > 0 && (
-                <details className="connector-credentials">
+                <details
+                  className="connector-credentials"
+                  open={
+                    !selected.connected &&
+                    !selected.authorization?.oauth_available
+                  }
+                >
                   <summary>Credentials and access</summary>
                   <p>
                     Use credentials scoped to this account. Saved values are
@@ -391,33 +428,30 @@ export function Connectors({ project }: { project: Project }) {
                 <button className="button" disabled={busy}>
                   Save connection
                 </button>
-                {selected.connected &&
-                  [
-                    "search_console",
-                    "shopify",
-                    "ga4",
-                    "business_profile",
-                    "webflow",
-                    "gitlab",
-                    "bitbucket",
-                  ].includes(platform) && (
-                    <button
-                      type="button"
-                      className="button secondary"
-                      disabled={busy}
-                      onClick={() =>
-                        action(async () => {
-                          const result = await api<{ url: string }>(
-                            path + "/" + platform + "/oauth",
-                            "POST",
+                {selected.authorization?.oauth_available && (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    disabled={busy}
+                    onClick={() =>
+                      action(async () => {
+                        await saveConnection();
+                        const result = await api<{ url: string }>(
+                          path + "/" + platform + "/oauth",
+                          "POST",
+                        );
+                        const destination = external(result.url);
+                        if (!destination)
+                          throw new Error(
+                            "Platform sign-in returned an invalid address.",
                           );
-                          window.location.assign(result.url);
-                        })
-                      }
-                    >
-                      Authorize account ↗
-                    </button>
-                  )}
+                        window.location.assign(destination);
+                      })
+                    }
+                  >
+                    Continue with {selected.definition.name} ↗
+                  </button>
+                )}
                 {selected.connected && (
                   <button
                     type="button"
